@@ -1,0 +1,290 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.module.base.*;
+import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.factorias.*;
+import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.core.exceptions.*;
+import com.jgg.sdp.parser.info.*;
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.work.*;
+import com.jgg.sdp.parser.code.*;
+
+parser code {:
+   Module module     = ModulesFactory.getCurrentModule();
+   Summary summary   = module.getSummary();
+   Configuration cfg = Configuration.getInstance();
+   ParserInfo      info     = ParserInfo.getInstance();          
+      public void syntax_error(Symbol token) {
+           
+          Symbol s = (Symbol) token.value;
+          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+          col = col + s.right + 1;
+
+          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
+                                   info.getMemberName(), 
+                                   info.getOffset() + s.left + 1, 
+                                   col, 
+                                   (String) s.value);
+      }
+
+      public void unrecovered_syntax_error(Symbol token) throws Exception {
+          Symbol s = (Symbol) token.value;
+          throw new ParseException(MSG.EXCEPTION_CUP, 
+                                  info.getMemberName(), 
+                                  info.getOffset() + s.left + 1,
+                                  s.right + 1, 
+                                  (String) s.value); 
+      }
+:}
+
+action code {:
+   Module          module   = null;
+   DB2Code         code     = null;
+   ParserInfo      info     = ParserInfo.getInstance();
+         
+   StmtSQL currStmt = new StmtSQL();  // Instruccion en proceso
+   
+   public void initActionClass() {
+      module = ModulesFactory.getCurrentModule();
+      code = new DB2Code(module);
+   }
+
+   public String getSymbolName(Symbol s)    { return (String) s.value; }
+   public int    getSymbolLine(Symbol s)    { return (int)    s.left;  }
+   
+   public void debug(String txt) { System.err.println(txt); }
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+scan with {:
+    Symbol sym = ((GenericScanner) getScanner()).tokenSQL();
+    return (sym!=null) ? sym : getSymbolFactory().newSymbol("END_OF_FILE",EOF_sym());
+ 
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               TERMINALES                                                 */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol COMMIT        ;
+terminal Symbol CURSOR        ;
+
+terminal Symbol DECLARE       ;
+
+terminal Symbol EXCLUSIVE     ;
+
+terminal Symbol ID            ;
+terminal Symbol ID_FULL       ;
+terminal Symbol INCLUDE       ;
+terminal Symbol IN            ;
+
+terminal Symbol LITERAL       ;
+terminal Symbol LOCK          ;
+
+terminal Symbol MODE          ;
+
+terminal Symbol NUMERO        ;
+
+terminal Symbol ROLLBACK      ;
+
+terminal Symbol SAVEPOINT     ;
+terminal Symbol SHARE         ;
+terminal Symbol STATEMENT     ;
+
+terminal Symbol TABLE         ;
+
+terminal Symbol WORK          ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               NO TERMINALES                                              */
+/****************************************************************************/
+/****************************************************************************/
+
+non terminal ax            ; 
+non terminal sql_statement ;
+
+non terminal            sql_stmt    ;
+non terminal StmtCopy   sql_include ;
+
+non terminal            sql_cursor         ;
+non terminal            sql_declare        ;
+non terminal            sql_declare_verb   ;
+non terminal            sql_declare_name   ;
+non terminal  Integer   sql_declare_type   ;
+non terminal  Integer   sql_declare_table  ;
+non terminal  Integer   sql_declare_cursor ;
+non terminal  Integer   sql_declare_statement ;
+
+non terminal            sql_eat ;
+non terminal            sql_resto ;
+non terminal            cosas ;
+non terminal            words ;
+
+non terminal            sql_dcl          ;
+non terminal            sql_lock         ;
+non terminal            sql_lock_resto   ;
+non terminal            sql_lock_mode    ;
+
+non terminal            sql_tcl          ;
+non terminal            sql_commit       ;
+non terminal            sql_rollback     ;
+non terminal            sql_rollback_opt ;
+        
+non terminal            sql_work_opt     ;
+non terminal            id_opt           ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+ax ::= sql_statement 
+   ;
+   
+sql_statement ::=  sql_include:i  {: code.processInclude(i); :}
+              |    sql_stmt
+              ;
+              
+sql_stmt ::= sql_cursor 
+//         |   sql_ddl
+         |   sql_dcl
+//         |   sql_dml
+         |   sql_tcl
+         |   sql_resto
+         ;              
+
+sql_cursor ::= sql_declare   {: code.processDeclare(currStmt); :}
+           ;
+ 
+/*********************************************************************/
+/* INCLUDE                                                           */
+/*********************************************************************/
+
+sql_include ::= INCLUDE:i ID:m {: StmtCopy stmt = new StmtCopy(i);
+                                  stmt.addRValue(m);
+                                  RESULT = stmt; 
+                               :}
+            ;
+          
+          
+/*********************************************************************/
+/* CURSOR                                                            */
+/*********************************************************************/
+
+sql_declare ::= sql_declare_verb sql_declare_name sql_declare_type:t {: info.setTypeCopy(t); :}
+            ;
+
+sql_declare_verb ::= DECLARE:d {: currStmt.setVerb(d); :}
+                 ;
+
+sql_declare_name ::= ID:i        {: currStmt.addRValue(i); :}
+                 |   ID_FULL:i   {: currStmt.addRValue(i); :}
+                 // Se puede dar la construccion DECLARE CURSOR CURSOR
+                 |   CURSOR:i    {: currStmt.addRValue(i); :}
+                 ;
+                                              
+sql_declare_type ::= sql_declare_table:d       {: RESULT = d; :}
+                 |   sql_declare_cursor:d      {: RESULT = d; :}
+                 |   sql_declare_statement:d   {: RESULT = d; :}
+                 ;
+                             
+sql_declare_table ::= TABLE:t sql_eat   {: currStmt.addOption(new Option(t)); RESULT = CDG.CPY_TABLE;  :} 
+                  ;
+                  
+sql_declare_cursor ::= CURSOR:c sql_eat {: currStmt.addOption(new Option(c)); RESULT = CDG.CPY_CURSOR;  :}
+                   ;
+
+sql_declare_statement ::= STATEMENT:s {: currStmt.addOption(new Option(s)); RESULT = CDG.CPY_STATEMENT; :}
+                      ;
+                   
+/*********************************************************************/
+/* DCL - CONTROL                                                     */
+/*********************************************************************/
+
+sql_dcl ::= sql_lock
+        ;
+         
+sql_lock ::= LOCK TABLE ID sql_lock_resto
+         ;
+
+sql_lock_resto ::= IN sql_lock_mode MODE
+               ;
+                        
+sql_lock_mode ::= SHARE
+              |   EXCLUSIVE
+              ;
+
+/*********************************************************************/
+/* TCL - TASK CONTROL                                                */
+/*********************************************************************/
+
+sql_tcl ::= sql_commit
+        |   sql_rollback  
+        ;
+        
+sql_commit ::= COMMIT sql_work_opt
+           ;
+
+sql_rollback ::= ROLLBACK sql_work_opt sql_rollback_opt
+             ;
+             
+sql_rollback_opt ::= SAVEPOINT id_opt
+                 |
+                 ;                          
+
+/*********************************************************************/
+/* PALABRAS OPCIONALES                                               */
+/*********************************************************************/
+
+id_opt ::= ID
+       |
+       ;
+       
+sql_work_opt ::= WORK
+             |
+             ;
+                                                         
+/*********************************************************************/
+/* RESTO                                                             */
+/*********************************************************************/
+
+sql_eat ::= cosas
+        |   sql_eat cosas
+        ;
+
+cosas ::= words
+      |   ID
+      |   ID_FULL
+      |   LITERAL
+      |   NUMERO  
+      |   IN
+      ;
+
+words ::= CURSOR
+      |   STATEMENT
+      ;
+                                                            
+/*********************************************************************/
+/* NADA                                                              */
+/*********************************************************************/
+            
+sql_resto ::= cosas
+         |   sql_resto cosas
+         ;

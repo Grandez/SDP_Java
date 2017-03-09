@@ -1,0 +1,304 @@
+package com.jgg.sdp.parser.db2.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.db2.base.*;
+
+parser code {:
+
+/*
+   Module module     = ModulesFactory.getCurrentModule();
+   Summary summary   = module.getSummary();
+   Configuration cfg = Configuration.getInstance();
+   ParserInfo      info     = ParserInfo.getInstance();          
+      public void syntax_error(Symbol token) {
+           
+          Symbol s = (Symbol) token.value;
+          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+          col = col + s.right + 1;
+
+          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
+                                   info.getMemberName(), 
+                                   info.getOffset() + s.left + 1, 
+                                   col, 
+                                   (String) s.value);
+      }
+
+      public void unrecovered_syntax_error(Symbol token) throws Exception {
+          Symbol s = (Symbol) token.value;
+          throw new ParseException(MSG.EXCEPTION_CUP, 
+                                  info.getMemberName(), 
+                                  info.getOffset() + s.left + 1,
+                                  s.right + 1, 
+                                  (String) s.value); 
+      }
+      */
+:}
+
+action code {:
+   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   ParserInfo      info     = ParserInfo.getInstance();
+   StmtSQL         stmt     = new StmtSQL();
+   
+/*
+   Module          module   = null;
+   DB2Code         code     = null;
+   ParserInfo      info     = ParserInfo.getInstance();
+         
+   StmtSQL currStmt = new StmtSQL();  // Instruccion en proceso
+   
+
+   public String getSymbolName(Symbol s)    { return (String) s.value; }
+   public int    getSymbolLine(Symbol s)    { return (int)    s.left;  }
+   
+   public void debug(String txt) { System.err.println(txt); }
+*/   
+   public void initActionClass() {
+//      module = ModulesFactory.getCurrentModule();
+//      code = new DB2Code(module);
+   }
+
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               TERMINALES                                                 */
+/****************************************************************************/
+/****************************************************************************/
+
+/****************************************************************************/
+/***                    PATRONES                                          ***/
+/****************************************************************************/
+
+terminal Symbol ID        ;
+terminal Symbol COMMA     ;
+terminal Symbol HOSTVAR1  ;
+terminal Symbol HOSTVAR2  ;
+terminal Symbol PREHOST   ;
+
+/****************************************************************************/
+/***                    SIMBOLOS                                         ***/
+/****************************************************************************/
+
+
+terminal Symbol ALIAS           ;
+terminal Symbol ALTER           ;
+terminal Symbol AUXILIARY       ;
+
+terminal Symbol COMMENT         ;
+terminal Symbol CONTEXT         ;
+terminal Symbol CREATE          ;
+
+terminal Symbol DATABASE        ;
+terminal Symbol DROP            ;
+
+terminal Symbol FUNCTION        ;
+
+terminal Symbol GLOBAL          ;
+
+terminal Symbol INDEX           ;
+
+terminal Symbol MASK            ;
+
+terminal Symbol PERMISSION      ;
+terminal Symbol PROCEDURE       ; 
+
+terminal Symbol RENAME          ;
+terminal Symbol ROLE            ;
+
+terminal Symbol SEQUENCE        ;
+terminal Symbol STOGROUP        ;
+terminal Symbol SYNONIM         ;
+
+terminal Symbol TABLE           ;
+terminal Symbol TABLESPACE      ;
+terminal Symbol TEMPORARY       ;
+terminal Symbol TO              ;
+terminal Symbol TRIGGER         ;
+terminal Symbol TRUSTED         ;
+terminal Symbol TYPE            ;
+
+terminal Symbol VIEW            ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               NO   TERMINALES                                            */
+/****************************************************************************/
+/****************************************************************************/
+
+non terminal Symbol  sql                ;
+non terminal         sql_ddl            ;
+
+non terminal         sql_alter          ;
+non terminal         alter_type         ;
+
+non terminal         sql_comment        ;
+
+
+non terminal         sql_create         ;
+non terminal         object_type        ;
+
+non terminal         sql_drop           ;
+
+non terminal         sql_label          ;
+
+non terminal         sql_rename         ;
+non terminal         object_opt         ;
+
+non terminal host_variable       ;
+non terminal var_id              ;
+
+non terminal eat                 ;
+non terminal eat_opt             ;
+non terminal eat_token           ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+sql ::= sql_ddl      {: RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  :}
+    ;
+
+sql_ddl ::= sql_alter 
+        |   sql_comment
+        |   sql_create
+        |   sql_drop        
+        |   sql_label            
+        |   sql_rename        
+        ;
+
+/**********************************************************************/
+/*                         ALTER                                      */
+/**********************************************************************/
+
+sql_alter ::= ALTER alter_type eat_opt
+          ;
+
+alter_type ::= DATABASE
+           |   FUNCTION
+           |   INDEX
+           |   MASK
+           |   PERMISSION
+           |   PROCEDURE
+           |   SEQUENCE
+           |   STOGROUP
+           |   TABLE
+           |   TABLESPACE
+           |   TRIGGER
+           |   TRUSTED CONTEXT
+           |   VIEW            
+           ;
+           
+/**********************************************************************/
+/*                         COMMENT                                    */
+/**********************************************************************/
+
+sql_comment ::= COMMENT eat
+            ;
+
+/**********************************************************************/
+/*                         CREATE                                     */
+/**********************************************************************/
+
+sql_create ::= CREATE object_type eat_opt
+           ;
+
+object_type ::= ALIAS
+            |   AUXILIARY TABLE
+            |   DATABASE
+            |   FUNCTION
+            |   GLOBAL TEMPORARY TABLE
+            |   INDEX
+            |   MASK
+            |   PERMISSION
+            |   PROCEDURE
+            |   ROLE
+            |   SEQUENCE
+            |   STOGROUP
+            |   SYNONIM
+            |   TABLE
+            |   TABLESPACE
+            |   TRIGGER
+            |   TRUSTED CONTEXT
+            |   TYPE
+            |   VIEW
+            ;
+                           
+/**********************************************************************/
+/*                         DROP                                       */
+/**********************************************************************/
+
+sql_drop ::= DROP object_type eat_opt
+         ;
+
+/**********************************************************************/
+/*                         RENAME                                     */
+/**********************************************************************/
+
+sql_rename ::= RENAME object_opt var_id TO var_id
+         ;
+
+object_opt ::= TABLE
+           |   INDEX
+           |
+           ;
+                    
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             COMUNES                                                */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+var_id ::= host_variable
+       |   ID
+       ;
+
+host_variable ::= HOSTVAR1
+              |   HOSTVAR2
+              |   PREHOST ID
+              ;
+                     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             PALABRAS OPCIONALES                                    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*            RESTO - SE COME TODO LO QUE HALLA                       */
+/*         FUNCIONES Y VERBOS NO ADMITIDOS EN PROGRAMAS               */     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+eat_opt ::= eat
+        |
+        ;
+        
+eat ::= eat_token
+    |   eat eat_token
+    ;
+    
+eat_token ::= ID
+          |   COMMA
+          ;                              

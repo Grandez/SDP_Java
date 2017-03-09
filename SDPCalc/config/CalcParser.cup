@@ -1,0 +1,240 @@
+package com.jgg.sdp.calculator;
+
+import java.util.*;
+import java.math.BigDecimal;
+import java_cup.runtime.*;
+
+parser code {:
+
+   HashMap<String, BigDecimal> vars = null;
+   
+   public void setVariables(HashMap<String, Integer> vars) {
+      if (vars == null) return;
+      this.vars = new HashMap<String, BigDecimal>();
+      for (Map.Entry<String, Integer> entry : vars.entrySet()) {
+         this.vars.put(entry.getKey(), new BigDecimal(entry.getValue()));
+      }
+   }
+   
+:}
+
+action code {:
+
+   private BigDecimal getValue(Symbol s) throws CalculatorException {
+      String name = (String) s.value;
+      BigDecimal value = parser.vars.get(name);
+      if (value == null) {
+          throw new CalculatorException(s, "Variable doesn't exists");
+      }
+      return value;
+   }
+
+   private double compareNumbers(BigDecimal l, BigDecimal r) {
+       return l.subtract(r).doubleValue();
+       
+   }
+   
+   private BigDecimal storeVar(Symbol s, BigDecimal value) {
+      String var = (String) ((Symbol) s.value).value;
+      if (parser.vars == null) parser.vars = new HashMap<String, BigDecimal>();
+      parser.vars.put(var, value);
+      return value;
+   }
+   
+   private void print(String txt) {
+      System.out.println(txt);
+   }
+   
+   private void printClass(Object o) {
+       if (o instanceof BigDecimal) {
+          System.out.print("BigDecimal ");
+       } else if (o instanceof Boolean) {
+          System.out.print("Boolean ");
+       } else if (o instanceof Symbol) {
+          System.out.print("Symbol ");
+       } else {
+          System.out.print("Object ");
+       }
+       System.out.println(o.toString());
+   }
+   
+:}
+
+init with {:
+
+:}
+
+
+/****************************************************************************/
+/****************************************************************************/
+/*               VERBOS                                                     */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol ABS       ;
+terminal Symbol LOG       ;
+terminal Symbol LOG2      ;
+terminal Symbol LN        ;
+terminal Symbol EXP       ;
+
+terminal Symbol AND       ;
+terminal Symbol OR        ;
+
+terminal BigDecimal NUMBER    ;
+terminal Symbol VAR       ;
+terminal Symbol STORE       ;
+
+terminal Symbol PLUS      ; 
+terminal Symbol MINUS     ;
+terminal Symbol MULT      ;
+terminal Symbol DIV       ;
+terminal Symbol MOD       ;
+terminal Symbol POW       ;
+
+terminal Symbol LPAR      ;
+terminal Symbol RPAR      ;
+
+terminal Symbol EQ        ;
+terminal Symbol NE        ;
+terminal Symbol GT        ;
+terminal Symbol GE        ;
+terminal Symbol LT        ;
+terminal Symbol LE        ;
+
+terminal Symbol ENDS      ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               NO TERMINALES                                              */
+/****************************************************************************/
+/****************************************************************************/
+
+non terminal Symbol     ax                    ;
+non terminal Symbol     main_operation        ;
+non terminal Symbol     full_operation        ;
+non terminal Symbol     operation             ;
+
+non terminal            assign_operation_list ;
+non terminal            assign_operation_lst  ;
+non terminal            assign_operation      ;
+non terminal BigDecimal numeric_operation     ;
+
+non terminal Boolean logical_operation ;
+non terminal Boolean relational_operation ;
+non terminal Boolean logical_or        ;
+non terminal Boolean logical_and       ;
+
+
+non terminal BigDecimal factor        ;
+non terminal BigDecimal function      ;
+non terminal BigDecimal func_op       ;
+non terminal BigDecimal primary       ;  
+
+                    
+precedence left PLUS, MINUS    ;
+precedence left MULT, DIV, MOD ;
+precedence left POW            ;
+precedence nonassoc LPAR, RPAR ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+// Siempre se envia un punto y coma
+ax ::= assign_operation_list main_operation:m {: RESULT = m; :}
+   |   ENDS                                   {: RESULT = new Symbol(0, 0,0, new Boolean(false)); :}
+   ;
+
+// Esta es la ultima operacion de la lista
+main_operation ::= full_operation:f   {: RESULT = f; :}
+               ;
+                                        
+full_operation ::= operation:o ENDS   {: RESULT = o;  :}
+               ;
+
+operation ::= numeric_operation:n {: RESULT = new Symbol(n.intValue(), 0,0, n); :}
+          |   logical_operation:l {: RESULT = new Symbol(0, 0,0, l); :}
+          ;                         
+   
+
+/*************************************************************************************/
+/*         ASSIGN  STORE VAR = expression                                            */
+/*************************************************************************************/
+
+assign_operation_list ::= assign_operation_lst:l {: RESULT = l; :}
+                      |
+                      ;
+                      
+assign_operation_lst ::= assign_operation:a                      {: RESULT = a; :}
+                     |   assign_operation_lst assign_operation:a {: RESULT = a; :}
+                     ;
+
+assign_operation ::= STORE VAR:v EQ numeric_operation:d ENDS  {: RESULT = storeVar(v, d); :}
+                 ;
+
+/*************************************************************************************/
+/*         NUMERIC EXPRESSION                                                        */
+/*************************************************************************************/
+          
+numeric_operation ::= factor:f PLUS  numeric_operation:o   {: RESULT = f.add(o);            :}
+                  |   factor:f MINUS numeric_operation:o   {: RESULT = f.subtract(o);       :}
+                  |   factor:f MULT  numeric_operation:o   {: RESULT = f.multiply(o);       :}
+                  |   factor:f POW   numeric_operation:o   {: RESULT = f.pow(o.intValue()); :}
+                  |   factor:f MOD   numeric_operation:o   {: RESULT = f.remainder(o);      :}          
+                  |   factor:f                     {: RESULT = f; :}
+                  |   factor:f DIV   numeric_operation:o   {: BigDecimal aux = null;
+                                                      try {
+                                                        aux = f.divide(o);
+                                                     } catch (ArithmeticException ex) {
+                                                        aux = new BigDecimal(f.doubleValue()/o.doubleValue());
+                                                     }       
+                                                     RESULT = aux;
+                                                   :}
+                ;
+
+factor ::= LPAR numeric_operation:o RPAR {: RESULT = o; :}
+       |   function:f            {: RESULT = f; :} 
+       |   primary:p             {: RESULT = p; :}
+       ;
+
+function ::= LOG  func_op:f {: RESULT = new BigDecimal(Math.log10(f.doubleValue())); :}
+         |   LOG2 func_op:f {: RESULT = new BigDecimal(Math.log10(f.doubleValue()) / Math.log(2)); :}
+         |   LN   func_op:f {: RESULT = new BigDecimal(Math.log(f.doubleValue())); :}
+         |   EXP  func_op:f {: RESULT = new BigDecimal(Math.exp(f.doubleValue())); :}
+         |   ABS  func_op:f {: RESULT = f.abs(); :}
+         ;
+
+func_op ::= LPAR numeric_operation:o RPAR  {: RESULT = o; :}
+        ;
+        
+primary ::= NUMBER:n    {: RESULT = n; :}
+        |   VAR:v       {: RESULT = getValue(v); :}
+        ;
+               
+/*************************************************************************************/
+/*         LOGICAL OPERATION                                                         */
+/*         RELATIONAL_OPERATION [AND | OR RELATIONAL_OPERATION]*                     */
+/*************************************************************************************/
+
+logical_operation ::= logical_or:l {: RESULT = l; :}
+                  ;
+                  
+logical_or ::= logical_and:l                  {: RESULT = l; :}
+           |   logical_or:o OR logical_and:a  {: RESULT = (o || a); :}
+           ;
+
+logical_and ::= relational_operation:o                   {: RESULT = o; :}
+            |   logical_and:a AND relational_operation:o {: RESULT = (a && o); :}
+            ;
+            
+relational_operation ::= numeric_operation:l EQ numeric_operation:r  {: RESULT = (compareNumbers(l, r) == 0); :}
+                  |   numeric_operation:l NE numeric_operation:r  {: RESULT = (compareNumbers(l, r) != 0); :}
+                  |   numeric_operation:l GT numeric_operation:r  {: RESULT = (compareNumbers(l, r) >  0); :}
+                  |   numeric_operation:l LT numeric_operation:r  {: RESULT = (compareNumbers(l, r) <  0); :}
+                  |   numeric_operation:l GE numeric_operation:r  {: RESULT = (compareNumbers(l, r) >= 0); :}
+                  |   numeric_operation:l LE numeric_operation:r  {: RESULT = (compareNumbers(l, r) <= 0); :}                                    
+                  ;

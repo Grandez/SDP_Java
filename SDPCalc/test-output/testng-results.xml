@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results skipped="0" failed="0" total="6" passed="6">
+  <reporter-output>
+  </reporter-output>
+  <suite name="Default suite" duration-ms="8632" started-at="2017-01-17T11:45:05Z" finished-at="2017-01-17T11:45:13Z">
+    <groups>
+    </groups>
+    <test name="Default test" duration-ms="8632" started-at="2017-01-17T11:45:05Z" finished-at="2017-01-17T11:45:13Z">
+      <class name="com.jgg.sdp.calc.test.TestCalculator">
+        <test-method status="PASS" signature="testBoolean(java.lang.String, boolean)[pri:0, instance:com.jgg.sdp.calc.test.TestCalculator@659a969b]" name="testBoolean" duration-ms="4184" started-at="2017-01-17T12:45:05Z" data-provider="relational" finished-at="2017-01-17T12:45:09Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[1 + 2 = 3]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[true]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBoolean -->
+        <test-method status="PASS" signature="testBoolean(java.lang.String, boolean)[pri:0, instance:com.jgg.sdp.calc.test.TestCalculator@659a969b]" name="testBoolean" duration-ms="1" started-at="2017-01-17T12:45:09Z" data-provider="relational" finished-at="2017-01-17T12:45:09Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[1 > 2]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[false]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBoolean -->
+        <test-method status="PASS" signature="testBoolean(java.lang.String, boolean)[pri:0, instance:com.jgg.sdp.calc.test.TestCalculator@659a969b]" name="testBoolean" duration-ms="1" started-at="2017-01-17T12:45:09Z" data-provider="relational" finished-at="2017-01-17T12:45:09Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[2 <= 2]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[true]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testBoolean -->
+        <test-method status="PASS" signature="testValues(java.lang.String, java.math.BigDecimal)[pri:0, instance:com.jgg.sdp.calc.test.TestCalculator@659a969b]" name="testValues" duration-ms="4414" started-at="2017-01-17T12:45:09Z" data-provider="values" finished-at="2017-01-17T12:45:13Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[1 + 2]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[3]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValues -->
+        <test-method status="PASS" signature="testValues(java.lang.String, java.math.BigDecimal)[pri:0, instance:com.jgg.sdp.calc.test.TestCalculator@659a969b]" name="testValues" duration-ms="1" started-at="2017-01-17T12:45:13Z" data-provider="values" finished-at="2017-01-17T12:45:13Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[ 2 + 3 * 4]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[14]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValues -->
+        <test-method status="PASS" signature="testValues(java.lang.String, java.math.BigDecimal)[pri:0, instance:com.jgg.sdp.calc.test.TestCalculator@659a969b]" name="testValues" duration-ms="1" started-at="2017-01-17T12:45:13Z" data-provider="values" finished-at="2017-01-17T12:45:13Z">
+          <params>
+            <param index="0">
+              <value>
+                <![CDATA[ (2 + 3) * 4]]>
+              </value>
+            </param>
+            <param index="1">
+              <value>
+                <![CDATA[20]]>
+              </value>
+            </param>
+          </params>
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValues -->
+      </class> <!-- com.jgg.sdp.calc.test.TestCalculator -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>

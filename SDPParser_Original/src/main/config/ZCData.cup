@@ -1,0 +1,1094 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.module.base.*;
+import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.factorias.*;
+import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.core.exceptions.*;
+import com.jgg.sdp.parser.info.*;
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.work.*;
+import com.jgg.sdp.parser.code.*;
+import com.jgg.sdp.parser.blocks.*;
+
+parser code {:
+   Module module     = ModulesFactory.getDefaultModule();
+   Summary summary   = module.getSummary();
+   Configuration cfg = Configuration.getInstance();
+   ParserInfo      info     = ParserInfo.getInstance();
+             
+   public void syntax_error(Symbol token) {
+           
+          Symbol s = (Symbol) token.value;
+          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+          col = col + s.right;
+
+          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
+                                   info.getMemberName(), 
+                                   s.left + 1,  
+                                   col, 
+                                   (String) s.value);
+      }
+
+      public void unrecovered_syntax_error(Symbol token) throws Exception {
+          Symbol s = (Symbol) token.value;
+          throw new ParseException(MSG.EXCEPTION_CUP, 
+                                  info.getMemberName(), s.left + 1, s.right + 1, (String) s.value); 
+      }
+:}
+
+action code {:
+   Module          module   = null;
+   Summary         summary  = null;
+   Persistence     fichero  = null;
+   ZCDCode         code     = null;
+   BlockCode       currBlock = null; 
+   IssuesChecker   issues    = null;
+
+   ParserInfo      info     = ParserInfo.getInstance();
+      
+   Variable    currVar  = null;
+   Statement lastStmt = null;  // Ultima instruccion
+   Statement currStmt = null;  // Instruccion en proceso
+   
+   boolean   hasEndProgram = false; // Hay STOPRUN o GOBACK?
+    
+   boolean master     = false;  // El fichero es el maestro?   
+   int     numFillers = 0;
+          
+   public void initActionClass() {
+      module  = ModulesFactory.getMainModule();
+      summary = module.getSummary();
+      code = new ZCDCode(module);
+      issues = new IssuesChecker(module);
+   }
+
+   public String getSymbolName(Symbol s)    { return (String) s.value; }
+   public int    getSymbolLine(Symbol s)    { return (int)    s.left;  }
+   
+   public void debug(String txt) { System.err.println(txt); }
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+scan with {:
+    Symbol sym = ((GenericScanner) getScanner()).tokenCobolData();
+    return (sym!=null) ? sym : getSymbolFactory().newSymbol("END_OF_FILE",EOF_sym());
+ 
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               LOS SIMBOLOS SON COMUNES                                   */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol DIV_ID   ;
+terminal Symbol DIV_ENV  ;
+terminal Symbol DIV_DATA ;
+
+terminal Symbol ID        ;
+terminal Symbol NUMERO    ;
+terminal Symbol HEX_VAL   ;
+terminal Symbol LITERAL   ;
+terminal Symbol LITCONCAT ;
+
+terminal Symbol FILE_SECTION    ;
+terminal Symbol WORKING_SECTION ;
+terminal Symbol LOCAL_SECTION   ;
+terminal Symbol LINKAGE_SECTION ;
+terminal Symbol FILE_CONTROL    ;
+terminal Symbol CONF_SECTION    ;
+terminal Symbol IO_SECTION      ;
+terminal Symbol SPECIAL_NAMES   ;
+terminal Symbol SOURCE_COMPUTER ;
+terminal Symbol OBJECT_COMPUTER ;
+
+/* Verbos de IDENTIFICATION */
+
+terminal Symbol PGMID        ;
+terminal Symbol AUTHOR       ;
+terminal Symbol DATEW        ;
+terminal Symbol DATEC        ;
+terminal Symbol INSTALLATION ;
+terminal Symbol REMARKS      ;
+
+/* Verbos de ENVIRONMENT */
+
+terminal Symbol ACCESS       ;
+terminal Symbol ALTERNATE    ;
+terminal Symbol ASSIGN       ;
+terminal Symbol BLOCK        ;
+terminal Symbol DATA         ;
+terminal Symbol DYNAMIC      ;
+terminal Symbol FD           ;
+terminal Symbol INDEXED      ;
+terminal Symbol INDEX        ;
+terminal Symbol LABEL        ;
+terminal Symbol LINAGE       ;
+terminal Symbol ORGANIZATION ;
+terminal Symbol RANDOM       ;
+terminal Symbol RECORDING    ;
+terminal Symbol RECORDS      ;
+terminal Symbol RECORD       ;
+terminal Symbol RELATIVE     ;
+terminal Symbol SD           ;
+terminal Symbol SEQUENTIAL   ;
+terminal Symbol SELECT       ;
+terminal Symbol STATUS       ;
+
+/* Working y datos */
+
+terminal Symbol BINARY       ;
+terminal Symbol BLOB         ;
+terminal Symbol BLOB_LOCATOR ;
+terminal Symbol COMP1        ;
+terminal Symbol COMP2        ;
+terminal Symbol COMP3        ;
+terminal Symbol COMP4        ;
+terminal Symbol COMP5        ;
+terminal Symbol COMP6        ;
+terminal Symbol DFHCICS      ;
+terminal Symbol FILLER       ;
+terminal Symbol REDEFINES    ;
+terminal Symbol RENAMES      ;
+terminal Symbol PACKED       ;
+terminal Symbol PICTURE      ;
+terminal Symbol VALUE        ;
+terminal Symbol OCCURS       ;
+terminal Symbol DEPENDING    ;
+terminal Symbol ORDER        ;
+
+terminal Symbol POINTER       ;
+terminal Symbol PIC_ALPHANUM  ;
+terminal Symbol PIC_ALPHA     ;
+terminal Symbol PIC_DEC       ;
+terminal Symbol PIC_DEC_EMPTY ;
+terminal Symbol PIC_NUM       ;
+terminal Symbol PIC_FMT       ;
+terminal Symbol PIC_LEN       ;
+terminal Symbol PIC_V         ;
+
+terminal Symbol ROWID        ;
+
+terminal Symbol SPACES  ;
+terminal Symbol USAGE   ;
+terminal Symbol ZERO    ; 
+terminal Symbol HIGHVAL ;
+terminal Symbol LOWVAL  ;
+terminal Symbol QUOTE   ;
+terminal Symbol NULL    ;
+
+/* Palabras reservadas */
+
+terminal Symbol CLASS     ;
+terminal Symbol DEC_POINT ;
+terminal Symbol DISPLAY   ;
+terminal Symbol ENDP      ;
+terminal Symbol THRU      ;
+
+/* Simbolos gramaticales y palabras comunes */
+
+terminal Symbol LPAR   ;
+terminal Symbol RPAR   ;
+terminal Symbol TO     ;
+terminal Symbol IN     ;
+terminal Symbol OF     ;
+
+terminal Symbol EXEC_CICS ;
+terminal Symbol EXEC_SQL  ;
+terminal Symbol END_EXEC  ;
+
+/* SDP */
+
+terminal Symbol SDPDESC , SDPMASTER ;  
+
+/****************************************************************************/
+/****************************************************************************/
+/*               LOS SIMBOLOS SON COMUNES                                   */
+/****************************************************************************/
+/****************************************************************************/
+
+///////////////////////////////////////////////////////
+// Division 
+///////////////////////////////////////////////////////
+
+non terminal environment_division;
+non terminal data_division       ;
+
+//////////////////////////////////////////////////////
+// Identificacion division
+/////////////////////////////////////////////////////
+
+non terminal identification_division            ;
+non terminal ident_div_header , ident_bloque    ;
+
+non terminal Statement ident_sentences  ;
+non terminal Statement ident_sentence   ;
+
+
+non terminal Statement programId       ;
+non terminal Statement programId_verb  ;
+non terminal Statement author          ;
+non terminal Statement author_verb     ;
+
+non terminal SymbolList  author_opt      ;
+non terminal SymbolList  open_string     ;
+non terminal SymbolList  open_string_opt ;
+
+non terminal Symbol nombre   ;
+non terminal Statement date_written       ;
+non terminal Statement date_compiled      ;
+non terminal Statement installation       ;
+non terminal Statement remarks            ;
+
+non terminal Statement sdpDesc       ;
+non terminal Symbol sdpDescData   ;
+non terminal Symbol sdpDescLineas ;
+non terminal Symbol sdpDescLinea  ;          
+
+non terminal env_div_header ;
+non terminal data_div_header;
+non terminal bloque_env     ;
+non terminal bloque_data    ;
+
+non terminal section_file        ;
+non terminal sect_file_header    ;
+non terminal file_data           ; 
+non terminal section_working     ;
+non terminal sect_working_header ;
+non terminal working_data        ;
+non terminal section_local       ;
+non terminal sect_local_header   ;
+non terminal local_data          ;
+non terminal section_linkage     ;
+non terminal sect_linkage_header ;
+non terminal linkage_data ;
+
+//////////////////////////////////////////////////////
+// Generales
+/////////////////////////////////////////////////////
+
+non terminal ax          ; 
+non terminal descripcion ;
+non terminal module      ;
+
+non terminal endp_opt ;
+
+non terminal SymbolExtList rvalue_list ;
+
+/***********************************************************/
+/*                   VARIABLES                             */
+/***********************************************************/
+
+non terminal Symbol nivel;
+non terminal Symbol var_value            ;
+non terminal Symbol var_occurs           ;
+non terminal Symbol var_occurs_from      ;
+non terminal Symbol var_occurs_to        ;
+non terminal Symbol var_occurs_bound     ;
+non terminal Symbol var_occurs_depending ;
+non terminal Symbol var_indexed          ;
+non terminal Symbol var_indexes          ;
+non terminal Symbol var_index            ;
+non terminal Symbol var_type             ;
+non terminal Symbol var_order            ;
+non terminal Symbol var_name             ;
+non terminal Symbol var_filler           ;
+non terminal Symbol init_val_list        ;  
+non terminal Symbol init_val             ;
+non terminal Symbol init_val_num         ;
+
+non terminal Variable variables     ;
+non terminal Variable variable      ;
+non terminal Variable var_def       ;
+non terminal Var      var_data      ;
+non terminal Var      var_data_def  ;
+non terminal          var_usage     ;
+non terminal Symbol   var_attr      ;
+non terminal Symbol   var_redefines ;
+non terminal Symbol   var_renames   ;
+non terminal Symbol   var_renames_opt ;
+non terminal Symbol   var_picture   ;
+non terminal Symbol   pic_types     ;
+non terminal Symbol   pic_type      ;
+non terminal Symbol   pic_size_opt  ;
+non terminal Symbol   pic_size      ;
+non terminal Symbol   pic_len       ;
+non terminal Symbol   pic_dec_opt   ;
+non terminal Symbol   pic_dec       ;
+non terminal Symbol   compn ;
+
+/* CONFIGURATION SECTION */
+
+non terminal configuration_section ;
+non terminal conf_sect_header      ;
+non terminal conf_sect_data_opt    ;
+non terminal conf_sect_data        ;
+non terminal conf_sect_item        ;
+non terminal conf_sect_source      ;
+non terminal conf_sect_object      ;
+non terminal conf_sect_special     ;
+non terminal special_names_lst_opt ;
+non terminal special_names_lst     ;
+non terminal special_name          ;
+non terminal special_names_items   ;
+non terminal special_name_item     ;
+
+non terminal computer_name_opt     ;
+non terminal computer_name         ;
+
+non terminal section_io            ;
+non terminal sect_io_header        ;
+non terminal sect_io_bloques       ;
+non terminal file_control_decl     ;
+non terminal file_control_header   ;
+
+/***********************************************************/
+/*                    SELECT FICHEROS                      */
+/***********************************************************/
+
+non terminal select_files     ;
+non terminal select_file      ;
+non terminal select_file_mark ;
+non terminal select_file_list ;
+
+non terminal file_select       ;
+non terminal file_attrs        ;
+non terminal file_attr_item    ;
+non terminal file_attr_common  ;
+non terminal file_attr_assign  ;
+non terminal file_attr_fs      ;
+non terminal file_attr_org     ;
+non terminal file_attr_rel     ;
+non terminal file_attr_key     ;
+non terminal file_attr_alt     ;
+non terminal file_attr_assign_dd ;
+non terminal file_attr_org_type  ;
+non terminal file_attr_access    ;
+non terminal file_attr_acc_mode  ;
+
+non terminal             fd                ;
+non terminal             fd_list           ;
+non terminal             fd_fields         ;
+non terminal             fd_attr_label     ;
+non terminal OptionList  fd_attrs_opt ;
+non terminal OptionList  fd_attrs     ;
+non terminal Option      fd_attr      ;
+non terminal Option      fd_attr_names     ;
+non terminal SymbolList  fd_attr_name      ;
+non terminal fd_attr_record    ;
+non terminal fd_attr_record_detail ;
+non terminal fd_attr_record_size   ;
+non terminal fd_attr_records   ;
+non terminal fd_attr_record_to ;
+
+non terminal Option fd_attr_mode      ;
+non terminal Symbol fd_attr_mode_type ;
+
+non terminal fd_attr_block     ;
+non terminal fd_attr_block_records ;
+non terminal fd_attr_number    ;
+non terminal fd_attr_linage    ;
+non terminal fd_attr_depending ;
+
+non terminal Variable    fd_def       ;
+non terminal Symbol      fd_desc      ;
+
+/***********************************************************/
+/*    OTRAS SENTENCIAS                                     */
+/***********************************************************/
+
+non terminal Symbol    rvalue      ;
+non terminal           padres_lst;
+non terminal           padres      ;
+non terminal           padre       ;
+non terminal           padre_indicator ;
+
+non terminal Symbol        figurative  ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+ax     ::=  descripcion module 
+       ; 
+
+descripcion ::= sdpDesc
+            |
+            ;
+                   
+module ::= identification_division 
+           environment_division    
+           data_division         
+       ;
+
+/*********************************************************************/
+/* Identification division                                           */
+/*********************************************************************/
+
+identification_division ::= ident_div_header ident_bloque {: issues.checkIdentification((BlockID) currBlock); :}
+                        |
+                        ;
+
+ident_div_header ::= DIV_ID:s  ENDP  {: code.setDivision(CDG.SECT_ID, s.left); 
+                                        currBlock = new BlockID(s);
+                                     :}
+                 ;                      
+
+ident_bloque ::= ident_sentences
+             |   
+             ;
+
+ident_sentences ::= ident_sentence:i                   {: currBlock.addStatement(i); :}
+                |   ident_sentences ident_sentence:i   {: currBlock.addStatement(i); :}
+                ;
+
+ident_sentence ::= programId:s     {: RESULT = s; :} {: /* issues.checkProgramId(getSymbolName(p), getSymbolLine(p)); */ :}
+               |   author:s        {: RESULT = s; :}  
+               |   installation:s  {: RESULT = s; :}
+               |   date_written:s  {: RESULT = s; :}
+               |   date_compiled:s {: RESULT = s; :}
+               |   remarks:s       {: RESULT = s; :}
+               |   sdpDesc:s       {: RESULT = s; :}   
+               ;
+                             
+programId ::= programId_verb:p endp_opt ID:s endp_opt  {: RESULT = p.addRValue(s); :}
+/*
+{: module.setName(getSymbolName(s));
+                                                RESULT = s; 
+                                             :}
+*/  
+          ;
+
+programId_verb ::= PGMID:p {: RESULT = new Statement(p); :}
+               ;
+               
+author    ::= author_verb:a author_opt:o {: RESULT = a.addRValues(o); :} 
+          ;
+
+author_verb ::= AUTHOR:s   {: RESULT = new Statement(s); :}
+            ;
+            
+author_opt ::= open_string:s {: RESULT = s; 
+                                module.setAuthor(s.toString()); 
+                             :}
+           |                 {: RESULT = null; :}  
+           ;
+                       
+date_written ::= DATEW:d open_string_opt:o         {: RESULT = new Statement(d, o); :}
+             ;
+
+date_compiled ::= DATEC:d open_string_opt:o        {: RESULT = new Statement(d, o); :}
+             ;
+             
+installation ::= INSTALLATION:i open_string_opt:o  {: RESULT = new Statement(i, o); :}
+             ;
+                   
+remarks ::= REMARKS open_string_opt {: ILexer ilex = (ILexer) this.parser.getScanner();
+                                       ilex.unsetIgnoreReserved(); 
+                                     :}
+        ;
+        
+open_string_opt ::= open_string:o {: RESULT = o;    :}
+                |                 {: RESULT = null; :}
+                ;
+                
+open_string ::= nombre:s       {: RESULT = new SymbolList(s); :}
+/*
+StringBuilder sb = new StringBuilder();
+                                  sb.append((String) s.value);
+                                  RESULT = sb;
+                               :}
+*/  
+            |   open_string:a nombre:s {: RESULT = a.add(s); :}
+/*             
+                                   {: a.append(" "); a.append((String) s.value);
+                                          RESULT= a;
+                                       :}
+*/            ;
+
+nombre ::= ID:i      {: RESULT = i; :}
+       |   NUMERO:i  {: RESULT = i; :}
+       |   LITERAL:i {: RESULT = i; :}       
+       |   ENDP:p    {: RESULT = p; :}
+       ;
+       
+                                                                               
+sdpDesc  ::= SDPDESC sdpDescData 
+         ;
+
+sdpDescData ::= sdpDescLineas
+            |
+            ;
+            
+sdpDescLineas ::= sdpDescLinea
+              |   sdpDescLineas sdpDescLinea
+            ;
+            
+sdpDescLinea ::= LITERAL:s   {: module.setDescription(s.value, false); :}
+             |   LITCONCAT:s {: module.setDescription(s.value, true);  :}
+             ;
+ 
+/*********************************************************************/
+/* Environment division                                              */
+/*********************************************************************/
+
+environment_division  ::= env_div_header bloque_env
+                      |
+                      ;
+                     
+env_div_header        ::= DIV_ENV:s {: code.setDivision(CDG.SECT_ENV, s.left); :} ENDP 
+                      ;
+
+bloque_env            ::= configuration_section
+                          section_io
+                      ;
+           
+configuration_section ::= conf_sect_header conf_sect_data_opt
+                      |
+                      ;
+                      
+conf_sect_header      ::= CONF_SECTION:s ENDP {: code.setSection(CDG.SECT_CONF, s.left); :}
+                      ;
+
+conf_sect_data_opt ::= conf_sect_data
+                   |
+                   ;
+                   
+conf_sect_data ::= conf_sect_item
+               |   conf_sect_data conf_sect_item
+               ;
+
+conf_sect_item ::= conf_sect_source
+               |   conf_sect_object
+               |   conf_sect_special
+               ;
+               
+conf_sect_source ::= SOURCE_COMPUTER ENDP computer_name_opt
+                 ;
+                 
+conf_sect_object ::= OBJECT_COMPUTER ENDP computer_name_opt
+                 ;
+
+computer_name_opt ::= computer_name
+                  |
+                  ;
+                  
+computer_name ::= ID ENDP
+              ;
+              
+conf_sect_special ::= SPECIAL_NAMES ENDP special_names_lst_opt
+                  ;
+
+special_names_lst_opt ::= special_names_lst
+                      |
+                      ;
+                                     
+special_names_lst ::= special_name
+                  |   special_names_lst special_name
+                  ;
+
+special_name ::= CLASS ID special_names_items endp_opt
+             |   DEC_POINT                    endp_opt
+             |   ID ID                        endp_opt
+             ;
+          
+special_names_items ::= special_name_item
+                    |   special_names_items special_name_item
+                    ;
+                    
+special_name_item ::= LITERAL
+                  |   NUMERO
+                  ;
+                                              
+section_io ::= sect_io_header sect_io_bloques
+           |
+           ;
+
+sect_io_header ::= IO_SECTION:s {: code.setSection(CDG.SECT_IO, s.left); :} ENDP 
+               ;
+
+sect_io_bloques ::= file_control_decl
+                |
+                ;       
+
+file_control_decl ::= file_control_header select_file_list
+                  ;
+                      
+file_control_header ::= FILE_CONTROL ENDP 
+                    ;
+
+select_file_list ::= select_files
+                 |
+                 ;
+                                                                  
+select_files ::= select_file_mark
+             |   select_files select_file_mark
+             ;
+
+select_file_mark ::= SDPMASTER    {: master = true; :}
+                 |   select_file
+                 ;
+                      
+select_file ::= file_select  file_attrs  ENDP 
+            ;         
+
+file_select ::= SELECT ID:s {: fichero = new Persistence(getSymbolName(s), master);
+                               module.addFile(fichero);
+                               master = false; 
+                               module.setFile();
+                            :}
+            ;
+
+file_attrs ::= file_attr_item 
+           |   file_attrs file_attr_item 
+           ;
+
+file_attr_item ::= file_attr_assign 
+               |   file_attr_fs
+               |   file_attr_access
+               |   file_attr_common
+               |   file_attr_org
+               |   file_attr_key
+               |   file_attr_rel               
+               |   file_attr_alt               
+               ;
+                      
+file_attr_assign ::= ASSIGN file_attr_assign_dd
+                 ;  
+                      
+file_attr_assign_dd ::= LITERAL:s  {: fichero.setPhysicalName(getSymbolName(s)); :} 
+                    |   ID:s       {: fichero.setPhysicalName(getSymbolName(s)); :} 
+                    |   DISPLAY:s  {: fichero.setPhysicalName("DISPLAY");        :}   
+                    ;
+                        
+file_attr_fs ::= STATUS ID 
+             ;
+
+file_attr_org ::= ORGANIZATION file_attr_org_type                               
+              ;                      
+
+file_attr_org_type ::= SEQUENTIAL   {: fichero.setType(Persistence.SEQUENTIAL); :}
+                   |   RELATIVE     {: fichero.setType(Persistence.RELATIVE); :}
+                   |   INDEXED      {: fichero.setType(Persistence.INDEXED); :}
+                   ;
+
+file_attr_access ::= ACCESS file_attr_acc_mode
+                 ;                            
+
+file_attr_acc_mode ::= SEQUENTIAL
+                   |   DYNAMIC
+                   |   RANDOM
+                   ;
+
+file_attr_rel ::= RELATIVE ID
+              ;
+
+file_attr_key ::= RECORD ID
+              ;
+
+file_attr_alt ::= ALTERNATE ID
+              ;
+                                                                   
+/*********************************************************************/
+/* Data division                                                     */
+/*********************************************************************/
+
+data_division   ::= data_div_header bloque_data
+                |
+                ;
+
+data_div_header ::=  DIV_DATA:s {: code.setDivision(CDG.SECT_DATA, s.left); :} ENDP 
+                ;
+                
+bloque_data     ::= section_file 
+                    section_working 
+                    section_local 
+                    section_linkage 
+                ;
+
+/***************************************************************/
+/*         FILE SECTION                                        */
+/***************************************************************/
+
+section_file ::= sect_file_header file_data 
+             |
+             ;
+
+sect_file_header ::= FILE_SECTION:s {: code.setSection(CDG.SECT_FILE, s.left); :} ENDP
+                 ;
+                 
+
+file_data ::= fd_list
+          |
+          ;
+
+fd_list   ::= fd
+          |   fd_list fd
+          ;
+        
+fd        ::= fd_def:d fd_fields  
+          ;
+
+fd_def ::= fd_desc ID:s fd_attrs_opt:a ENDP  
+                   {: module.setRecordName(s.value, a.getOptionValues(ZCDSym.DATA)); :}  
+       ;
+
+fd_desc ::= FD:i    {: RESULT = i; :}
+        |   SD:i    {: RESULT = i; :}
+        ;
+        
+fd_attrs_opt ::= fd_attrs:f {: RESULT = f;                :}
+             |              {: RESULT = new OptionList(); :}
+             ;
+             
+fd_attrs ::= fd_attr:f             {: RESULT = new OptionList(f); :}
+         |   fd_attrs:t fd_attr:f  {: RESULT = t.add(f);          :} 
+         ;
+
+fd_attr ::= fd_attr_names:f        {: RESULT = f; :}
+        |   fd_attr_mode:f         {: RESULT = f; :} 
+        |   fd_attr_label          {: RESULT = new Option(); :}
+        |   fd_attr_block          {: RESULT = new Option(); :}
+        |   fd_attr_record         {: RESULT = new Option(); :}
+        |   fd_attr_linage         {: RESULT = new Option(); :}
+        |   fd_attr_depending      {: RESULT = new Option(); :}  
+        ;
+
+fd_attr_names ::= DATA:d fd_attr_records fd_attr_name:f  {: Option o = new Option(d.sym, d.value);
+                                                            RESULT = o.add(f); 
+                                                         :} 
+              ;
+                                      
+fd_attr_name ::= ID:i                  {: RESULT = new SymbolList(i); :}
+             |   fd_attr_name:l ID:i   {: RESULT = l.add(i);          :}
+             ;
+
+fd_attr_mode ::= RECORDING:i fd_attr_mode_type:a  
+                            {: RESULT = new Option(i.sym , (String) i.value, a); :}
+             ;
+
+fd_attr_mode_type ::= ID:i        {: RESULT = i; :}
+                  |   PIC_DEC:i   {: RESULT = i; :} 
+                  |   FILLER:i    {: RESULT = i; :}
+                  ;
+                    
+fd_attr_label ::= LABEL fd_attr_records ;    
+                
+fd_attr_block ::= BLOCK NUMERO fd_attr_block_records ;
+
+fd_attr_block_records ::= RECORDS
+                      |
+                      ;
+
+fd_attr_record ::= RECORD fd_attr_record_detail
+               ; 
+ 
+fd_attr_record_detail ::= fd_attr_record_size
+                      |   fd_attr_depending
+                      ; 
+
+fd_attr_record_size ::= fd_attr_number fd_attr_record_to
+                    ;   
+
+
+fd_attr_record_to ::= TO fd_attr_number
+                  |
+                  ;
+
+fd_attr_records ::= RECORD
+                |   RECORDS
+                ;
+                
+fd_fields ::= variables
+          |              // Case de que la copy no exista
+          ;
+
+fd_attr_linage ::= LINAGE fd_attr_number
+               ; 
+                           
+fd_attr_number ::= NUMERO 
+               |   PIC_NUM
+               ;
+
+fd_attr_depending ::= DEPENDING rvalue 
+                  ;               
+                                                
+/***************************************************************/
+/*         WORKING-STORAGE SECTION                             */
+/***************************************************************/
+
+section_working ::= sect_working_header working_data
+                |
+                ;
+
+sect_working_header ::= WORKING_SECTION:s {: code.setSection(CDG.SECT_WORK, s.left); :} ENDP  
+                    ;
+
+working_data        ::= variables
+                    |
+                    ;
+
+/***************************************************************/
+/*         LOCAL-STORAGE SECTION                               */
+/***************************************************************/
+                  
+section_local     ::= sect_local_header local_data
+                  |
+                  ;
+
+sect_local_header ::= LOCAL_SECTION:s {: code.setSection(CDG.SECT_LOCAL, s.left); :} ENDP 
+                  ;
+
+local_data        ::= variables
+                  | 
+                  ;
+
+/***************************************************************/
+/*         LINKAGE SECTION                                     */
+/***************************************************************/
+                 
+section_linkage     ::= sect_linkage_header linkage_data
+                    |
+                    ; 
+
+sect_linkage_header ::= LINKAGE_SECTION:s {: code.setSection(CDG.SECT_LINK, s.left); :} ENDP 
+                    ;
+
+linkage_data        ::= variables
+                    | 
+                    ;
+             
+/***************************************************************/
+/*   TRATAMIENTO DE VARIABLES                                  */
+/***************************************************************/
+
+variables ::= variable 
+          |   variables variable 
+          ;
+           
+variable ::= var_def:v var_data_def ENDP  {: RESULT = module.addVariable(v); :} 
+         |   EXEC_SQL 
+         |   EXEC_CICS 
+         |   END_EXEC endp_opt
+         ;
+           
+                    
+var_def    ::= nivel:n var_name:s  {: currVar = code.createVar(n,s);
+                                      RESULT = currVar; 
+                                   :}
+           ;
+           
+var_name   ::= ID:s           {: RESULT = s; :}
+           |   PIC_ALPHANUM:s {: RESULT = s; :}
+           |   PIC_ALPHA:s    {: RESULT = s; :}
+           |   var_filler:s   {: String f = "F_" + ++numFillers;
+                                 RESULT = new SymbolExt(s, f); 
+                              :}                  
+           ;
+           
+var_filler ::=  FILLER:f   {: RESULT = f; :}      
+           |               {: RESULT = new Symbol(ZCDSym.FILLER,0,0, " "); :}        
+           ;
+           
+nivel ::= NUMERO:n        {: RESULT = n; :}
+      ;
+
+var_data_def ::= var_data
+             |
+             ;
+                        
+var_data   ::= var_attr
+           |   var_data var_attr
+           ;
+
+var_attr   ::= var_redefines
+           |   var_renames
+           |   var_picture
+           |   var_occurs
+           |   var_indexed
+           |   var_value
+           |   var_order
+           |   var_type:v   {: code.setVarType(currVar,v); :}
+           |   var_usage
+           ;
+
+                          
+var_redefines ::= REDEFINES var_name:i  {: module.setRedefines(currVar, (String)i.value); :}
+              ;
+
+var_renames ::= RENAMES var_name:i  var_renames_opt 
+              ;
+
+var_renames_opt ::= THRU var_name
+                |
+                ;
+                
+var_occurs ::= OCCURS var_occurs_from:from var_occurs_to:to var_occurs_depending
+                     {: 
+                        code.setBounds(currVar, from, to);
+                     :}
+           ;
+
+var_occurs_from ::= var_occurs_bound:v {: RESULT = v; :}
+                ;  
+                
+var_occurs_to ::= TO var_occurs_bound:n {: RESULT = n; :}
+              |                         {: RESULT = new Symbol(0, 0, 0, "0"); :}
+              ; 
+
+var_occurs_bound ::= NUMERO:n   {: RESULT = n; :}
+                |    PIC_NUM:p  {: RESULT = p; :}
+                ;                                                                                    
+
+var_occurs_depending ::= DEPENDING rvalue
+                     |
+                     ;
+
+var_order ::= ORDER var_indexes
+          ;
+                      
+var_indexed ::= INDEXED var_indexes
+             ;
+
+var_indexes ::= var_index
+            |   var_indexes var_index
+            ;
+            
+var_index ::= rvalue
+          |   PIC_ALPHA
+          |   FILLER
+          ;
+                 
+var_usage ::= USAGE var_type:c {: code.setVarType(currVar,c); :} 
+          ;
+
+var_type ::= POINTER:c       {: RESULT = c; :}
+         |   INDEX:c         {: RESULT = c; :} 
+         |   PACKED:c        {: RESULT = c; :}
+         |   DISPLAY:c       {: RESULT = c; :}
+         |   BINARY:c        {: RESULT = c; :}
+         |   ROWID:c         {: RESULT = c; :}
+         |   BLOB_LOCATOR:c  {: RESULT = c; :}
+         |   BLOB:c PIC_LEN  {: RESULT = c; :}       
+         |   compn:c         {: RESULT = c; :}
+         ;
+
+compn ::= COMP1:c {: RESULT = c; :}
+      |   COMP2:c {: RESULT = c; :}
+      |   COMP3:c {: RESULT = c; :}
+      |   COMP4:c {: RESULT = c; :}
+      |   COMP5:c {: RESULT = c; :}
+      |   COMP6:c {: RESULT = c; :}
+      ;
+                                                                                                          
+var_picture ::= PICTURE pic_types 
+           ;
+           
+pic_types ::= pic_type
+          |   pic_types pic_type
+          ;
+          
+pic_type ::= PIC_ALPHANUM {: code.addSize(currVar, 1); :}
+         |   PIC_ALPHA    {: code.addSize(currVar, 1); :}
+         |   PIC_NUM      {: code.addSize(currVar, 1); :}
+         |   PIC_FMT:p    {: code.calculateSizeFormat(currVar, p); :}
+         |   PIC_DEC
+         |   PIC_DEC_EMPTY
+         |   PIC_V:p      {: code.calculateSize(currVar, p); :}
+         |   PIC_LEN:p    {: code.calculateSizeLen(currVar, p); :}
+         |   NUMERO
+         |   pic_size          
+         ;          
+
+pic_size ::= LPAR pic_len:s RPAR  {: code.addSize(currVar, s); :}
+         ;
+
+pic_len ::= NUMERO:s  {: RESULT = s; :}
+        |   PIC_NUM:p {: RESULT = p; :}   // Caso 9(9)
+        ;
+
+pic_dec_opt ::= pic_dec
+            |
+            ;
+
+pic_dec   ::= PIC_DEC:p  pic_size_opt {: RESULT = p; :}
+          ;
+
+pic_size_opt ::= pic_size
+             |
+             ;
+             
+                      
+var_value ::= VALUE init_val_list:i  
+          ;
+
+/* Los niveles 88 pueden tener varios valores */
+
+init_val_list ::= init_val:i                {: currVar.setInitValue((String) i.value); :}
+              |   init_val_list init_val:i  {: currVar.setInitValue((String) i.value); :}
+              ;
+
+init_val ::= LITERAL:s        {: RESULT = s; :}
+         |   DFHCICS:s        {: RESULT = s; :}
+         |   init_val_num:s   {: RESULT = s; :}
+         |   PIC_NUM:s        {: RESULT = s; :}
+         |   figurative:f     {: RESULT = f; :} 
+         |   PIC_ALPHANUM init_val:v {: RESULT = v; :}
+         |   HEX_VAL:s        {: RESULT = s; :}
+         |   THRU:s           {: RESULT = s; :} 
+         ;
+
+init_val_num ::= NUMERO:s  pic_dec_opt {: RESULT = s; :}
+             |   PIC_FMT:s pic_dec_opt {: RESULT = s; :}
+             ;
+
+
+rvalue ::= ID:i padres_lst {: RESULT = i; :}
+       ; 
+
+padres_lst ::= padres:p  {: RESULT = p;    :}
+           |             {: RESULT = null; :}
+           ;
+
+padres ::= padre:p           // {: RESULT = new SymbolExt(p); :}
+       |   padres:p padre:i  //{: RESULT = p; /* p.addParent(i); */  :}
+       ;
+                    
+padre ::= padre_indicator ID:s // {: RESULT = s;    :}
+      ;
+
+padre_indicator ::= OF
+                |   IN
+                ;
+                 
+///////////////////////////////////////////////////////
+// WORK
+//////////////////////////////////////////////////////
+
+figurative ::= SPACES:f   {: RESULT = f; :}
+           |   ZERO:f     {: RESULT = f; :}
+           |   HIGHVAL:f  {: RESULT = f; :}
+           |   LOWVAL:f   {: RESULT = f; :}
+           |   QUOTE:f    {: RESULT = f; :}  
+           |   NULL:f     {: RESULT = f; :}
+           ;
+
+endp_opt ::= ENDP
+         |
+         ;
+

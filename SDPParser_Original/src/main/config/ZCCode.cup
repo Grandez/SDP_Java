@@ -1,0 +1,1807 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.module.base.*;
+import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.factorias.*;
+import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.core.exceptions.*;
+import com.jgg.sdp.parser.info.*;
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.work.*;
+import com.jgg.sdp.parser.code.*;
+import com.jgg.sdp.parser.blocks.*;
+
+parser code {:
+   Module module     = ModulesFactory.getDefaultModule();
+   Summary summary   = module.getSummary();
+   Configuration cfg = Configuration.getInstance();
+   ParserInfo      info     = ParserInfo.getInstance();
+             
+   public void syntax_error(Symbol token) {
+           
+          Symbol s = (Symbol) token.value;
+          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+          col = col + s.right + 1;
+
+          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
+                                   info.getMemberName(), 
+                                   info.getOffset() + s.left + 1,  
+                                   col, 
+                                   (String) s.value);
+      }
+
+      public void unrecovered_syntax_error(Symbol token) throws Exception {
+          Symbol s = (Symbol) token.value;
+          throw new ParseException(MSG.EXCEPTION_CUP, 
+                                  info.getMemberName(), info.getOffset() + s.left + 1, s.right + 1, (String) s.value); 
+      }
+:}
+
+action code {:
+   Module          module   = null;
+   Summary         summary  = null;
+   Persistence     fichero  = null;
+   ZCCCode         code     = null;
+   Sections        sections = null;
+   ParserInfo      info     = ParserInfo.getInstance();
+      
+   Variable    currVar  = null;
+   Statement lastStmt = null;  // Ultima instruccion
+   Statement currStmt = null;  // Instruccion en proceso
+   
+   boolean   hasEndProgram = false; // Hay STOPRUN o GOBACK?
+    
+   boolean master     = false;  // El fichero es el maestro?   
+   int     numFillers = 0;
+          
+   public void initActionClass() {
+      module = ModulesFactory.getMainModule();
+      summary = module.getSummary();
+      sections = module.getSections();
+      code = new ZCCCode(module);
+   }
+
+   public String getSymbolName(Symbol s)    { return (String) s.value; }
+   public int    getSymbolLine(Symbol s)    { return (int)    s.left;  }
+   
+   public void debug(String txt) { System.err.println(txt); }
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+scan with {:
+    Symbol sym = ((GenericScanner) getScanner()).tokenCobolCode();
+    return (sym!=null) ? sym : getSymbolFactory().newSymbol("END_OF_FILE",EOF_sym());
+ 
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               LOS SIMBOLOS SON COMUNES                                   */
+/****************************************************************************/
+/****************************************************************************/
+
+// terminal Symbol COPY     ;
+
+terminal Symbol DIV_PROC ;
+
+terminal Symbol ID        ;
+terminal Symbol NUMERO    ;
+//terminal Symbol HEX_VAL   ;
+terminal Symbol PARRAFO   ;
+terminal Symbol LITERAL   ;
+// terminal Symbol LITCONCAT ;
+terminal Symbol END_PGM   ;
+
+
+terminal Symbol SPACES       ;
+terminal Symbol ZERO         ; 
+terminal Symbol HIGHVAL      ;
+terminal Symbol LOWVAL       ;
+terminal Symbol QUOTE        ;
+terminal Symbol ALPHABETIC   ;
+terminal Symbol ALPHANUMERIC ;
+terminal Symbol NUMERIC      ;
+terminal Symbol KANJI        ;
+terminal Symbol POSITIVE     ;
+terminal Symbol NEGATIVE     ;
+terminal Symbol NULL         ;
+
+terminal Symbol DUPLICATES ;
+
+/* Verbos */
+ 
+terminal Symbol ACCEPT     ;
+terminal Symbol ADD        ;
+terminal Symbol ALLOCATE   ;
+terminal Symbol CALL       ;
+terminal Symbol CANCEL     ;
+terminal Symbol CLOSE      ;
+terminal Symbol COMMIT     ;
+terminal Symbol COMPUTE    ;
+terminal Symbol CONTINUE   ;
+terminal Symbol DELETE     ;
+terminal Symbol DISPLAY    ;
+terminal Symbol DIVIDE     ;     
+terminal Symbol EVALUATE   ;
+terminal Symbol EXITPGM    ;
+terminal Symbol EXITP      ;
+terminal Symbol EXIT       ;
+terminal Symbol FREE       ;
+terminal Symbol GOBACK     ;
+terminal Symbol GOTO       ;
+terminal Symbol IF         ;
+terminal Symbol INITIALIZE ;
+terminal Symbol INSPECT    ;
+terminal Symbol MERGE      ;
+terminal Symbol MOVE       ;
+terminal Symbol MULTIPLY   ;
+terminal Symbol NEXT       ;
+terminal Symbol OPEN       ;
+terminal Symbol PERFORM    ;
+terminal Symbol READ       ;
+terminal Symbol RELEASE    ;
+terminal Symbol RETURN     ;
+terminal Symbol REWRITE    ;
+terminal Symbol ROLLBACK   ;
+terminal Symbol SEARCH     ;
+terminal Symbol SET        ;
+terminal Symbol SORT       ;
+terminal Symbol START      ;
+terminal Symbol STOPRUN    ;
+terminal Symbol STRING     ;
+terminal Symbol SUBTRACT   ;
+terminal Symbol TRANSFORM  ; 
+terminal Symbol UNLOCK     ;
+terminal Symbol UNSTRING   ;
+terminal Symbol WRITE      ;
+
+/* Palabras reservadas */
+
+terminal Symbol AFTER      ;
+terminal Symbol ALL        ;
+terminal Symbol ALSO       ;
+terminal Symbol AND        ;
+terminal Symbol ASCENDING  ;
+terminal Symbol ATEND      ;
+terminal Symbol BEFORE     ;
+terminal Symbol BY         ;
+terminal Symbol CHARACTER  ;
+// terminal Symbol CLASS      ;
+terminal Symbol CONVERTING ;
+terminal Symbol COUNT      ;
+//terminal Symbol DEC_POINT  ;
+terminal Symbol DEPENDING    ;
+terminal Symbol DELIMITED  ;
+terminal Symbol DELIMITER  ;
+terminal Symbol DESCENDING ;
+terminal Symbol ELSE       ;
+terminal Symbol ENDEVAL    ;
+terminal Symbol ENDIF      ;
+terminal Symbol ENDPERFORM ;
+terminal Symbol ENDP       ;
+terminal Symbol ENDVERB    ;
+terminal Symbol EOP        ;
+terminal Symbol EXCEPTION  ;
+terminal Symbol EXTEND     ;
+terminal Symbol FIRST      ;
+terminal Symbol FOREVER    ;
+terminal Symbol FOR        ;
+terminal Symbol FROM       ;
+terminal Symbol GIVING     ;
+terminal Symbol INPUT      ;
+terminal Symbol INTO       ;
+terminal Symbol INVALID    ;
+terminal Symbol IN         ;
+terminal Symbol IO         ;
+terminal Symbol KEY        ;
+terminal Symbol LEADING    ;
+terminal Symbol LENGTH     ;
+terminal Symbol LINE     ;
+terminal Symbol LOCK         ;
+terminal Symbol NO         ;
+terminal Symbol OF         ;
+terminal Symbol OR         ;
+terminal Symbol OUTPUT     ;
+terminal Symbol OVERFLOW   ;
+terminal Symbol PAGE       ;
+terminal Symbol PARAGRAPH  ;
+terminal Symbol POINTER      ;
+terminal Symbol PROGRAM    ;
+terminal Symbol REFERENCE  ;
+terminal Symbol REPLACING  ;
+terminal Symbol RETURNING  ;
+terminal Symbol SECTION    ;
+terminal Symbol SIZE       ;
+terminal Symbol TALLYING   ;
+terminal Symbol TEST       ;
+terminal Symbol THRU       ;
+terminal Symbol TIMES      ;
+terminal Symbol UNTIL      ;
+terminal Symbol USING      ;
+terminal Symbol VALUE      ;
+terminal Symbol VARYING    ;
+terminal Symbol WHEN       ;
+
+/* Simbolos gramaticales y palabras comunes */
+
+terminal Symbol LPAR   ;
+terminal Symbol LPARID ;
+terminal Symbol RPAR   ;
+terminal Symbol TO     ;
+terminal Symbol WITH   ;
+terminal Symbol EQUAL  ;
+terminal Symbol LESS   ;    
+terminal Symbol OP_REL ;
+
+terminal Symbol PLUS  ;
+terminal Symbol POWER ;
+terminal Symbol MULT  ;
+terminal Symbol SIZE_ERROR  ;
+
+terminal Symbol FUNCTION ;
+
+terminal Symbol EXEC_CICS ;
+terminal Symbol EXEC_SQL  ;
+terminal Symbol END_EXEC  ;
+
+/* CICS  Caso especial DFHxxx*/
+
+terminal Symbol DFHCICS ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               LOS SIMBOLOS SON COMUNES                                   */
+/****************************************************************************/
+/****************************************************************************/
+
+///////////////////////////////////////////////////////
+// Division 
+///////////////////////////////////////////////////////
+
+non terminal procedure_division  ;
+non terminal end_program         ;
+
+non terminal        proc_div_header ; 
+non terminal        bloque_procedure;
+
+//////////////////////////////////////////////////////
+// No terminales para comerse el resto de sentencias
+/////////////////////////////////////////////////////
+
+non terminal Tokens stmtAccept_detail ;
+
+non terminal Tokens stmtAdd_detail  ;
+non terminal Tokens stmtAdd_options ;
+non terminal Tokens stmtAdd_option  ;
+
+non terminal Symbol stmtCompute_detail  ;
+non terminal Symbol stmtCompute_rvalues ;
+non terminal Symbol stmtCompute_rvalue  ;
+non terminal Symbol stmtCompute_options_opt ;
+non terminal Symbol stmtCompute_options     ;
+non terminal Symbol stmtCompute_option      ;
+
+non terminal Statement stmtDivide        ;
+non terminal Tokens    stmtDivide_detail ;
+non terminal Tokens    stmtDivide_fields ;
+non terminal Tokens    stmtDivide_field  ;
+
+non terminal Tokens stmtEvaluate_detail ;
+
+non terminal Tokens stmtIf_detail     ;
+
+non terminal Tokens stmtInitialize_detail        ;
+non terminal Tokens stmtInitialize_replacing_opt ;
+non terminal Tokens stmtInitialize_resto         ;
+non terminal Tokens stmtInitialize_tokens        ;
+
+non terminal Tokens stmtMultiply_detail ;
+non terminal Tokens stmtMultiply_by     ;
+                   
+non terminal Statement stmtRead            ;                   
+non terminal Tokens    stmtRead_detail     ;
+non terminal Tokens    stmtRead_options    ;
+non terminal Tokens    stmtRead_option     ;
+non terminal Tokens    stmtRead_into       ;
+non terminal Tokens    stmtRead_key        ;
+
+non terminal Statement stmtSearch         ;
+non terminal Tokens    stmtSearch_detail  ;
+non terminal Tokens    stmtSearch_options ;
+non terminal Tokens    stmtSearch_option  ;
+non terminal Tokens    stmtSearch_opt     ;
+non terminal Tokens    stmtSearch_varying ;
+
+non terminal Tokens stmtSet_detail ;
+non terminal Tokens stmtSet_resto  ;
+
+non terminal Statement stmtSort ;
+non terminal stmtSort_detail ;
+non terminal stmtSort_option ;
+non terminal stmtSort_order  ;
+non terminal stmtSort_duplicates  ;
+non terminal stmtSort_using  ;
+non terminal stmtSort_giving ;
+non terminal stmtSort_procedure ;
+
+
+non terminal Statement stmtStart               ;
+non terminal Tokens    stmtStart_detail        ;
+non terminal Tokens    stmtStart_options_opt   ;
+non terminal Tokens    stmtStart_options       ;
+non terminal Tokens    stmtStart_option        ;
+non terminal Tokens    stmtStart_key           ;
+non terminal Tokens    stmtStart_key_words_opt ;
+non terminal Tokens    stmtStart_key_words     ;
+non terminal Tokens    stmtStart_key_word      ;
+
+
+non terminal Tokens stmtString_detail         ;
+non terminal Tokens stmtString_from           ;
+non terminal Tokens stmtString_into           ;
+non terminal Tokens stmtString_from_string    ; 
+non terminal Tokens stmtString_from_tokens    ;
+non terminal Tokens stmtString_from_delimiter ;
+non terminal Tokens stmtString_from_delim     ;
+non terminal Tokens stmtString_pointer_opt    ;
+non terminal Tokens stmtString_pointer        ;
+
+non terminal Statement stmtSubtract           ; 
+non terminal Tokens    stmtSubtract_detail    ;
+non terminal Tokens    stmtSubtract_options   ;
+non terminal Tokens    stmtSubtract_option    ;
+
+non terminal Tokens stmtUnstring_detail          ;
+non terminal Tokens stmtUnstring_delimited_opt   ;
+non terminal Tokens stmtUnstring_to              ;
+non terminal Tokens stmtUnstring_targets         ;
+non terminal Tokens stmtUnstring_target          ;  
+non terminal Tokens stmtUnstring_delimited       ;
+non terminal Tokens stmtUnstring_delimiteds      ;
+non terminal Tokens stmtUnstring_delimited_token ;
+non terminal Tokens stmtUnstring_delimiters_opt  ;
+non terminal Tokens stmtUnstring_delimiters      ;
+non terminal Tokens stmtUnstring_delimiter       ;
+non terminal Tokens stmtUnstring_options_opt     ;
+non terminal Tokens stmtUnstring_options         ;
+non terminal Tokens stmtUnstring_option          ;
+
+non terminal        stmtWrite_detail   ;
+non terminal        stmtWrite_options  ;
+non terminal        stmtWrite_option   ; 
+non terminal        stmtWrite_from     ;
+non terminal        stmtWrite_position ;
+non terminal        stmtWrite_after    ;
+non terminal        stmtWrite_eop      ;
+
+non terminal Symbol option_and_or       ;
+non terminal        option_position     ;
+non terminal        option_order        ;
+
+non terminal Tokens option_giving_opt  ;
+non terminal Tokens option_giving      ;
+non terminal Tokens option_to_multiple ;
+                   
+non terminal Tokens eatClose   , eatCloseLst , eatCloseItem ;
+non terminal Tokens eatWrite   , eatWriteLst , eatWriteItem ;
+
+// Calificadores opcionales
+
+non terminal all_opt  ;
+non terminal in_opt   ;
+non terminal key_opt  ;
+non terminal to_opt   ;
+
+//////////////////////////////////////////////////////
+// Generales
+/////////////////////////////////////////////////////
+
+non terminal ax          ; 
+non terminal module      ;
+
+non terminal Symbol    indices_opt ;
+non terminal Symbol    indice  ;
+non terminal Symbol    ind_items ;
+non terminal Symbol    ind_item  ;
+non terminal Statement lst_indices ;
+
+non terminal by_opt   ;
+
+/* Parrafos y sentencias */
+
+non terminal lista_parrafos , bloque_parrafos  , bloque_parrafo ;
+non terminal         bloque_inicial ; 
+non terminal Integer bloque_sentences ;
+non terminal Symbol  parrafo_name ;
+non terminal Boolean parr_section;
+
+non terminal Symbol exitType;
+
+non terminal           lista_stmt   ;
+non terminal Statement stmt     ;
+non terminal Statement verbos   ;
+non terminal Statement noverbos ;
+
+non terminal Tokens    perform_test    ;
+non terminal Tokens    perform_tokens  ;
+non terminal Tokens    perform_token   ;
+non terminal Tokens    resto_call      ;
+non terminal Tokens    list_parms_opt  ;
+non terminal Tokens    list_parms      ;
+non terminal Tokens    proc_parms_list ;
+non terminal Tokens    proc_parms      ;
+non terminal Tokens    proc_parm       ;
+
+
+non terminal Statement stmtInitialize ;
+non terminal Statement stmtCommit     ;
+non terminal Statement stmtMerge      ;
+non terminal Statement stmtUnstring   ;
+non terminal Statement stmtClose      ;
+non terminal Statement stmtTransform  ;
+non terminal Statement stmtCompute    ;
+non terminal Statement stmtDelete     ;
+non terminal Statement stmtAllocate   ;
+non terminal Statement stmtDisplay    ;
+
+non terminal Statement stmtContinue   ;
+non terminal Statement stmtGoback     ;
+non terminal Statement stmtExit       ;
+non terminal Statement stmtExitP      ; 
+non terminal Statement stmtExitG      ;
+non terminal Statement stmtExitPgm    ;
+non terminal Statement exitTypes      ;
+non terminal Statement stmtEvaluate   ;
+
+non terminal Statement stmtPerform            ; 
+non terminal Statement stmtPerform_verb       ; 
+non terminal Statement stmtPerform_from_opt   ;
+non terminal Option    stmtPerform_from       ;
+non terminal Statement stmtPerform_thru_opt   ;
+non terminal Option    stmtPerform_thru       ;
+non terminal Statement stmtPerform_options_opt;
+non terminal Option    stmtPerform_options    ;
+non terminal Option    stmtPerform_option     ;
+                               
+non terminal Statement stmtFree     ;                               
+non terminal Statement stmtRelease  ;
+
+non terminal Statement stmtGoTo               ;
+non terminal           stmtGoto_procs         ;
+non terminal           stmtGoto_depending_opt ;
+non terminal           stmtGoto_depending     ;
+ 
+non terminal Statement stmtRewrite    ;
+non terminal Statement stmtString     ;
+non terminal Statement stmtMove       ;
+non terminal Statement stmtMultiply   ;
+non terminal Statement stmtAccept     ;
+non terminal Statement stmtUnlock     ;
+non terminal Statement stmtNext       ;
+non terminal Statement stmtCancel     ;
+non terminal Statement stmtWrite      ;
+non terminal Statement stmtOpen       ;
+
+non terminal           stmtAcceptOpt  ;
+
+non terminal Statement stmtInspect                ; 
+non terminal           stmtInspect_detail         ;
+non terminal           stmtInspect_token          ;
+
+non terminal Statement stmtCall               ;
+non terminal           stmtCall_using_opt     ;
+non terminal           stmtCall_using         ;
+non terminal           stmtCall_returning_opt ;
+non terminal           stmtCall_returning     ;
+non terminal           stmtCall_parm_list     ;
+non terminal           stmtCall_parm          ;
+non terminal           stmtCall_parm_type     ;
+
+non terminal Symbol    moduloCall ;
+
+non terminal Statement stmtEndP    ;
+non terminal Statement stmtExec    ;
+non terminal Statement stmtEndExec ;
+
+non terminal Statement stmtRollback  ;
+
+non terminal Statement stmtReturn ;             
+non terminal Statement stmtStop   ;             
+non terminal Statement stmtAdd    ;             
+             
+non terminal Statement stmtSet    ;             
+
+non terminal Statement optionOverflow_opt ;
+non terminal Statement optionOverflow     ;
+
+non terminal Statement option_size_error_opt    ;
+non terminal Statement option_size_error    ;
+non terminal Statement stmtAtEnd;
+non terminal Statement stmtInvalid;
+non terminal Statement stmtException;
+
+non terminal Statement stmtIf    ;
+non terminal Statement stmtElse  ;
+non terminal Statement stmtEndIf ;
+
+non terminal Statement stmtEndPerform ; 
+non terminal Statement stmtEndEvaluate ;
+non terminal Statement stmtWhen;
+non terminal Tokens    stmtWhen_thru_opt ;
+non terminal Tokens    stmtWhen_thru ;
+
+non terminal Statement stmtEndVerb ;         
+
+non terminal Statement stmtDatos   , stmtDatos1   , stmtDatos2   ;
+non terminal Statement stmtIO      , stmtIO1      , stmtIO2      ;
+non terminal Statement stmtControl , stmtControl1 , stmtControl2 ;
+non terminal Statement stmtFlujo   ;
+non terminal Statement stmtArit    ; 
+non terminal Statement stmtLang    ;
+
+/** OPEN ***/
+
+non terminal Tokens    stmtOpen_files ;
+non terminal Tokens    stmtOpen_list ,  stmtOpen_group ;
+non terminal Statement stmtOpen_mode     ;
+
+non terminal Tokens closeFile , closeLstFiles ;
+
+/***********************************************************/
+/*    OTRAS SENTENCIAS                                     */
+/***********************************************************/
+
+non terminal SymbolExt     padres_lst  ;
+non terminal SymbolExt     padres      ;
+non terminal Symbol        padre       ;
+non terminal Symbol        padre_indicator ;  
+non terminal SymbolExt     rvalue      ;
+non terminal SymbolExt     figurative  ;
+non terminal SymbolExt     constantes  ;
+non terminal SymbolExt     constante   ;
+non terminal Symbol        operadores  ;
+non terminal SymbolExt     ident       ;
+non terminal SymbolExt     ident_base  ;
+non terminal SymbolExt     lvalue      ; 
+non terminal SymbolExtList lvalue_list ; 
+non terminal SymbolExtList rvalue_list ;
+
+non terminal Symbol        function ;
+non terminal               function_name    ;
+
+/***  WORK  ***/
+
+non terminal Tokens token ;
+non terminal Tokens tokens;
+non terminal Tokens optTokens ;
+
+// CONDITION
+
+non terminal Statement condition      ;
+non terminal           cond_tokens    ;
+non terminal cond_operando ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+ax     ::=  module {: code.EndOfFile(lastStmt, hasEndProgram);  :}
+       ; 
+
+module ::= procedure_division      
+           end_program                        
+       ;
+
+end_program  ::= END_PGM:s ID ENDP {: hasEndProgram = true; 
+                                      Statement stmt = new Statement(s); 
+                                      code.endProgram(stmt);
+                                      lastStmt = stmt;
+                                   :}
+             |
+             ;
+
+
+/*********************************************************************/
+/* Procedure division                                                */
+/*********************************************************************/
+                                             
+procedure_division ::= proc_div_header  bloque_procedure
+                   ;
+
+proc_div_header    ::= DIV_PROC:s resto_call:p {: code.beginCode(s); :}
+                   ;
+
+resto_call         ::=  proc_parms_list:p {: RESULT = p; :} 
+                        ENDP:s          {: code.parrafoVirtual(s); :}
+                   ;
+
+proc_parms_list ::= proc_parms 
+                |              
+                ;
+                 
+proc_parms ::= proc_parm
+           |   proc_parms proc_parm
+           ;
+              
+proc_parm ::= USING list_parms_opt 
+          |   RETURNING rvalue 
+          ;
+
+list_parms_opt ::= list_parms
+               |
+               ;
+                                                
+list_parms ::= ID:s               {: RESULT = new Tokens(s); :}
+           |   list_parms:l ID:s  {: RESULT = l.add(s);      :} 
+           ;
+                                         
+bloque_procedure   ::= bloque_inicial  lista_parrafos
+                   ;
+
+// Bloque sentences podria ser vacio
+// Por eso no es necesario indicarlo en bloque_inicial                 
+
+bloque_inicial  ::= bloque_sentences
+                ;
+
+lista_parrafos ::= bloque_parrafos
+               |
+               ;
+               
+bloque_parrafos ::= bloque_parrafo
+                |   bloque_parrafos bloque_parrafo
+                ;
+                
+bloque_parrafo   ::= parrafo_name  bloque_sentences
+                 ;
+
+bloque_sentences ::= lista_stmt  
+                 |               
+                 ;
+                        
+parrafo_name     ::= PARRAFO:p parr_section:b ENDP 
+                     {: // if (b == true) code.notSupportedSection(p); 
+                        RESULT = code.processParrafo(p, lastStmt); 
+                     :}   
+                 ;  
+
+parr_section     ::= SECTION:s {: RESULT = true;  :}
+                 |             {: RESULT = false; :}
+                 ;                               
+                 
+lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(s, lastStmt); :} 
+           |   lista_stmt stmt:s  {: lastStmt = code.processStatement(s, lastStmt); :}
+           ;
+
+stmt     ::= verbos:s       {: RESULT = s; code.incStmt(); :}
+         |   noverbos:s     {: RESULT = s; :}
+         ;  
+
+verbos   ::= stmtControl:s    {: RESULT = s; module.incStmtControl(); :}
+         |   stmtFlujo:s      {: RESULT = s; module.incStmtFlujo();   :}
+         |   stmtDatos:s      {: RESULT = s; module.incStmtDatos();   :}
+         |   stmtArit:s       {: RESULT = s; module.incStmtArit();    :}
+         |   stmtIO:s         {: RESULT = s; module.incStmtIO();      :}
+         |   stmtLang:s       {: RESULT = s; module.incStmtLang();    :}       
+         |   stmtExec:s       {: RESULT = s;                         :}
+         ;
+
+noverbos ::= stmtEndP:s        {: RESULT = code.checkFlujo( s, lastStmt);:}
+         |   stmtEndIf:s       {: RESULT = code.endIf(s);              :}                       
+         |   stmtEndPerform:s  {: RESULT = code.endPerform(s);        :}
+         |   stmtEndEvaluate:s {: RESULT = code.endEvaluate(s);       :}         
+         |   stmtEndVerb:s     {: RESULT = s;                         :}
+         |   stmtWhen:s        {: RESULT = code.processWhen(s);       :}
+         |   stmtElse:s        {: RESULT = code.processElse(s);       :}         
+         |   stmtAtEnd:s       {: RESULT = s;                         :}  
+         |   stmtInvalid:s     {: RESULT = s;                         :}         
+         |   stmtException:s   {: RESULT = s;                         :}         
+         |   stmtEndExec:s     {: RESULT = s;                         :}         
+         ;
+  
+/* Verbos que tienen tratamiento especial
+ * Cuando se procesa el verbo, se inyecta codigo
+ * En estos casos hay que inyectar el codigo y preparar el siguiente
+ * En el bloque todavia no se ha contado la sentencia If
+ */
+          
+
+/* Sentencias de control de programa */
+
+stmtControl ::= stmtControl1:s optTokens:t {: RESULT = s.addTokens(t);          :}
+             |  stmtExit:s                 {: RESULT =  code.processExit(s);    :}    
+             |  stmtControl2:s             {: hasEndProgram = true; RESULT = s; :}
+             ;
+            
+stmtControl1 ::= stmtNext:s         {: RESULT = s; :}
+             ;
+
+stmtControl2 ::= stmtStop:s         {: hasEndProgram = true;
+                                       RESULT = s; 
+                                       code.trapEndModule(); 
+                                   :}
+             | stmtGoback:s       {:  hasEndProgram = true;
+                                      code.trapEndModule();
+                                      RESULT = s; 
+                                   :}
+             ;
+             
+
+/* Sentencias de control de flujo */
+
+stmtFlujo ::= stmtPerform:s     {: RESULT = s; :}
+          |   stmtCall:s        {: RESULT = s; :}
+          |   stmtIf:s          {: RESULT = s; :}
+          |   stmtEvaluate:s    {: RESULT = code.processEvaluate(s); :}
+          |   stmtGoTo:s        {: RESULT = s; :}
+          |   stmtContinue:s    {: RESULT = s; :}
+          ;
+             
+/* Sentencias de manipulacion de datos */
+
+stmtDatos ::= stmtDatos1:s  optTokens:t {: RESULT = s.addTokens(t); :}
+          |   stmtDatos2:s              {: RESULT = s;              :}
+          ;
+
+stmtDatos1 ::= stmtTransform:s      {: RESULT = s; :}
+           ;
+             
+stmtDatos2 ::= stmtMove:s           {: RESULT = s; :}
+           |   stmtString:s         {: RESULT = s; :}
+           |   stmtInspect:s        {: RESULT = s; :}
+           |   stmtSearch:s         {: RESULT = s; :}
+           |   stmtUnstring:s       {: RESULT = s; :}
+           |   stmtInitialize:s     {: RESULT = s; :}
+           |   stmtSet:s            {: RESULT = s; :}
+           ;
+            
+/* Sentencias de entrada/salida */
+
+stmtIO    ::= stmtIO1:s optTokens:t {: RESULT = s.addTokens(t); :}
+          |   stmtIO2:s             {: RESULT = s;              :}
+          ;
+          
+stmtIO1   ::= stmtCommit:s         {: RESULT = s; :}
+          |   stmtUnlock:s         {: RESULT = s; :}
+          |   stmtMerge:s          {: RESULT = s; :}
+          |   stmtStart:s          {: RESULT = s; :}
+          |   stmtRollback:s       {: RESULT = s; :}
+          ;
+
+stmtIO2 ::= stmtAccept:s         {: RESULT = s; :}
+        |   stmtDisplay:s        {: RESULT = s; :}
+        |   stmtOpen:s           {: RESULT = s; :}
+        |   stmtClose:s          {: RESULT = s; :}
+        |   stmtRead:s           {: RESULT = s; :}
+        |   stmtRelease:s        {: RESULT = s; :}          
+        |   stmtReturn:s         {: RESULT = s; :}
+        |   stmtWrite:s          {: RESULT = s; :}
+        |   stmtDelete:s         {: RESULT = s; :}
+        |   stmtRewrite:s        {: RESULT = s; :}
+        |   stmtSort:s           {: RESULT = s; :}        
+        ;
+                    
+/* Sentencias de operaciones aritmeticas */
+stmtArit ::= stmtMultiply:s    {: RESULT = s; :}
+         |   stmtCompute:s     {: RESULT = s; :}
+         |   stmtAdd:s         {: RESULT = s; :}
+         |   stmtDivide:s      {: RESULT = s; :}
+         |   stmtSubtract:s    {: RESULT = s; :}
+         ;
+            
+/* Sentencias del lenguaje */
+
+stmtLang    ::= stmtAllocate:s    {: RESULT = s; :}
+            |   stmtCancel:s      {: RESULT = s; :}
+            |   stmtFree:s        {: RESULT = s; :}
+            ;
+
+/* Verbos */
+                                                   
+
+stmtTransform   ::=  TRANSFORM:s  {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtAllocate    ::=  ALLOCATE:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtContinue    ::=  CONTINUE:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+
+
+stmtString ::=  STRING:s stmtString_detail  {: RESULT = new Statement(s, code.getStmts()); :} ; 
+
+
+
+stmtCommit ::=  COMMIT:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+stmtGoback      ::=  GOBACK:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtUnlock      ::=  UNLOCK:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtMerge       ::=  MERGE:s      {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+
+stmtAccept ::=  ACCEPT:s lvalue stmtAccept_detail    {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtAcceptOpt ::= ID
+              |
+              ;
+moduloCall      ::= ident:i  {: RESULT = i; :}
+                |   LITERAL:l {: RESULT = l; :}
+                ;
+                
+// EXIT PERFORM crea un conflicto. por eso se controla EXIT PERFORM
+// en el analizador lexico
+
+stmtExit        ::= exitTypes:s   {: RESULT = s; :}
+                ;
+
+exitTypes ::= stmtExitG:s {: RESULT = s; :} 
+          |   stmtExitP:s {: RESULT = s; :}
+          |   stmtExitPgm:s {: RESULT = s; :}
+          ;  
+                        
+stmtExitG ::=  EXIT:s  exitType:t   {: Statement stmt = new Statement(s, code.getStmts());
+                                       RESULT = stmt.addSymbol(t); 
+                                    :}    
+          ;
+
+stmtExitP ::=  EXITP:s  {: Statement stmt = new Statement(s, code.getStmts());
+                           RESULT = stmt.addSymbol(code.makeSymbol(ZCCSym.PERFORM, -1, -1, "PERFORM")); 
+                        :}    
+          ;
+
+stmtExitPgm ::=  EXITPGM:s  {: Statement stmt = new Statement(s, code.getStmts());
+                               RESULT = stmt.addSymbol(s); 
+                            :}
+            ;                    
+
+exitType  ::= PROGRAM:s   {: RESULT = s; :}
+          |   PARAGRAPH:s {: RESULT = s; :}
+          |   SECTION:s   {: RESULT = s; :}
+          |               {: RESULT = code.makeSymbol(ZCCSym.PARAGRAPH, -1, -1, ""); :}
+          ;
+          
+stmtFree     ::=  FREE:s       {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+stmtRollback ::=  ROLLBACK:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtNext     ::=  NEXT:s       {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+stmtReturn   ::=  RETURN:r  ID:i stmtRead_detail:j     
+                  {: Statement stmt = code.fileAccess(TRAP.ACC_READ, r, i);
+                     RESULT = stmt.addTokens(j); 
+                  :}
+             ;
+stmtExec ::= EXEC_CICS:s {: module.incStmtCics(); RESULT = new Statement(s, code.getStmts()); :}     
+         |   EXEC_SQL:s  {: module.incStmtSql();  RESULT = new Statement(s, code.getStmts()); :}     
+         ;
+
+stmtEndExec ::= END_EXEC:s {: RESULT = new Statement(s, code.getStmts()); :}     
+            ;
+            
+/*************************************************************************************/
+/*************************************************************************************/
+/***                     STATEMENT DETAILS                                         ***/ 
+/*************************************************************************************/
+/*************************************************************************************/
+
+// ACCEPT
+
+stmtAccept_detail ::= FROM rvalue stmtAcceptOpt
+                  |
+                  ;
+
+// ADD
+
+stmtAdd ::=  ADD:s stmtAdd_detail {: RESULT = new Statement(s, code.getStmts()); :}     
+        ;
+             
+                  
+stmtAdd_detail ::=  rvalue_list stmtAdd_options
+               ;
+
+stmtAdd_options ::= stmtAdd_option
+                |   stmtAdd_options stmtAdd_option
+                ;
+                
+stmtAdd_option ::= option_giving
+               |   option_to_multiple
+               |   option_size_error
+               ;
+
+// CALL
+
+stmtCall ::=  CALL:s moduloCall:i 
+                     stmtCall_using_opt
+                     stmtCall_returning_opt      {: RESULT = code.processCall(s, i); :}     
+         ;
+
+stmtCall_using_opt ::= stmtCall_using
+                   |
+                   ;
+                     
+stmtCall_using ::= USING stmtCall_parm_list
+               ;
+
+stmtCall_parm_list ::= stmtCall_parm
+                   |   stmtCall_parm_list stmtCall_parm
+                   ;
+               
+stmtCall_parm ::= rvalue
+              |   BY stmtCall_parm_type
+              ;
+              
+stmtCall_parm_type ::= VALUE
+                   |   REFERENCE
+                   ;
+
+stmtCall_returning_opt ::= stmtCall_returning
+                       |
+                       ;
+                       
+stmtCall_returning ::= RETURNING lvalue
+                   ;
+                                                                                      
+// CANCEL
+
+stmtCancel ::= CANCEL:s rvalue  {: RESULT = new Statement(s, code.getStmts()); :}     ;               
+
+// COMPUTE 
+
+stmtCompute  ::=  COMPUTE:s stmtCompute_detail:i
+                   {: Statement stmt = new Statement(s, code.getStmts());
+                      stmt.addSymbol(i);
+                      RESULT = stmt; 
+                   :}     
+              ;
+
+stmtCompute_detail ::= lvalue:i EQUAL stmtCompute_rvalues stmtCompute_options_opt {: RESULT = i; :} 
+                   ;
+
+stmtCompute_rvalues ::= stmtCompute_rvalue
+                    |   stmtCompute_rvalues stmtCompute_rvalue
+                    ;                   
+                   
+stmtCompute_rvalue ::= rvalue
+                   |   LPAR
+                   |   RPAR 
+                   ;
+
+stmtCompute_options_opt ::= stmtCompute_options
+                        |
+                        ;
+                        
+stmtCompute_options ::= stmtCompute_option
+                    |   stmtCompute_options stmtCompute_option
+                    ;
+
+stmtCompute_option ::= option_size_error
+                   ;
+// DISPLAY
+
+stmtDisplay ::= DISPLAY:s   rvalue_list {: RESULT = new Statement(s, code.getStmts()); :}     
+            ;
+                                                                                              
+// DIVIDE
+
+stmtDivide ::=  DIVIDE:s stmtDivide_detail {: RESULT = new Statement(s, code.getStmts()); :}     
+           ;
+
+stmtDivide_detail ::= rvalue stmtDivide_fields option_size_error_opt
+                  ;
+                  
+stmtDivide_fields ::= stmtDivide_field
+                  |   stmtDivide_fields stmtDivide_field
+                  ;
+                  
+stmtDivide_field ::= ident
+                 |   NUMERO
+                 |   GIVING
+                 |   INTO
+                 |   BY
+                 ;
+
+// EVALUATE
+
+stmtEvaluate    ::=  EVALUATE:s  stmtEvaluate_detail  
+                                {: RESULT = new Statement(s, code.getStmts()); :}     
+                ;
+
+stmtEvaluate_detail ::= condition
+                    ;
+stmtWhen ::= WHEN:s condition:t stmtWhen_thru_opt 
+                    {: Statement stmt  = new Statement(s);
+                       RESULT = stmt; /* stmt.addTokens(t); */  
+                    :} 
+                ;
+
+stmtWhen_thru_opt ::= stmtWhen_thru
+                  |
+                  ;
+                  
+stmtWhen_thru ::= THRU condition
+              ;
+                                                   
+// GO TO
+
+stmtGoTo ::=  GOTO:s to_opt 
+                     stmtGoto_procs 
+                     stmtGoto_depending_opt   
+                     {: RESULT = new Statement(s, code.getStmts()); :} 
+         ;
+
+stmtGoto_procs ::= ID
+               |   stmtGoto_procs ID
+               ;
+
+stmtGoto_depending_opt ::= stmtGoto_depending
+                       |
+                       ;
+                       
+stmtGoto_depending ::= DEPENDING rvalue
+                   ;
+                                                          
+// IF
+
+stmtIf ::= IF:s stmtIf_detail {: Statement stmt = new Statement(s, code.getStmts());      
+                                 RESULT = code.processIf(stmt);
+                              :}
+       ;
+
+stmtIf_detail ::= condition
+              ;
+              
+// INITIALIZE
+
+stmtInitialize  ::=  INITIALIZE:s stmtInitialize_detail {: RESULT = new Statement(s, code.getStmts()); :}     
+                ;
+                
+stmtInitialize_detail ::= lvalue_list stmtInitialize_replacing_opt
+                      ;
+                      
+stmtInitialize_replacing_opt ::= REPLACING stmtInitialize_resto
+                             |
+                             ;
+                                                    
+stmtInitialize_resto ::= stmtInitialize_tokens
+                     |   stmtInitialize_resto stmtInitialize_tokens
+                     ;                                       
+
+stmtInitialize_tokens ::= ident
+                      |   constantes
+                      |   BY
+                      |   ALL
+                      ;
+// INSPECT
+
+stmtInspect ::=  INSPECT:s rvalue:l stmtInspect_detail
+                                {: RESULT = new Statement(s); :}     
+            ;
+
+stmtInspect_detail ::= stmtInspect_token
+                   |   stmtInspect_detail stmtInspect_token
+                   ;
+
+stmtInspect_token ::= ALL
+                |     BY
+                |     BEFORE
+                |     AFTER
+                |     LEADING
+                |     FIRST
+                |     CHARACTER
+                |     TO
+                |     TALLYING
+                |     REPLACING
+                |     CONVERTING
+                |     rvalue
+                ;
+                   
+
+// MOVE
+
+stmtMove ::= MOVE:s all_opt rvalue:r TO lvalue_list:l      
+                   {: code.checkCall(l, r);
+                      Statement stmt = new Statement(s, code.getStmts());
+                      stmt.addSymbol(r);
+                      stmt.addVariables(l);
+                      RESULT = stmt; 
+                   :}     
+              ;
+
+                
+// MULTIPLY
+
+stmtMultiply ::=  MULTIPLY:s stmtMultiply_detail {: RESULT = new Statement(s, code.getStmts()); :}
+             ;
+             
+stmtMultiply_detail ::= stmtMultiply_by option_giving_opt option_size_error_opt
+                   ;
+                   
+stmtMultiply_by ::= rvalue BY rvalue
+                ;
+
+
+// OPEN
+
+stmtOpen ::=  OPEN:o stmtOpen_list:l 
+                   {: RESULT = code.fileAction(TRAP.ACC_OPEN, o, l); :} 
+         ;
+
+stmtOpen_list ::= stmtOpen_group:s                  {: RESULT = s;         :}
+              |   stmtOpen_list:l stmtOpen_group:s  {: RESULT = l.add(s);  :}
+              ;
+
+stmtOpen_group  ::= stmtOpen_mode:o stmtOpen_files:l 
+                 {: Persistence f;
+                 /*JGG
+                    for (Symbol s : l.getTokens()) {
+                        f = module.getFile(getSymbolName(s));
+                        f.setAccess(o.getId());
+                    }
+                    */
+                    RESULT = l;
+                 :}
+              ; 
+
+stmtOpen_mode ::= INPUT:s   {: Statement stmt = new Statement(s);
+                               stmt.setId(Persistence.INPUT);
+                               RESULT = stmt; 
+                            :}
+              |   OUTPUT:s  {: Statement stmt = new Statement(s);
+                               stmt.setId(Persistence.OUTPUT);
+                               RESULT = stmt;
+                            :}
+              |   IO:s      {: Statement stmt = new Statement(s);
+                               stmt.setId(Persistence.IO);
+                               RESULT = stmt;
+                            :}
+              |   EXTEND:s  {: Statement stmt = new Statement(s);
+                               stmt.setId(Persistence.EXTEND);
+                               RESULT = stmt;
+                            :}
+              ;      
+
+stmtOpen_files ::= ID:s                    {: RESULT = new Tokens(s); :}
+               |   stmtOpen_files:l ID:s   {: RESULT = l.add(s);      :}
+               ;
+
+                
+// PERFORM
+// Caso 1: PERFORM inline
+// Caso 2: PERFORM PARRAFO X TIMES (Por eso from es recursivo
+// Caso 3: PERFORM PARRAFO OPCIONES
+// Caso 4: PERFORM PARRAFO OPCIONES X TIMES
+// El caso TIMES NECESITA TRATAMIENTO ESPECIAL
+
+stmtPerform ::=  stmtPerform_verb stmtPerform_from_opt stmtPerform_thru_opt stmtPerform_options_opt:p {: RESULT = code.processPerform(currStmt, lastStmt); :} 
+            ;
+            
+stmtPerform_verb ::= PERFORM:s  {: currStmt = new Statement(s); :}
+                 ;
+
+stmtPerform_from_opt ::= stmtPerform_from
+                     |
+                     ;
+                     
+stmtPerform_from ::= rvalue:o                   {: RESULT = currStmt.addOption(new Option(o)); :}
+                 |   stmtPerform_from rvalue:o  {: RESULT = currStmt.addOption(new Option(o)); :}
+                 ;
+
+stmtPerform_thru_opt ::= stmtPerform_thru
+                     |
+                     ;
+                     
+stmtPerform_thru ::= THRU:o ID:i                       {: RESULT = currStmt.addOption(new Option(o, i)); :}
+                 |   stmtPerform_thru rvalue:o         {: RESULT = currStmt.addOption(new Option(o));    :}
+                 ;
+                                      
+stmtPerform_options_opt ::= stmtPerform_options
+                        |
+                        ;
+                        
+stmtPerform_options ::= stmtPerform_option:o                     {: RESULT = currStmt.addOption(o); :}
+                    |   stmtPerform_options stmtPerform_option:o {: RESULT = currStmt.addOption(o); :}
+                    ;
+                    
+stmtPerform_option ::= FOREVER:o                    {: RESULT = new Option(o); :}
+                   |   TIMES:o                      {: RESULT = currStmt.mergeOption(new Option(o)); :}
+                   |   UNTIL:o   condition:t        {: RESULT = new Option(o, t); :}
+                   |   VARYING:o perform_tokens:t   {: RESULT = new Option(o, t); :}
+                   |   AFTER:o   perform_tokens:t   {: RESULT = new Option(o, t); :}
+                   |   TEST:o    perform_test:t     {: RESULT = new Option(o);    :}
+//                   |   THRU:o    stmtPerform_from:s               {: RESULT = new Option(o, s); :}
+//                   |   ID:r                      {: RESULT = new Option(r);    :}
+                   ;
+
+perform_test ::= BEFORE
+             |   AFTER
+             ;
+             
+perform_tokens ::= perform_token:t   {: RESULT = t; :}
+               |   perform_tokens:v perform_token:t  {: v.add(t); RESULT = v; :}
+               ;
+               
+perform_token ::= rvalue:t {: RESULT = new Tokens(t); :}
+              |   FROM:f  {: RESULT = new Tokens(f); :}
+              |   BY:f    {: RESULT = new Tokens(f); :}
+              ;
+
+// READ
+
+stmtRead     ::=  READ:r  ID:i stmtRead_detail:s     
+                  {: Statement stmt = code.fileAccess(TRAP.ACC_READ, r, i);
+                     RESULT = stmt.addTokens(s); 
+                  :}
+             ;
+
+stmtRead_detail ::= stmtRead_options
+                |
+                ;
+                
+stmtRead_options ::= stmtRead_option
+                 |   stmtRead_options stmtRead_option
+                 ;
+
+stmtRead_option ::= stmtRead_into
+                |   stmtRead_key
+                ;
+                
+stmtRead_into ::= INTO:i lvalue:d {: Tokens t = new Tokens(i); RESULT = t.add(d); :}
+              ;
+              
+stmtRead_key ::= KEY rvalue
+             ;              
+
+// SEARCH
+
+stmtSearch ::= SEARCH:s all_opt stmtSearch_detail {: RESULT = new Statement(s, code.getStmts()); :}
+           ;
+           
+stmtSearch_detail ::= rvalue stmtSearch_options 
+                  ;
+                  
+stmtSearch_options ::= stmtSearch_option
+                   |
+                   ;
+                                     
+stmtSearch_option ::= stmtSearch_opt
+                  |   stmtSearch_option stmtSearch_opt
+                  ;
+                  
+stmtSearch_opt ::= stmtSearch_varying
+               ;
+               
+stmtSearch_varying ::= VARYING rvalue
+                   ;
+                   
+// SET
+
+stmtSet_detail ::= lvalue_list stmtSet_resto
+               ;
+               
+stmtSet_resto ::= TO rvalue 
+              |   BY rvalue
+              ;
+              
+// SORT
+
+stmtSort ::= SORT:s {: RESULT = new Statement(s); :} ID stmtSort_detail
+         ;
+         
+stmtSort_detail ::= stmtSort_option
+                |   stmtSort_detail stmtSort_option
+                ;
+
+stmtSort_option ::= stmtSort_order
+                |   stmtSort_duplicates
+                |   stmtSort_using
+                |   stmtSort_giving
+                |   stmtSort_procedure                
+                ;
+                
+stmtSort_order ::= option_order key_opt rvalue_list
+               ;                       
+               
+stmtSort_duplicates ::= DUPLICATES 
+                    ;
+                    
+stmtSort_using ::= USING rvalue_list 
+               ;
+
+stmtSort_giving ::= GIVING rvalue_list 
+               ;
+
+stmtSort_procedure ::= INPUT ID
+                   |   OUTPUT ID
+                   ;
+                                                                                      
+// START
+
+stmtStart       ::=  START:s  ID stmtStart_detail    {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+stmtStart_detail ::= stmtStart_options_opt
+                 ;
+                 
+stmtStart_options_opt ::= stmtStart_options
+                      |
+                      ;
+                      
+stmtStart_options ::= stmtStart_option
+                  |   stmtStart_options stmtStart_option
+                  ;
+                  
+stmtStart_option ::= stmtStart_key
+                 ;
+                 
+stmtStart_key ::= KEY stmtStart_key_words_opt rvalue
+              ;        
+
+stmtStart_key_words_opt ::= stmtStart_key_words
+                        |
+                        ;
+                  
+                        
+stmtStart_key_words ::= stmtStart_key_word
+                    |   stmtStart_key_words stmtStart_key_word
+                    ;
+                    
+stmtStart_key_word ::= OR
+                   |   EQUAL
+                   |   LESS
+                   |   TO
+                   |   OP_REL
+                   ;
+                                                                                                                                            
+// STRING
+
+stmtString_detail ::= stmtString_from stmtString_into optionOverflow_opt
+                  ;
+                  
+stmtString_from   ::= stmtString_from_string 
+                  |   stmtString_from stmtString_from_string 
+                  ; 
+
+stmtString_from_string ::= stmtString_from_tokens stmtString_from_delimiter  
+                       ;
+                       
+stmtString_from_tokens ::= rvalue
+                       |   stmtString_from_tokens rvalue
+                       ; 
+                                             
+stmtString_from_delimiter ::= DELIMITED by_opt stmtString_from_delim
+                          ;
+                          
+stmtString_from_delim ::= rvalue
+                      |   SIZE
+                      ;
+
+stmtString_into ::= INTO lvalue stmtString_pointer_opt
+                ;
+                
+stmtString_pointer_opt ::= stmtString_pointer
+                       |
+                       ;
+                                        
+stmtString_pointer ::= POINTER lvalue
+                ;
+                                                                
+// SUBTRACT
+
+stmtSubtract ::= SUBTRACT:s stmtSubtract_detail {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+             
+stmtSubtract_detail ::= rvalue_list stmtSubtract_options
+                    ;
+
+stmtSubtract_options ::= stmtSubtract_option
+                     |   stmtSubtract_options stmtSubtract_option
+                     ;
+                     
+stmtSubtract_option ::= FROM rvalue_list 
+                    |   option_giving
+                    |   option_size_error
+                    ;
+// UNSTRING
+
+stmtUnstring ::=  UNSTRING:s  stmtUnstring_detail {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+
+stmtUnstring_detail ::= rvalue stmtUnstring_delimited_opt stmtUnstring_to stmtUnstring_options_opt 
+                    ;
+                     
+stmtUnstring_delimited_opt ::= stmtUnstring_delimited
+                           |
+                           ;
+                                                 
+stmtUnstring_delimited ::= DELIMITED by_opt all_opt stmtUnstring_delimiteds
+                       ;
+                    
+stmtUnstring_delimiteds ::= stmtUnstring_delimited_token
+                        |   stmtUnstring_delimiteds stmtUnstring_delimited_token
+                        ;
+                        
+stmtUnstring_delimited_token ::= rvalue
+                             |   OR
+                             ;
+                                                   
+stmtUnstring_to ::= INTO stmtUnstring_targets 
+                ;
+
+stmtUnstring_targets ::= stmtUnstring_target
+                     |   stmtUnstring_targets stmtUnstring_target
+                     ;
+
+stmtUnstring_target ::= lvalue stmtUnstring_delimiters_opt
+                    ;
+                     
+stmtUnstring_delimiters_opt ::= stmtUnstring_delimiters
+                           |
+                           ;
+                           
+stmtUnstring_delimiters ::= stmtUnstring_delimiter
+                        |   stmtUnstring_delimiters stmtUnstring_delimiter
+                        ;
+                        
+stmtUnstring_delimiter ::= DELIMITER in_opt lvalue 
+                       |   COUNT in_opt lvalue
+                       ;
+
+stmtUnstring_options_opt ::= stmtUnstring_options
+                         |
+                         ;
+                         
+stmtUnstring_options ::= stmtUnstring_option
+                     |   stmtUnstring_options stmtUnstring_option
+                     ;
+                     
+stmtUnstring_option ::= POINTER   lvalue
+                    |   TALLYING  in_opt lvalue
+                    |   optionOverflow
+                    ; 
+// WRITE
+
+stmtWrite    ::=  WRITE:w ID:i stmtWrite_detail 
+                  {: RESULT = code.fileAccess(TRAP.ACC_INSERT, w, i); :}       
+             ;
+stmtRewrite  ::=  REWRITE:r ID:i  stmtWrite_detail 
+                  {: RESULT = code.fileAccess(TRAP.ACC_UPDATE, r, i); :}
+             ;
+
+stmtWrite_detail ::= stmtWrite_options
+                 |
+                 ;
+                 
+stmtWrite_options ::= stmtWrite_option
+                  |   stmtWrite_options stmtWrite_option
+                  ;
+
+stmtWrite_option ::= stmtWrite_from
+                 |   stmtWrite_position
+                 |   stmtWrite_after
+                 |   stmtWrite_eop
+                 ;
+                                                  
+stmtWrite_from ::= FROM rvalue
+               ;
+
+stmtWrite_position ::= option_position rvalue
+                   ;
+                
+stmtWrite_after ::= AFTER
+                ;
+                                
+stmtWrite_eop ::= EOP:s {: code.setImperative(); 
+                                   RESULT = new Statement(s); 
+                                :}                         
+              ;
+                     
+stmtRelease  ::=  RELEASE:s  ID:i eatWrite:e  
+                  {: Statement stmt = new Statement(s);
+                     stmt.addSymbol(i);
+                     RESULT = stmt.addTokens(e);
+                  :}     
+             ;
+
+stmtDelete   ::=  DELETE:d ID:i      
+                 {: RESULT = code.fileAccess(TRAP.ACC_DELETE, d, i); :}
+             ;
+
+stmtStop     ::=  STOPRUN:s  optTokens  {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+
+stmtSet      ::=  SET:s stmtSet_detail       {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+
+stmtClose       ::=  CLOSE:c  closeLstFiles:l  
+                    {: RESULT = code.fileAction(TRAP.ACC_CLOSE, c, l); :}
+                ;
+
+closeLstFiles   ::= closeFile:c                  {: RESULT = c;         :}
+                |   closeLstFiles:l closeFile:c  {: RESULT = l.add(c);  :}
+                ;
+
+closeFile       ::= ID:s eatClose:e   {: Tokens t = new Tokens(s);
+                                         RESULT = t.add(e); 
+                                      :}
+                ;
+
+
+stmtAtEnd ::= ATEND:s     {: Statement stmt = new Statement(s);
+                             RESULT = code.setAtEnd(stmt); 
+                          :}
+          ;
+
+stmtInvalid       ::= INVALID:s key_opt    {: Statement stmt = new Statement(s);
+                                              RESULT = code.setAtEnd(stmt); 
+                                           :}
+                ;
+
+stmtException ::= EXCEPTION:s  {: RESULT = new Statement(s); :}
+              ;
+                                                      
+/**************************************************************/     
+/* Opciones comunes                                           */
+/**************************************************************/
+
+optionOverflow_opt ::= optionOverflow
+                   |
+                   ;
+                                   
+optionOverflow  ::= OVERFLOW:i  {: code.setImperative(); 
+                                   RESULT = new Statement(i); 
+                                :}
+                ;
+                
+option_size_error_opt ::= option_size_error
+                      |
+                      ;
+                      
+option_size_error ::= SIZE_ERROR:i {: code.setImperative(); 
+                                   RESULT = new Statement(i); 
+                                :}
+                  ;
+                  
+option_giving_opt ::= option_giving
+                  |
+                  ;                                   
+
+option_giving ::= GIVING lvalue_list
+              ;
+                       
+option_to_multiple ::= TO rvalue_list
+                   ;
+
+option_position ::= BEFORE
+                |   AFTER
+                ;
+
+option_and_or ::= AND:a    {: RESULT = a; code.incComplexity(); :}
+              |   OR:o     {: RESULT = o; code.incComplexity(); :}
+              |   ALSO:a   {: RESULT = a; code.incComplexity(); :}
+              ;
+
+option_order ::= ASCENDING
+             |   DESCENDING
+             ;
+
+all_opt ::= ALL
+        |
+        ;
+                                     
+in_opt ::= IN
+       |
+       ;
+       
+key_opt ::= KEY
+        |
+        ;
+to_opt ::= TO
+       |
+       ;
+                                                                                   
+/**************************************************************/     
+/* Otras palabras reservadas                                  */
+/**************************************************************/
+
+stmtEndP        ::= ENDP:s        {: RESULT = new Statement(s); :} ;
+stmtElse        ::= ELSE:s        {: RESULT = new Statement(s); :} ;   
+stmtEndIf       ::= ENDIF:s       {: RESULT = new Statement(s); :} ;
+stmtEndPerform  ::= ENDPERFORM:s  {: RESULT = new Statement(s); :} ;
+stmtEndEvaluate ::= ENDEVAL:s     {: RESULT = new Statement(s); :} ;
+stmtEndVerb     ::= ENDVERB:s     {: RESULT = new Statement(s); :} ;
+                                       
+///////////////////////////////////////////////////////
+// No terminales para eliminar el resto de las sentencias
+//////////////////////////////////////////////////////
+
+eatClose ::= eatCloseLst:l {: RESULT = l;            :}
+         |                 {: RESULT = new Tokens(); :}
+         ;
+
+eatCloseLst ::= eatCloseItem:i               {: RESULT = new Tokens(i); :}
+            |   eatCloseLst:l eatCloseItem:i {: RESULT = l.add(i);      :}
+            ;
+
+eatCloseItem ::= WITH:s {: RESULT = new Tokens(s); :}
+             |   NO:s   {: RESULT = new Tokens(s); :}
+             |   FOR:s  {: RESULT = new Tokens(s); :}
+             ;
+
+    
+eatWrite ::= eatWriteLst:l {: RESULT = l;            :}
+         |                 {: RESULT = new Tokens(); :}
+         ;
+
+eatWriteLst ::= eatWriteItem:e               {: RESULT = new Tokens(e); :}
+            |   eatWriteLst:x eatWriteItem:i {: RESULT = x.add(i);      :}
+            ;
+
+eatWriteItem ::= token:s {: RESULT = new Tokens(s); :} 
+             |   WITH:s  {: RESULT = new Tokens(s); :}
+             |   LOCK:s  {: RESULT = new Tokens(s); :}
+             |   NO:s    {: RESULT = new Tokens(s); :}
+             |   LINE:s  {: RESULT = new Tokens(s); :}
+             |   PAGE:s  {: RESULT = new Tokens(s); :}
+             |   AFTER:s  {: RESULT = new Tokens(s); :}
+             ;
+
+/*****************************************************************/
+/*****************************************************************/
+/***              EXPRESION LOGICA                             ***/
+/*****************************************************************/
+/*****************************************************************/
+
+condition ::= cond_tokens
+          |   condition option_and_or cond_tokens
+          ;                
+
+cond_tokens ::= cond_operando
+            |   cond_tokens cond_operando
+            ;
+            
+cond_operando ::= ident_base
+//              |   function
+              |   constantes
+              |   ALL
+              |   EQUAL
+              |   LESS
+              |   LPAR
+              |   LPARID
+              |   OP_REL
+              |   RPAR
+              |   TO
+              ;            
+
+///////////////////////////////////////////////////////
+// WORK
+//////////////////////////////////////////////////////
+
+optTokens ::= tokens:t {: RESULT = t;               :}
+          |            {: RESULT = new Tokens();    :}
+          ;
+           
+tokens ::= token:t          {: RESULT = t;        :}
+       |   tokens:l token:t {: RESULT = l.add(t); :}
+       ;
+ 
+token ::= ID:s                {: RESULT = new Tokens(s); :}
+      |   LITERAL:s           {: RESULT = new Tokens(s); :}
+      |   NUMERO:s            {: RESULT = new Tokens(s); :} 
+      |   LPAR tokens:t RPAR  {: RESULT = new Tokens(t); :}
+      |   figurative:f        {: RESULT = new Tokens(f); :}
+//      |   FILLER:f            {: RESULT = new Tokens(f); :}
+      ;
+
+/*****************************************************************/
+/*****************************************************************/
+/*** IDENTIFICADORES  LVALUES   RVALUES                        ***/
+/*****************************************************************/
+/*****************************************************************/
+
+lvalue ::= ident:i  {: RESULT = i; code.setVarWrite(i); :}  
+       ;
+       
+lvalue_list ::= lvalue:i                {: RESULT = new SymbolExtList(i); :}
+            |   lvalue_list:l lvalue:i  {: RESULT = l.add(i);       :}
+            ;
+
+/* Se come todo lo que haya como variables de lectura */                    
+rvalue_list ::= rvalue 
+            |   rvalue_list rvalue
+            ;
+
+rvalue ::= ident:i      {: RESULT = i;  code.setVarRead(i); :}
+       |   constantes:c {: RESULT = c; :}
+       ;
+
+ident ::= ident_base:i indices_opt  {: RESULT = i;    :}
+      ;
+
+ident_base ::= ID:i padres_lst:s {: RESULT = new SymbolExt(i, s); :}
+           |   function:f        {: RESULT = new SymbolExt(f);    :}
+           ;
+
+padres_lst ::= padres:p  {: RESULT = p;    :}
+           |             {: RESULT = null; :}
+           ;
+
+padres ::= padre:p           {: RESULT = new SymbolExt(p); :}
+       |   padres:p padre:i  {: RESULT = p.addParent(i);   :}
+       ;
+                    
+padre ::= padre_indicator ID:s {: RESULT = s;    :}
+      ;
+
+padre_indicator ::= OF
+                |   IN
+                ;
+                      
+indices_opt ::= lst_indices
+            |
+            ;
+
+lst_indices ::= indice
+            |   lst_indices indice
+            ;
+
+indice ::= LPARID ind_items RPAR
+       ;      
+ 
+ind_items ::= ind_item
+          |   ind_items ind_item
+          ;
+
+ind_item  ::= ident
+          |   operadores
+          |   NUMERO
+          |   LPAR ind_items RPAR
+          ;
+
+constantes ::= constante:c   {: RESULT = c; :}
+           |   figurative:f  {: f.setId(ZCZSym.FIGURATIVE); RESULT = f; :}
+           ;
+            
+constante  ::= LITERAL:l     {: RESULT = new SymbolExt(l); :}
+           |   NUMERO:n      {: RESULT = new SymbolExt(n); :}
+           ;
+
+operadores ::= PLUS:p    {: RESULT = p; :}
+           |   MULT:p    {: RESULT = p; :}
+           |   POWER:p   {: RESULT = p; :}
+           ;
+                     
+figurative ::= SPACES:f       {: RESULT = new SymbolExt(f); :}
+           |   ZERO:f         {: RESULT = new SymbolExt(f); :}
+           |   HIGHVAL:f      {: RESULT = new SymbolExt(f); :}
+           |   LOWVAL:f       {: RESULT = new SymbolExt(f); :} 
+           |   QUOTE:f        {: RESULT = new SymbolExt(f); :}
+           |   POSITIVE:f     {: RESULT = new SymbolExt(f); :}
+           |   NEGATIVE:f     {: RESULT = new SymbolExt(f); :}
+           |   ALPHABETIC:f   {: RESULT = new SymbolExt(f); :}
+           |   ALPHANUMERIC:f {: RESULT = new SymbolExt(f); :}           
+           |   NUMERIC:f      {: RESULT = new SymbolExt(f); :}           
+           |   KANJI:f        {: RESULT = new SymbolExt(f); :}
+           |   NULL:f         {: RESULT = new SymbolExt(f); :}
+           |   DFHCICS:i      {: RESULT = new SymbolExt(i); :}
+           ;
+
+by_opt ::= BY
+       |
+       ;
+
+
+function ::= FUNCTION:f function_name  {: RESULT = f; :} 
+         ;
+
+function_name ::= ID
+              |   LENGTH
+              ;
+                        

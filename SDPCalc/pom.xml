@@ -1,0 +1,54 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.jgg.sdp</groupId>
+  <artifactId>SDPCalc</artifactId>
+<!--   <version>${sdp.version}</version> -->
+  <packaging>jar</packaging>
+
+  <name>Serendipity Calculator</name>
+
+  <parent>
+    <groupId>com.jgg</groupId>
+    <artifactId>sdp</artifactId>
+    <version>4.0</version>
+    <relativePath>../SDP</relativePath>
+  </parent>
+
+
+  <repositories>
+     <repository>
+       <id>jcenter</id>
+       <name>bintray</name>
+       <url>http://jcenter.bintray.com</url>
+     </repository>
+  </repositories>
+  
+  <dependencies> 
+
+    <dependency>
+       <groupId>com.jgg.parsers</groupId>
+       <artifactId>runtime</artifactId>
+       <version>[2.0,)</version>
+    </dependency>
+
+     <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>19.0</version>
+     </dependency>
+
+     <dependency>
+         <groupId>org.testng</groupId>
+         <artifactId>testng</artifactId>
+         <version>6.9.12</version>
+         <scope>test</scope>
+     </dependency>  
+
+  </dependencies>
+  
+</project>

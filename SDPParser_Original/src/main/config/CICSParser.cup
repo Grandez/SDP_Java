@@ -1,0 +1,181 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.module.base.*;
+import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.factorias.*;
+import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.core.exceptions.*;
+import com.jgg.sdp.parser.info.*;
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.work.*;
+import com.jgg.sdp.parser.code.*;
+
+parser code {:
+      Module module     = ModulesFactory.getMainModule();
+      Summary summary   = module.getSummary();
+      Configuration cfg = Configuration.getInstance();
+          
+      public void syntax_error(Symbol token) {
+           
+          Symbol s = (Symbol) token.value;
+          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+          col = col + s.right + 1;
+
+          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
+                                   module.getName(), 
+                                   s.left + 1, 
+                                   col, 
+                                   (String) s.value);
+      }
+
+      public void unrecovered_syntax_error(Symbol token) throws Exception {
+          Symbol s = (Symbol) token.value;
+          throw new ParseException(MSG.EXCEPTION_CUP, 
+                                  module.getName(), s.left + 1, s.right + 1, (String) s.value); 
+      }
+:}
+
+action code {:
+   Module      module   = null;
+   CICSCode    code     = null;
+   CICSStmt    stmt     = null;
+         
+   public void initActionClass() {
+      module = ModulesFactory.getMainModule();
+      code = new CICSCode(module);
+   }
+
+   public String getSymbolName(Symbol s)    { return (String) s.value; }
+   public void debug(String txt)            { System.err.println(txt); }
+
+:}
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+scan with {:
+    Symbol sym = ((GenericScanner) getScanner()).tokenCICS();
+    return (sym!=null) ? sym : getSymbolFactory().newSymbol("END_OF_FILE",EOF_sym());
+ 
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               VERBOS                                                     */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol DECIMAL   ;
+terminal Symbol ENTERO    ;
+terminal Symbol ID        ; 
+terminal Symbol IN        ;
+terminal Symbol LENGTH    ;
+terminal Symbol LITERAL   ;
+terminal Symbol LPAR      ;
+terminal Symbol OF        ;
+terminal Symbol RPAR      ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               NO TERMINALES                                              */
+/****************************************************************************/
+/****************************************************************************/
+
+non terminal CICSStmt ax              ;
+non terminal CICSStmt cics_stmts      ;
+non terminal CICSStmt cics_statement  ;
+non terminal CICSStmt cics_stmt       ;
+
+non terminal CICSParm cics_options    ;
+non terminal CICSParm cics_parm_list  ;
+non terminal CICSParm cics_parm_attr  ;
+
+non terminal Symbol   cics_parm       ;
+non terminal Symbol   cics_values     ;
+non terminal Symbol   cics_value      ;
+non terminal Symbol   number          ;
+
+non terminal Symbol   ident_base  ;
+
+non terminal Symbol     padres_lst  ;
+non terminal Symbol     padres      ;
+non terminal Symbol     padre       ;
+non terminal Symbol     padre_indicator ;  
+
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+ax ::= cics_stmts:s   
+   |
+   ;
+   
+cics_stmts ::= cics_statement:s             {: RESULT = code.processCICSStatement(s); :}
+           ;
+           
+cics_statement ::= cics_stmt:s cics_options:o {: RESULT = s; :}
+               ;
+               
+cics_stmt ::= ID:i    {: stmt = new CICSStmt((String) i.value); RESULT = stmt; :}
+          ;
+          
+cics_options ::= cics_parm_list:c {: RESULT = c;    :}
+             |                    {: RESULT = null; :}
+             ;
+             
+cics_parm_list ::= cics_parm_attr:c                {: RESULT = stmt.addParm(c); :}
+               |   cics_parm_list cics_parm_attr:c {: RESULT = stmt.addParm(c); :} 
+               ;
+                                 
+cics_parm_attr ::= ID:i cics_parm:c      {: RESULT = new CICSParm(i,c); :}
+               |   LENGTH:i cics_parm:c  {: RESULT = new CICSParm(i,c); :}
+               ;
+               
+cics_parm ::= LPAR cics_values:c RPAR   {: RESULT = c;    :}
+          |                             {: RESULT = null; :}
+          ;             
+
+cics_values ::= cics_value:c             {: RESULT = c; :} 
+            |   cics_values:c cics_value {: RESULT = c; /* Nos interesa el primero */ :}
+            ;
+            
+cics_value ::= ident_base:i           {: RESULT = i; :}
+           |   number:n               {: RESULT = n; :}
+           |   LITERAL:l              {: RESULT = l; :}
+           |   LENGTH OF ident_base:i {: RESULT = i; :}
+           |   LPAR cics_values:i RPAR {: RESULT = i; :}
+           ;
+
+
+number ::= ENTERO:e    {: RESULT = e; :}
+       |   DECIMAL:d   {: RESULT = d; :} 
+       ;                                                      
+       
+       
+ident_base ::= ID:i padres_lst:s {: RESULT = i; :} 
+           ;
+
+padres_lst ::= padres:p  {: RESULT = p;    :}
+           |             {: RESULT = null; :}
+           ;
+
+padres ::= padre:p           {: RESULT = p; :}
+       |   padres:p padre:i  {: RESULT = i; :}
+       ;
+                    
+padre ::= padre_indicator ID:s {: RESULT = s;    :}
+      ;
+
+padre_indicator ::= OF
+                |   IN
+                ;
+       

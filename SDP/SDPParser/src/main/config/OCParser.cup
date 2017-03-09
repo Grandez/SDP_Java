@@ -1,0 +1,1270 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+import com.jgg.sdp.module.base.*;
+import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.factorias.*;
+import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.core.exceptions.*;
+import com.jgg.sdp.parser.info.*;
+import com.jgg.sdp.parser.base.*;
+
+parser code {:
+      String fullName = ((CobolLexer) getScanner()).getFullName();
+      Module module = ModulesFactory.getModule(fullName);
+      Summary summary = module.getSummary();
+      Configuration cfg = Configuration.getInstance();
+          
+      public String getFullName() { return fullName; }
+
+      public void syntax_error(Symbol token) {
+          Symbol s = (Symbol) token.value;
+          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+          col = col + s.right + 1;
+
+          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
+                                   module.getName(), 
+                                   s.left + 1, 
+                                   col, 
+                                   (String) s.value);
+      }
+
+      public void unrecovered_syntax_error(Symbol token) throws Exception {
+          Symbol s = (Symbol) token.value;
+          throw new ParseException(MSG.EXCEPTION_CUP, 
+                                  module.getName(), s.left + 1, s.right + 1, (String) s.value); 
+      }
+:}
+
+action code {:
+   Module      module   = null;
+   Summary     summary  = null;
+   Persistence fichero  = null;
+   ParserCode  code     = null;
+   Sections    sections = null;
+      
+   Var       currVar  = null;
+   Statement lastStmt = null;  // Ultima instruccion
+   
+   boolean   hasEndProgram = false; // Hay STOPRUN o GOBACK?
+    
+   boolean master = false;  // El fichero es el maestro?   
+          
+   public void initActionClass(String name) {
+      module = ModulesFactory.getModule(name);
+      summary = module.getSummary();
+      sections = module.getSections();
+      code = new ParserCode(module);
+   }
+
+   public String getSymbolName(Symbol s)    { return (String) s.value; }
+
+:}
+
+init with {:
+  action_obj.initActionClass(fullName);
+:}
+
+terminal Symbol DIV_ID , DIV_ENV , DIV_DATA , DIV_PROC;
+
+terminal Symbol ID , NUMERO ;
+terminal Symbol PARRAFO  , LITERAL , LITCONCAT ;
+terminal Symbol END_PGM      ;
+
+terminal Symbol FILE_SECTION   , WORKING_SECTION , LOCAL_SECTION , LINKAGE_SECTION ;
+terminal Symbol FILE_CONTROL   ;
+terminal Symbol SCREEN_SECTION ;
+terminal Symbol CONF_SECTION   , IO_SECTION     ;
+
+/* Verbos de ENVIRONMNET */
+
+terminal Symbol SELECT    , ASSIGN    ;
+terminal Symbol STATUS    ;
+terminal Symbol LOCK      ;
+terminal Symbol RECORD    ;
+terminal Symbol ROLLBACK  ;
+
+terminal Symbol SEQUENTIAL   , DYNAMIC , RANDOM  , RELATIVE  ;
+terminal Symbol ORGANIZATION ;
+terminal Symbol LINE         ;
+terminal Symbol INDEXED      , ACCESS    ;
+terminal Symbol FD           ;
+
+/* Working y datos */
+terminal Symbol LEVEL  , LEVEL_77 , LEVEL_78 , LEVEL_88 ;
+terminal Symbol FILLER , REDEFINES , PICTURE ;
+terminal Symbol VALUE    , OCCURS   ;
+terminal Symbol SPACES , ZERO     ;
+terminal Symbol PIC_NUMERIC , PIC_ALPHANUM , PIC_ALPHA ; 
+
+/* Verbos */ 
+terminal Symbol INITIALIZE , TRANSFORM ; 
+terminal Symbol ALLOCATE   , CONTINUE  , EVALUATE  ;
+terminal Symbol MULTIPLY   , SUBTRACT  , UNSTRING            ;
+terminal Symbol COMPUTE    , DISPLAY   , INSPECT   , PERFORM  , RELEASE  ;
+terminal Symbol REWRITE    ;
+terminal Symbol ACCEPT     , CANCEL    , CLOSE     , COMMIT   , DELETE   ;
+terminal Symbol DIVIDE     , GOBACK    , GOTO      , RETURN   , SEARCH   ;
+terminal Symbol STRING     , UNLOCK    ;
+terminal Symbol WRITE      , MERGE     , START     , FREE    ;
+terminal Symbol CALL       , EXIT      , EXITP     , MOVE    ;
+terminal Symbol NEXT       , OPEN      , READ      , STOPRUN ;
+terminal Symbol ADD        , SET       , IF       ;
+terminal Symbol USING      , PROGRAM   , PARAGRAPH ;
+
+/* Palabras reservadas */
+terminal Symbol COPY  ;
+terminal Symbol INPUT , OUTPUT , IO      , EXTEND ;
+terminal Symbol THRU  , UNTIL  , VARYING , TIMES  ;
+terminal Symbol ELSE  , WHEN   , AND     , OR     ;
+terminal Symbol PGMID , AUTHOR ;
+terminal Symbol NO     ;
+terminal Symbol FROM  , INTO   ;
+terminal Symbol SECTION ;
+terminal Symbol ENDP  , ENDIF , ENDPERFORM , ENDEVAL , ENDVERB;
+terminal Symbol CHECK , ATEND ;
+
+terminal Symbol FOR   , PAGE;
+terminal Symbol AFTER , FOREVER ; 
+
+/* Simbolos gramaticales y palabras comunes */
+
+terminal Symbol LPAR , RPAR ;
+terminal Symbol TO , WITH , OF ;  
+
+/* SDP */
+
+terminal Symbol SDPDESC , SDPMASTER ;  
+
+///////////////////////////////////////////////////////
+// Division 
+///////////////////////////////////////////////////////
+
+non terminal environment_division;
+non terminal data_division           , procedure_division;
+non terminal end_program ;
+
+//////////////////////////////////////////////////////
+// Identificacion division
+/////////////////////////////////////////////////////
+
+non terminal identification_division            ;
+non terminal ident_div_header , ident_bloque    ;
+non terminal ident_sentences  , ident_sentence  ;
+non terminal programId                          ;
+non terminal Symbol author , nombre             ;
+
+non terminal sdpDesc       , sdpDescData        ;
+non terminal sdpDescLineas , sdpDescLinea       ;          
+
+non terminal proc_div_header ; 
+non terminal env_div_header  , data_div_header;
+non terminal bloque_env;
+non terminal bloque_data     , bloque_procedure;
+
+non terminal section_file     , sect_file_header    , file_data    ; 
+non terminal section_working  , sect_working_header , working_data ;
+non terminal section_local    , sect_local_header   , local_data   ;
+non terminal section_linkage  , sect_linkage_header , linkage_data ;
+non terminal section_screen   , sect_screen_header  , screen_data  ;
+
+//////////////////////////////////////////////////////
+// No terminales para comerse el resto de sentencias
+/////////////////////////////////////////////////////
+
+non terminal Tokens read_resto ;
+non terminal Tokens eatClose   , eatCloseLst , eatCloseItem ;
+non terminal Tokens eatWrite   , eatWriteLst , eatWriteItem ;
+
+//////////////////////////////////////////////////////
+// Generales
+/////////////////////////////////////////////////////
+
+non terminal ax    , descripcion , module;
+non terminal Symbol indice ;
+non terminal Statement lst_indices , indSymbol ;
+
+/***********************************************************/
+/*                   VARIABLES                             */
+/***********************************************************/
+
+non terminal Symbol nivel;
+non terminal Symbol var_occurs , var_value , var_occurs_to  ;
+non terminal Symbol var_name   , init_val  ;
+
+non terminal Var    var_def;
+non terminal Var    variables  , variable     ;
+non terminal Var    var_data   , var_data_def ;
+non terminal Symbol var_attr , var_redefines , var_picture ;
+non terminal Symbol pic_type , pic_size ; 
+
+
+/* CONFIGURATION SECTION */
+
+non terminal section_configuration , sect_conf_header  , sect_conf_data ;
+non terminal section_io            , sect_io_header    , sect_io_bloques ;
+non terminal file_control_decl , file_control_header ;
+
+/***********************************************************/
+/*                    SELECT FICHEROS                      */
+/***********************************************************/
+
+non terminal select_files     , select_file ;
+non terminal select_file_mark , select_file_list ;
+
+non terminal file_dd          ;
+non terminal file_attrs , file_attr_item ;
+non terminal file_attr_assign , file_attr_fs  ;
+non terminal file_attr_org ;
+non terminal file_attr_rel ;
+non terminal file_attr_record ;
+non terminal file_attr_assign_dd ;
+non terminal file_attr_org_type , file_attr_access ;
+non terminal file_attr_acc_mode ;
+
+non terminal         fd     , fd_list , fd_fields , fd_resto ;
+non terminal Var     fd_def , fd_record;
+
+/* Parrafos y sentencias */
+
+non terminal lista_parrafos , bloque_parrafos  , bloque_parrafo ;
+non terminal         bloque_inicial ; 
+non terminal Integer bloque_sentences ;
+non terminal Symbol  parrafo_name ;
+non terminal Boolean parr_section;
+
+non terminal Symbol exitType;
+
+non terminal           lista_stmt   ;
+non terminal Statement stmt , verbos , noverbos ;
+
+non terminal Tokens    perform_vacio   ;
+
+non terminal Tokens    perform1       , perform2 , perform3 , perform4;
+non terminal Tokens    perform_thru   , perform_resto;
+non terminal Tokens    perform_conds  , perform_cond ;
+non terminal Tokens    perform_times  ;
+non terminal Tokens    parms_entrada  , resto_call  , list_parms;
+
+non terminal Statement stmtInitialize , stmtCommit   , stmtMerge  ;
+non terminal Statement stmtUnstring   , stmtClose    , stmtStart  ;
+non terminal Statement stmtTransform  , stmtCompute   , stmtDelete   ;
+non terminal Statement stmtAllocate   , stmtDisplay   , stmtDivide   ;
+non terminal Statement stmtContinue   , stmtInspect   , stmtGoback   ;
+non terminal Statement stmtExit       , stmtExitP     , stmtExitG    , exitTypes  ;
+non terminal Statement stmtEvaluate   , stmtPerform   , stmtFree     ;
+non terminal Statement stmtRelease    , stmtSearch    , stmtGoTo   ;
+non terminal Statement stmtRewrite    , stmtString    , stmtMove   ;
+non terminal Statement stmtMultiply   , stmtAccept    , stmtUnlock   , stmtNext   ;
+non terminal Statement stmtSubtract   , stmtCancel    , stmtWrite    , stmtOpen   ;
+
+non terminal Statement stmtCall   ;
+non terminal Symbol    moduloCall ;
+non terminal           restoCall  ;
+
+non terminal Statement stmtRollback  ;
+
+non terminal Statement stmtRead   ;
+non terminal Statement stmtReturn ;             
+non terminal Statement stmtStop   ;             
+non terminal Statement stmtAdd    ;             
+non terminal Statement stmtEndP   ;             
+non terminal Statement stmtSet    ;             
+
+non terminal Statement stmtImperative;
+non terminal Statement stmtAtEnd;
+non terminal Statement stmtCopy;
+
+non terminal Statement stmtIf , stmtElse  , stmtEndIf ;
+non terminal Statement stmtEndPerform ; 
+non terminal Statement stmtEndEvaluate ;
+non terminal Statement stmtWhen;
+non terminal Statement stmtEndVerb ;         
+non terminal Statement condition , cond_or , cond_and ;
+
+non terminal Statement stmtDatos   , stmtDatos1   , stmtDatos2   ;
+non terminal Statement stmtIO      , stmtIO1      , stmtIO2      ;
+non terminal Statement stmtControl , stmtControl1 , stmtControl2 ;
+non terminal Statement stmtFlujo   , stmtFlujo1   , stmtFlujo2   ;
+non terminal Statement stmtArit    , stmtArit1    , stmtArit2    ; 
+non terminal Statement stmtLang    ;
+
+/** OPEN ***/
+
+non terminal Tokens    lstFilesOpen ;
+non terminal Tokens    openLstFiles ,  openSentence ;
+non terminal Statement openMode     ;
+
+non terminal Tokens closeFile , closeLstFiles ;
+
+non terminal Variable ident  , padre ;
+non terminal VarList  lvalue , lvalue_list ;
+non terminal Symbol   rvalue ;
+
+/***  WORK  ***/
+
+non terminal Tokens token , tokens , optTokens , nada ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+ax     ::=  descripcion module {: code.EndOfFile(lastStmt, hasEndProgram);  :}
+       ; 
+
+descripcion ::= sdpDesc
+            |
+            ;
+                   
+module ::= identification_division 
+           environment_division    
+           data_division           
+           procedure_division      
+           end_program                        
+       ;
+
+end_program  ::= END_PGM:s ID ENDP {: hasEndProgram = true; 
+                                      Statement stmt = new Statement(s); 
+                                      code.endProgram(stmt);
+                                      lastStmt = stmt;
+                                   :}
+             |
+             ;
+                  
+/*********************************************************************/
+/* Identification division                                           */
+/*********************************************************************/
+
+identification_division ::= ident_div_header ident_bloque
+                        |
+                        ;
+
+ident_div_header ::= DIV_ID:s  ENDP  {: sections.setIdentification(s.left); :}
+                 ;                      
+
+ident_bloque ::= ident_sentences
+             |   
+             ;
+
+ident_sentences ::= ident_sentence
+                |   ident_sentences ident_sentence
+                ;
+
+ident_sentence ::= programId
+               |   author
+               |   sdpDesc  
+               ;
+                             
+programId ::= PGMID ENDP ID:s ENDP {: module.setName(getSymbolName(s)); :}
+          ;
+
+author    ::= AUTHOR ENDP nombre:s ENDP {: module.setAuthor(getSymbolName(s)); :}
+          ;
+
+nombre    ::= ID:s          {: RESULT = s; :}
+          |   nombre:n ID:s {: n.value = (String) n.value + " " + (String) s.value; 
+                               RESULT = n;
+                            :}
+          ;
+                    
+sdpDesc  ::= SDPDESC sdpDescData
+         ;
+
+sdpDescData ::= sdpDescLineas
+            |
+            ;
+            
+sdpDescLineas ::= sdpDescLinea
+              |   sdpDescLineas sdpDescLinea
+            ;
+            
+sdpDescLinea ::= LITERAL:s   {: module.setDescription(s.value, false); :}
+             |   LITCONCAT:s {: module.setDescription(s.value, true);  :}
+             ;
+ 
+/*********************************************************************/
+/* Environment division                                              */
+/*********************************************************************/
+
+environment_division  ::= env_div_header bloque_env
+                      |
+                      ;
+                     
+env_div_header        ::= DIV_ENV:s ENDP  {: sections.setEnvironment(s.left); :}
+                      ;
+
+bloque_env            ::= section_configuration
+                          section_io
+                      ;
+           
+section_configuration ::= sect_conf_header sect_conf_data
+                      |
+                      ;
+                      
+sect_conf_header      ::= CONF_SECTION:s ENDP {: sections.setConfiguration(s.left); :}
+                      ;
+
+sect_conf_data        ::=
+                      ;
+
+section_io            ::= sect_io_header sect_io_bloques
+                      |
+                      ;
+
+sect_io_header        ::= IO_SECTION:s ENDP  {: sections.setInputOutput(s.left); :}
+                      ;
+
+sect_io_bloques       ::= file_control_decl
+                      |
+                      ;       
+
+file_control_decl     ::= file_control_header select_file_list
+                      ;
+                      
+file_control_header   ::= FILE_CONTROL ENDP 
+                      ;
+
+select_file_list      ::= select_files
+                      |
+                      ;
+                                                                  
+select_files          ::= select_file_mark
+                      |   select_files select_file_mark
+                      ;
+
+select_file_mark      ::= SDPMASTER    {: master = true; :}
+                      |   select_file
+                      ;
+                      
+select_file           ::= file_dd  file_attrs  ENDP 
+                      ;         
+
+file_dd               ::= SELECT ID:s {: fichero = new Persistence(getSymbolName(s), master);
+                                         module.addFile(fichero);
+                                         master = false; 
+                                         summary.setFiles();
+                                      :}
+                      ;
+
+file_attrs            ::= file_attr_item 
+                      |   file_attrs file_attr_item 
+                      ;
+
+file_attr_item        ::= file_attr_assign 
+                      |   file_attr_fs
+                      |   file_attr_org
+                      |   file_attr_access
+                      |   file_attr_rel
+                      |   file_attr_record
+                      ;                      
+   
+file_attr_assign      ::= ASSIGN file_attr_assign_dd
+                      ;  
+                      
+file_attr_assign_dd   ::= LITERAL:s  {: fichero.setPhysicalName(getSymbolName(s)); :} 
+                      |   ID:s       {: fichero.setPhysicalName(getSymbolName(s)); :} 
+                      |   DISPLAY:s  {: fichero.setPhysicalName("DISPLAY");        :}   
+                      ;
+                        
+file_attr_fs          ::= STATUS ID 
+                      ;
+
+file_attr_org ::= ORGANIZATION file_attr_org_type                               
+              ;                      
+
+file_attr_org_type ::= SEQUENTIAL   {: fichero.setType(Persistence.SEQUENTIAL); :}
+                   |   RELATIVE     {: fichero.setType(Persistence.RELATIVE); :}
+                   |   INDEXED      {: fichero.setType(Persistence.INDEXED); :}
+                   ;
+
+file_attr_access   ::= ACCESS file_attr_acc_mode
+                   ;                            
+
+file_attr_acc_mode ::= SEQUENTIAL
+                   |   DYNAMIC
+                   |   RANDOM
+                   ;
+
+file_attr_rel      ::= RELATIVE ID
+                   ;
+                                 
+file_attr_record        ::= RECORD ID
+                   ;                   
+                        
+/*********************************************************************/
+/* Data division                                                     */
+/*********************************************************************/
+
+data_division   ::= data_div_header bloque_data
+                |
+                ;
+
+data_div_header ::=  DIV_DATA:s ENDP {: sections.setData(s.left); :}
+                ;
+                
+bloque_data     ::= section_file 
+                    section_working 
+                    section_local 
+                    section_linkage 
+                    section_screen
+                ;
+
+/***************************************************************/
+/*         FILE SECTION                                        */
+/***************************************************************/
+
+section_file    ::= sect_file_header file_data 
+                |
+                ;
+
+sect_file_header ::= FILE_SECTION:s ENDP  {: sections.setFile(s.left); :}
+                 ;
+                 
+
+file_data ::= fd_list
+          |
+          ;
+
+fd_list   ::= fd
+          |   fd_list fd
+          ;
+        
+fd        ::= fd_def:d fd_record:v fd_fields {: module.setRecordName(d, v); :}
+          ;
+
+fd_def    ::= FD ID:s fd_resto ENDP {: RESULT = new Var(getSymbolName(s), 99); :}  
+          ;
+
+fd_record ::= variable:v {: RESULT = v; :}
+          ;
+          
+fd_fields ::= variables
+          |
+          ;
+                 
+fd_resto ::= tokens
+         |
+         ;                 
+
+/***************************************************************/
+/*         WORKING-STORAGE SECTION                             */
+/***************************************************************/
+
+section_working     ::= sect_working_header working_data
+                    |
+                    ;
+
+sect_working_header ::= WORKING_SECTION:s ENDP 
+                        {: sections.setWorkingStorage(s.left); :}
+                    ;
+
+working_data        ::= variables
+                    |
+                    ;
+
+/***************************************************************/
+/*         LOCAL-STORAGE SECTION                               */
+/***************************************************************/
+                  
+section_local     ::= sect_local_header local_data
+                  |
+                  ;
+
+sect_local_header ::= LOCAL_SECTION:s ENDP 
+                      {: sections.setLocalStorage(s.left); :}
+                  ;
+
+local_data        ::= variables
+                  | 
+                  ;
+
+/***************************************************************/
+/*         LINKAGE SECTION                                     */
+/***************************************************************/
+                 
+section_linkage     ::= sect_linkage_header linkage_data
+                    |
+                    ; 
+
+sect_linkage_header ::= LINKAGE_SECTION:s ENDP 
+                        {: sections.setLinkage(s.left); :}
+                    ;
+
+linkage_data        ::= variables
+                    | 
+                    ;
+             
+/***************************************************************/
+/*         SCREEN SECTION                                      */
+/***************************************************************/
+                    
+section_screen  ::= sect_screen_header screen_data
+                |
+                ;
+
+sect_screen_header ::= SCREEN_SECTION:s ENDP 
+                       {: sections.setScreen(s.left); :}
+                   ;
+
+screen_data ::= nada
+            |
+            ;
+
+/***************************************************************/
+/*   TRATAMIENTO DE VARIABLES                                  */
+/***************************************************************/
+
+variables  ::= variable
+           |   variables variable
+           ;
+           
+variable   ::= var_def:v var_data_def ENDP {: RESULT = module.addVariable(v); :}
+           ;
+           
+var_def    ::= nivel:n var_name:s 
+              {: currVar = new Var(getSymbolName(s), getSymbolName(n)); 
+                 RESULT = currVar;
+              :}
+           ;
+var_name   ::= ID:s          {: RESULT = s; :}
+           |   FILLER:s      {: RESULT = s; :}     
+           ;
+           
+nivel      ::= LEVEL:l       {: RESULT = l; :}
+           |   LEVEL_77:l    {: RESULT = l; :}
+           |   LEVEL_78:l    {: RESULT = l; :}
+           |   LEVEL_88:l    {: RESULT = l; :}
+           ;
+
+var_data_def ::= var_data
+             |
+             ;
+                        
+var_data   ::= var_attr
+           |   var_data var_attr
+           ;
+
+var_attr   ::= var_redefines
+           |   var_picture
+           |   var_occurs
+           |   var_value
+           ;
+
+var_redefines ::= REDEFINES ID:i  
+                 {: currVar.setHermano(module.getVariable(getSymbolName(i))); :}
+              ;
+
+var_occurs ::= OCCURS NUMERO:from var_occurs_to:to
+               {: Integer min = Integer.parseInt((String) from.value);
+                  Integer max = Integer.parseInt((String) to.value);
+                  if (max > min) min = max;
+                  currVar.setElements(min);
+               :}
+           ;
+                                                                                    
+var_occurs_to ::= TO NUMERO:n {: RESULT = n; :}
+              |               {: RESULT = new Symbol(0, 0, 0, "0"); :}
+              ;
+
+var_picture ::= PICTURE pic_type pic_size
+            ;
+
+pic_type ::= PIC_NUMERIC:s   {: currVar.setType(Var.NUMERIC);
+                                currVar.setSize(((String) s.value).length());  
+                             :} 
+         |   PIC_ALPHANUM:s  {: currVar.setType(Var.ALPHANUM); 
+                                currVar.setSize(((String) s.value).length());  
+                             :} 
+         
+         |   PIC_ALPHA:s     {: currVar.setType(Var.ALPHA);    
+                                currVar.setSize(((String) s.value).length());  
+                             :} 
+         
+         ; 
+         
+pic_size ::= LPAR NUMERO:s RPAR  {: Integer i = Integer.parseInt((String) s.value);
+                                    currVar.setSize(i);
+                                 :}   
+         |
+         ;
+                   
+var_value ::= VALUE init_val:i  {: currVar.setValue((String) i.value); :}
+          ;
+
+init_val ::= LITERAL:s   {: RESULT = s; :}
+         |   NUMERO:s    {: RESULT = s; :}
+         |   ZERO        {: RESULT = new Symbol(0, 0, 0, "0"); :}
+         |   SPACES      {: RESULT = new Symbol(0, 0, 0, " "); :}
+         ;
+
+/*********************************************************************/
+/* Procedure division                                                */
+/*********************************************************************/
+                                             
+procedure_division ::= proc_div_header bloque_procedure
+                   ;
+
+proc_div_header    ::= DIV_PROC:s resto_call:p {: code.beginCode(s); :}
+                   ;
+
+resto_call         ::=  parms_entrada:p {: RESULT = p; :} 
+                        ENDP:s          {: code.parrafoVirtual(s); :}
+                   ;
+
+parms_entrada      ::= USING list_parms {: module.setType(CDG.MOD_ROUTINE); :}
+                   |                    {: module.setType(CDG.MOD_MAIN);    :}  
+                   ;
+                                 
+list_parms         ::= ID:s               {: RESULT = new Tokens(s); :}
+                   |   list_parms:l ID:s  {: RESULT = l.add(s);      :} 
+                   ;
+                                         
+bloque_procedure   ::= bloque_inicial  lista_parrafos
+                   ;
+
+// Bloque sentences podria ser vacio
+// Por eso no es necesario indicarlo en bloque_inicial                 
+
+bloque_inicial  ::=  bloque_sentences
+                ;
+
+lista_parrafos ::= bloque_parrafos
+               |
+               ;
+               
+bloque_parrafos ::= bloque_parrafo
+                |   bloque_parrafos bloque_parrafo
+                ;
+                
+bloque_parrafo   ::= parrafo_name  bloque_sentences
+                 ;
+
+bloque_sentences ::= lista_stmt  
+                 |               
+                 ;
+                        
+parrafo_name     ::= PARRAFO:p parr_section:b ENDP 
+                     {: if (b == true) code.notSupportedSection(p); 
+                        RESULT = code.processParrafo(p, lastStmt); 
+                     :}   
+                 ;  
+
+parr_section     ::= SECTION:s {: RESULT = true;  :}
+                 |             {: RESULT = false; :}
+                 ;                               
+                 
+lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(s, lastStmt); :} 
+           |   lista_stmt stmt:s  {: lastStmt = code.processStatement(s, lastStmt); :}
+           ;
+
+stmt     ::= verbos:s       {: RESULT = s; code.incStmt(); :}
+         |   noverbos:s     {: RESULT = s; :}
+         ;  
+
+noverbos ::= stmtEndP:s        {: RESULT = code.checkFlujo( s, lastStmt);:}
+         |   stmtEndIf:s       {: RESULT = code.endIf(s);              :}                       
+         |   stmtEndPerform:s  {: RESULT = code.endPerform(s);        :}
+         |   stmtEndEvaluate:s {: RESULT = code.endEvaluate(s);       :}         
+         |   stmtEndVerb:s     {: RESULT = s;                         :}
+         |   stmtImperative:s  {: RESULT = s;                         :}
+         |   stmtWhen:s        {: RESULT = code.processWhen(s);       :}
+         |   stmtElse:s        {: RESULT = code.processElse(s);       :}         
+         |   stmtCopy:s        {: code.notSupportedCopy(s.getVerb()); :}
+         |   stmtAtEnd:s       {: RESULT = s;                         :}  
+         ;
+
+verbos   ::= stmtControl:s    {: RESULT = s; summary.incStmtDatos();  :}
+         |   stmtFlujo:s      {: RESULT = s; summary.incStmtFlujo();  :}
+         |   stmtDatos:s      {: RESULT = s; summary.incStmtDatos();  :}
+         |   stmtArit:s       {: RESULT = s; summary.incStmtArit();   :}
+         |   stmtIO:s         {: RESULT = s; summary.incStmtIO();     :}
+         |   stmtLang:s       {: RESULT = s; summary.incStmtLang();   :}       
+         ;
+         
+/* Verbos que tienen tratamiento especial
+ * Cuando se procesa el verbo, se inyecta codigo
+ * En estos casos hay que inyectar el codigo y preparar el siguiente
+ * En el bloque todavia no se ha contado la sentencia If
+ */
+          
+
+/* Sentencias de control de programa */
+
+stmtControl ::= stmtControl1:s optTokens:t {: RESULT = s.addTokens(t);          :}
+             |  stmtExit:s                 {: RESULT =  code.processExit(s);    :}    
+             |  stmtControl2:s             {: hasEndProgram = true; RESULT = s; :}
+             ;
+            
+stmtControl1 ::= stmtNext:s         {: RESULT = s; :}
+             ;
+
+stmtControl2 ::= stmtStop:s         {: hasEndProgram = true;
+                                       RESULT = s; 
+                                       code.trapEndModule(); 
+                                   :}
+             | stmtGoback:s       {:  hasEndProgram = true;
+                                      code.trapEndModule();
+                                      RESULT = s; 
+                                   :}
+             ;
+             
+
+/* Sentencias de control de flujo */
+
+stmtFlujo   ::= stmtFlujo1:s optTokens:t {: RESULT = s.addTokens(t); :}
+            |   stmtFlujo2:s             {: RESULT = s;              :}
+            ;
+
+stmtFlujo1  ::= stmtContinue:s    {: RESULT = s; :}
+            |   stmtEvaluate:s    {: RESULT = code.processEvaluate(s); :}
+            |   stmtGoTo:s        {: RESULT = s; :}
+            ;                                
+
+stmtFlujo2 ::= stmtPerform:s     {: RESULT = s; :}
+           |   stmtCall:s        {: RESULT = s; :}
+           |   stmtIf:s          {: RESULT = s; :}
+           ;
+             
+/* Sentencias de manipulacion de datos */
+
+stmtDatos ::= stmtDatos1:s  optTokens:t {: RESULT = s.addTokens(t); :}
+          |   stmtDatos2:s              {: RESULT = s;              :}
+          ;
+
+stmtDatos1 ::= stmtInitialize:s     {: RESULT = s; :}
+           |   stmtTransform:s      {: RESULT = s; :}
+           |   stmtUnstring:s       {: RESULT = s; :}
+           |   stmtSearch:s         {: RESULT = s; :}
+           |   stmtString:s         {: RESULT = s; :}
+           |   stmtSet:s            {: RESULT = s; :}
+           |   stmtInspect:s        {: RESULT = s; :}
+           ;
+             
+stmtDatos2 ::= stmtMove:s          {: RESULT = s; :}
+           ;
+            
+/* Sentencias de entrada/salida */
+
+stmtIO    ::= stmtIO1:s optTokens:t {: RESULT = s.addTokens(t); :}
+          |   stmtIO2:s             {: RESULT = s;              :}
+          ;
+          
+stmtIO1   ::= stmtAccept:s         {: RESULT = s; :}
+          |   stmtCommit:s         {: RESULT = s; :}
+          |   stmtUnlock:s         {: RESULT = s; :}
+          |   stmtMerge:s          {: RESULT = s; :}
+          |   stmtStart:s          {: RESULT = s; :}
+          |   stmtRollback:s       {: RESULT = s; :}
+          ;
+
+stmtIO2   ::= stmtDisplay:s        {: RESULT = s; :}
+          |   stmtOpen:s           {: RESULT = s; :}
+          |   stmtClose:s          {: RESULT = s; :}
+          |   stmtRead:s           {: RESULT = s; :}
+          |   stmtRelease:s        {: RESULT = s; :}          
+          |   stmtReturn:s         {: RESULT = s; :}
+          |   stmtWrite:s          {: RESULT = s; :}
+          |   stmtDelete:s         {: RESULT = s; :}
+          |   stmtRewrite:s        {: RESULT = s; :}
+          ;
+                    
+/* Sentencias de operaciones aritmeticas */
+stmtArit  ::= stmtArit1:s optTokens {: RESULT = s; :}
+          |   stmtArit2:s           {: RESULT = s; :} 
+          ;
+          
+stmtArit1   ::= stmtMultiply:s    {: RESULT = s; :}
+            |   stmtSubtract:s    {: RESULT = s; :}
+            |   stmtDivide:s      {: RESULT = s; :}
+            ;
+            
+stmtArit2   ::= stmtCompute:s     {: RESULT = s; :}
+            |   stmtAdd:s         {: RESULT = s; :}
+            ;
+            
+/* Sentencias del lenguaje */
+
+stmtLang    ::= stmtAllocate:s    {: RESULT = s; :}
+            |   stmtCancel:s      {: RESULT = s; :}
+            |   stmtFree:s        {: RESULT = s; :}
+            ;
+
+/* Verbos */
+                                                   
+stmtInitialize  ::=  INITIALIZE:s {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtTransform   ::=  TRANSFORM:s  {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtAllocate    ::=  ALLOCATE:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtContinue    ::=  CONTINUE:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtEvaluate    ::=  EVALUATE:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtMultiply    ::=  MULTIPLY:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtSubtract    ::=  SUBTRACT:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtUnstring    ::=  UNSTRING:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtInspect     ::=  INSPECT:s    {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtAccept      ::=  ACCEPT:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtCancel      ::=  CANCEL:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtCommit      ::=  COMMIT:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtDivide      ::=  DIVIDE:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtGoback      ::=  GOBACK:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtSearch      ::=  SEARCH:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtString      ::=  STRING:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtUnlock      ::=  UNLOCK:s     {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtMerge       ::=  MERGE:s      {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtStart       ::=  START:s      {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+stmtCall        ::=  CALL:s moduloCall:i restoCall      {: RESULT = code.processCall(s, i); :}     
+                ;
+
+moduloCall      ::= ID:i      {: RESULT = i; :}
+                |   LITERAL:l {: RESULT = l; :}
+                ;
+                
+restoCall       ::= USING tokens
+                |
+                ;
+                
+// EXIT PERFORM crea un conflicto. por eso se controla EXIT PERFORM
+// en el analizador lexico
+
+stmtExit        ::= exitTypes:s   {: RESULT = s; :}
+                ;
+
+exitTypes ::= stmtExitG:s {: RESULT = s; :} 
+          |   stmtExitP:s {: RESULT = s; :}
+          ;  
+                        
+stmtExitG ::=  EXIT:s  exitType:t   {: Statement stmt = new Statement(s, code.getStmts());
+                                       RESULT = stmt.addSymbol(t); 
+                                    :}    
+          ;
+
+stmtExitP ::=  EXITP:s  {: Statement stmt = new Statement(s, code.getStmts());
+                           RESULT = stmt.addSymbol(code.makeSymbol(OCSym.PERFORM, -1, -1, "PERFORM")); 
+                        :}    
+          ;
+
+exitType  ::= PROGRAM:s   {: RESULT = s; :}
+          |   PARAGRAPH:s {: RESULT = s; :}
+          |   SECTION:s   {: RESULT = s; :}
+          |               {: RESULT = code.makeSymbol(OCSym.PARAGRAPH, -1, -1, ""); :}
+          ;
+          
+stmtFree     ::=  FREE:s       {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtGoTo     ::=  GOTO:s       {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtRollback ::=  ROLLBACK:s   {: RESULT = new Statement(s, code.getStmts()); :}     ;
+stmtNext     ::=  NEXT:s       {: RESULT = new Statement(s, code.getStmts()); :}     ;
+
+stmtDisplay  ::=  DISPLAY:s   tokens {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+               
+stmtRead     ::=  READ:r  ID:i read_resto:s     
+                  {: Statement stmt = code.fileAccess(TRAP.ACC_READ, r, i);
+                     RESULT = stmt.addTokens(s); 
+                  :}
+             ;
+
+stmtReturn   ::=  RETURN:r  ID:i read_resto:j     
+                  {: Statement stmt = code.fileAccess(TRAP.ACC_READ, r, i);
+                     RESULT = stmt.addTokens(j); 
+                  :}
+             ;
+
+read_resto   ::= INTO:i ID:d {: Tokens t = new Tokens(i); RESULT = t.add(d); :} 
+             |               {: Tokens t = new Tokens();  RESULT = t;        :}
+             ;
+
+stmtWrite    ::=  WRITE:w ID:i eatWrite:e 
+                  {: RESULT = code.fileAccess(TRAP.ACC_INSERT, w, i); :}       
+             ;
+
+stmtRewrite  ::=  REWRITE:r ID:i  eatWrite:e 
+                  {: RESULT = code.fileAccess(TRAP.ACC_UPDATE, r, i); :}
+             ;
+             
+stmtRelease  ::=  RELEASE:s  ID:i eatWrite:e  
+                  {: Statement stmt = new Statement(s);
+                     stmt.addSymbol(i);
+                     RESULT = stmt.addTokens(e);
+                  :}     
+             ;
+
+stmtDelete   ::=  DELETE:d ID:i      
+                 {: RESULT = code.fileAccess(TRAP.ACC_DELETE, d, i); :}
+             ;
+
+stmtStop     ::=  STOPRUN:s  optTokens  {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+
+stmtAdd      ::=  ADD:s tokens {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+             
+stmtSet      ::=  SET:s        {: RESULT = new Statement(s, code.getStmts()); :}     
+             ;
+
+stmtCompute  ::=  COMPUTE:s ID:i tokens
+                   {: Statement stmt = new Statement(s, code.getStmts());
+                      stmt.addSymbol(i);
+                      RESULT = stmt; 
+                   :}     
+              ;
+
+stmtMove      ::=  MOVE:s rvalue:r lvalue:l      
+                   {: Statement stmt = new Statement(s, code.getStmts());
+                      stmt.addSymbol(r);
+                      stmt.addVariables(l);
+                      RESULT = stmt; 
+                   :}     
+              ;
+
+
+stmtOpen      ::=  OPEN:o openLstFiles:l 
+                   {: RESULT = code.fileAction(TRAP.ACC_OPEN, o, l); :} 
+              ;
+
+openLstFiles  ::= openSentence:s                 {: RESULT = s;         :}
+              |   openLstFiles:l openSentence:s  {: RESULT = l.add(s);  :}
+              ;
+
+openSentence  ::= openMode:o lstFilesOpen:l 
+                 {: Persistence f;
+                    for (Symbol s : l.getTokens()) {
+                        f = module.getFile(getSymbolName(s));
+                        f.setAccess(o.getId());
+                    }
+                    RESULT = l;
+                 :}
+              ; 
+             
+openMode ::= INPUT:s   {: Statement stmt = new Statement(s);
+                          stmt.setId(Persistence.INPUT);
+                          RESULT = stmt; 
+                       :}
+         |   OUTPUT:s  {: Statement stmt = new Statement(s);
+                          stmt.setId(Persistence.OUTPUT);
+                          RESULT = stmt;
+                       :}
+         |   IO:s      {: Statement stmt = new Statement(s);
+                          stmt.setId(Persistence.IO);
+                          RESULT = stmt;
+                       :}
+         |   EXTEND:s  {: Statement stmt = new Statement(s);
+                          stmt.setId(Persistence.EXTEND);
+                          RESULT = stmt;
+                       :}
+         ;      
+
+lstFilesOpen ::= ID:s                  {: RESULT = new Tokens(s); :}
+             |   lstFilesOpen:l ID:s   {: RESULT = l.add(s);      :}
+             ;
+
+stmtClose       ::=  CLOSE:c  closeLstFiles:l  
+                    {: RESULT = code.fileAction(TRAP.ACC_CLOSE, c, l); :}
+                ;
+
+closeLstFiles   ::= closeFile:c                  {: RESULT = c;         :}
+                |   closeLstFiles:l closeFile:c  {: RESULT = l.add(c);  :}
+                ;
+
+closeFile       ::= ID:s eatClose:e   {: Tokens t = new Tokens(s);
+                                         RESULT = t.add(e); 
+                                      :}
+                ;
+
+stmtImperative  ::= CHECK:s     {: code.setImperative(); 
+                                   RESULT = new Statement(s); 
+                                :}
+                ;
+                
+stmtAtEnd       ::= ATEND:s     {: Statement stmt = new Statement(s);
+                                   RESULT = code.setAtEnd(stmt); 
+                                :}
+                ;
+
+stmtCopy        ::= COPY:c ID:i {: RESULT = new Statement(c); :}
+                ;
+                
+stmtIf     ::=  IF:s condition {: Statement stmt = new Statement(s, code.getStmts());      
+                                  RESULT = code.processIf(stmt);
+                               :}
+           ;
+                     
+condition  ::= cond_or
+           ;                
+
+cond_or    ::= cond_and 
+           |   cond_or OR cond_and    {: code.incComplexity(); :}
+           ;
+
+cond_and   ::= tokens
+           |   cond_and AND tokens   {: code.incComplexity(); :}
+           ;
+                   
+/*****************************************************************/
+/***    TRATAMIENTO PERFORM                                    ***/
+/*****************************************************************/
+
+stmtPerform    ::=  PERFORM:s perform1:p 
+                   {: RESULT = code.processPerform(s, p, lastStmt); :}
+               ;
+                                
+perform1       ::= perform2:p      {: RESULT = p; :} 
+               |   perform3:p      {: RESULT = p; :}
+               |   perform_vacio:p {: RESULT = p; :}
+               ;
+              
+perform2       ::= ID:i perform4:s {: Tokens tok = new Tokens(i); 
+                                      RESULT = tok.add(s); 
+                                   :}
+               ;
+
+perform3 ::= FOREVER:f       {: RESULT = new Tokens(f); :}
+         |   NUMERO TIMES:t  {: RESULT = new Tokens(t); :}
+         |   perform_conds:c {: RESULT = c;             :}
+         ;
+         
+perform4       ::= perform_times:p                 {: RESULT = p;             :}
+               |   perform_conds:p                 {: RESULT = p;             :}
+               |   perform_thru:t  perform_resto:r {: RESULT = t.add(r);      :}
+               |   TIMES:s                         {: RESULT = new Tokens(s); :}
+               |                                   {: RESULT = new Tokens();  :}
+               ;
+
+perform_thru   ::= THRU:t ID:s {: Tokens tok = new Tokens(t); 
+                                  RESULT = tok.add(s); 
+                               :} 
+               ;
+
+
+perform_resto  ::= perform_conds:s {: RESULT = s;             :} 
+               |   perform_times:s {: RESULT = s;             :}
+               |   FOREVER:s       {: RESULT = new Tokens(s); :}      
+               |                   {: RESULT = new Tokens();  :} 
+               ;
+                                                         
+perform_vacio  ::= ENDPERFORM:s {: RESULT = new Tokens(s); :}
+               ;
+               
+perform_conds  ::= perform_cond:s                 {: RESULT = s;         :}
+               |   perform_conds:p perform_cond:s {: RESULT = p.add(s);  :}
+               ;
+               
+perform_cond   ::= VARYING:s tokens:t   {: RESULT = new Tokens(s, t); :}
+               |   AFTER:s   tokens:t   {: RESULT = new Tokens(s, t); :}
+               |   UNTIL:s   condition  {: RESULT = new Tokens(s);    :}
+               ;
+
+perform_times  ::= NUMERO:v TIMES:s  {: Tokens t = new Tokens(v); RESULT = t.add(s); :} 
+               |   ID:v     TIMES:s  {: Tokens t = new Tokens(v); RESULT = t.add(s); :}
+               ;                               
+                                     
+/**************************************************************/     
+/* Otras palabras reservadas                                  */
+/**************************************************************/
+
+stmtEndP        ::= ENDP:s        {: RESULT = new Statement(s); :} ;
+stmtElse        ::= ELSE:s        {: RESULT = new Statement(s); :} ;   
+stmtEndIf       ::= ENDIF:s       {: RESULT = new Statement(s); :} ;
+stmtEndPerform  ::= ENDPERFORM:s  {: RESULT = new Statement(s); :} ;
+stmtEndEvaluate ::= ENDEVAL:s     {: RESULT = new Statement(s); :} ;
+stmtEndVerb     ::= ENDVERB:s     {: RESULT = new Statement(s); :} ;
+                                       
+stmtWhen        ::= WHEN:s optTokens:t {: Statement stmt  = new Statement(s);
+                                          RESULT = stmt.addTokens(t);  
+                                      :} 
+                ;
+                                       
+///////////////////////////////////////////////////////
+// No terminales para eliminar el resto de las sentencias
+//////////////////////////////////////////////////////
+
+eatClose ::= eatCloseLst:l {: RESULT = l;            :}
+         |                 {: RESULT = new Tokens(); :}
+         ;
+
+eatCloseLst ::= eatCloseItem:i               {: RESULT = new Tokens(i); :}
+            |   eatCloseLst:l eatCloseItem:i {: RESULT = l.add(i);      :}
+            ;
+
+eatCloseItem ::= WITH:s {: RESULT = new Tokens(s); :}
+             |   NO:s   {: RESULT = new Tokens(s); :}
+             |   FOR:s  {: RESULT = new Tokens(s); :}
+             ;
+
+    
+eatWrite ::= eatWriteLst:l {: RESULT = l;            :}
+         |                 {: RESULT = new Tokens(); :}
+         ;
+
+eatWriteLst ::= eatWriteItem:e               {: RESULT = new Tokens(e); :}
+            |   eatWriteLst:x eatWriteItem:i {: RESULT = x.add(i);      :}
+            ;
+
+eatWriteItem ::= token:s {: RESULT = new Tokens(s); :} 
+             |   FROM:s  {: RESULT = new Tokens(s); :}
+             |   WITH:s  {: RESULT = new Tokens(s); :}
+             |   LOCK:s  {: RESULT = new Tokens(s); :}
+             |   NO:s    {: RESULT = new Tokens(s); :}
+             |   LINE:s  {: RESULT = new Tokens(s); :}
+             |   PAGE:s  {: RESULT = new Tokens(s); :}
+             ;
+
+///////////////////////////////////////////////////////
+// WORK
+//////////////////////////////////////////////////////
+
+optTokens ::= tokens:t {: RESULT = t;               :}
+          |            {: RESULT = new Tokens();    :}
+          ;
+           
+tokens ::= token:t          {: RESULT = t;        :}
+       |   tokens:l token:t {: RESULT = l.add(t); :}
+       ;
+ 
+token ::= ID:s                {: RESULT = new Tokens(s); :}
+      |   LITERAL:s           {: RESULT = new Tokens(s); :}
+      |   NUMERO:s            {: RESULT = new Tokens(s); :} 
+      |   LPAR tokens:t RPAR  {: RESULT = new Tokens(t); :}
+      ;
+
+lvalue ::= lvalue_list:l  {: RESULT = l; :}
+       ;
+       
+lvalue_list ::= ident:i                {: RESULT = new VarList(i); :}
+            |   lvalue_list:l ident:i  {: RESULT = l.add(i);       :}
+            ;
+                    
+rvalue ::= LITERAL:l  {: RESULT = l; :}
+       |   NUMERO:n   {: RESULT = n; :}
+       |   ident:i    {: RESULT = i; :}
+       ;
+
+ident ::= ID:i indice padre:s  {: RESULT = new Variable(i, s); :} 
+      ;
+
+padre ::= OF ID:s {: RESULT = new Variable(s);    :}
+      |           {: RESULT = null; :}
+      ;
+
+indice ::= LPAR lst_indices RPAR
+       |
+       ;      
+
+lst_indices ::= indSymbol
+            |   lst_indices indSymbol
+            ;
+              
+indSymbol ::= ident
+          |   NUMERO
+          ;
+               
+/*
+ * Esto se come lo que esta sin hacer
+ */
+
+nada ::= ENDP:s          {: RESULT = new Tokens(s); :}
+     |   nada:t ENDP:s   {: RESULT = t.add(s);      :} 
+     ;             

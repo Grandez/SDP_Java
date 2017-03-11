@@ -536,13 +536,11 @@ non terminal         id_lst            ;
             
 non terminal         declare_cursor            ; 
 
-non terminal         cursor_opc_opt            ;
 non terminal         cursor_opc                ;
 non terminal         cursor_opc_item           ;
 non terminal         cursor_type               ;
 non terminal         cursor_attr_opt           ;
 non terminal         cursor_attr               ;
-non terminal         cursor_select             ;
 non terminal         cursor_attr_with          ;
 non terminal         cursor_attr_item          ;
 
@@ -578,7 +576,6 @@ non terminal         schema_type               ;
 /**********************************************************************/
  
 non terminal         sql_select_into           ;
-non terminal         sel_select_from           ;
 non terminal         sql_select_clauses_opt    ;
 non terminal         sql_select_into_lst       ;
 non terminal         sql_select_column         ;
@@ -605,35 +602,37 @@ non terminal          sql_update_right_lst        ;
 non terminal          sql_update_clauses_opt      ;
 non terminal          sql_update_clause           ;
 
-non terminal sql_fetch          ;
-non terminal sql_fetch_lst      ;
+non terminal          function                    ;
+non terminal          function_value              ;
+non terminal          function_value_parms        ;
+non terminal          function_type               ;
+non terminal          function_parms              ;
+non terminal          func_parms_lst_opt          ;    
+non terminal          func_parms_lst              ;
+non terminal          func_parm_item              ;
+non terminal          func_parm_quantifier        ;
 
-
-non terminal                function                 ;
-non terminal                function_type            ;
-non terminal                function_parms           ;
-non terminal                func_parms_lst_opt       ;    
-non terminal                func_parms_lst           ;
-non terminal                func_parm_item           ;
-non terminal                func_parm_quantifier     ;
-
-non terminal                register             ;
-non terminal                register_word        ;
-non terminal                register_words       ;
-non terminal                reg_zone_opt         ;
+non terminal          register                    ;
+non terminal          register_word               ;
+non terminal          register_words              ;
+non terminal          reg_zone_opt                ;
 
 /**********************************************************************/
 /*          QUERIES                                                   */
 /**********************************************************************/
 
-non terminal           qry_fullselect            ;
-non terminal           qry_fullselect_left       ;
-non terminal           qry_fullselect_right_opt  ;
-non terminal           qry_fullselect_right_lst  ;
-non terminal           qry_fullselect_right      ;
+non terminal           qry_fullselect              ;
+non terminal           qry_fullselect_par          ;
+non terminal           qry_fullselect_left         ;
+non terminal           qry_fullselect_right_opt    ;
+non terminal           qry_fullselect_right_lst    ;
+non terminal           qry_fullselect_right        ;
+non terminal           qry_fullselect_clauses_opt  ;
 non terminal           qry_fullselect_clauses      ;
+non terminal           qry_fullselect_clauses_item ;
+non terminal           qry_fullselect_qry          ;
 
-non terminal           qry_subselect         ;
+non terminal           qry_subselect               ;
 non terminal           qry_subselect_clauses_opt   ;
 non terminal           qry_subselect_clauses       ;
 non terminal           qry_subselect_clause        ;
@@ -644,28 +643,25 @@ non terminal           qry_select_clauses_opt          ;
 non terminal           qry_select_clauses              ;
 non terminal           qry_select_clause               ;
 
-non terminal           qry_union_type                  ;
+non terminal           qry_fullselect_union            ;
 
-non terminal           qry_sub_full                    ;
-  
 /**********************************************************************/
 /*          CLAUSES                                                   */
 /**********************************************************************/
 
 non terminal           clause_allow                ;
 non terminal           clause_cardinality          ;
-non terminal           clause_correlation_opt      ;
-non terminal           clause_correlation          ;
-non terminal           clause_correlation_lst      ;
-non terminal           clause_correlation_items    ;
 non terminal           clause_encryption_opc       ;
 non terminal           clause_encryption           ;
 non terminal           clause_escape               ;
 non terminal           clause_explain              ; 
 non terminal           clause_hint                 ;
-non terminal           clause_into                 ;
-non terminal           clause_into_list            ;
-non terminal           clause_into_lst             ;
+
+non terminal           clause_isolation_opt        ;
+non terminal           clause_isolation            ;
+non terminal           clause_isolation_type       ;
+
+
 non terminal           clause_maintained           ;
 non terminal           clause_packageset           ;
 non terminal           clause_round                ;
@@ -680,8 +676,6 @@ non terminal           clause_select_column        ;
 non terminal           clause_select_column_as_opt ;
 non terminal           clause_select_column_as     ;
 
-non terminal clause_subselect_lst ;
-
 non terminal           clause_session           ;
 non terminal           clause_skip              ;
 non terminal           clause_sqlid             ;
@@ -689,7 +683,6 @@ non terminal           clause_values            ;
 non terminal           clause_values_data       ;
 non terminal           clause_yes_no            ;
 
-non terminal sequence_list                  ;
 non terminal sequence_from_opt              ;
 non terminal sequence_from                  ;
 non terminal sequence_reference_type        ;
@@ -702,25 +695,18 @@ non terminal clause_from             ;
 non terminal clause_where_opt        ; 
 non terminal clause_where            ;
 non terminal clause_where_condition  ;
-non terminal clause_group_opt        ;
 non terminal clause_group            ;
 non terminal expr_grouping_lst ;
 non terminal expr_grouping     ;
 
-non terminal clause_isolation_opt ;
-non terminal clause_isolation     ;
+non terminal clause_having           ;
 
-non terminal clause_isolation_type       ;
-
-non terminal clause_optimize_opt     ;
 non terminal clause_optimize         ;
 
 non terminal clause_update ;
 non terminal clause_update_opt ;
 non terminal clause_update_lst ;
 
-non terminal clause_having_opt       ;
-non terminal clause_having           ;
 
 non terminal clause_order            ;
 non terminal order_mode              ;
@@ -731,21 +717,16 @@ non terminal sort_type_opt           ;
 non terminal sort_type               ;
 non terminal clause_fetch_first      ;
 
-non terminal clause_fetch        ;
-non terminal clause_fetch_type   ;
 non terminal fetch_first_opt         ;
 
 
-non terminal clause_for_opt          ;
 non terminal clause_for              ;
 non terminal clause_for_type         ;
 non terminal clause_for_read_only    ;
-non terminal clause_for_opc          ;
 non terminal clause_read_only        ;
+non terminal clause_read             ;
 non terminal clause_for_update       ;
-non terminal clause_for_update_opt   ;
 non terminal clause_for_update_columns ;
-non terminal clause_for_update_lst   ;
 
 non terminal clause_for_row_opt      ;
 
@@ -760,30 +741,17 @@ non terminal clause_portion          ;
 non terminal clause_queryno_opt ;
 non terminal clause_queryno     ;
 
-
-non terminal clause_select_fields_lst       ;
-non terminal clause_select_field_item       ;
-non terminal clause_select_field_basic      ;
-non terminal clause_select_field            ;
-non terminal expr_select       ;
-non terminal unpacked_row            ;
-non terminal             select_alias            ;
-
 non terminal             clause_with_opt      ;
 non terminal             clause_with          ;
 
 non terminal table_reference_lst     ;
 non terminal table_reference         ;
-non terminal table_correlated        ;
 non terminal table_table_prfx        ;
 non terminal table_table             ;
-non terminal table_item_opt          ;
 non terminal table_item              ;
 non terminal table_locator           ;
 non terminal table_single            ;
 non terminal table_nested            ;
-non terminal table_nested_1          ;
-non terminal table_nested_2          ;
 non terminal table_change            ;
 non terminal table_change_sql        ;
 non terminal               table_function                   ;
@@ -796,6 +764,7 @@ non terminal               table_xml                        ;
 /*               JOIN                                         */
 /**************************************************************/
 
+
 non terminal               table_join                       ;
 non terminal               table_join_mode                  ;
 non terminal               table_join_type                  ;
@@ -807,8 +776,6 @@ non terminal               table_join_condition_expr        ;
 non terminal               table_join_condition_right       ;
 non terminal               table_join_condition_unary       ;
 non terminal               table_join_condition_item        ;
-non terminal               table_join_condition_item_basic  ;
-non terminal               table_join_condition_item_lst    ;
 
 non terminal               predicate                        ;
 non terminal               predicate_search                 ;
@@ -854,16 +821,12 @@ non terminal del_object             ;
 
 non terminal verb_merge             ;
 
-non terminal expression_lst         ;
 non terminal expression             ;
 non terminal expression_arit        ;
 non terminal expression_primary     ;
 non terminal expression_id          ;
 non terminal expression_var         ;
 non terminal expression_attribute   ;
-
-non terminal row_value_expression ;
-
 
 non terminal operator               ;
 non terminal Symbol comparator      ;
@@ -872,6 +835,7 @@ non terminal Symbol comparator_verb      ;
 non terminal constant               ;
 non terminal constant_string        ;
 non terminal constant_numeric       ;
+non terminal constant_number        ;
 non terminal constant_binary        ;
 non terminal constant_graphic       ;
 non terminal constant_date          ;
@@ -904,29 +868,22 @@ non terminal table_designator ;
 /*          EXPRESIONES                                               */
 /**********************************************************************/
 
-non terminal expr_common_table_opt ;
-non terminal expr_common_table_lst ;
-non terminal expr_common_table     ;
+// CASE EXPRESSION  
 
-/**********************************************************************/
-/*    CASE EXPRESSION                                                 */
-/**********************************************************************/
 
 non terminal expr_case                 ;
-non terminal case_type                 ;
-non terminal case_else_opt             ;
-non terminal case_else                 ;
+non terminal expr_case_type            ;
+non terminal expr_case_else_opt   ;
 
-non terminal case_searched_when        ;
-non terminal case_searched_when_lst    ;
-non terminal case_searched_when_opc    ;
-non terminal case_simple_when_lst      ;
-non terminal case_simple_when_opc      ;
+non terminal expr_case_searched        ;
+non terminal expr_case_searched_lst    ;
+non terminal expr_case_searched_item   ;
+non terminal expr_case_simple          ;
+non terminal expr_case_simple_lst      ;
+non terminal expr_case_simple_item     ;
+non terminal expr_case_result          ;
 
-
-non terminal search_result_opc         ;
-non terminal case_simple_when        ;
-
+non terminal expr_common_table_lst     ;
 
 non terminal include_columns_opt     ;
 non terminal include_columns_lst     ;
@@ -944,9 +901,6 @@ non terminal data_type_def      ;
 non terminal data_type_name     ;
 non terminal data_type_prec_opt ;
               
-non terminal        others   ;
-non terminal id_or_host      ;
-non terminal id_host         ;
 non terminal id              ;
 non terminal id_qualified    ;
 
@@ -966,42 +920,24 @@ non terminal opt_not                   ;
 non terminal        opt_quantifier   ;
 non terminal Symbol quantifier       ;
 non terminal opt_eq           ;
-non terminal opt_locale       ;
+non terminal opt_minus        ;
 non terminal opt_table        ;
 non terminal opt_optimization ;
-non terminal opt_current      ;
 non terminal opt_package      ;
-non terminal opt_session      ;
 
-non terminal yes_no           ;
 non terminal and_or           ;
-non terminal all_distinct     ;
 non terminal opt_as           ;
 non terminal opt_multiplier   ;
 non terminal opt_outer        ;
 non terminal opt_of           ;
 non terminal opt_return_caller   ;
-non terminal opt_work         ;
-non terminal opt_id           ;
 non terminal opt_rows         ;
-non terminal opt_all          ;
-non terminal opt_sign         ;
-non terminal opt_sql          ;
-non terminal opt_to           ;
 non terminal opt_indicator    ;
-non terminal opt_escape       ;
 
 non terminal with_without     ;
 non terminal final_old        ;
 
 non terminal parameter_marker ;
-
-non terminal subselect ;
-non terminal select    ;
-non terminal select_options_opt ;
-non terminal select_options_lst ;
-non terminal select_option      ;
-
 
 /**********************************************************************/
 /**********************************************************************/
@@ -1014,9 +950,6 @@ non terminal select_option      ;
 non terminal          column_lst      ;
 non terminal          column          ;
 
-non terminal common_table_columns_opt ;
-non terminal common_table_columns_lst ;
-non terminal common_table_columns     ;
 non terminal table_name      ;
 non terminal column_name     ;
 non terminal column_list     ;
@@ -1030,13 +963,8 @@ non terminal            wrd_of                 ;
 non terminal            host_var_opt           ;
 non terminal            host_var               ;
 non terminal            host_var_base          ;
-non terminal            var_qualified ;
 non terminal            host_field       ;
-non terminal            host_var_id_opt        ;
                  
-non terminal host_attr              ;
-non terminal host_type              ;
-
 non terminal var_general          ;
 non terminal var_int              ;
 non terminal var_string           ;
@@ -1104,10 +1032,6 @@ declare_type ::= CURSOR declare_cursor
 declare_cursor ::= cursor_attr_opt FOR cursor_type 
                ;
                
-cursor_opc_opt ::= cursor_opc
-               |
-               ;
-
 cursor_opc ::= cursor_opc_item
            |   cursor_opc cursor_opc_item
            ;
@@ -1136,14 +1060,10 @@ cursor_attr_item ::= HOLD
                  |   RETURN opt_return_caller
                  |   ROWSET POSITIONING
                  ;
-                                                                    
-cursor_type ::= cursor_select
-            |   LPAR cursor_select RPAR
-            ;
-            
-cursor_select ::= clause_with_opt clause_select clause_from sql_select_clauses_opt
-              ;
 
+cursor_type ::= id
+            |   qry_select
+            ;
 
 /****************************************************************************/
 /***                      DELETE                                          ***/
@@ -1455,54 +1375,9 @@ sql_update_clause ::= clause_where
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/
-             
-qry_select ::= clause_with_opt qry_fullselect qry_select_clauses_opt 
-           ;              
 
-qry_fullselect ::= qry_fullselect_left qry_fullselect_right_opt // qry_fullselect_clauses
-               ;
-               
-qry_fullselect_left ::= qry_subselect
-                    |   LPAR qry_fullselect RPAR
-                    |   clause_values
-                    ;
+// SUBSELECT
 
-qry_fullselect_right_opt ::= qry_fullselect_right_lst
-                         |
-                         ;
-                         
-qry_fullselect_right_lst ::= qry_fullselect_right
-                         |   qry_fullselect_right_lst qry_fullselect_right
-                         ;
-
-qry_fullselect_right ::= qry_union_type opt_quantifier qry_sub_full
-                     ;
-                     
-qry_sub_full ::= qry_subselect
-             |   LPAR qry_fullselect RPAR
-             ;  
-
-qry_union_type ::= UNION
-               |   EXCEPT
-               |   INTERSECT
-               ;
-
-qry_select_clauses_opt ::= qry_select_clauses
-                       |
-                       ;
-                       
-qry_select_clauses ::= qry_select_clause
-                   |   qry_select_clauses qry_select_clause
-                   ;
-
-qry_select_clause ::= clause_update
-                  |   clause_read_only
-                  |   clause_optimize
-                  |   clause_isolation
-                  |   clause_queryno
-                  |   clause_skip
-                  ;
-                                                            
 qry_subselect ::= clause_select clause_from qry_subselect_clauses_opt
               ;
 
@@ -1519,9 +1394,80 @@ qry_subselect_clause ::= clause_where
                      |   clause_having
                      |   clause_order
                      |   clause_fetch_first
+                     |   qry_select_clause
                      ;                      
+qry_select_clause ::= clause_update
+                  |   clause_read_only
+                  |   clause_optimize
+                  |   clause_isolation 
+                  |   clause_queryno
+                  |   clause_skip
+//                  |   clause_fetch_first
+                  ;
                
+ // FULLSELECT
+ 
+qry_fullselect ::= qry_fullselect_left qry_fullselect_right_opt // qry_fullselect_clauses_opt
+               ;
 
+qry_fullselect_left ::= qry_fullselect_qry 
+                    |   clause_values
+                    ;
+
+qry_fullselect_right_opt ::= qry_fullselect_right_lst
+                         |
+                         ;
+
+qry_fullselect_qry ::=  qry_subselect
+                    |   LPAR qry_fullselect RPAR
+                    ;
+                                             
+qry_fullselect_right_lst ::= qry_fullselect_right
+                         |   qry_fullselect_right_lst qry_fullselect_right
+                         ;
+
+qry_fullselect_right ::= qry_fullselect_union opt_quantifier qry_fullselect_qry
+                     ;
+
+qry_fullselect_clauses_opt ::= qry_fullselect_clauses
+                           |
+                           ;
+
+qry_fullselect_clauses ::= qry_fullselect_clauses_item
+                       |   qry_fullselect_clauses qry_fullselect_clauses_item
+                       ;
+                            
+qry_fullselect_clauses_item ::= clause_order
+                            |   clause_fetch_first
+                            ;
+                                                                                                  
+qry_fullselect_union ::= UNION
+                     |   EXCEPT
+                     |   INTERSECT
+                     ;
+
+// SELECT STATEMENT
+             
+qry_select ::= clause_with_opt qry_fullselect // qry_select_clauses_opt 
+           ;              
+/*
+qry_select_clauses_opt ::= qry_select_clauses
+                       |
+                       ;
+                       
+qry_select_clauses ::= qry_select_clause
+                   |   qry_select_clauses qry_select_clause
+                   ;
+
+qry_select_clause ::= clause_update
+                  |   clause_read_only
+                  |   clause_optimize
+                  |   clause_isolation 
+                  |   clause_queryno
+                  |   clause_skip
+                  |   clause_fetch_first
+                  ;
+ */                                                           
 /**********************************************************************/
 /*                  TABLES                                            */
 /**********************************************************************/
@@ -1529,22 +1475,12 @@ qry_subselect_clause ::= clause_where
 table_reference_lst ::= table_reference
                     |   table_reference_lst COMMA table_reference
                     ;
-/*
-table_reference ::= table_correlated
-                ;
-*/                
-table_correlated ::= table_item table_item_opt
-                 ;
-                 
+
 table_reference ::= table_item
                 |   table_reference table_item // el segundo es join o correlation
                 ;
  
                                      
-table_item_opt ::= opt_as table_single
-               |
-               ;
-                                                    
 table_item ::= table_single    
            |   table_table_prfx        
            |   table_nested
@@ -1560,7 +1496,7 @@ table_single ::= table_name // clause_period_opt
 table_table_prfx ::= TABLE LPAR table_table RPAR
                  ;
                  
-table_table ::= table_nested_2
+table_table ::= qry_fullselect
             |   table_function
             |   table_locator
             |   table_change
@@ -1569,9 +1505,6 @@ table_table ::= table_nested_2
 table_nested ::= LPAR qry_fullselect RPAR
              ;
                                           
-table_nested_2 ::= qry_fullselect 
-             ;
-
 table_function ::=  id  table_function_data clause_cardinality
                ;
 
@@ -1656,21 +1589,6 @@ clause_cardinality ::= CARDINALITY opt_multiplier var_int
                    |
                    ;
                    
-clause_correlation_opt ::= clause_correlation
-                       |
-                       ;
-                       
-clause_correlation ::= opt_as id clause_correlation_items
-                   ;
-                   
-clause_correlation_items ::= LPAR clause_correlation_lst RPAR
-                         |
-                         ;
-                         
-clause_correlation_lst ::= column_name
-                       |   clause_correlation_lst COMMA column_name
-                       ;
-                                             
 clause_encryption_opc ::= clause_hint
                       |
                       ;
@@ -1689,6 +1607,13 @@ clause_explain ::= clause_yes_no
 
 clause_for ::= FOR clause_for_type
            ;
+
+
+// FROM
+
+clause_from ::= FROM table_reference_lst 
+            ;
+
 
 clause_period_opt ::= clause_period
                   |
@@ -1751,21 +1676,8 @@ clause_schema ::= clause_sqlid
               |   id
               ;
 
-clause_session ::= SESSION_USER
-               |   USER
-               ;
-
-clause_sqlid ::= clause_packageset
-             ;
-
-clause_yes_no ::= YES
-              |   NO
-              ;
-
-
-/**********************************************************************/
-/*                           SELECT                                   */
-/*********************************************************************/
+// SELECT
+// SELECT STATEMENT
 
 clause_select ::= clause_select_verb  opt_all_distinct clause_select_data
               ;
@@ -1797,14 +1709,21 @@ clause_select_column_as ::= opt_as ID
                         ;                   
                         
 //JGG clause_unpacked_row ::= UNPACK
+
+
+clause_session ::= SESSION_USER
+               |   USER
+               ;
+
+clause_sqlid ::= clause_packageset
+             ;
+
+clause_yes_no ::= YES
+              |   NO
+              ;
+
+
                                        
-/**********************************************************************/
-/*                  FROM                                              */
-/**********************************************************************/
-
-clause_from ::= FROM table_reference_lst 
-            ;
-
                                                         
 /**********************************************************************/
 /*                VALUES                                              */
@@ -1831,10 +1750,6 @@ sequence_reference_type ::= PREVIOUS
 sequence_name ::= id_general sequence_from_opt
               ;
               
-sequence_list ::= id_general
-              |   sequence_list COMMA id_general    
-              ;
-
 sequence_from_opt ::= sequence_from
                   |
                   ;
@@ -1894,33 +1809,13 @@ fetch_first_opt ::= var_int
                 |
                 ;
 
-/*****************************************************************/
-/*                     JOIN                                      */
-/*****************************************************************/
-
-                                                                                                          
-
-/*XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX*/
-                                                        
-                  
-                                 
-clause_into ::= INTO clause_into_list 
-            ;
-            
-clause_into_list ::= LPAR clause_into_lst RPAR
-                 |   clause_into_lst
+clause_read_only ::= FOR clause_read ONLY
                  ;
-                 
-clause_into_lst ::= host_var
-                |   clause_into_lst COMMA host_var
-                ;                 
 
-expr_select ::= expression  
-            ; 
-
-select_alias ::= table_name DOT MULTIPLY
-             ;                                       
-
+clause_read ::= READ
+            |   FETCH
+            ;
+                             
 /*****************************************************************/
 /*                       WHERE                                   */
 /*****************************************************************/
@@ -1939,10 +1834,6 @@ clause_where_condition ::= search_condition
 /*                       GROUP                                   */
 /*****************************************************************/
              
-clause_group_opt ::= clause_group
-                 |
-                 ;
-                                  
 clause_group ::= GROUP BY expr_grouping_lst
              ;
 
@@ -1958,16 +1849,8 @@ expr_grouping ::= id
 /*                      HAVING                                   */
 /*****************************************************************/
                         
-clause_having_opt ::= clause_having
-                  |
-                  ;
-                                          
 clause_having ::= HAVING search_condition
               ;
-
-clause_for_opt ::= clause_for
-               |
-               ;
 
 /*****************************************************************/
 /*                        FOR UPDATE                             */
@@ -2002,13 +1885,7 @@ clause_isolation_type ::= RR
                       |   UR
                       ;
 
-/*****************************************************************/
-/*               OPTIMIZATION                                   */
-/*****************************************************************/
-
-clause_optimize_opt ::= clause_optimize
-                    |
-                    ;
+//  OPTIMIZATION 
 
 clause_optimize ::= OPTIMIZE FOR NUM_ENTERO opt_rows
                 ;
@@ -2043,14 +1920,23 @@ clause_optimize ::= OPTIMIZE FOR NUM_ENTERO opt_rows
 /**********************************************************************/
 
 function ::= function_type function_parms
+         |   function_value
          ;
 
 function_type ::= FUNCTION_SCALAR
               |   FUNCTION_AGGREGATE
               |   FUNCTION_ROW
-              |   FUNCTION_BOTH              
+              |   FUNCTION_BOTH       
+//              |   function_value       
               ;
-                       
+              
+function_value ::= VALUE function_value_parms
+               ;
+               
+function_value_parms ::= function_parms
+//                     |   expression   
+                     ;
+                     
 function_parms ::= LPAR func_parms_lst_opt RPAR
            ;
 
@@ -2070,7 +1956,7 @@ func_parm_quantifier ::= ALL
                      |   DISTINCT
                      |
                      ;
-                     
+
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/
@@ -2136,10 +2022,6 @@ reg_zone_opt ::= ZONE
 /**********************************************************************/
 /**********************************************************************/
 
-expression_lst ::= expression
-               |   expression_lst COMMA expression
-               ;
-               
 expression ::= expression_arit
            ;
            
@@ -2150,6 +2032,7 @@ expression_arit ::= expression_primary
 expression_primary ::= expression_id
                    |   function
                    |   register
+                   |   expr_case
                    |   LPAR expression RPAR expression_attribute
                    ;
 
@@ -2175,6 +2058,7 @@ expression_attribute ::= YEARS
 expression_item ::= function 
                   | constant 
                   | register
+                  | expr_case
                   | id_or_host
 //                  |   expr_case
 //                |   scalar_fullselect
@@ -2188,26 +2072,6 @@ expression_item ::= function
                 
 */
 
-expr_common_table_opt ::= expr_common_table
-                      |
-                      ;
-
-expr_common_table ::= table_name 
-                      common_table_columns_opt 
-                      AS LPAR qry_fullselect RPAR
-                  ;
-
-common_table_columns_opt ::= common_table_columns
-                         |
-                         ;
-                         
-common_table_columns ::= LPAR common_table_columns_lst RPAR
-                     ;
-
-common_table_columns_lst ::= column_name
-                         |   common_table_columns_lst COMMA column_name
-                         ;                                 
-
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/
@@ -2216,43 +2080,40 @@ common_table_columns_lst ::= column_name
 /**********************************************************************/
 /**********************************************************************/
 
-expr_case ::= CASE case_type case_else_opt END
+expr_case ::= CASE expr_case_type expr_case_else_opt END
                ;
 
-case_type ::= case_searched_when
-          |   case_simple_when
-          ;
+expr_case_type ::= expr_case_searched
+               |   expr_case_simple
+               ;
 
-case_searched_when ::= case_searched_when_lst
+expr_case_searched ::= expr_case_searched_lst
                    ;
 
-case_searched_when_lst ::= case_searched_when_opc 
-                       |   case_searched_when_lst case_searched_when_opc 
+expr_case_searched_lst ::= expr_case_searched_item 
+                       |   expr_case_searched_lst expr_case_searched_item 
                        ;
                        
-case_searched_when_opc ::= WHEN {: info.setInSearch(); :} predicate {: info.unsetInSearch(); :} THEN search_result_opc
+expr_case_searched_item ::= WHEN {: info.setInSearch(); :} search_condition {: info.unsetInSearch(); :} THEN expr_case_result
                        ;
                        
-search_result_opc ::= expression
-                  ;
-                  
-case_simple_when ::= expression case_simple_when_lst
+expr_case_simple ::= expression expr_case_simple_lst
                  ;
                  
-case_simple_when_lst ::= case_simple_when_opc
-                     |   case_simple_when_lst case_simple_when_opc
+expr_case_simple_lst ::= expr_case_simple_item
+                     |   expr_case_simple_lst expr_case_simple_item
                      ;
                      
-case_simple_when_opc ::= WHEN expression THEN search_result_opc
+expr_case_simple_item ::= WHEN expression THEN expr_case_result
                      ;
 
-case_else_opt ::= case_else
-              |
-              ;
-              
-case_else ::= ELSE search_result_opc
-          ;                                     
+expr_case_else_opt ::= ELSE expr_case_result
+                   |     
+                   ;
 
+expr_case_result ::= expression
+              ;
+                                
 /**********************************************************************/
 /*          PREDICAOOS   Y SEARCH                                     */
 /**********************************************************************/
@@ -2381,10 +2242,6 @@ data_type_name ::= DECIMAL
                |   VARBINARY
                ;
                
-expr_comparator ::= comparator_verb
-                |   BETWEEN
-                ;
-               
 comparator ::= comparator_verb
            ;
            
@@ -2465,31 +2322,6 @@ clause_for_row_opt ::= FOR ROWS var_int OF ROWSET
                    |
                    ;
                     
-/**********************************************************************/
-/**********************************************************************/
-/**********************************************************************/
-/*             SELECT CLAUSES                                         */
-/**********************************************************************/
-/**********************************************************************/
-/**********************************************************************/
-
-select ::= expr_common_table_opt qry_fullselect // select_options_opt {: print("ACABA FULLSELECT"); :}
-       ;
-       
-select_options_opt ::= select_options_lst
-                   |
-                   ;
-                   
-select_options_lst ::= select_option
-                   |   select_options_lst select_option
-                   ;
-                   
-select_option ::= clause_update
-              |   clause_read_only
-              |   clause_optimize
-              |   clause_isolation
-              |   clause_queryno
-              ;
 
 /**********************************************************************/
 /**********************************************************************/
@@ -2509,11 +2341,6 @@ column ::= id
 parameter_marker ::= QUESTION_MARK NUM_ENTERO
                  ;
                  
-yes_no ::= YES
-       |   NO
-       |   host_var
-       ;
-
 and_or ::= AND
        |   OR
        ;
@@ -2524,14 +2351,6 @@ var_string ::= LITERAL
            ;
 
         
-id_or_host ::= id_host // expr_datetime_opt
-           ;
-
-id_host ::= id
-        |   host_var
-        ;         
-            
-            
 constant ::= constant_string
          |   constant_numeric
          |   constant_binary
@@ -2541,8 +2360,11 @@ constant ::= constant_string
          
 constant_string ::= LITERAL
                 ;
-                
-constant_numeric ::= NUM_ENTERO
+
+constant_numeric ::= opt_minus constant_number
+                 ;
+                                 
+constant_number ::= NUM_ENTERO
                  |   NUM_DECIMAL
                  |   NUM_FLOAT 
                  ;
@@ -2626,43 +2448,26 @@ opt_all_distinct ::= ALL
                  |
                  ;
 
-opt_all ::= ALL
-        |
-        ;
-
-
 opt_as ::= AS
        | 
        ;
-
-opt_current ::= wrd_current
-            |
-            ;
 
 opt_eq ::= EQ
           |
           ;
 
-opt_escape ::= ESCAPE var_string
-           |
-           ;
-
 final_old ::= FINAL
           |   OLD
           ;
                      
-opt_id ::= id
-       | 
-       ;
-
 opt_indicator::= INDICATOR 
               |
               ;            
            
-opt_locale ::= LOCALE
-           |
-           ;
-
+opt_minus ::= SUBTRACT
+          |
+          ;
+          
 opt_multiplier ::= MULTIPLIER
                |
                ;
@@ -2704,34 +2509,14 @@ opt_rows ::= ROWS
          |
          ;  
                
-opt_session ::= SESSION
-            |
-            ;
-
-opt_sign ::= SUBTRACT
-         |
-         ;
-
-opt_sql  ::= SQL
-         |
-         ;
-
 opt_table ::= TABLE
           |
           ;
                                                                                                                              
-opt_to ::= TO
-       |
-       ;
-
 with_without ::= WITH
              |   WITHOUT
              ;
              
-opt_work ::= WORK
-         |
-         ;        
-
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/
@@ -2741,12 +2526,6 @@ opt_work ::= WORK
 /**********************************************************************/
 /**********************************************************************/
        
-others ::= LPAR
-       |   RPAR
-       |   COMMA
-       |   DECIMAL
-       ;
-
 host_var_opt ::= host_var
                 |
                 ;
@@ -2763,9 +2542,6 @@ host_field ::= host_var opt_indicator host_var_opt
            ;
                  
                                                  
-host_attr ::= host_var_base
-          ;
-
 id_general ::= id
            |   NUM_ENTERO
            |   LITERAL

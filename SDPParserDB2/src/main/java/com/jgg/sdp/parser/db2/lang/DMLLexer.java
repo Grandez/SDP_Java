@@ -6218,7 +6218,7 @@ public class DMLLexer extends GenericLexer implements java_cup.runtime.Scanner {
             }
           case 596: break;
           case 191: 
-            { cacheSymbol(VALUE                              , FUNCTION_SCALAR);
+            { return symbol(VALUE);
             }
           case 597: break;
           case 192: 

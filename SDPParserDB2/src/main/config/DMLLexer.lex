@@ -664,7 +664,7 @@ ATTR = MONTHS
    UNICODE                                        { return symbol(FUNCTION_SCALAR);    }
    UNICODE_STR                                    { return symbol(FUNCTION_SCALAR);    }
    UPPER                                          { return symbol(FUNCTION_SCALAR);    }
-   VALUE                                          { cacheSymbol(VALUE                              , FUNCTION_SCALAR);    }
+   VALUE                                          { return symbol(VALUE);              }
    VARBINARY                                      { cacheSymbol(VARBINARY                           , FUNCTION_SCALAR);    }
    VARCHAR                                        { cacheSymbol(VARCHAR                             , FUNCTION_SCALAR);    }
    VARCHAR_FORMAT                                 { return symbol(FUNCTION_SCALAR);    }

@@ -203,7 +203,6 @@ terminal Symbol CURRVAL                    ;
 terminal Symbol CURSOR                     ;
 terminal Symbol DATABASE                   ;
 terminal Symbol DATA                       ;
-terminal Symbol DAY                        ;
 terminal Symbol DAYS                       ;
 terminal Symbol DBINFO                     ;
 terminal Symbol DEBUG                      ;
@@ -265,7 +264,6 @@ terminal Symbol HAVING                     ;
 terminal Symbol HINT                       ;
 terminal Symbol HOLD                       ;
 terminal Symbol HOURS                      ;
-terminal Symbol HOUR                       ;
 terminal Symbol IF                         ;
 terminal Symbol IMMEDIATE                  ;
 terminal Symbol IN                         ;
@@ -310,7 +308,6 @@ terminal Symbol MINUTES                    ;
 terminal Symbol MODE                       ;
 terminal Symbol MODIFIES                   ;
 terminal Symbol MONTHS                     ;
-terminal Symbol MONTH                      ;
 terminal Symbol NEXT                       ;
 terminal Symbol NEXTVAL                    ;
 terminal Symbol NO                         ;
@@ -346,7 +343,6 @@ terminal Symbol PERIOD1                    ;
 terminal Symbol PLAN                       ;
 terminal Symbol PRECISION                  ;
 terminal Symbol PREPARE                    ;
-terminal Symbol PREVVAL                    ;
 terminal Symbol PRIOR                      ;
 terminal Symbol PRIQTY                     ;
 terminal Symbol PRIVILEGES                 ;
@@ -443,7 +439,6 @@ terminal Symbol XMLNAMESPACES              ;
 terminal Symbol XMLCAST                    ;
 terminal Symbol XMLTABLE                   ;
 terminal Symbol YEARS                      ;
-terminal Symbol YEAR                       ;
 terminal Symbol ZONE                       ;
 
 /****************************************************************************/
@@ -486,6 +481,7 @@ terminal Symbol INT                                   ;
 terminal Symbol NUMERIC                               ;
 terminal Symbol ONLY                                  ;
 terminal Symbol PREVIOUS                              ;
+terminal Symbol PREVVAL                               ;
 terminal Symbol PORTION                               ;
 terminal Symbol REAL                                  ;
 terminal Symbol ROWS                                  ;
@@ -547,6 +543,10 @@ non terminal         cursor_attr_item          ;
 
 non terminal         verb_refresh              ;
 
+non terminal         select_stmt       ;
+non terminal         select_queries    ;
+non terminal         select_query      ;
+
 /**********************************************************************/
 /*                           SET                                      */
 /**********************************************************************/
@@ -575,12 +575,12 @@ non terminal         schema_type               ;
 /*                           SELECT                                   */
 /**********************************************************************/
  
-non terminal         sql_select_into           ;
-non terminal         sql_select_clauses_opt    ;
-non terminal         sql_select_into_lst       ;
-non terminal         sql_select_column         ;
-non terminal         sql_select_clauses        ;
-non terminal         sql_select_clause         ;
+non terminal         select_into           ;
+non terminal         select_clauses_opt    ;
+non terminal         select_into_lst       ;
+non terminal         select_column         ;
+non terminal         select_clauses        ;
+non terminal         select_clause         ;
 
 /**********************************************************************/
 /*                           UPDATE                                   */
@@ -605,6 +605,8 @@ non terminal          sql_update_clause           ;
 non terminal          function                    ;
 non terminal          function_value              ;
 non terminal          function_value_parms        ;
+non terminal          function_time               ;
+non terminal          function_time_words         ;
 non terminal          function_type               ;
 non terminal          function_parms              ;
 non terminal          func_parms_lst_opt          ;    
@@ -679,17 +681,17 @@ non terminal           clause_select_column_as     ;
 non terminal           clause_session           ;
 non terminal           clause_skip              ;
 non terminal           clause_sqlid             ;
+non terminal           clause_union             ;
+non terminal           clause_union_type        ;
 non terminal           clause_values            ;
 non terminal           clause_values_data       ;
 non terminal           clause_yes_no            ;
 
-non terminal sequence_from_opt              ;
-non terminal sequence_from                  ;
-non terminal sequence_reference_type        ;
-non terminal sequence_reference      ;
-non terminal sequence_reference_lst  ;
-
-
+non terminal           sequence_lst             ;
+non terminal           sequence                 ;
+non terminal           sequence_type            ;
+non terminal           sequence_from_opt        ;
+non terminal           sequence_from            ;
 
 non terminal clause_from             ;
 non terminal clause_where_opt        ; 
@@ -823,6 +825,7 @@ non terminal verb_merge             ;
 
 non terminal expression             ;
 non terminal expression_arit        ;
+non terminal expression_signed      ;
 non terminal expression_primary     ;
 non terminal expression_id          ;
 non terminal expression_var         ;
@@ -954,6 +957,8 @@ non terminal table_name      ;
 non terminal column_name     ;
 non terminal column_list     ;
 non terminal sequence_name   ;
+non terminal field_name      ;
+non terminal field_list      ;
 
 non terminal id_general             ;
 
@@ -1261,29 +1266,36 @@ refresh_opc ::= var_int
 /***                      SELECT                                          ***/
 /****************************************************************************/
 
-sql_select ::= clause_with_opt clause_select sql_select_into clause_from sql_select_clauses_opt
-          ;
+sql_select ::= clause_with_opt select_queries
+           ;
 
-sql_select_into ::= INTO sql_select_into_lst
-                ;
+select_queries ::= select_query
+               |   select_queries clause_union select_query
+               ;
+                   
+select_query ::= clause_select select_into clause_from select_clauses_opt 
+             ;
                 
-sql_select_into_lst ::= sql_select_column
-                    |   sql_select_into_lst COMMA sql_select_column
-                    ;
+select_into ::= INTO select_into_lst
+            ;
+                
+select_into_lst ::= field_name
+                |   select_into_lst COMMA field_name
+                ;
 
-sql_select_column ::= host_field
-                  ;
+select_column ::= field_name
+              ;
                   
                                   
-sql_select_clauses_opt ::= sql_select_clauses
+select_clauses_opt ::= select_clauses
                        |
                        ;
                         
-sql_select_clauses ::= sql_select_clause
-                   |   sql_select_clauses sql_select_clause
+select_clauses ::= select_clause
+                   |   select_clauses select_clause
                    ;
 
-sql_select_clause ::= clause_where
+select_clause ::= clause_where
                   |   clause_group
                   |   clause_having
                   |   clause_optimize                  
@@ -1411,7 +1423,7 @@ qry_fullselect ::= qry_fullselect_left qry_fullselect_right_opt // qry_fullselec
                ;
 
 qry_fullselect_left ::= qry_fullselect_qry 
-                    |   clause_values
+//                    |   clause_values
                     ;
 
 qry_fullselect_right_opt ::= qry_fullselect_right_lst
@@ -1419,14 +1431,14 @@ qry_fullselect_right_opt ::= qry_fullselect_right_lst
                          ;
 
 qry_fullselect_qry ::=  qry_subselect
-                    |   LPAR qry_fullselect RPAR
+                    |   LPAR qry_fullselect RPAR qry_fullselect_clauses_opt
                     ;
                                              
 qry_fullselect_right_lst ::= qry_fullselect_right
                          |   qry_fullselect_right_lst qry_fullselect_right
                          ;
 
-qry_fullselect_right ::= qry_fullselect_union opt_quantifier qry_fullselect_qry
+qry_fullselect_right ::= clause_union  qry_fullselect_qry
                      ;
 
 qry_fullselect_clauses_opt ::= qry_fullselect_clauses
@@ -1440,11 +1452,6 @@ qry_fullselect_clauses ::= qry_fullselect_clauses_item
 qry_fullselect_clauses_item ::= clause_order
                             |   clause_fetch_first
                             ;
-                                                                                                  
-qry_fullselect_union ::= UNION
-                     |   EXCEPT
-                     |   INTERSECT
-                     ;
 
 // SELECT STATEMENT
              
@@ -1467,7 +1474,8 @@ qry_select_clause ::= clause_update
                   |   clause_skip
                   |   clause_fetch_first
                   ;
- */                                                           
+*/
+                                                           
 /**********************************************************************/
 /*                  TABLES                                            */
 /**********************************************************************/
@@ -1722,32 +1730,22 @@ clause_yes_no ::= YES
               |   NO
               ;
 
-
+// SEQUENCE
                                        
-                                                        
-/**********************************************************************/
-/*                VALUES                                              */
-/**********************************************************************/
-
-clause_values ::= VALUES clause_values_data
-              ;
-              
-clause_values_data ::= sequence_reference
-                   |   LPAR sequence_reference_lst RPAR
-                   ;
-                   
-sequence_reference_lst ::= sequence_reference
-                       |   sequence_reference_lst COMMA  sequence_reference
-                       ;
+sequence_lst ::= sequence
+             |   sequence_lst COMMA  sequence
+             ;
                        
-sequence_reference ::= sequence_reference_type VALUES FOR sequence_name
-                   ;
+sequence ::= sequence_type FOR sequence_name
+         ;
 
-sequence_reference_type ::= PREVIOUS
-                        |   NEXT
-                        ;
+sequence_type ::= PREVIOUS  VALUES
+              |   NEXT      VALUES
+              |   PREVVAL
+              |   NEXTVAL
+              ;
                                            
-sequence_name ::= id_general sequence_from_opt
+sequence_name ::= id_general // sequence_from_opt
               ;
               
 sequence_from_opt ::= sequence_from
@@ -1757,9 +1755,26 @@ sequence_from_opt ::= sequence_from
 sequence_from ::= FROM id
               ;
 
-/**********************************************************************/
-/*                WITH                                              */
-/**********************************************************************/
+// UNION
+
+clause_union ::= clause_union_type opt_quantifier
+             ;
+                                                                                                                  
+clause_union_type ::= UNION
+                  |   EXCEPT
+                  |   INTERSECT
+                     ;
+                                                                      
+// VALUES
+
+clause_values ::= VALUES clause_values_data
+              ;
+              
+clause_values_data ::= sequence
+                   |   LPAR sequence_lst RPAR
+                   ;
+                   
+// WITH
 
 clause_with_opt ::= clause_with
                 |
@@ -1921,20 +1936,20 @@ clause_optimize ::= OPTIMIZE FOR NUM_ENTERO opt_rows
 
 function ::= function_type function_parms
          |   function_value
+         |   function_time
          ;
 
 function_type ::= FUNCTION_SCALAR
               |   FUNCTION_AGGREGATE
               |   FUNCTION_ROW
-              |   FUNCTION_BOTH       
-//              |   function_value       
+              |   FUNCTION_BOTH             
               ;
               
 function_value ::= VALUE function_value_parms
                ;
                
 function_value_parms ::= function_parms
-//                     |   expression   
+//JGG Perfilar, no vale todo                     |   expression   
                      ;
                      
 function_parms ::= LPAR func_parms_lst_opt RPAR
@@ -1957,6 +1972,18 @@ func_parm_quantifier ::= ALL
                      |
                      ;
 
+function_time ::= function_time_words function_parms
+              ;
+              
+function_time_words ::= YEARS
+                    |   MONTHS
+                    |   DAYS 
+                    |   HOURS
+                    |   MINUTES
+                    |   SECONDS
+                    |   MICROSECONDS
+                    ;
+                       
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/
@@ -2026,13 +2053,18 @@ expression ::= expression_arit
            ;
            
 expression_arit ::= expression_primary
-                |   expression_arit operator expression_primary
+                |   expression_arit expression_signed
                 ;
 
+expression_signed ::= operator expression_primary
+                  |   NUM_SIGNED
+                  ;
+                  
 expression_primary ::= expression_id
                    |   function
                    |   register
                    |   expr_case
+                   |   sequence
                    |   LPAR expression RPAR expression_attribute
                    ;
 
@@ -2044,12 +2076,7 @@ expression_var ::= host_field
                |   constant
                ;
                
-expression_attribute ::= YEARS
-                     |   YEAR
-                     |   MONTHS
-                     |   MONTH
-                     |   DAYS
-                     |   DAY
+expression_attribute ::= function_time_words
                      |
                      ;
                       
@@ -2067,7 +2094,7 @@ expression_item ::= function
 //                |   XMLCAST_specification
 //                |   OLAP_specification
 //                |   row_change_expression
-//                 |   sequence_reference
+
                 ;
                 
 */
@@ -2112,7 +2139,7 @@ expr_case_else_opt ::= ELSE expr_case_result
                    ;
 
 expr_case_result ::= expression
-              ;
+                 ;
                                 
 /**********************************************************************/
 /*          PREDICAOOS   Y SEARCH                                     */
@@ -2355,7 +2382,6 @@ constant ::= constant_string
          |   constant_numeric
          |   constant_binary
          |   constant_graphic
-//         |   NULL
          ;
          
 constant_string ::= LITERAL
@@ -2365,8 +2391,9 @@ constant_numeric ::= opt_minus constant_number
                  ;
                                  
 constant_number ::= NUM_ENTERO
-                 |   NUM_DECIMAL
-                 |   NUM_FLOAT 
+                 |  NUM_DECIMAL
+                 |  NUM_FLOAT
+                 |  NUM_SIGNED 
                  ;
                  
 constant_binary ::=  NUM_BINARY
@@ -2565,11 +2592,21 @@ column_list ::= id
             |   column_list COMMA id
             ;
 
+field_name ::= id
+           |   host_field
+           ;
+                                             
+field_list ::= field_name
+            |   field_list COMMA field_name
+            ;
+
 id_qualified ::= IDQUALIFIED
              |
              ;
 
-
+non_reserved_words ::= TIMESTAMP
+                   ;
+                   
 eat_opt ::= eat
         |
         ;

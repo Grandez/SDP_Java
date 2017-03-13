@@ -128,13 +128,6 @@ HOSTVAR2    = :[ ]+{ID}
 IDQUALIFIED = \.{ID} 
 FULLTABLE   = {ID}\.\*
 
-ATTR = MONTHS
-     | YEARS
-     | {HOSTVAR}
-     
-     
-//JGG  HOSTVAR_ATTR = {HOSTVAR}{SPACES}{ATTR}
-
 %% 
 
   \xB5          { /* eat */ }
@@ -212,6 +205,7 @@ ATTR = MONTHS
    CURSOR                     { return symbol(CURSOR              ); }
    DATABASE                   { return symbol(DATABASE            ); }
    DATA                       { return symbol(DATA                ); }
+   DAY[Ss]?                   { return symbol(DAYS                ); }
    DBINFO                     { return symbol(DBINFO              ); }
    DEBUG                      { return symbol(DEBUG               ); }   
    DECLARE                    { return symbol(DECLARE             ); }
@@ -270,6 +264,7 @@ ATTR = MONTHS
    HAVING                     { return symbol(HAVING              ); }
    HINT                       { return symbol(HINT                ); }   
    HOLD                       { return symbol(HOLD                ); }
+   HOUR[Ss]?                  { return symbol(HOURS               ); }     
    IF                         { return symbol(IF                  ); }
    IMMEDIATE                  { return symbol(IMMEDIATE           ); }
    IN                         { return symbol(IN                  ); }
@@ -306,12 +301,14 @@ ATTR = MONTHS
    LOOP                       { return symbol(LOOP                ); }
    MAINTAINED                 { return symbol(MAINTAINED          ); }
    MATERIALIZED               { return symbol(MATERIALIZED        ); }
-   MEMBER                     { return symbol(MEMBER              ); }   
+   MEMBER                     { return symbol(MEMBER              ); }
+   MICROSECOND[Ss]?           { return symbol(MICROSECONDS        ); }   
+   MINUTE[Ss]?                { return symbol(MINUTES             ); }      
    MODE                       { return symbol(MODE                ); }   
    MODIFIES                   { return symbol(MODIFIES            ); }
-   MONTHS                     { return symbol(MONTHS              ); }   
-   NEXT                       { return symbol(NEXT                ); }
+   MONTH[Ss]?                 { return symbol(MONTHS              ); }     
    NEXTVAL                    { return symbol(NEXTVAL             ); }
+   NEXT                       { return symbol(NEXT                ); }
    NO                         { return symbol(NO                  ); }
    NONE                       { return symbol(NONE                ); }
    NOT                        { return symbol(NOT                 ); }
@@ -345,6 +342,7 @@ ATTR = MONTHS
    PLAN                       { return symbol(PLAN                ); }
    PRECISION                  { return symbol(PRECISION           ); }
    PREPARE                    { return symbol(PREPARE             ); }
+   PREVIOUS                   { return symbol(PREVIOUS            ); }   
    PREVVAL                    { return symbol(PREVVAL             ); }
    PRIOR                      { return symbol(PRIOR               ); }
    PRIQTY                     { return symbol(PRIQTY              ); }
@@ -386,6 +384,7 @@ ATTR = MONTHS
    SCHEMA                     { return symbol(SCHEMA              ); }
    SCHEME                     { return symbol(SCHEME              ); }   
    SCRATCHPAD                 { return symbol(SCRATCHPAD          ); }
+   SECOND[Ss]?                { return symbol(SECONDS             ); }     
    SECQTY                     { return symbol(SECQTY              ); }
    SECURITY                   { return symbol(SECURITY            ); }
    SEQUENCE                   { return symbol(SEQUENCE            ); }
@@ -472,17 +471,16 @@ ATTR = MONTHS
    INPUT                   { return symbol(INPUT            ); }
    NUMERIC                 { return symbol(NUMERIC          ); }
    ONLY                    { return symbol(ONLY             ); }
-   PREVIOUS                { return symbol(PREVIOUS         ); }
    PORTION                 { return symbol(PORTION          ); }
    RR                      { return symbol(RR               ); }
-   RS                      { return symbol(RS               ); }
+   RS                      { return symbol(RS               ); }   
    SKIP                    { return symbol(SKIP             ); }
    SQL                     { return symbol(SQL              ); }
    UR                      { return symbol(UR               ); }
    VALUES                  { return symbol(VALUES           ); }   
    VERSION                 { return symbol(VERSION          ); }
    WITHOUT                 { return symbol(WITHOUT          ); }
-   YEAR                    { return symbol(YEAR             ); }   
+   YEAR[Ss]?               { return symbol(YEARS            ); }      
    YES                     { return symbol(YES              ); }
 
    /*************************************************************/
@@ -537,7 +535,6 @@ ATTR = MONTHS
    COS                                            { return symbol(FUNCTION_SCALAR);    }
    COSH                                           { return symbol(FUNCTION_SCALAR);    }
    DATE                                           { cacheSymbol(DATE                                , FUNCTION_SCALAR);    }
-   DAY[sS]?                                       { cacheSymbol(DAYS                                , FUNCTION_SCALAR);    }
    DAYOFMONTH                                     { return symbol(FUNCTION_SCALAR);    }
    DAYOFWEEK                                      { return symbol(FUNCTION_SCALAR);    }
    DAYOFWEEK_ISO                                  { return symbol(FUNCTION_SCALAR);    }
@@ -571,7 +568,6 @@ ATTR = MONTHS
    GETVARIABLE                                    { return symbol(FUNCTION_SCALAR);    }
    GRAPHIC                                        { cacheSymbol(GRAPHIC                             , FUNCTION_SCALAR);    }
    HEX                                            { return symbol(FUNCTION_SCALAR);    }
-   HOUR[Ss]?                                      { cacheSymbol(HOURS                               , FUNCTION_SCALAR);    }
    IDENTITY_VAL_LOCAL                             { return symbol(FUNCTION_SCALAR);    }
    IFNULL                                         { return symbol(FUNCTION_SCALAR);    }
    INSERT                                         { cacheSymbol(INSERT                              , FUNCTION_SCALAR);    }
@@ -589,11 +585,8 @@ ATTR = MONTHS
    LOWER                                          { return symbol(FUNCTION_SCALAR);    }
    LPAD                                           { return symbol(FUNCTION_SCALAR);    }
    LTRIM                                          { return symbol(FUNCTION_SCALAR);    }
-   MICROSECOND[Ss]?                               { cacheSymbol(MICROSECONDS                        , FUNCTION_SCALAR);    }
    MIDNIGHT_SECONDS                               { return symbol(FUNCTION_SCALAR);    }
-   MINUTE[Ss]?                                    { cacheSymbol(MINUTES                             , FUNCTION_SCALAR);    }
    MOD                                            { return symbol(FUNCTION_SCALAR);    }
-   MONTH                                          { cacheSymbol(MONTH                               , FUNCTION_SCALAR);    }
    MONTHS_BETWEEN                                 { return symbol(FUNCTION_SCALAR);    }
    MQREAD                                         { return symbol(FUNCTION_SCALAR);    }
    MQREADCLOB                                     { return symbol(FUNCTION_SCALAR);    }
@@ -627,7 +620,6 @@ ATTR = MONTHS
    RPAD                                           { return symbol(FUNCTION_SCALAR);    }
    RTRIM                                          { return symbol(FUNCTION_SCALAR);    }
    SCORE                                          { return symbol(FUNCTION_SCALAR);    }
-   SECOND[Ss]?                                    { cacheSymbol(SECONDS                             , FUNCTION_SCALAR);    }
    SIGN                                           { return symbol(FUNCTION_SCALAR);    }
    SIN                                            { return symbol(FUNCTION_SCALAR);    }
    SINH                                           { return symbol(FUNCTION_SCALAR);    }
@@ -690,7 +682,6 @@ ATTR = MONTHS
    XMLTEXT                                        { return symbol(FUNCTION_SCALAR);    }
    XMLXSROBJECTID                                 { return symbol(FUNCTION_SCALAR);    }
    XSLTRANSFORM                                   { return symbol(FUNCTION_SCALAR);    }
-   YEARS                                          { cacheSymbol(YEARS                               , FUNCTION_SCALAR);    }
    ADMIN_TASK_LIST                                { return symbol(FUNCTION_TABLE);     }
    ADMIN_TASK_OUTPUT                              { return symbol(FUNCTION_TABLE);     }
    ADMIN_TASK_STATUS                              { return symbol(FUNCTION_TABLE);     }

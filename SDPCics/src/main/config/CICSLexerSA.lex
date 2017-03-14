@@ -5,7 +5,7 @@ import java_cup.runtime.*;
 import com.jgg.sdp.cics.base.*;
 import com.jgg.sdp.core.exceptions.*;
 import static com.jgg.sdp.cics.lang.CICSSym.*;
-
+import com.jgg.sdp.parser.base.*;
 %%
 
 %public

@@ -11,7 +11,7 @@ package com.jgg.sdp.parser.base;
 
 import com.jgg.sdp.parser.cics.lang.*;
 import com.jgg.sdp.parser.cobol.lang.*;
-import com.jgg.sdp.parser.sql.SQLParser;
+import com.jgg.sdp.parser.db2.DB2Parser;
 import com.jgg.sdp.parser.copy.lang.*;
 
 import java_cup.runtime.Symbol;
@@ -23,7 +23,7 @@ public class GenericParser {
 	private ZCData   zcd   = null;
 	private ZCCode   zcc   = null;
 //	private OCParser   oc   = null;
-	private SQLParser  sql  = null;
+	private DB2Parser  sql  = null;
 	private CICSParser cics = null;
 	private COPYParser copy = null;
 //	private TestParser  test  = null;
@@ -34,7 +34,7 @@ public class GenericParser {
 //		if (parser instanceof ZCParser)     this.zc   = (ZCParser)     parser;
 		if (parser instanceof ZCData) this.zcd  = (ZCData) parser;
 		if (parser instanceof ZCCode) this.zcc  = (ZCCode) parser;
-		if (parser instanceof SQLParser)    this.sql  = (SQLParser)    parser;
+		if (parser instanceof DB2Parser)    this.sql  = (DB2Parser)    parser;
 		if (parser instanceof CICSParser)   this.cics = (CICSParser)   parser;		
 		if (parser instanceof COPYParser)   this.copy = (COPYParser)   parser;		
 //		if (parser instanceof TestParser)   this.test = (TestParser)   parser;		

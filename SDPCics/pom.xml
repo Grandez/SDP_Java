@@ -50,6 +50,12 @@
        <artifactId>runtime</artifactId>
        <version>${sdp.version}</version>
     </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPParserBase</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
     
   </dependencies>
 

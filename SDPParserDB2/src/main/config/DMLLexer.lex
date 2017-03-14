@@ -143,57 +143,25 @@ FULLTABLE   = {ID}\.\*
   {IDQUALIFIED}     { return symbol(IDQUALIFIED);   }
 
    ACCELERATION               { return symbol(ACCELERATION        ); }    
-   ADD                        { return symbol(ADD                 ); }
-   AFTER                      { return symbol(AFTER               ); }
    AGE                        { return symbol(AGE                 ); }   
-   ALLOCATE                   { return symbol(ALLOCATE            ); }
    ALLOW                      { return symbol(ALLOW               ); }
    ALL                        { return symbol(ALL                 ); }
-   ALTER                      { return symbol(ALTER               ); }
    AND                        { return symbol(AND                 ); }
    ANY                        { return symbol(ANY                 ); }
    APPLICATION                { return symbol(APPLICATION         ); }   
    AS                         { return symbol(AS                  ); }
    ASENSITIVE                 { return symbol(ASENSITIVE          ); }
-   ASSOCIATE                  { return symbol(ASSOCIATE           ); }
-   ASUTIME                    { return symbol(ASUTIME             ); }
-   AT                         { return symbol(AT                  ); }
-   AUDIT                      { return symbol(AUDIT               ); }
-   AUXILIARY                  { return symbol(AUXILIARY           ); }
-   AUX                        { return symbol(AUX                 ); }
-   BEFORE                     { return symbol(BEFORE              ); }
-   BEGIN                      { return symbol(BEGIN               ); }
    BETWEEN                    { return symbol(BETWEEN             ); }
-   BUFFERPOOL                 { return symbol(BUFFERPOOL          ); }
    BY                         { return symbol(BY                  ); }
-   CALL                       { return symbol(CALL                ); }
-   CAPTURE                    { return symbol(CAPTURE             ); }
    CARDINALITY                { return symbol(CARDINALITY         ); }
-   CASCADED                   { return symbol(CASCADED            ); }
    CASE                       { return symbol(CASE                ); }
-   CAST                       { return symbol(CAST                ); }
-   CCSID                      { return symbol(CCSID               ); }
    CHARACTER                  { return symbol(CHARACTER           ); }
-   CHECK                      { return symbol(CHECK               ); }
    CLIENT_ACCTNG              { return symbol(CLIENT_ACCTNG       ); }   
    CLIENT_APPLNAME            { return symbol(CLIENT_APPLNAME     ); }   
    CLIENT_USERID              { return symbol(CLIENT_USERID       ); }   
    CLIENT_WRKSTNNAME          { return symbol(CLIENT_WRKSTNNAME   ); }   
-   CLONE                      { return symbol(CLONE               ); }
-   CLOSE                      { return symbol(CLOSE               ); }
-   CLUSTER                    { return symbol(CLUSTER             ); }
-   COLLECTION                 { return symbol(COLLECTION          ); }
-   COLLID                     { return symbol(COLLID              ); }
-   COLUMN                     { return symbol(COLUMN              ); }
    COMMENT                    { return symbol(COMMENT             ); }
-   COMMIT                     { return symbol(COMMIT              ); }
-   CONDITION                  { return symbol(CONDITION           ); }
    CONNECTION                 { return symbol(CONNECTION          ); }
-   CONNECT                    { return symbol(CONNECT             ); }
-   CONSTRAINT                 { return symbol(CONSTRAINT          ); }
-   CONTENT                    { return symbol(CONTENT             ); }
-   CONTINUE                   { return symbol(CONTINUE            ); }
-   CREATE                     { return symbol(CREATE              ); }
    CURRENT                    { return symbol(CURRENT             ); }
    CURRENT_DATE               { return symbol(CURRENT_DATE        ); }
    CURRENT_LC_CTYPE           { return symbol(CURRENT_LC_CTYPE    ); }
@@ -201,172 +169,84 @@ FULLTABLE   = {ID}\.\*
    CURRENT_SCHEMA             { return symbol(CURRENT_SCHEMA      ); }
    CURRENT_TIME               { return symbol(CURRENT_TIME        ); }
    CURRENT_TIMESTAMP          { return symbol(CURRENT_TIMESTAMP   ); }
-   CURRVAL                    { return symbol(CURRVAL             ); }
    CURSOR                     { return symbol(CURSOR              ); }
-   DATABASE                   { return symbol(DATABASE            ); }
    DATA                       { return symbol(DATA                ); }
    DAY[Ss]?                   { return symbol(DAYS                ); }
-   DBINFO                     { return symbol(DBINFO              ); }
    DEBUG                      { return symbol(DEBUG               ); }   
    DECLARE                    { return symbol(DECLARE             ); }
    DEFAULT                    { return symbol(DEFAULT             ); }
    DEGREE                     { return symbol(DEGREE              ); }   
    DELETE                     { return symbol(DELETE              ); }
-   DESCRIPTOR                 { return symbol(DESCRIPTOR          ); }
-   DETERMINISTIC              { return symbol(DETERMINISTIC       ); }
    DISABLE                    { return symbol(DISABLE             ); }
    DISALLOW                   { return symbol(DISALLOW            ); }
    DISTINCT                   { return symbol(DISTINCT            ); }
-   DOCUMENT                   { return symbol(DOCUMENT            ); }
-   DO                         { return symbol(DO                  ); }
-   DROP                       { return symbol(DROP                ); }
-   DSSIZE                     { return symbol(DSSIZE              ); }
    DYNAMIC                    { return symbol(DYNAMIC             ); }
-   EDITPROC                   { return symbol(EDITPROC            ); }
    ELIGIBLE                   { return symbol(ELIGIBLE            ); }   
    ELSE                       { return symbol(ELSE                ); }
-   ELSEIF                     { return symbol(ELSEIF              ); }
    ENABLE                     { return symbol(ENABLE              ); }   
    ENCODING                   { return symbol(ENCODING            ); }
    ENCRYPTION                 { return symbol(ENCRYPTION          ); }
-   ENDING                     { return symbol(ENDING              ); }
    END                        { return symbol(END                 ); }
-   END_EXEC                   { return symbol(END_EXEC            ); }
-   ERASE                      { return symbol(ERASE               ); }
    ESCAPE                     { return symbol(ESCAPE              ); }
-   EXCEPTION                  { return symbol(EXCEPTION           ); }
    EXCEPT                     { return symbol(EXCEPT              ); }
-   EXECUTE                    { return symbol(EXECUTE             ); }
    EXISTS                     { return symbol(EXISTS              ); }
-   EXIT                       { return symbol(EXIT                ); }
    EXPLAIN                    { return symbol(EXPLAIN             ); }
-   EXTERNAL                   { return symbol(EXTERNAL            ); }
    FAILBACK                   { return symbol(FAILBACK            ); }   
-   FENCED                     { return symbol(FENCED              ); }
    FETCH                      { return symbol(FETCH               ); }
-   FIELDPROC                  { return symbol(FIELDPROC           ); }
    FINAL                      { return symbol(FINAL               ); }
    FIRST                      { return symbol(FIRST               ); }
    FOR                        { return symbol(FOR                 ); }
-   FREE                       { return symbol(FREE                ); }
    FROM                       { return symbol(FROM                ); }
    FULL                       { return symbol(FULL                ); }
-   FUNCTION                   { return symbol(FUNCTION            ); }
-   GENERATED                  { return symbol(GENERATED           ); }
-   GET_ACCEL_ARCHIVE          { return symbol(GET_ACCEL_ARCHIVE   ); }
-   GET                        { return symbol(GET                 ); }   
+   GET_ACCEL_ARCHIVE          { return symbol(GET_ACCEL_ARCHIVE   ); }  
    GLOBAL                     { return symbol(GLOBAL              ); }
-   GO                         { return symbol(GO                  ); }
-   GOTO                       { return symbol(GOTO                ); }
-   GRANT                      { return symbol(GRANT               ); }
    GROUP                      { return symbol(GROUP               ); }
-   HANDLER                    { return symbol(HANDLER             ); }
    HAVING                     { return symbol(HAVING              ); }
    HINT                       { return symbol(HINT                ); }   
    HOLD                       { return symbol(HOLD                ); }
    HOUR[Ss]?                  { return symbol(HOURS               ); }     
-   IF                         { return symbol(IF                  ); }
-   IMMEDIATE                  { return symbol(IMMEDIATE           ); }
    IN                         { return symbol(IN                  ); }
-   INCLUSIVE                  { return symbol(INCLUSIVE           ); }
-   INDEX                      { return symbol(INDEX               ); }
-   INHERIT                    { return symbol(INHERIT             ); }
    INNER                      { return symbol(INNER               ); }
-   INOUT                      { return symbol(INOUT               ); }
    INSENSITIVE                { return symbol(INSENSITIVE         ); }
    INTERSECT                  { return symbol(INTERSECT           ); }
    INTO                       { return symbol(INTO                ); }
-   ISOBID                     { return symbol(ISOBID              ); }
    IS                         { return symbol(IS                  ); }
-   ITERATE                    { return symbol(ITERATE             ); }
-   JAR                        { return symbol(JAR                 ); }
    JOIN                       { return symbol(JOIN                ); }
-   KEEP                       { return symbol(KEEP                ); }
-   KEY                        { return symbol(KEY                 ); }
-   LABEL                      { return symbol(LABEL               ); }
-   LANGUAGE                   { return symbol(LANGUAGE            ); }
-   LAST1                      { return symbol(LAST1               ); }
    LC_CTYPE                   { return symbol(LC_CTYPE            ); }
    LC_TYPE                    { return symbol(LC_TYPE             ); }   
-   LEAVE                      { return symbol(LEAVE               ); }
    LIKE                       { return symbol(LIKE                ); }
    LOCALE                     { return symbol(LOCALE              ); }
-   LOCAL                      { return symbol(LOCAL               ); }
-   LOCATORS                   { return symbol(LOCATORS            ); }
-   LOCATOR                    { return symbol(LOCATOR             ); }
-   LOCKMAX                    { return symbol(LOCKMAX             ); }
-   LOCKSIZE                   { return symbol(LOCKSIZE            ); }
-   LOCK                       { return symbol(LOCK                ); }
-   LONG                       { return symbol(LONG                ); }
-   LOOP                       { return symbol(LOOP                ); }
    MAINTAINED                 { return symbol(MAINTAINED          ); }
-   MATERIALIZED               { return symbol(MATERIALIZED        ); }
    MEMBER                     { return symbol(MEMBER              ); }
    MICROSECOND[Ss]?           { return symbol(MICROSECONDS        ); }   
    MINUTE[Ss]?                { return symbol(MINUTES             ); }      
    MODE                       { return symbol(MODE                ); }   
-   MODIFIES                   { return symbol(MODIFIES            ); }
    MONTH[Ss]?                 { return symbol(MONTHS              ); }     
    NEXTVAL                    { return symbol(NEXTVAL             ); }
    NEXT                       { return symbol(NEXT                ); }
    NO                         { return symbol(NO                  ); }
    NONE                       { return symbol(NONE                ); }
    NOT                        { return symbol(NOT                 ); }
-   NULLS                      { return symbol(NULLS               ); }
    NULL                       { return symbol(NULL                ); }
-   NUMPARTS                   { return symbol(NUMPARTS            ); }
-   OBID                       { return symbol(OBID                ); }
    OF                         { return symbol(OF                  ); }
    OLD                        { return symbol(OLD                 ); }
    ON                         { return symbol(ON                  ); }
-   OPEN                       { return symbol(OPEN                ); }
    OPTIMIZATION               { return symbol(OPTIMIZATION        ); }
    OPTIMIZE                   { return symbol(OPTIMIZE            ); }
    ORDER                      { return symbol(ORDER               ); }
    OR                         { return symbol(OR                  ); }
-   ORGANIZATION1              { return symbol(ORGANIZATION1       ); }
    OUTER                      { return symbol(OUTER               ); }
-   OUT                        { return symbol(OUT                 ); }
    PACKAGESET                 { return symbol(PACKAGESET          ); }   
    PACKAGE                    { return symbol(PACKAGE             ); }
-   PARAMETER                  { return symbol(PARAMETER           ); }
-   PART                       { return symbol(PART                ); }
-   PADDED                     { return symbol(PADDED              ); }
-   PARTITIONED                { return symbol(PARTITIONED         ); }
-   PARTITIONING               { return symbol(PARTITIONING        ); }
-   PARTITION                  { return symbol(PARTITION           ); }
    PASSWORD                   { return symbol(PASSWORD            ); }   
    PATH                       { return symbol(PATH                ); }
-   PIECESIZE                  { return symbol(PIECESIZE           ); }
-   PERIOD1                    { return symbol(PERIOD1             ); }
-   PLAN                       { return symbol(PLAN                ); }
    PRECISION                  { return symbol(PRECISION           ); }
-   PREPARE                    { return symbol(PREPARE             ); }
    PREVIOUS                   { return symbol(PREVIOUS            ); }   
    PREVVAL                    { return symbol(PREVVAL             ); }
-   PRIOR                      { return symbol(PRIOR               ); }
-   PRIQTY                     { return symbol(PRIQTY              ); }
-   PRIVILEGES                 { return symbol(PRIVILEGES          ); }
-   PROCEDURE                  { return symbol(PROCEDURE           ); }
-   PROGRAM                    { return symbol(PROGRAM             ); }
-   PSID                       { return symbol(PSID                ); }
-   PUBLIC                     { return symbol(PUBLIC              ); }
    QUERYNO                    { return symbol(QUERYNO             ); }
    QUERY                      { return symbol(QUERY               ); }
-   READS                      { return symbol(READS               ); }
-   REFERENCES                 { return symbol(REFERENCES          ); }
    REFRESH                    { return symbol(REFRESH             ); }
-   RESIGNAL                   { return symbol(RESIGNAL            ); }
-   RELEASE                    { return symbol(RELEASE             ); }
-   RENAME                     { return symbol(RENAME              ); }
-   RESTRICT                   { return symbol(RESTRICT            ); }
-   RESULT                     { return symbol(RESULT              ); }
-   RESULT_SET_LOCATOR         { return symbol(RESULT_SET_LOCATOR  ); }
-   RETURNS                    { return symbol(RETURNS             ); }
    RETURN                     { return symbol(RETURN              ); }
-   REVOKE                     { return symbol(REVOKE              ); }
-   ROLE                       { return symbol(ROLE                ); }
-   ROLLBACK                   { return symbol(ROLLBACK            ); }
    ROUND_CEILING              { return symbol(ROUND_MODE          ); }
    ROUND_DOWN                 { return symbol(ROUND_MODE          ); }
    ROUND_FLOOR                { return symbol(ROUND_MODE          ); }
@@ -379,14 +259,9 @@ FULLTABLE   = {ID}\.\*
    ROWSET                     { return symbol(ROWSET              ); }
    ROW[Ss]?                   { return symbol(ROWS                ); }
    RULES                      { return symbol(RULES               ); }   
-   RUN                        { return symbol(RUN                 ); }
-   SAVEPOINT                  { return symbol(SAVEPOINT           ); }
    SCHEMA                     { return symbol(SCHEMA              ); }
    SCHEME                     { return symbol(SCHEME              ); }   
-   SCRATCHPAD                 { return symbol(SCRATCHPAD          ); }
    SECOND[Ss]?                { return symbol(SECONDS             ); }     
-   SECQTY                     { return symbol(SECQTY              ); }
-   SECURITY                   { return symbol(SECURITY            ); }
    SEQUENCE                   { return symbol(SEQUENCE            ); }
    SELECT                     { return symbol(SELECT              ); }
    SELECTIVITY                { return symbol(SELECTIVITY         ); }   
@@ -394,52 +269,23 @@ FULLTABLE   = {ID}\.\*
    SERVER                     { return symbol(SERVER              ); }   
    SESSION_USER               { return symbol(SESSION_USER        ); }
    SET                        { return symbol(SET                 ); }
-   SIGNAL                     { return symbol(SIGNAL              ); }
-   SIMPLE                     { return symbol(SIMPLE              ); }
    SOME                       { return symbol(SOME                ); }
-   SOURCE                     { return symbol(SOURCE              ); }
-   SPECIFIC                   { return symbol(SPECIFIC            ); }
    SQLID                      { return symbol(SQLID               ); }   
-   STANDARD                   { return symbol(STANDARD            ); }
    STATIC                     { return symbol(STATIC              ); }
    STATEMENT                  { return symbol(STATEMENT           ); }
-   STAY                       { return symbol(STAY                ); }
-   STOGROUP                   { return symbol(STOGROUP            ); }
-   STORES                     { return symbol(STORES              ); }
-   STYLE                      { return symbol(STYLE               ); }
-   SUMMARY                    { return symbol(SUMMARY             ); }
-   SYNONYM                    { return symbol(SYNONYM             ); }
-   SYSDATE                    { return symbol(SYSDATE             ); }
    SYSTEM                     { return symbol(SYSTEM              ); }
-   SYSTIMESTAMP               { return symbol(SYSTIMESTAMP        ); }
-   TABLESPACE                 { return symbol(TABLESPACE          ); }
    TABLE                      { return symbol(TABLE               ); }
    THEN                       { return symbol(THEN                ); }
    TO                         { return symbol(TO                  ); }
-   TRIGGER                    { return symbol(TRIGGER             ); }
    TYPE[Ss]?                  { return symbol(TYPES               ); }
-   UNDO                       { return symbol(UNDO                ); }
    UNION                      { return symbol(UNION               ); }
-   UNIQUE                     { return symbol(UNIQUE              ); }
-   UNTIL                      { return symbol(UNTIL               ); }
    UPDATE                     { return symbol(UPDATE              ); }
    USER                       { return symbol(USER                ); }
-   USING                      { return symbol(USING               ); }
-   VALIDPROC                  { return symbol(VALIDPROC           ); }
    VARIABLE                   { return symbol(VARIABLE            ); }
-   VARIANT                    { return symbol(VARIANT             ); }
-   VCAT                       { return symbol(VCAT                ); }
-   VIEW                       { return symbol(VIEW                ); }
-   VOLATILE                   { return symbol(VOLATILE            ); }
-   VOLUMES                    { return symbol(VOLUMES             ); }
-   WHENEVER                   { return symbol(WHENEVER            ); }
    WHEN                       { return symbol(WHEN                ); }
    WHERE                      { return symbol(WHERE               ); }
-   WHILE                      { return symbol(WHILE               ); }
    WITH                       { return symbol(WITH                ); }
-   WLM                        { return symbol(WLM                 ); }
    XMLEXISTS                  { return symbol(XMLEXISTS           ); }
-   XMLCAST                    { return symbol(XMLCAST             ); }
    ZONE                       { return symbol(ZONE                ); }
    
    /*************************************************************/
@@ -452,7 +298,6 @@ FULLTABLE   = {ID}\.\*
    CALLER                  { return symbol(CALLER           ); }
    CLIENT                  { return symbol(CLIENT           ); }
    DESC                    { return symbol(DESC             ); }
-   DOT                     { return symbol(DOT              ); }
    EXCHANGE                { return symbol(EXCHANGE         ); }
    INCLUDE                 { return symbol(INCLUDE          ); }
    LOCKED                  { return symbol(LOCKED           ); }
@@ -463,7 +308,6 @@ FULLTABLE   = {ID}\.\*
    SCROLL                  { return symbol(SCROLL           ); }
    SESSION                 { return symbol(SESSION          ); }
    TEMPORARY               { return symbol(TEMPORARY        ); }
-   WORK                    { return symbol(WORK             ); }
    BUSINESS_TIME           { return symbol(BUSINESS_TIME    ); }
    CROSS                   { return symbol(CROSS            ); }
    CS                      { return symbol(CS               ); }
@@ -475,7 +319,6 @@ FULLTABLE   = {ID}\.\*
    RR                      { return symbol(RR               ); }
    RS                      { return symbol(RS               ); }   
    SKIP                    { return symbol(SKIP             ); }
-   SQL                     { return symbol(SQL              ); }
    UR                      { return symbol(UR               ); }
    VALUES                  { return symbol(VALUES           ); }   
    VERSION                 { return symbol(VERSION          ); }
@@ -489,8 +332,8 @@ FULLTABLE   = {ID}\.\*
    /*************************************************************/
    /*************************************************************/
 
-   MAX                                            { return symbol(FUNCTION_BOTH); }
-   MIN                                            { return symbol(FUNCTION_BOTH); }
+   MAX                                            { cacheSymbol(MAX                                , FUNCTION_SCALAR);    }
+   MIN                                            { cacheSymbol(MIN                                , FUNCTION_SCALAR);    }
    AVG                                            { return symbol(FUNCTION_AGGREGATE); }
    CORRELATION                                    { return symbol(FUNCTION_AGGREGATE); }
    COUNT                                          { return symbol(FUNCTION_AGGREGATE); }
@@ -524,6 +367,7 @@ FULLTABLE   = {ID}\.\*
    BLOB                                           { return symbol(FUNCTION_SCALAR);    }
    CCSID_ENCODING                                 { return symbol(FUNCTION_SCALAR);    }
    CEILING                                        { return symbol(FUNCTION_SCALAR);    }
+   CAST                                           { return symbol(CAST);    }   
    CHAR                                           { cacheSymbol(CHAR                                , FUNCTION_SCALAR);    }
    CHARACTER_LENGTH                               { return symbol(FUNCTION_SCALAR);    }
    CLOB                                           { return symbol(FUNCTION_SCALAR);    }
@@ -531,7 +375,6 @@ FULLTABLE   = {ID}\.\*
    COLLATION_KEY                                  { return symbol(FUNCTION_SCALAR);    }
    COMPARE_DECFLOAT                               { return symbol(FUNCTION_SCALAR);    }
    CONCAT                                         { cacheSymbol(CONCAT                              , FUNCTION_SCALAR);    }
-   CONTAINS                                       { cacheSymbol(CONTAINS                            , FUNCTION_SCALAR);    }
    COS                                            { return symbol(FUNCTION_SCALAR);    }
    COSH                                           { return symbol(FUNCTION_SCALAR);    }
    DATE                                           { cacheSymbol(DATE                                , FUNCTION_SCALAR);    }
@@ -610,7 +453,7 @@ FULLTABLE   = {ID}\.\*
    RAISE_ERROR                                    { return symbol(FUNCTION_SCALAR);    }
    RAND                                           { return symbol(FUNCTION_SCALAR);    }
    REAL                                           { cacheSymbol(REAL                                , FUNCTION_SCALAR);    }
-   REPEAT                                         { cacheSymbol(REPEAT                              , FUNCTION_SCALAR);    }
+   REPEAT                                         { return symbol(FUNCTION_SCALAR);    }
    REPLACE                                        { return symbol(FUNCTION_SCALAR);    }
    RID                                            { return symbol(FUNCTION_SCALAR);    }
    RIGHT                                          { cacheSymbol(RIGHT                               , FUNCTION_SCALAR);    }
@@ -649,7 +492,7 @@ FULLTABLE   = {ID}\.\*
    TOTALORDER                                     { return symbol(FUNCTION_SCALAR);    }
    TRANSLATE                                      { return symbol(FUNCTION_SCALAR);    }
    TRIM                                           { return symbol(FUNCTION_SCALAR);    }
-   TRUNCATE                                       { cacheSymbol(TRUNCATE                            , FUNCTION_SCALAR);    }
+   TRUNCATE                                       { return symbol(FUNCTION_SCALAR);    }
    TRUNC                                          { return symbol(FUNCTION_SCALAR);    }
    TRUNC_TIMESTAMP                                { return symbol(FUNCTION_SCALAR);    }
    UCASE                                          { return symbol(FUNCTION_SCALAR);    }
@@ -667,6 +510,7 @@ FULLTABLE   = {ID}\.\*
    WEEK                                           { return symbol(FUNCTION_SCALAR);    }
    WEEK_ISO                                       { return symbol(FUNCTION_SCALAR);    }
    XMLATTRIBUTES                                  { return symbol(FUNCTION_SCALAR);    }
+   XMLCAST                                        { return symbol(XMLCAST);            }   
    XMLCOMMENT                                     { return symbol(FUNCTION_SCALAR);    }
    XMLCONCAT                                      { return symbol(FUNCTION_SCALAR);    }
    XMLDOCUMENT                                    { return symbol(FUNCTION_SCALAR);    }

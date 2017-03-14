@@ -84,7 +84,6 @@ init with {:
 /****************************************************************************/
 
 terminal Symbol ID        ;
-terminal Symbol ID2       ;
 
 terminal Symbol HOSTVAR1     ;
 terminal Symbol HOSTVAR2     ;
@@ -138,60 +137,26 @@ terminal Symbol QUESTION_MARK                         ;
 /****************************************************************************/
 
 terminal Symbol ACCELERATION               ;
-terminal Symbol ADD                        ;
-terminal Symbol AFTER                      ;
 terminal Symbol AGE                        ;
-terminal Symbol ALLOCATE                   ;
 terminal Symbol ALLOW                      ;
 terminal Symbol ALL                        ;
-terminal Symbol ALTER                      ;
 terminal Symbol AND                        ;
 terminal Symbol ANY                        ;
 terminal Symbol APPLICATION                ;
 terminal Symbol AS                         ;
 terminal Symbol ASENSITIVE                 ;
-terminal Symbol ASSOCIATE                  ;
-terminal Symbol ASUTIME                    ;
-terminal Symbol AT                         ;
-terminal Symbol AUDIT                      ;
-terminal Symbol AUXILIARY                  ;
-terminal Symbol AUX                        ;
-terminal Symbol BEFORE                     ;
-terminal Symbol BEGIN                      ;
 terminal Symbol BETWEEN                    ;
-terminal Symbol BUFFERPOOL                 ;
 terminal Symbol BY                         ;
-terminal Symbol CALL                       ;
-terminal Symbol CAPTURE                    ;
 terminal Symbol CARDINALITY                ;
-terminal Symbol CASCADED                   ;
 terminal Symbol CASE                       ;
 terminal Symbol CAST                       ;
-terminal Symbol CCSID                      ;
 terminal Symbol CHARACTER                  ;
 terminal Symbol CHAR                       ;
-terminal Symbol CHECK                      ;
 terminal Symbol CLIENT_APPLNAME            ;
 terminal Symbol CLIENT_ACCTNG              ;
 terminal Symbol CLIENT_USERID              ;
 terminal Symbol CLIENT_WRKSTNNAME          ;
-terminal Symbol CLONE                      ;
-terminal Symbol CLOSE                      ;
-terminal Symbol CLUSTER                    ;
-terminal Symbol COLLECTION                 ;
-terminal Symbol COLLID                     ;
-terminal Symbol COLUMN                     ;
-terminal Symbol COMMENT                    ;
-terminal Symbol COMMIT                     ;
-terminal Symbol CONCAT                     ;
-terminal Symbol CONDITION                  ;
 terminal Symbol CONNECTION                 ;
-terminal Symbol CONNECT                    ;
-terminal Symbol CONSTRAINT                 ;
-terminal Symbol CONTAINS                   ;
-terminal Symbol CONTENT                    ;
-terminal Symbol CONTINUE                   ;
-terminal Symbol CREATE                     ;
 terminal Symbol CURRENT                    ;
 terminal Symbol CURRENT_DATE               ;
 terminal Symbol CURRENT_LC_CTYPE           ;
@@ -199,244 +164,120 @@ terminal Symbol CURRENT_PATH               ;
 terminal Symbol CURRENT_SCHEMA             ;
 terminal Symbol CURRENT_TIME               ;
 terminal Symbol CURRENT_TIMESTAMP          ;
-terminal Symbol CURRVAL                    ;
 terminal Symbol CURSOR                     ;
-terminal Symbol DATABASE                   ;
 terminal Symbol DATA                       ;
 terminal Symbol DAYS                       ;
-terminal Symbol DBINFO                     ;
 terminal Symbol DEBUG                      ;
 terminal Symbol DECLARE                    ;
 terminal Symbol DEFAULT                    ;
 terminal Symbol DEGREE                     ;
 terminal Symbol DELETE                     ;
-terminal Symbol DESCRIPTOR                 ;
-terminal Symbol DETERMINISTIC              ;
 terminal Symbol DISABLE                    ;
 terminal Symbol DISALLOW                   ;
 terminal Symbol DISTINCT                   ;
-terminal Symbol DOCUMENT                   ;
 terminal Symbol DOUBLE                     ;
-terminal Symbol DO                         ;
-terminal Symbol DROP                       ;
-terminal Symbol DSSIZE                     ;
 terminal Symbol DYNAMIC                    ;
-terminal Symbol EDITPROC                   ;
 terminal Symbol ELIGIBLE                   ;
 terminal Symbol ELSE                       ;
-terminal Symbol ELSEIF                     ;
 terminal Symbol ENABLE                     ;
 terminal Symbol ENCODING                   ;
 terminal Symbol ENCRYPTION                 ;
-terminal Symbol ENDING                     ;
 terminal Symbol END                        ;
-terminal Symbol END_EXEC                   ;
-terminal Symbol ERASE                      ;
 terminal Symbol ESCAPE                     ;
-terminal Symbol EXCEPTION                  ;
 terminal Symbol EXCEPT                     ;
-terminal Symbol EXECUTE                    ;
 terminal Symbol EXISTS                     ;
-terminal Symbol EXIT                       ;
 terminal Symbol EXPLAIN                    ;
-terminal Symbol EXTERNAL                   ;
 terminal Symbol FAILBACK                   ;
-terminal Symbol FENCED                     ;
 terminal Symbol FETCH                      ;
-terminal Symbol FIELDPROC                  ;
 terminal Symbol FINAL                      ;
 terminal Symbol FIRST                      ;
 terminal Symbol FOR                        ;
-terminal Symbol FREE                       ;
 terminal Symbol FROM                       ;
 terminal Symbol FULL                       ;
-terminal Symbol FUNCTION                   ;
-terminal Symbol GENERATED                  ;
-terminal Symbol GET                        ;
 terminal Symbol GET_ACCEL_ARCHIVE          ;
 terminal Symbol GLOBAL                     ;
-terminal Symbol GO                         ;
-terminal Symbol GOTO                       ;
-terminal Symbol GRANT                      ;
 terminal Symbol GROUP                      ;
-terminal Symbol HANDLER                    ;
 terminal Symbol HAVING                     ;
 terminal Symbol HINT                       ;
 terminal Symbol HOLD                       ;
 terminal Symbol HOURS                      ;
-terminal Symbol IF                         ;
-terminal Symbol IMMEDIATE                  ;
 terminal Symbol IN                         ;
-terminal Symbol INCLUSIVE                  ;
-terminal Symbol INDEX                      ;
-terminal Symbol INHERIT                    ;
 terminal Symbol INNER                      ;
-terminal Symbol INOUT                      ;
 terminal Symbol INSENSITIVE                ;
 terminal Symbol INSERT                     ;
 terminal Symbol INTERSECT                  ;
 terminal Symbol INTO                       ;
-terminal Symbol ISOBID                     ;
 terminal Symbol IS                         ;
-terminal Symbol ITERATE                    ;
-terminal Symbol JAR                        ;
 terminal Symbol JOIN                       ;
-terminal Symbol KEEP                       ;
-terminal Symbol KEY                        ;
-terminal Symbol LABEL                      ;
-terminal Symbol LANGUAGE                   ;
-terminal Symbol LAST1                      ;
 terminal Symbol LC_CTYPE                   ;
 terminal Symbol LC_TYPE                    ;
-terminal Symbol LEAVE                      ;
 terminal Symbol LEFT                       ;
 terminal Symbol LIKE                       ;
 terminal Symbol LOCALE                     ;
-terminal Symbol LOCAL                      ;
-terminal Symbol LOCATORS                   ;
-terminal Symbol LOCATOR                    ;
-terminal Symbol LOCKMAX                    ;
-terminal Symbol LOCKSIZE                   ;
-terminal Symbol LOCK                       ;
-terminal Symbol LONG                       ;
-terminal Symbol LOOP                       ;
 terminal Symbol MAINTAINED                 ;
-terminal Symbol MATERIALIZED               ;
 terminal Symbol MEMBER                     ;
 terminal Symbol MICROSECONDS               ;
 terminal Symbol MINUTES                    ;
 terminal Symbol MODE                       ;
-terminal Symbol MODIFIES                   ;
 terminal Symbol MONTHS                     ;
 terminal Symbol NEXT                       ;
 terminal Symbol NEXTVAL                    ;
 terminal Symbol NO                         ;
 terminal Symbol NONE                       ;
 terminal Symbol NOT                        ;
-terminal Symbol NULLS                      ;
 terminal Symbol NULL                       ;
-terminal Symbol NUMPARTS                   ;
-terminal Symbol OBID                       ;
 terminal Symbol OF                         ;
 terminal Symbol OLD                        ;
 terminal Symbol ON                         ;
-terminal Symbol OPEN                       ;
 terminal Symbol OPTIMIZATION               ;
 terminal Symbol OPTIMIZE                   ;
 terminal Symbol ORDER                      ;
 terminal Symbol OR                         ;
-terminal Symbol ORGANIZATION1              ;
 terminal Symbol OUTER                      ;
-terminal Symbol OUT                        ;
 terminal Symbol PACKAGESET                 ;
 terminal Symbol PACKAGE                    ;
-terminal Symbol PARAMETER                  ;
-terminal Symbol PART                       ;
-terminal Symbol PADDED                     ;
-terminal Symbol PARTITIONED                ;
-terminal Symbol PARTITIONING               ;
-terminal Symbol PARTITION                  ;
 terminal Symbol PASSWORD                   ;
 terminal Symbol PATH                       ;
-terminal Symbol PIECESIZE                  ;
-terminal Symbol PERIOD1                    ;
-terminal Symbol PLAN                       ;
 terminal Symbol PRECISION                  ;
-terminal Symbol PREPARE                    ;
-terminal Symbol PRIOR                      ;
-terminal Symbol PRIQTY                     ;
-terminal Symbol PRIVILEGES                 ;
-terminal Symbol PROCEDURE                  ;
-terminal Symbol PROGRAM                    ;
-terminal Symbol PSID                       ;
-terminal Symbol PUBLIC                     ;
 terminal Symbol QUERYNO                    ;
 terminal Symbol QUERY                      ;
-terminal Symbol READS                      ;
-terminal Symbol REFERENCES                 ;
 terminal Symbol REFRESH                    ;
-terminal Symbol RESIGNAL                   ;
-terminal Symbol RELEASE                    ;
-terminal Symbol RENAME                     ;
-terminal Symbol REPEAT                     ;
-terminal Symbol RESTRICT                   ;
-terminal Symbol RESULT                     ;
-terminal Symbol RESULT_SET_LOCATOR         ;
-terminal Symbol RETURNS                    ;
 terminal Symbol RETURN                     ;
-terminal Symbol REVOKE                     ;
 terminal Symbol RIGHT                      ;
-terminal Symbol ROLE                       ;
-terminal Symbol ROLLBACK                   ;
 terminal Symbol ROUND_MODE                 ;
 terminal Symbol ROUNDING                   ;
 terminal Symbol ROUTINE                    ;
 terminal Symbol ROWSET                     ;
 terminal Symbol RULES                      ;
-terminal Symbol RUN                        ;
-terminal Symbol SAVEPOINT                  ;
 terminal Symbol SCHEMA                     ;
 terminal Symbol SCHEME                     ;
-terminal Symbol SCRATCHPAD                 ;
 terminal Symbol SECONDS                    ;
-terminal Symbol SECQTY                     ;
-terminal Symbol SECURITY                   ;
 terminal Symbol SEQUENCE                   ;
 terminal Symbol SELECT                     ;
 terminal Symbol SENSITIVE                  ;
 terminal Symbol SERVER                     ;
 terminal Symbol SESSION_USER               ;
 terminal Symbol SET                        ;
-terminal Symbol SIGNAL                     ;
-terminal Symbol SIMPLE                     ;
 terminal Symbol SOME                       ;
-terminal Symbol SOURCE                     ;
 terminal Symbol SQLID                      ;
-terminal Symbol SPECIFIC                   ;
-terminal Symbol STANDARD                   ;
 terminal Symbol STATIC                     ;
 terminal Symbol STATEMENT                  ;
-terminal Symbol STAY                       ;
-terminal Symbol STOGROUP                   ;
-terminal Symbol STORES                     ;
-terminal Symbol STYLE                      ;
-terminal Symbol SUMMARY                    ;
-terminal Symbol SYNONYM                    ;
-terminal Symbol SYSDATE                    ;
 terminal Symbol SYSTEM                     ;
-terminal Symbol SYSTIMESTAMP               ;
-terminal Symbol TABLESPACE                 ;
 terminal Symbol TABLE                      ;
 terminal Symbol THEN                       ;
 terminal Symbol TO                         ;
-terminal Symbol TRIGGER                    ;
-terminal Symbol TRUNCATE                   ;
 terminal Symbol TYPES                      ;
-terminal Symbol UNDO                       ;
 terminal Symbol UNION                      ;
-terminal Symbol UNIQUE                     ;
-terminal Symbol UNTIL                      ;
 terminal Symbol UPDATE                     ;
 terminal Symbol USER                       ;
-terminal Symbol USING                      ;
-terminal Symbol VALIDPROC                  ;
 terminal Symbol VALUES                     ;
 terminal Symbol VALUE                      ;
 terminal Symbol VARIABLE                   ;
-terminal Symbol VARIANT                    ;
-terminal Symbol VCAT                       ;
-terminal Symbol VIEW                       ;
-terminal Symbol VOLATILE                   ;
-terminal Symbol VOLUMES                    ;
-terminal Symbol WHENEVER                   ;
 terminal Symbol WHEN                       ;
 terminal Symbol WHERE                      ;
-terminal Symbol WHILE                      ;
 terminal Symbol WITH                       ;
-terminal Symbol WLM                        ;
-terminal Symbol XMLEXISTS                  ;
-terminal Symbol XMLNAMESPACES              ;
 terminal Symbol XMLCAST                    ;
+terminal Symbol XMLEXISTS                  ;
 terminal Symbol XMLTABLE                   ;
 terminal Symbol YEARS                      ;
 terminal Symbol ZONE                       ;
@@ -450,10 +291,9 @@ terminal Symbol ZONE                       ;
 terminal Symbol ASC                                   ;
 terminal Symbol CALLER                                ;
 terminal Symbol CLIENT                                ;
-terminal Symbol COALESCE                              ;
+terminal Symbol CONCAT                                ;
 terminal Symbol DECFLOAT                              ;
 terminal Symbol DESC                                  ;
-terminal Symbol DOT                                   ;
 terminal Symbol EXCHANGE                              ;
 terminal Symbol INCLUDE                               ;
 terminal Symbol LOCKED                                ;
@@ -464,7 +304,6 @@ terminal Symbol READ                                  ;
 terminal Symbol SCROLL                                ;
 terminal Symbol SESSION                               ;
 terminal Symbol TEMPORARY                             ;
-terminal Symbol WORK                                  ;
 terminal Symbol BINARY                                ;
 terminal Symbol BUSINESS_TIME                         ;
 terminal Symbol CROSS                                 ;
@@ -478,6 +317,8 @@ terminal Symbol INDICATOR                             ;
 terminal Symbol INPUT                                 ;
 terminal Symbol INTEGER                               ;
 terminal Symbol INT                                   ;
+terminal Symbol MAX                                   ;
+terminal Symbol MIN                                   ;
 terminal Symbol NUMERIC                               ;
 terminal Symbol ONLY                                  ;
 terminal Symbol PREVIOUS                              ;
@@ -490,7 +331,6 @@ terminal Symbol RS                                    ;
 terminal Symbol SELECTIVITY                           ;
 terminal Symbol SKIP                                  ;
 terminal Symbol SMALLINT                              ;
-terminal Symbol SQL                                   ;
 terminal Symbol SYSTEM_TIME                           ;
 terminal Symbol TIME                                  ;
 terminal Symbol TIMESTAMP                             ;
@@ -528,7 +368,6 @@ non terminal         sql_update    ;
 non terminal         declare_clauses           ;
 non terminal         declare_vars              ;
 non terminal         declare_type              ;
-non terminal         id_lst            ;
             
 non terminal         declare_cursor            ; 
 
@@ -543,7 +382,6 @@ non terminal         cursor_attr_item          ;
 
 non terminal         verb_refresh              ;
 
-non terminal         select_stmt       ;
 non terminal         select_queries    ;
 non terminal         select_query      ;
 
@@ -605,8 +443,10 @@ non terminal          sql_update_clause           ;
 non terminal          function                    ;
 non terminal          function_value              ;
 non terminal          function_value_parms        ;
+non terminal          function_cast               ;
+non terminal          function_cast_verb          ;
+non terminal          function_cast_parm          ;
 non terminal          function_time               ;
-non terminal          function_time_words         ;
 non terminal          function_type               ;
 non terminal          function_parms              ;
 non terminal          func_parms_lst_opt          ;    
@@ -618,6 +458,9 @@ non terminal          register                    ;
 non terminal          register_word               ;
 non terminal          register_words              ;
 non terminal          reg_zone_opt                ;
+
+non terminal          time_words_opt              ;
+non terminal          time_words                  ;
 
 /**********************************************************************/
 /*          QUERIES                                                   */
@@ -644,8 +487,6 @@ non terminal           qry_select            ;
 non terminal           qry_select_clauses_opt          ;
 non terminal           qry_select_clauses              ;
 non terminal           qry_select_clause               ;
-
-non terminal           qry_fullselect_union            ;
 
 /**********************************************************************/
 /*          CLAUSES                                                   */
@@ -690,6 +531,7 @@ non terminal           clause_yes_no            ;
 non terminal           sequence_lst             ;
 non terminal           sequence                 ;
 non terminal           sequence_type            ;
+non terminal           sequence_value           ;
 non terminal           sequence_from_opt        ;
 non terminal           sequence_from            ;
 
@@ -753,7 +595,9 @@ non terminal table_table             ;
 non terminal table_item              ;
 non terminal table_locator           ;
 non terminal table_single            ;
+non terminal table_correlation       ;
 non terminal table_nested            ;
+non terminal table_nested_item            ;
 non terminal table_change            ;
 non terminal table_change_sql        ;
 non terminal               table_function                   ;
@@ -770,6 +614,7 @@ non terminal               table_xml                        ;
 non terminal               table_join                       ;
 non terminal               table_join_mode                  ;
 non terminal               table_join_type                  ;
+non terminal               table_join_verb                  ;
 non terminal               table_join_cross                 ;
 non terminal               table_join_full                  ;
 non terminal               table_join_not_full              ;
@@ -841,7 +686,6 @@ non terminal constant_numeric       ;
 non terminal constant_number        ;
 non terminal constant_binary        ;
 non terminal constant_graphic       ;
-non terminal constant_date          ;
 
 non terminal clause_assignment                 ;
 non terminal clause_assignment_lst             ;
@@ -896,7 +740,7 @@ non terminal include_column_id       ;
 non terminal queryno                 ;
 
 non terminal Symbol non_reserved_words ;
-
+non terminal Symbol reserved_words     ;
 
 non terminal timestamp     ;
 
@@ -905,6 +749,8 @@ non terminal data_type_name     ;
 non terminal data_type_prec_opt ;
               
 non terminal id              ;
+non terminal id_base         ;
+non terminal id_lst          ;
 non terminal id_qualified    ;
 
 
@@ -965,8 +811,9 @@ non terminal id_general             ;
 non terminal            wrd_current            ;
 non terminal            wrd_of                 ;
 
-non terminal            host_var_opt           ;
+non terminal            host_var_indicator           ;
 non terminal            host_var               ;
+non terminal            host_var_negated       ;
 non terminal            host_var_base          ;
 non terminal            host_field       ;
                  
@@ -978,6 +825,12 @@ non terminal var_time             ;
 non terminal eat                 ;
 non terminal eat_opt             ;
 non terminal eat_token           ;
+
+non terminal eat_full            ;
+non terminal eat_token_full      ;
+
+non terminal eat_functions       ;
+non terminal not_functions       ;
 
 precedence nonassoc LPAR, RPAR ;
 
@@ -1024,7 +877,7 @@ declare_vars ::= id_lst
                               
 declare_type ::= CURSOR declare_cursor
              |   STATEMENT
-             |   TABLE eat
+             |   TABLE eat_full
              |   VARIABLE eat_opt
              |   cursor_opc declare_cursor
              ;
@@ -1488,32 +1341,50 @@ table_reference ::= table_item
                 |   table_reference table_item // el segundo es join o correlation
                 ;
  
-                                     
 table_item ::= table_single    
            |   table_table_prfx        
            |   table_nested
            |   table_join 
            |   table_xml
            |   FUNCTION_TABLE
-           |   AS id
+           |   AS id_base
            ;
 
-table_single ::= table_name // clause_period_opt      
+table_single ::= table_name // clause_period      
              ;
 
 table_table_prfx ::= TABLE LPAR table_table RPAR
                  ;
-                 
+
+table_nested ::= LPAR table_nested_item RPAR
+             ;
+
+table_nested_item ::= qry_fullselect
+                  |   table_reference
+                  ;
+                  
+table_join ::= table_join_mode
+           |   LPAR table_join RPAR
+           ;
+
+table_xml ::= XMLTABLE LPAR eat RPAR 
+          ;
+
+table_correlation ::= table_single
+                  |
+                  ;
+                                                
 table_table ::= qry_fullselect
             |   table_function
-            |   table_locator
+//            |   table_locator
             |   table_change
             ;
 
-table_nested ::= LPAR qry_fullselect RPAR
-             ;
-                                          
-table_function ::=  id  table_function_data clause_cardinality
+
+
+
+                                                         
+table_function ::= id table_function_data clause_cardinality
                ;
 
 table_function_data ::= table_function_item
@@ -1533,10 +1404,6 @@ table_change_sql ::= sql_insert
                  |   sql_merge
                  ;
                                               
-table_join ::= table_join_mode
-           |   LPAR table_join RPAR
-           ;
-
 table_join_mode ::= table_join_cross
                 |   table_join_full
                 |   table_join_not_full
@@ -1548,12 +1415,16 @@ table_join_cross ::= CROSS JOIN table_item
 table_join_full ::= FULL opt_outer JOIN table_reference ON table_join_condition
                 ;
 
-table_join_not_full ::= table_join_type opt_outer JOIN table_reference ON search_condition
+table_join_not_full ::= table_join_type JOIN table_reference ON search_condition
                     ;
-                                                                                                                          
-table_join_type ::= INNER
+
+table_join_type ::= table_join_verb opt_outer
+                ;
+                                                                                                                                           
+table_join_verb ::= INNER
                 |   LEFT
                 |   RIGHT
+                |
                 ;     
                   
 table_join_condition ::= table_join_condition_expr
@@ -1576,9 +1447,6 @@ table_join_condition_item ::= column_name
                           |   FUNCTION_SCALAR
                           ;
 
-table_xml ::= XMLTABLE LPAR eat RPAR 
-          ;
-               
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/
@@ -1623,13 +1491,10 @@ clause_from ::= FROM table_reference_lst
             ;
 
 
-clause_period_opt ::= clause_period
-                  |
-                  ;
-                  
 clause_period ::= FOR clause_period_time clause_period_mode
+              |
               ;
-              
+                  
 clause_period_time ::= SYSTEM_TIME
                    |   BUSINESS_TIME
                    ;
@@ -1739,12 +1604,16 @@ sequence_lst ::= sequence
 sequence ::= sequence_type FOR sequence_name
          ;
 
-sequence_type ::= PREVIOUS  VALUES
-              |   NEXT      VALUES
+sequence_type ::= PREVIOUS  sequence_value
+              |   NEXT      sequence_value
               |   PREVVAL
               |   NEXTVAL
               ;
-                                           
+
+sequence_value ::= VALUE
+               |   VALUES
+               ;
+                                                          
 sequence_name ::= id_general // sequence_from_opt
               ;
               
@@ -1936,6 +1805,7 @@ clause_optimize ::= OPTIMIZE FOR NUM_ENTERO opt_rows
 
 function ::= function_type function_parms
          |   function_value
+         |   function_cast         
          |   function_time
          ;
 
@@ -1947,7 +1817,18 @@ function_type ::= FUNCTION_SCALAR
               
 function_value ::= VALUE function_value_parms
                ;
-               
+
+function_cast ::= function_cast_verb LPAR function_cast_parm AS eat RPAR
+               ;
+
+function_cast_verb ::= CAST
+                   |   XMLCAST
+                   ;
+
+function_cast_parm ::= expression
+                   |   NULL
+                   ;
+                                  
 function_value_parms ::= function_parms
 //JGG Perfilar, no vale todo                     |   expression   
                      ;
@@ -1972,17 +1853,21 @@ func_parm_quantifier ::= ALL
                      |
                      ;
 
-function_time ::= function_time_words function_parms
+function_time ::= time_words function_parms
               ;
-              
-function_time_words ::= YEARS
-                    |   MONTHS
-                    |   DAYS 
-                    |   HOURS
-                    |   MINUTES
-                    |   SECONDS
-                    |   MICROSECONDS
-                    ;
+     
+time_words_opt ::= time_words
+               |
+               ;
+               
+time_words ::= YEARS
+           |   MONTHS
+           |   DAYS 
+           |   HOURS
+           |   MINUTES
+           |   SECONDS
+           |   MICROSECONDS
+           ;
                        
 /**********************************************************************/
 /**********************************************************************/
@@ -2057,9 +1942,9 @@ expression_arit ::= expression_primary
                 ;
 
 expression_signed ::= operator expression_primary
-                  |   NUM_SIGNED
+                  |   NUM_SIGNED time_words_opt
                   ;
-                  
+
 expression_primary ::= expression_id
                    |   function
                    |   register
@@ -2076,7 +1961,7 @@ expression_var ::= host_field
                |   constant
                ;
                
-expression_attribute ::= function_time_words
+expression_attribute ::= time_words
                      |
                      ;
                       
@@ -2247,6 +2132,7 @@ data_type ::=   SMALLINT
           |     REAL
           |     DATE
           |     TIME
+          |     NUMERIC
           |     timestamp
           |     data_type_def
           ;
@@ -2288,6 +2174,7 @@ operator ::= PLUS
          |   SUBTRACT
          |   DIVIDE
          |   MULTIPLY
+         |   CONCAT
          |   CONCAT_SYM
          ;
 
@@ -2402,9 +2289,6 @@ constant_binary ::=  NUM_BINARY
 constant_graphic ::= NUM_GRAPHIC
                  ;
                  
-constant_date ::= constant_string
-              ;
-
 correlation_name_opt ::= correlation_name
                      |
                      ;
@@ -2553,19 +2437,23 @@ with_without ::= WITH
 /**********************************************************************/
 /**********************************************************************/
        
-host_var_opt ::= host_var
-                |
-                ;
+host_var_indicator ::= host_var_base
+             |
+             ;
 
-host_var ::= host_var_base id_qualified
+host_var ::= host_var_negated id_qualified
          ;
-            
+
+host_var_negated ::= SUBTRACT host_var_base
+                 |   host_var_base
+                 ;
+                                  
 host_var_base ::= HOSTVAR1
               |   HOSTVAR2
               |   PREHOST ID
               ;
 
-host_field ::= host_var opt_indicator host_var_opt
+host_field ::= host_var opt_indicator host_var_indicator
            ;
                  
                                                  
@@ -2573,14 +2461,21 @@ id_general ::= id
            |   NUM_ENTERO
            |   LITERAL
            ;
-           
-id ::= ID id_qualified
-   |   non_reserved_words
-   ;
 
 id_lst ::= id
        |   id_lst COMMA id
        ;
+           
+id ::= id_base id_qualified
+   ;
+
+id_base ::= ID 
+        |   non_reserved_words
+        ;
+
+id_qualified ::= IDQUALIFIED
+             |
+             ;
 
 table_name ::= id 
            ;
@@ -2600,21 +2495,191 @@ field_list ::= field_name
             |   field_list COMMA field_name
             ;
 
-id_qualified ::= IDQUALIFIED
-             |
-             ;
-
-non_reserved_words ::= TIMESTAMP
-                   ;
-                   
 eat_opt ::= eat
         |
         ;
-        
+
+eat_full ::= eat_token_full
+         |   eat_full eat_token_full
+         ;
+                 
 eat ::= eat_token
     |   eat eat_token
     ;
     
-eat_token ::= ID
+    
+eat_token ::= id
+          |   eat_functions
+          |   reserved_words
           |   COMMA
-          ;                                                           
+          ;
+
+eat_token_full ::= eat_token
+               |   LPAR
+               |   RPAR
+               ;
+
+eat_functions ::= function
+              |   not_functions
+              ;
+
+not_functions ::= BINARY
+              |   CHAR
+              |   DATE
+              |   DECFLOAT
+              |   DECIMAL
+              |   DOUBLE
+              |   FLOAT
+              |   GRAPHIC
+              |   INT
+              |   LEFT
+              |   REAL
+              |   RIGHT
+              |   SMALLINT
+              |   TIME
+              |   VARBINARY
+              |   VARCHAR
+              |   VARGRAPHIC
+              ;
+                            
+non_reserved_words ::= MAX
+                   |   MIN
+                   |   VERSION
+                   |   TIMESTAMP
+                   ;
+                   
+reserved_words ::= ACCELERATION        
+               |   AGE                 
+               |   ALLOW               
+               |   ALL                 
+               |   AND                 
+               |   ANY                 
+               |   APPLICATION         
+               |   AS                  
+               |   ASENSITIVE          
+               |   BETWEEN             
+               |   BY                  
+               |   CARDINALITY         
+               |   CASE                
+               |   CHARACTER                          
+               |   CLIENT_APPLNAME     
+               |   CLIENT_ACCTNG       
+               |   CLIENT_USERID       
+               |   CLIENT_WRKSTNNAME   
+               |   CONNECTION          
+               |   CURRENT             
+               |   CURRENT_DATE        
+               |   CURRENT_LC_CTYPE    
+               |   CURRENT_PATH        
+               |   CURRENT_SCHEMA      
+               |   CURRENT_TIME        
+               |   CURRENT_TIMESTAMP   
+               |   CURSOR              
+               |   DATA                               
+               |   DEBUG               
+               |   DECLARE             
+               |   DEFAULT             
+               |   DEGREE              
+               |   DELETE              
+               |   DISABLE             
+               |   DISALLOW            
+               |   DISTINCT                         
+               |   DYNAMIC             
+               |   ELIGIBLE            
+               |   ELSE                
+               |   ENABLE              
+               |   ENCODING            
+               |   ENCRYPTION          
+               |   END                 
+               |   ESCAPE              
+               |   EXCEPT              
+               |   EXISTS              
+               |   EXPLAIN             
+               |   FAILBACK            
+               |   FETCH               
+               |   FINAL               
+               |   FIRST               
+               |   FOR                 
+               |   FROM                
+               |   FULL                
+               |   GET_ACCEL_ARCHIVE   
+               |   GLOBAL              
+               |   GROUP               
+               |   HAVING              
+               |   HINT                
+               |   HOLD                              
+               |   IN                  
+               |   INNER               
+               |   INSENSITIVE         
+               |   INSERT              
+               |   INTERSECT           
+               |   INTO                
+               |   IS                  
+               |   JOIN                
+               |   LC_CTYPE            
+               |   LC_TYPE                            
+               |   LIKE                
+               |   LOCALE              
+               |   MAINTAINED          
+               |   MEMBER                                
+               |   MODE                             
+               |   NEXT                
+               |   NEXTVAL             
+               |   NO                  
+               |   NONE                
+               |   NOT                 
+               |   NULL                
+               |   OF                  
+               |   OLD                 
+               |   ON                  
+               |   OPTIMIZATION        
+               |   OPTIMIZE            
+               |   ORDER               
+               |   OR                  
+               |   OUTER               
+               |   PACKAGESET          
+               |   PACKAGE             
+               |   PASSWORD            
+               |   PATH                
+               |   PRECISION           
+               |   QUERYNO             
+               |   QUERY               
+               |   REFRESH             
+               |   RETURN                            
+               |   ROUND_MODE          
+               |   ROUNDING            
+               |   ROUTINE             
+               |   ROWSET              
+               |   RULES               
+               |   SCHEMA              
+               |   SCHEME                          
+               |   SEQUENCE            
+               |   SELECT              
+               |   SENSITIVE           
+               |   SERVER              
+               |   SESSION_USER        
+               |   SET                 
+               |   SOME                
+               |   SQLID               
+               |   STATIC              
+               |   STATEMENT           
+               |   SYSTEM              
+               |   TABLE               
+               |   THEN                
+               |   TO                  
+               |   TYPES               
+               |   UNION               
+               |   UPDATE              
+               |   USER                
+               |   VALUES              
+               |   VALUE               
+               |   VARIABLE            
+               |   WHEN                
+               |   WHERE               
+               |   WITH                
+               |   XMLEXISTS           
+               |   XMLTABLE                          
+               |   ZONE                
+               ;
+                   
+                                                                                    

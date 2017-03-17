@@ -169,13 +169,16 @@ public class Parser {
 	   calls.parse();
 	   
 	   checkMQAndCalls(module);
+	   module.makeGraph();
+	   
 	}
 
 	private void parse(Module module, int type) throws SDPException, Exception {
        	GenericParser parser = null;
         Source source =  unit.getMainSource();
        	Scanner scanner = new ProxyLexer(source);
-
+       	// Scanner scanner = FactoryLexer.getLexer(source, Parsers.ZCOBOLDATA);
+       	
        	// Parse el modulo fuente hasta encontrar PROCEDURE
        	parser = FactoryParser.getParser(scanner, source, Parsers.ZCOBOLDATA);
        	parser.parse();

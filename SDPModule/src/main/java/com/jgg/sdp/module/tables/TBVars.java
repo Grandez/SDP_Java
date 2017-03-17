@@ -6,7 +6,7 @@
  * @version 3.0
  *   
  */
-package com.jgg.sdp.module.tablas;
+package com.jgg.sdp.module.tables;
 
 import java.util.*;
 

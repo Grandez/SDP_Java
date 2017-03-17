@@ -923,8 +923,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                       if (lastSymbol != LENGTH) return symbol(ZCCSym.OF);         
                     }
   ON                { data = true;  }     
-  OR                { return symbol(OR);         }
-  OUTPUT            { return symbol(OUTPUT);  }
+  OR                { return symbol(OR);        }
+  OTHER             { return symbol(OTHER);     }
+  OUTPUT            { return symbol(OUTPUT);    }
   OVERFLOW          { return symbol(OVERFLOW);  }
 
   PAGE              { data = true;  }

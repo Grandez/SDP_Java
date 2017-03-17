@@ -237,8 +237,10 @@ non terminal         opt_result_set          ;
 
 non terminal         procedure_name   ;
 
-non terminal result_set     ;
-non terminal id               ;
+non terminal         result_set            ;
+non terminal         id_base               ;
+non terminal         id_qualified          ;
+non terminal         id                    ;
              
 non terminal         clause_using_opt      ;
 non terminal         clause_using_for_opt  ;
@@ -259,12 +261,13 @@ non terminal         host_field             ;
 non terminal         host_var_opt           ;
 non terminal         host_var               ;
 non terminal         host_var_base          ;
-non terminal         host_var_qualified_opt ;
 
 non terminal         host_label            ;
 
 non terminal         eat                   ;
 non terminal         eat_token             ;
+
+non terminal         non_reserved_words     ;
 
 /**********************************************************************/
 /**********************************************************************/
@@ -492,7 +495,7 @@ locator_variable_lst ::= host_var
 /*                 PREPARE                                          */
 /********************************************************************/
 
-sql_open ::= OPEN:v {: stmt.setVerb(v); :} ID sql_open_using_opt
+sql_open ::= OPEN:v {: stmt.setVerb(v); :} id sql_open_using_opt
          ;
 
 sql_open_using_opt ::= USING sql_open_using_type
@@ -565,7 +568,7 @@ host_var_opt ::= host_var
              |
              ;
              
-host_var ::= host_var_base host_var_qualified_opt
+host_var ::= host_var_base id_qualified
          ;
          
 host_var_base ::= HOSTVAR1
@@ -573,12 +576,17 @@ host_var_base ::= HOSTVAR1
               |   PREHOST ID
               ;
                           
-host_var_qualified_opt ::= IDQUALIFIED
-                       |
-                       ;
-              
-id ::= ID
+id ::= id_base id_qualified
    ;
+
+id_base ::= ID 
+        |   non_reserved_words
+        ;
+
+id_qualified ::= IDQUALIFIED
+             |
+             ;
+
 
 var_string ::= host_var
            |   LITERAL
@@ -636,3 +644,7 @@ eat_token ::= ID
           |   RPAR
           |   COMMA
           ;                              
+          
+non_reserved_words ::= CURSOR
+                   ;
+          

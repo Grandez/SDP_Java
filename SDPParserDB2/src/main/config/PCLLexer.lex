@@ -10,6 +10,7 @@ import static com.jgg.sdp.parser.db2.lang.PCLSym.*;
 %public
 %class      PCLLexer
 %extends    GenericLexer
+%implements GenericScanner
 
 %line
 %column

@@ -12,6 +12,7 @@ import static com.jgg.sdp.parser.db2.lang.DMLSym.*;
 %public
 %class      DMLLexer
 %extends    GenericLexer
+%implements GenericScanner
 
 %line
 %column
@@ -29,8 +30,11 @@ import static com.jgg.sdp.parser.db2.lang.DMLSym.*;
    Stack<Integer> pars = new Stack<Integer>();
    HashSet<Integer> words = new HashSet<Integer>();
 
-   Symbol symWord;
-   Symbol symFunction;
+   // Auxiliares para distinguir entre funcion o ID
+   Symbol  symWord;
+   Symbol  symFunction;
+   // Controla si la ultima palabra esta en cache  
+   boolean hasCache = false;
          
    public void resetLiteral(String txt) {
       data = true;
@@ -52,9 +56,6 @@ import static com.jgg.sdp.parser.db2.lang.DMLSym.*;
       cadena.setLength(0);
       print("Devuelve LITERAL (" + LITERAL + ") - " + texto);
       Symbol s = new Symbol(LITERAL, litLine, litColumn, texto);
-//      if (texto.contains("%")) {
-//          return symbolFactory.newSymbol(texto, MASK, s);
-//      }
       return symbolFactory.newSymbol(texto, LITERAL, s);
    }
 
@@ -73,12 +74,14 @@ import static com.jgg.sdp.parser.db2.lang.DMLSym.*;
    private void cacheSymbol(int codeWord, int codeFunction) {
       symWord     = symbol(codeWord);
       symFunction = symbol(codeFunction);
+      hasCache = true;
       pushState(CHECK_FUNCTION);
    } 
    
    private Symbol getCacheSymbol(boolean function) {
       popState();
 //      if (function) print("DEVUELVE FUNCTION"); else print("DEVUELVE ID");
+      hasCache = false;
       return (function) ? symFunction : symWord;
    }   
    
@@ -96,16 +99,11 @@ import static com.jgg.sdp.parser.db2.lang.DMLSym.*;
 
 %init{
    initLexer();
-/*
-   words.add(LPAR);
-   words.add(WHERE);
-   words.add(WHEN);   
-   words.add(AND);
-   words.add(OR);
-*/   
 %init}
 
 %eofval{
+    // La ultima palabra esta en la cache
+    if (hasCache) return getCacheSymbol(false);
     return symbolFactory.newSymbol("EOF", EOF);
 %eofval}
 
@@ -294,10 +292,12 @@ FULLTABLE   = {ID}\.\*
    /*************************************************************/
    /*************************************************************/
    
-   ASC                     { return symbol(ASC              ); }
+   ASC                     { return symbol((lastID == RPAR) ? ASCENDING : ASC );   }
+   DESC                    { return symbol((lastID == RPAR) ? DESCENDING : DESC ); }
+   
    CALLER                  { return symbol(CALLER           ); }
    CLIENT                  { return symbol(CLIENT           ); }
-   DESC                    { return symbol(DESC             ); }
+
    EXCHANGE                { return symbol(EXCHANGE         ); }
    INCLUDE                 { return symbol(INCLUDE          ); }
    LOCKED                  { return symbol(LOCKED           ); }
@@ -573,27 +573,9 @@ FULLTABLE   = {ID}\.\*
   "/"              { return symbol(DIVIDE);    }  
   "*"              { return symbol(MULTIPLY);  }
   ","              { return symbol(COMMA);     }
-  "?"              { return symbol(QUESTION_MARK);     }
-  "("              { return symbol(LPAR);
-  /* 
-                    if (words.contains(lastID)) {
-                         info.setInSearch();
-                      }
-                      if (info.isInSearch() && words.contains(lastID)) {
-                            pars.push(0);
-                      }    
-                      else { 
-                        pars.push(1); // Pila de parentesis
-                        return symbol(LPAR);      
-                     }
-*/                     
-                   }   
-  ")"              { return symbol(RPAR);
-/*
-                     int idPar = pars.pop(); // Quita el ( de la pila
-                     if (idPar == 1) return symbol(RPAR);
-*/
-                   }
+  "?"              { return symbol(QUESTION_MARK);  }
+  "("              { return symbol(LPAR);           }   
+  ")"              { return symbol(RPAR);           }
   // Caso : \n Host
   ":"              { return symbol(PREHOST); }
 
@@ -613,8 +595,8 @@ FULLTABLE   = {ID}\.\*
    {SPACES}     { /* eat */ }
    {TABS}       { /* eat */ }
    "("          { yypushback(1); return getCacheSymbol(true);  }
-   \r           { return getCacheSymbol(false);                }
-   \n           { return getCacheSymbol(false);                } 
+   \r           { /* eat */ }
+   \n           { /* eat */ } 
    [^]          { yypushback(1); return getCacheSymbol(false); }
 }
 

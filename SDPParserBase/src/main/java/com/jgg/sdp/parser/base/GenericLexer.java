@@ -34,7 +34,6 @@ public abstract class GenericLexer implements ILexer {
    protected ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
 
    protected SDPUnit         unit   = null;
-//   protected Module          module = null;
    protected boolean         data   = false;
    protected int             lastID = -1; 
    
@@ -53,15 +52,7 @@ public abstract class GenericLexer implements ILexer {
    protected boolean inCopy      = false;  // Estamos en estado COPY?       
    
    protected Configuration cfg = Configuration.getInstance();
-/*   
-   private CopyLoader  loader    = new CopyLoader();
-   private boolean     sendEOF   = false;
-   private boolean     begParser = false;
-   private Symbol      sym       = null;
-   private Symbol      lastSym   = null;
 
-   private Copy        currCopy  = null;
-*/   
    // Para el control de COPYs e INCLUDEs
    
    protected boolean                  isCopy    = false;
@@ -69,8 +60,6 @@ public abstract class GenericLexer implements ILexer {
    protected ArrayList<StringBuilder> chgTokens = null;
    protected StringBuilder            chgToken  = null;
    protected RulesChecker             rules     = null;   
-   
-//   private   int         parserType  = Parsers.COBOL;
    
    protected Symbol      exec      = null;
    protected Symbol      endExec   = null;
@@ -182,7 +171,7 @@ public abstract class GenericLexer implements ILexer {
    public boolean isIgnoreReserved() { return ignoreReserved;  }
    
    public void print(String txt) {
-        System.out.println(txt);
+//         System.out.println(txt);
    }   
 
    protected String removeQuotes(String txt) {

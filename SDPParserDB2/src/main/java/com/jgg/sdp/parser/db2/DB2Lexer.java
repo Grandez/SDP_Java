@@ -1,7 +1,5 @@
 package com.jgg.sdp.parser.db2;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.util.Properties;
 
 import com.jgg.sdp.module.unit.Source;

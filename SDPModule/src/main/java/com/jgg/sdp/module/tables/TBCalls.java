@@ -1,4 +1,4 @@
-package com.jgg.sdp.module.tablas;
+package com.jgg.sdp.module.tables;
 
 /**
  * Tabla con las variables que se utilizan para las llamadas dinamicas

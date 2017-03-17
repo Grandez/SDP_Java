@@ -6,7 +6,7 @@ import java.util.*;
 
 import java_cup.runtime.Symbol;
 
-import com.jgg.sdp.parser.base.GenericLexer;
+import com.jgg.sdp.parser.base.*;
 
 import static com.jgg.sdp.parser.db2.lang.TCLSym.*;
 
@@ -16,7 +16,7 @@ import static com.jgg.sdp.parser.db2.lang.TCLSym.*;
  * <a href="http://www.jflex.de/">JFlex</a> 1.6.1
  * from the specification file <tt>P:/SDP/Java/SDPParserDB2/src/main/config/TCLLexer.lex</tt>
  */
-public class TCLLexer extends GenericLexer implements java_cup.runtime.Scanner {
+public class TCLLexer extends GenericLexer implements GenericScanner, java_cup.runtime.Scanner {
 
   /** This character denotes the end of file */
   public static final int YYEOF = -1;

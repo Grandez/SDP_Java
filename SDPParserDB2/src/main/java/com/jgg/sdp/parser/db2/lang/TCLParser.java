@@ -9,6 +9,7 @@ package com.jgg.sdp.parser.db2.lang;
 import java_cup.runtime.*;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.db2.base.*;
+import com.jgg.sdp.parser.db2.stmt.StmtSQL;
 
 /** CUP v0.11a beta 20060608 generated parser.
   * @version Thu Mar 02 12:01:40 CET 2017

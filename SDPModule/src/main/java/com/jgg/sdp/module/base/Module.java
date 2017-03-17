@@ -12,9 +12,9 @@ import java.util.*;
 import com.jgg.sdp.core.ctes.CDG;
 import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.module.factorias.ModulesFactory;
-import com.jgg.sdp.module.grafo.Grafo;
+import com.jgg.sdp.module.graph.Graph;
 import com.jgg.sdp.module.items.*;
-import com.jgg.sdp.module.tablas.*;
+import com.jgg.sdp.module.tables.*;
 
 public class Module {
 
@@ -31,7 +31,7 @@ public class Module {
 	private Sections        sections     = new Sections();	
 	
 	private TBFiles       tbFiles      = new TBFiles();
-    private Grafo         grafo        = new Grafo();
+    private Graph         grafo        = new Graph();
     private TBBadStmts    tbBad        = new TBBadStmts();
 
 	private TBBloques     tbBloques    = new TBBloques();
@@ -40,6 +40,7 @@ public class Module {
     private TBIssues      tbIssues     = new TBIssues();
 	private TBCopys       tbCopys      = new TBCopys();
 	private TBRoutines    tbRuts       = new TBRoutines();
+	private TBSql         tbSql        = new TBSql();	
 	
 	private boolean fullParsed  = true;
 	private String  fullName    = null;
@@ -92,7 +93,6 @@ public class Module {
 	public Sections        getSections()        { return sections;       }
     public Summary         getSummary()         { return summary;        }
     public Codigo          getCodigo()          { return codigo;         }    
-    public Grafo           getGrafo()           { return grafo;          }
     
 	public ArrayList<Persistence> getFicheros()   { return tbFiles.getFiles();           }
 	public ArrayList<Block>       getBloques()    {	return tbBloques.getBloques();       }
@@ -292,6 +292,14 @@ public class Module {
     public int  getNumBloques()                         { return tbBloques.getCount();  }
 
     //// *********************************************************************    
+    //// Tratamiento de SQL                                           
+    //// *********************************************************************
+
+	public void addSql(SQLItem sqli, SQLCode sqlc)      { tbSql.addSql(sqli,  sqlc);  }
+	public List<SQLItem> getTableSql()                  { return tbSql.getSqlItems(); }
+	public List<SQLCode> getTableSqlCode()              { return tbSql.getSqlCodes(); }
+	
+    //// *********************************************************************    
     //// Tratamiento de issues                                           
     //// *********************************************************************
     
@@ -417,4 +425,15 @@ public class Module {
     public void              resetReplacing()                { chgTokens = null;     }  
     public void              addReplacingToken(String token) { chgTokens.add(token); }
     public ArrayList<String> getReplacingTokens()            { return chgTokens;     }
+    
+    //// *********************************************************************
+    ////  Tratamiento GRAFO                          
+    //// *********************************************************************
+    
+    public Graph           getGraph()           { return grafo;          }
+    public void            makeGraph()          { 
+    	grafo.makeGraph();
+    	
+    }
+
 }

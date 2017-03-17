@@ -24,7 +24,7 @@ import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.module.base.Module;
-import com.jgg.sdp.module.grafo.*;
+import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.parser.cobol.lang.ZCCSym;
 import com.jgg.sdp.parser.cobol.lang.ZCZSym;
@@ -34,7 +34,10 @@ public class ZCCCode extends ZCZCode {
 
 	private Injector injector = InjectorSingleton.getInjector();
 	
-	private Grafo    grafo;
+	private FactoryGraphs graphs = FactoryGraphs.getInstance();
+	
+	private Graph       rootGraph;
+	private SubGraph    grafo;
 	
 	private Paragraph parrafo = null;
 
@@ -58,7 +61,7 @@ public class ZCCCode extends ZCZCode {
     
     public ZCCCode(Module module) {
        super(module);
-	   grafo    = module.getGrafo();
+       rootGraph = module.getGraph();
 	}
 
     public int  getStmts()      { return numStmts;   }
@@ -87,6 +90,8 @@ public class ZCCCode extends ZCZCode {
 		info.addDivision(CDG.SECT_PRC, s.left);
         Trap trap = new Trap(TRAP.BEG_MODULE, makeLiteral(module.getName()));
         trap = injector.setPrevTrap(trap);
+
+        grafo = newGraph("ROOT");
 	}
 	
 	public Symbol makeSymbol(int code, int line, int column, String text) {
@@ -128,7 +133,6 @@ public class ZCCCode extends ZCZCode {
         currBlock = new Block(bloque, stmts, cause);
 		
         module.addBlock(currBlock, endLine);
-        grafo.addNode(new Nodo(currBlock, cause));
         
         if (genTrap) {
 		   Trap trap = new Trap(TRAP.BLOCK, bloque);
@@ -184,6 +188,7 @@ public class ZCCCode extends ZCZCode {
         // Incluir una llamada a ese Perform
 	    
         if (numStmts == 0) {
+        	grafo.addNode(Nodes.PERFORM, name);
             parrafo = module.getParagraph("");
             if (parrafo != null) {
                 parrafo.setName(name);
@@ -194,14 +199,18 @@ public class ZCCCode extends ZCZCode {
             trap = new Trap(TRAP.FIRST_PARR, name, module.getName());
             injector.setPrevTrap(trap);
 
-        }
+        } 
+      	grafo = newGraph(name);
+        
         
 //JGG4        if (numStmts > 0 && !parrafo.isExit()) {  
 //JGG4            trap = new Trap(TRAP.END_PARAGRAPH, makeLiteral(parrafo.getName()));
 //JGG4            injector.setPrevTrap(trap);
 //JGG4        }
 
-        if (!firstP) parrafo = module.addParagraph(name, s.left, numStmts);
+        if (!firstP) {
+        	parrafo = module.addParagraph(name, s.left, numStmts);
+        }
         
 //JGG4        trap = new Trap(TRAP.IN_PARR, makeLiteral(parrafo.getName()), parrafo.getIndex());
         trap = new Trap(TRAP.IN_PARR, parrafo.getIndex());
@@ -249,6 +258,7 @@ public class ZCCCode extends ZCZCode {
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStmts + 1);
 		newBlock(stmt, true, TRAP.INLINE);
 		skipBlock = true;
+        grafo.addBlock(Nodes.PERFORM, "INLINE", "INLINE");
 	}
 
 	private void performOutline(Statement stmt) {
@@ -265,6 +275,13 @@ public class ZCCCode extends ZCZCode {
         	to = thru.getVar(0).getName();
         }
         module.addParagraphReference(from, to);
+        
+        if (stmt.getOptionByName("UNTIL") != null   ||
+            stmt.getOptionByName("VARYING") != null) {
+        	grafo.addBlock(Nodes.PERFORM, from, to);
+        } else {
+            grafo.addNode(Nodes.PERFORM, from, to);
+        }
         
         //JGG Mirar esto. Caso procedure perform
         if (currBlock != null) currBlock.addPerform(from);
@@ -285,6 +302,7 @@ public class ZCCCode extends ZCZCode {
 	}
 	
     public Statement processIf(Statement stmt) {
+    	grafo.openEdge(Nodes.IF);
         parrafo.incCiclomatic();
         stackFlujo.push(stmt);
         return stmt;
@@ -298,6 +316,7 @@ public class ZCCCode extends ZCZCode {
     }
 
     public Statement processEvaluate(Statement stmt) {
+    	grafo.openEdge(Nodes.EVALUATE);
         stackFlujo.push(stmt);
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStmts);
 //        newBlock(true, TRAP.EVALUATE);
@@ -306,12 +325,20 @@ public class ZCCCode extends ZCZCode {
     }
     	
     public Statement processWhen(Statement stmt) {
+    	//jgg Si no es OTHER
+    	if (stmt.getOptionByName("OTHER") != null) {
+    		grafo.closeNary(Nodes.EVALUATE);
+    	} else {
+    	   grafo.addEdge("WHEN");
+    	}  
+    	
         parrafo.incCiclomatic();
         newBlock(stmt, true, TRAP.WHEN);
         return stmt;
     }
     
     public Statement processElse(Statement stmt) {
+    	grafo.closeBinary(Nodes.IF);
         newBlock(stmt, true, TRAP.ELSE);
         return stmt;
     }
@@ -395,6 +422,7 @@ public class ZCCCode extends ZCZCode {
 	public Statement processCall (Symbol verbo, Symbol rutina) {
 		int callMode = CDG.CALL_CALL;
 		int callType = CDG.CALL_DYNAMIC;
+		Nodes nodeType = Nodes.CALL_DYNAMIC;
 		
         Statement stmt = new Statement(verbo);
         stmt.addSymbol(rutina);
@@ -403,8 +431,10 @@ public class ZCCCode extends ZCZCode {
 	    if (rutina.sym == ZCCSym.LITERAL) {
 	    	nombre = makeLiteral(nombre, true);
 	    	callType = CDG.CALL_STATIC;
+	    	nodeType = Nodes.CALL_STATIC;
 	    }
 
+	    grafo.addNode(nodeType, nombre);
 	    module.getSummary().setCallMode(callMode);
 	    module.getSummary().setCallType(callType);
 	    
@@ -439,6 +469,8 @@ public class ZCCCode extends ZCZCode {
             sections.setSectionOrDivision(sect, line);
             sect = info.removeSection();
         }
+        grafo.endCycle(Nodes.BEGIN);
+        
 //        hasEndProgram = true;
 	}
 
@@ -524,22 +556,26 @@ public class ZCCCode extends ZCZCode {
 	public Statement endIf(Statement stmt) {
 	    stackFlujo.pop();
         newBlock(stmt, true, TRAP.END_IF);
+        grafo.endCycle(Nodes.IF);
         return stmt;
 	}
 	
     public Statement endPerform(Statement stmt) {
         newBlock(stmt, true, TRAP.END_PERFORM);
+        grafo.endCycle(Nodes.PERFORM);
         return stmt;
     }
     
     public Statement endEvaluate(Statement stmt) {
         stackFlujo.pop();
         newBlock(true, TRAP.END_EVAL);
+        grafo.endCycle(Nodes.EVALUATE);
         return stmt;
     }
 
     public void trapEndModule() {
 		injector.setPrevTrap(new Trap(TRAP.END_MODULE, makeLiteral(module.getName())));
+		grafo.endCycle(Nodes.BEGIN);
 	}
 	
 
@@ -724,5 +760,10 @@ public class ZCCCode extends ZCZCode {
 			   module.setVarValue(s.getName(), value, id);
 		}
 	}
-	
+
+	private SubGraph newGraph(String name) {
+		SubGraph sub = graphs.get(name);
+		rootGraph.add(sub);
+		return sub;
+	}
 }

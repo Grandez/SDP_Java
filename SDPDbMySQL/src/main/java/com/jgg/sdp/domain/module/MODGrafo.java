@@ -5,14 +5,7 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name="MOD_GRAFO")
-
-@NamedQueries({
-     @NamedQuery(name="MODGrafo.getGrafo",
-                 query="SELECT g FROM MODGrafo g WHERE g.idVersion = ?1 " +
-                       "                         AND   g.idGrafo = ?2   " + 
-                       "                         ORDER BY g.orden ASC")
-})
+@Table(name="MOD_GRAPH")
 public class MODGrafo implements Serializable {
 
     private static final long serialVersionUID = -3574798070702785374L;
@@ -23,123 +16,87 @@ public class MODGrafo implements Serializable {
     
     @Id
     @Column(name="idGrafo")
-    Long idGrafo;
+    Integer idGrafo;
 
-    @Id
-    @Column(name="orden")
-    Integer orden;
+    @Column(name="nodeFrom")
+    Integer nodeFrom;
 
-    @Column(name="tipo")
-    Integer tipo;
+    @Column(name="nodeTo")
+    Integer nodeTo;
 
-    @Column(name="nombre")
-    String nombre;
+	public Long getIdVersion() {
+		return idVersion;
+	}
 
-    @Column(name="peso")
-    Integer peso;
+	public void setIdVersion(Long idVersion) {
+		this.idVersion = idVersion;
+	}
 
-    public Long getIdVersion() {
-        return idVersion;
-    }
+	public Integer getIdGrafo() {
+		return idGrafo;
+	}
 
-    public void setIdVersion(Long idVersion) {
-        this.idVersion = idVersion;
-    }
+	public void setIdGrafo(Integer idGrafo) {
+		this.idGrafo = idGrafo;
+	}
 
-    public Long getIdGrafo() {
-        return idGrafo;
-    }
+	public Integer getNodeFrom() {
+		return nodeFrom;
+	}
 
-    public void setIdGrafo(Long idGrafo) {
-        this.idGrafo = idGrafo;
-    }
+	public void setNodeFrom(Integer nodeFrom) {
+		this.nodeFrom = nodeFrom;
+	}
 
-    public Integer getOrden() {
-        return orden;
-    }
+	public Integer getNodeTo() {
+		return nodeTo;
+	}
 
-    public void setOrden(Integer orden) {
-        this.orden = orden;
-    }
+	public void setNodeTo(Integer nodeTo) {
+		this.nodeTo = nodeTo;
+	}
 
-    public Integer getTipo() {
-        return tipo;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((idGrafo == null) ? 0 : idGrafo.hashCode());
+		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
+		result = prime * result + ((nodeFrom == null) ? 0 : nodeFrom.hashCode());
+		result = prime * result + ((nodeTo == null) ? 0 : nodeTo.hashCode());
+		return result;
+	}
 
-    public void setTipo(Integer tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public Integer getPeso() {
-        return peso;
-    }
-
-    public void setPeso(Integer peso) {
-        this.peso = peso;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idGrafo == null) ? 0 : idGrafo.hashCode());
-        result = prime * result
-                + ((idVersion == null) ? 0 : idVersion.hashCode());
-        result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-        result = prime * result + ((orden == null) ? 0 : orden.hashCode());
-        result = prime * result + ((peso == null) ? 0 : peso.hashCode());
-        result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        MODGrafo other = (MODGrafo) obj;
-        if (idGrafo == null) {
-            if (other.idGrafo != null)
-                return false;
-        } else if (!idGrafo.equals(other.idGrafo))
-            return false;
-        if (idVersion == null) {
-            if (other.idVersion != null)
-                return false;
-        } else if (!idVersion.equals(other.idVersion))
-            return false;
-        if (nombre == null) {
-            if (other.nombre != null)
-                return false;
-        } else if (!nombre.equals(other.nombre))
-            return false;
-        if (orden == null) {
-            if (other.orden != null)
-                return false;
-        } else if (!orden.equals(other.orden))
-            return false;
-        if (peso == null) {
-            if (other.peso != null)
-                return false;
-        } else if (!peso.equals(other.peso))
-            return false;
-        if (tipo == null) {
-            if (other.tipo != null)
-                return false;
-        } else if (!tipo.equals(other.tipo))
-            return false;
-        return true;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MODGrafo other = (MODGrafo) obj;
+		if (idGrafo == null) {
+			if (other.idGrafo != null)
+				return false;
+		} else if (!idGrafo.equals(other.idGrafo))
+			return false;
+		if (idVersion == null) {
+			if (other.idVersion != null)
+				return false;
+		} else if (!idVersion.equals(other.idVersion))
+			return false;
+		if (nodeFrom == null) {
+			if (other.nodeFrom != null)
+				return false;
+		} else if (!nodeFrom.equals(other.nodeFrom))
+			return false;
+		if (nodeTo == null) {
+			if (other.nodeTo != null)
+				return false;
+		} else if (!nodeTo.equals(other.nodeTo))
+			return false;
+		return true;
+	}
 
 }

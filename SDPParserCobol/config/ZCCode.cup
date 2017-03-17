@@ -204,6 +204,7 @@ terminal Symbol LOCK         ;
 terminal Symbol NO         ;
 terminal Symbol OF         ;
 terminal Symbol OR         ;
+terminal Symbol OTHER      ;
 terminal Symbol OUTPUT     ;
 terminal Symbol OVERFLOW   ;
 terminal Symbol PAGE       ;
@@ -288,8 +289,6 @@ non terminal Statement stmtDivide        ;
 non terminal Tokens    stmtDivide_detail ;
 non terminal Tokens    stmtDivide_fields ;
 non terminal Tokens    stmtDivide_field  ;
-
-non terminal Tokens stmtEvaluate_detail ;
 
 non terminal Tokens stmtIf_detail     ;
 
@@ -455,6 +454,10 @@ non terminal Statement stmtExitG      ;
 non terminal Statement stmtExitPgm    ;
 non terminal Statement exitTypes      ;
 non terminal Statement stmtEvaluate   ;
+non terminal Statement stmtEvaluate_object ;
+non terminal Statement stmtEvaluate_condition ;
+non terminal Statement stmtEvaluate_item      ;
+non terminal Statement stmtEvaluate_other     ;
 
 non terminal Statement stmtPerform            ; 
 non terminal Statement stmtPerform_verb       ; 
@@ -617,7 +620,7 @@ end_program  ::= END_PGM:s ID ENDP {: hasEndProgram = true;
 procedure_division ::= proc_div_header  bloque_procedure
                    ;
 
-proc_div_header    ::= DIV_PROC:s {: print("JGG PROCDEURE"); :} resto_call:p {: code.beginCode(s); :}
+proc_div_header    ::= DIV_PROC:s  resto_call:p {: code.beginCode(s); :}
                    ;
 
 resto_call         ::=  proc_parms_list:p {: RESULT = p; :} 
@@ -1006,25 +1009,36 @@ stmtDivide_field ::= ident
 
 // EVALUATE
 
-stmtEvaluate    ::=  EVALUATE:s  stmtEvaluate_detail  
+stmtEvaluate    ::=  EVALUATE:s  stmtEvaluate_object  
                                 {: RESULT = new Statement(s, code.getStmts()); :}     
                 ;
 
-stmtEvaluate_detail ::= condition
+stmtEvaluate_object ::= condition
                     ;
-stmtWhen ::= WHEN:s condition:t stmtWhen_thru_opt 
+
+stmtWhen ::= WHEN:s stmtEvaluate_condition
+         ;
+
+stmtEvaluate_condition ::= stmtEvaluate_item
+                       |   stmtEvaluate_other
+                       ;
+                                                     
+stmtEvaluate_item ::= condition:t stmtWhen_thru
+//                  |   stmtEvaluate_item ALSO condition:t stmtWhen_thru
+                  /*
                     {: Statement stmt  = new Statement(s);
-                       RESULT = stmt; /* stmt.addTokens(t); */  
+                       RESULT = stmt; // stmt.addTokens(t);   
                     :} 
+                  */  
                 ;
 
-stmtWhen_thru_opt ::= stmtWhen_thru
-                  |
-                  ;
-                  
+stmtEvaluate_other ::= OTHER 
+                   ;
+                    
 stmtWhen_thru ::= THRU condition
+              |
               ;
-                                                   
+                  
 // GO TO
 
 stmtGoTo ::=  GOTO:s to_opt 

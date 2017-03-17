@@ -23,7 +23,7 @@ public class Zipper {
      * @param rawChars  Datos a comprimir
      * @return Los datos comprimidos
      */
-	public byte[] zip(String name, char[] rawChars)  {
+	public static byte[] zip(String name, char[] rawChars)  {
 		CharBuffer charBuffer = CharBuffer.wrap(rawChars);
 	    ByteBuffer byteBuffer = Charset.forName("UTF-8").encode(charBuffer);
 	    ByteArrayOutputStream bos = new ByteArrayOutputStream();  

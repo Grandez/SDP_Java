@@ -83,6 +83,7 @@ init with {:
 /****************************************************************************/
 /****************************************************************************/
 
+terminal Symbol XX ;
 terminal Symbol ID        ;
 
 terminal Symbol HOSTVAR1     ;
@@ -92,6 +93,10 @@ terminal Symbol PREHOST      ;
 terminal Symbol FULLTABLE    ;
 
 terminal Symbol LITERAL      ;
+
+// Wrapper para ( ..... ) ASC/DESC
+terminal Symbol ASCENDING    ;
+terminal Symbol DESCENDING   ;
 
 terminal Symbol FUNCTION_SCALAR     ;
 terminal Symbol FUNCTION_AGGREGATE  ;
@@ -395,6 +400,7 @@ non terminal         set_current_commands      ;
 non terminal         set_host_variable         ;
 non terminal         set_host_var_multiple     ;
 non terminal         set_host_var_simple       ;
+non terminal         set_host_var_id           ;
 non terminal         set_host_var              ;
 non terminal         set_host_var_lst          ;
 non terminal         set_host_var_value_lst    ;
@@ -467,7 +473,6 @@ non terminal          time_words                  ;
 /**********************************************************************/
 
 non terminal           qry_fullselect              ;
-non terminal           qry_fullselect_par          ;
 non terminal           qry_fullselect_left         ;
 non terminal           qry_fullselect_right_opt    ;
 non terminal           qry_fullselect_right_lst    ;
@@ -516,8 +521,6 @@ non terminal           clause_select_data          ;
 non terminal           clause_select_lst           ;
 non terminal           clause_select_item          ;
 non terminal           clause_select_column        ;
-non terminal           clause_select_column_as_opt ;
-non terminal           clause_select_column_as     ;
 
 non terminal           clause_session           ;
 non terminal           clause_skip              ;
@@ -553,12 +556,12 @@ non terminal clause_update_lst ;
 
 
 non terminal clause_order            ;
-non terminal order_mode              ;
+non terminal order_clause            ;
 non terminal order_lst               ;
-non terminal sort_key_mode           ;
-non terminal sort_key                ;
-non terminal sort_type_opt           ;
-non terminal sort_type               ;
+non terminal order_key               ;
+non terminal order_field             ;
+non terminal order_mode_opt          ;
+non terminal order_mode              ;
 non terminal clause_fetch_first      ;
 
 non terminal fetch_first_opt         ;
@@ -595,7 +598,6 @@ non terminal table_table             ;
 non terminal table_item              ;
 non terminal table_locator           ;
 non terminal table_single            ;
-non terminal table_correlation       ;
 non terminal table_nested            ;
 non terminal table_nested_item            ;
 non terminal table_change            ;
@@ -741,6 +743,7 @@ non terminal queryno                 ;
 
 non terminal Symbol non_reserved_words ;
 non terminal Symbol reserved_words     ;
+non terminal Symbol other_words        ;
 
 non terminal timestamp     ;
 
@@ -804,7 +807,6 @@ non terminal column_name     ;
 non terminal column_list     ;
 non terminal sequence_name   ;
 non terminal field_name      ;
-non terminal field_list      ;
 
 non terminal id_general             ;
 
@@ -1070,6 +1072,7 @@ set_current_commands ::= APPLICATION ENCODING:s {: stmt.appendVerb(s); :}  SCHEM
                      |   RULES:s                {: stmt.appendVerb(s); :}  EQ var_string
                      |   SQLID:s                {: stmt.appendVerb(s); :}  EQ clause_sqlid
                      |   SCHEMA:s               {: stmt.appendVerb(s); :}  opt_eq clause_schema
+                     |   TIMESTAMP:s            {: stmt.appendVerb(s); :}  opt_eq clause_schema                     
                      ;
 
 package_lst ::= package_item
@@ -1090,8 +1093,12 @@ set_host_var ::= set_host_var_simple
              |   set_host_var_multiple
              ;
             
-set_host_var_simple ::= host_var EQ expression
+set_host_var_simple ::= set_host_var_id EQ expression
                    ;
+
+set_host_var_id ::= host_var
+                |   id          //JGG Deberia ser :variable
+                ;
 
 set_host_var_multiple ::= LPAR set_host_var_lst RPAR EQ LPAR set_host_var_value_lst RPAR
                      ;
@@ -1141,24 +1148,24 @@ select_column ::= field_name
                   
                                   
 select_clauses_opt ::= select_clauses
-                       |
-                       ;
+                   |
+                   ;
                         
 select_clauses ::= select_clause
-                   |   select_clauses select_clause
-                   ;
+               |   select_clauses select_clause
+               ;
 
 select_clause ::= clause_where
-                  |   clause_group
-                  |   clause_having
-                  |   clause_optimize                  
-                  |   clause_order
-                  |   clause_isolation
-                  |   clause_queryno
-                  |   clause_skip
-                  |   clause_fetch_first
-                  |   clause_for
-                  ;
+              |   clause_group
+              |   clause_having
+              |   clause_optimize                  
+              |   clause_order
+              |   clause_isolation
+              |   clause_queryno
+              |   clause_skip
+              |   clause_fetch_first
+              |   clause_for
+              ;
 
 /****************************************************************************/
 /***                      UPDATE                                          ***/
@@ -1302,8 +1309,8 @@ qry_fullselect_clauses ::= qry_fullselect_clauses_item
                        |   qry_fullselect_clauses qry_fullselect_clauses_item
                        ;
                             
-qry_fullselect_clauses_item ::= clause_order
-                            |   clause_fetch_first
+qry_fullselect_clauses_item ::= clause_fetch_first
+                            |   clause_order
                             ;
 
 // SELECT STATEMENT
@@ -1370,19 +1377,11 @@ table_join ::= table_join_mode
 table_xml ::= XMLTABLE LPAR eat RPAR 
           ;
 
-table_correlation ::= table_single
-                  |
-                  ;
-                                                
 table_table ::= qry_fullselect
             |   table_function
 //            |   table_locator
             |   table_change
             ;
-
-
-
-
                                                          
 table_function ::= id table_function_data clause_cardinality
                ;
@@ -1571,16 +1570,9 @@ clause_select_item ::=  clause_select_column
                    |   FULLTABLE
                    ;
 
-clause_select_column ::= expression clause_select_column_as_opt 
+clause_select_column ::= expression correlation_name_opt  
                      ;
                      
-clause_select_column_as_opt ::= clause_select_column_as
-                            |   
-                            ;
-
-clause_select_column_as ::= opt_as ID
-                        ;                   
-                        
 //JGG clause_unpacked_row ::= UNPACK
 
 
@@ -1656,30 +1648,32 @@ clause_with ::= WITH expr_common_table_lst
 /*                       ORDER                                   */
 /*****************************************************************/
                                         
-clause_order ::= ORDER BY order_mode
-                ;
+clause_order ::= ORDER BY order_clause
+             |   ASCENDING
+             |   DESCENDING
+             ;
 
-order_mode ::= INPUT SEQUENCE
-           |   ORDER OF table_designator
-           |   order_lst
-           ;
+order_clause ::= INPUT SEQUENCE
+             |   ORDER OF table_designator
+             |   order_lst
+             ;
            
-order_lst ::= sort_key_mode
-          |   order_lst COMMA sort_key_mode
+order_lst ::= order_key
+          |   order_lst COMMA order_key
           ;     
            
-sort_key_mode ::= sort_key sort_type_opt
-              ;
-              
-sort_type_opt ::= sort_type
-              |
+order_key ::= order_field order_mode_opt
               ;
 
-sort_key ::= expression
-         ;
-                       
-sort_type ::= ASC
-           |  DESC
+order_field ::= expression
+            ;                    
+              
+order_mode_opt ::= order_mode
+               |
+               ;
+
+order_mode ::= ASC
+           |   DESC
            ;                            
 
 /*****************************************************************/
@@ -2437,9 +2431,9 @@ with_without ::= WITH
 /**********************************************************************/
 /**********************************************************************/
        
-host_var_indicator ::= host_var_base
-             |
-             ;
+host_var_indicator ::= host_var_base id_qualified
+                   |
+                   ;
 
 host_var ::= host_var_negated id_qualified
          ;
@@ -2491,10 +2485,6 @@ field_name ::= id
            |   host_field
            ;
                                              
-field_list ::= field_name
-            |   field_list COMMA field_name
-            ;
-
 eat_opt ::= eat
         |
         ;
@@ -2511,6 +2501,7 @@ eat ::= eat_token
 eat_token ::= id
           |   eat_functions
           |   reserved_words
+          |   other_words
           |   COMMA
           ;
 
@@ -2542,7 +2533,8 @@ not_functions ::= BINARY
               |   VARGRAPHIC
               ;
                             
-non_reserved_words ::= MAX
+non_reserved_words ::= CURSOR
+                   |   MAX
                    |   MIN
                    |   VERSION
                    |   TIMESTAMP
@@ -2573,8 +2565,7 @@ reserved_words ::= ACCELERATION
                |   CURRENT_PATH        
                |   CURRENT_SCHEMA      
                |   CURRENT_TIME        
-               |   CURRENT_TIMESTAMP   
-               |   CURSOR              
+               |   CURRENT_TIMESTAMP                 
                |   DATA                               
                |   DEBUG               
                |   DECLARE             
@@ -2682,4 +2673,8 @@ reserved_words ::= ACCELERATION
                |   ZONE                
                ;
                    
-                                                                                    
+// Palabras que hay que comer y que no se muy bien
+// donde caen                   
+other_words ::= NUMERIC
+            ;
+                                                                                                

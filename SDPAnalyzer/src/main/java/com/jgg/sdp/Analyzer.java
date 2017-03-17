@@ -1,5 +1,6 @@
 package com.jgg.sdp;
 
+import com.jgg.sdp.collector.process.CollectorParser;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
@@ -58,7 +59,7 @@ public class Analyzer {
 		if (args.length == 0) args = def;
 
         for (Archivo archivo : FileFinder.find(cfg.getInputDir(), args)) {
-        	if (cfg.getVerbose() > 1) msg.progressCont(MSG.PARSING, archivo.getBaseName());
+        	if (cfg.getVerbose() > 0) msg.progressCont(MSG.PARSING, archivo.getBaseName());
             
 			try {
 	            unit = new SDPUnit(archivo);
@@ -119,11 +120,11 @@ public class Analyzer {
 		info.setModule(module);
 		
 		try {
-		Parser parser = new Parser(unit);
-		parser.process();
-		if (module.getStatus() == CDG.STATUS_UNDEF) {
-			module.setStatus(CDG.STATUS_FULL);
-		}
+		   Parser parser = new Parser(unit);
+		   parser.process();
+		   if (module.getStatus() == CDG.STATUS_UNDEF) {
+			   module.setStatus(CDG.STATUS_FULL);
+		   }
 		}
 		catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -131,7 +132,7 @@ public class Analyzer {
 		}
 	}
 
-/*	
+	
 	private int storeModuleInfo (SDPUnit unit, boolean full) {
 		Serializer ser = new Serializer();
 	    CollectorParser collector = new CollectorParser();
@@ -149,6 +150,6 @@ public class Analyzer {
 	    collector.processXMLData(data);
 	    
 	}
-*/
+
 
 }

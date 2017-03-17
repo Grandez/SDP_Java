@@ -19,8 +19,8 @@ import com.jgg.sdp.parser.cobol.lang.*;
 import com.jgg.sdp.parser.copy.base.StmtCopy;
 import com.jgg.sdp.parser.copy.lang.COPYLexer;
 import com.jgg.sdp.parser.db2.*;
-import com.jgg.sdp.parser.db2.base.StmtSQL;
-
+import com.jgg.sdp.parser.db2.stmt.StmtSQL;
+import com.jgg.sdp.parser.post.PostSQL;
 import com.jgg.sdp.parser.work.CopyLoader;
 
 import java_cup.runtime.Scanner;
@@ -32,20 +32,21 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	
 	private CopyLoader  loader    = new CopyLoader();	
 
+	private PostSQL postSQL = null;
+	
 	private Scanner scanner;  // Scanner para los Parser
 	private Scanner cblLexer;
 	private ILexer  lexer;    // Interfaz de acceso al Lexer
 	
 	private int parserType = Parsers.COBOL;
 	
-
-	
 	private Copy     copy     = null;
 	
 	private ParserInfo  info = ParserInfo.getInstance();
 	
-	private Source main = null;
-
+	private Source main      = null;
+    private Source tmpSource = null;
+	
 	// Gestiona: el cambio de de parser entre DATA y CODE
 	//           Multimodulos
 	
@@ -65,7 +66,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 		        lexer = (ILexer) cblLexer;
 		        return cblLexer;
 		   case Parsers.DB2:  
-			    return new DB2Lexer(src);
+			    return DB2Lexer.getLexer(src);
 		   case Parsers.COPY:  
 			    return new COPYLexer(src);
 		   case Parsers.CICS:  
@@ -195,7 +196,6 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 		       }
 		   }
 		   return s;
-
 	   }
 
 	   private boolean specialDataSymbol (int sym) {
@@ -231,6 +231,10 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   System.out.println("Acaba PARSER SQL");
    	   if (s == null) return;
    	   
+   	   if (postSQL == null) postSQL = new PostSQL(info.module, s.value);
+   	   postSQL.setSource(tmpSource);
+   	   postSQL.parse();
+   	   
    	   s = (Symbol) s.value;
    	   StmtSQL sql = (StmtSQL) s.value;
    	   if (sql.isInclude()) {
@@ -254,13 +258,13 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
    }
    
    private Symbol parseAlter(int type) throws Exception {
-	   Source source = new Source(new Archivo("embedded.tmp"), true);
-	   source.setData(info.buffer.toString());
+	   tmpSource = new Source(new Archivo("embedded.tmp"), true);
+	   tmpSource.setData(info.buffer.toString());
 	   
 	   System.out.println(info.buffer.toString());
-	   Scanner scanner = getLexer(type, source);
+	   Scanner scanner = getLexer(type, tmpSource);
 
-   	   GenericParser parser = FactoryParser.getParser(scanner, type);
+   	   GenericParser parser = FactoryParser.getParser(scanner, tmpSource, type);
    	   Symbol s = parser.parse();
    	   return s;
    }

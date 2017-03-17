@@ -42,9 +42,12 @@
         <class>com.jgg.sdp.domain.module.MODFuenteError</class>
         <class>com.jgg.sdp.domain.module.MODIssue</class>
         <class>com.jgg.sdp.domain.module.MODMissing</class>
+        <class>com.jgg.sdp.domain.module.MODNode</class>
         <class>com.jgg.sdp.domain.module.MODParrafo</class>
         <class>com.jgg.sdp.domain.module.MODResumen</class>
         <class>com.jgg.sdp.domain.module.MODSecciones</class>
+        <class>com.jgg.sdp.domain.module.MODSql</class>        
+        <class>com.jgg.sdp.domain.module.MODSqlStmt</class>        
         <class>com.jgg.sdp.domain.module.MODSummary</class>        
         <class>com.jgg.sdp.domain.module.MODVersion</class>
 

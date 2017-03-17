@@ -4,7 +4,7 @@ import java.util.*;
 
 import java_cup.runtime.Symbol;
 
-import com.jgg.sdp.parser.base.GenericLexer;
+import com.jgg.sdp.parser.base.*;
 
 import static com.jgg.sdp.parser.db2.lang.TCLSym.*;
 
@@ -13,6 +13,7 @@ import static com.jgg.sdp.parser.db2.lang.TCLSym.*;
 %public
 %class      TCLLexer
 %extends    GenericLexer
+%implements GenericScanner
 
 %line
 %column

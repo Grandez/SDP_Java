@@ -5,7 +5,7 @@ import java.util.*;
 import com.jgg.sdp.core.ctes.CDG;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.*;
-import com.jgg.sdp.module.tablas.*;
+import com.jgg.sdp.module.tables.*;
 
 public class PostCall {
 

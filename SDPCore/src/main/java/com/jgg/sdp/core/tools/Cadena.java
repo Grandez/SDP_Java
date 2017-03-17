@@ -8,6 +8,8 @@
  */
 package com.jgg.sdp.core.tools;
 
+import java.util.Arrays;
+
 public class Cadena {
 	
 	/**
@@ -37,5 +39,11 @@ public class Cadena {
 	    }
 	    return s.substring(0,i+1);
 	}
-	
+
+	public static String spaces(int length) {
+		if (length <= 0) return "";
+		char[] data = new char[length];
+		Arrays.fill(data, ' ');
+		return new String(data);
+	}
 }

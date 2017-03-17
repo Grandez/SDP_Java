@@ -12,7 +12,9 @@ package com.jgg.sdp.parser;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import javax.persistence.Subgraph;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -28,6 +30,8 @@ import com.jgg.sdp.core.ctes.CDG;
 // import com.jgg.sdp.core.jms.*;
 import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.module.base.*;
+import com.jgg.sdp.module.graph.Node;
+import com.jgg.sdp.module.graph.SubGraph;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
@@ -115,10 +119,11 @@ public class Serializer {
   	   updateSections();
    	   updateCopys();
    	   updateCalls();
-   	   updateGrafo();
    	   updateBadStatements();
    	   updateIssues();
    	   updateCICS();
+   	   updateSQL();
+   	   updateGrafo();
     }
     
     private void updateModule() {
@@ -307,23 +312,6 @@ public class Serializer {
         }
     }
     
-    private void updateGrafo() {
-        Paragraph parr = null;
-        ArrayList<Paragraph> parrs = module.getParagraphs();
-        
-        for (int idx = parrs.size() - 1; idx > -1 ; idx--) {
-            parr = parrs.get(idx); 
-            MODGrafo p = new MODGrafo();
-            p.setIdVersion(idVersion);
-            p.setIdGrafo(1L);
-            p.setOrden(idx);
-            p.setTipo(1);
-            p.setNombre(parr.getName());
-            p.setPeso(parr.getCiclomatic());
-            generate(p);
-        }
-    }
-
     private void updateBadStatements() {
         BadStmt bad = null;
         ArrayList<BadStmt> lista = module.getBadStmts();
@@ -371,6 +359,73 @@ public class Serializer {
             verb.setTipo(verbo.getTipo());
             generate(verb);
         }
+    }
+    
+    private void updateSQL() {
+    	updateSQLInfo();
+    	updateSQLCode();    	
+    }
+    
+    private void updateSQLInfo() {
+        for (SQLItem verbo : module.getTableSql()) {
+            MODSql verb = new MODSql();
+            verb.setIdVersion(idVersion);
+            verb.setBegLine(verbo.getBegLine());
+            verb.setVerb(verbo.getVerb());
+            verb.setComplexity(verbo.getComplexity());
+            verb.setExplanation(verbo.getExplanation());
+            verb.setFirma(verbo.getFirma());
+            generate(verb);
+        }
+    }
+
+    private void updateSQLCode() {
+        for (SQLCode verbo : module.getTableSqlCode()) {
+            MODSqlStmt verb = new MODSqlStmt();
+            verb.setIdVersion(idVersion);
+            verb.setBegLine(verbo.getBegLine());
+            verb.setFirma(verbo.getFirma());
+            verb.setStmt(verb.getStmt());
+            generate(verb);
+        }    	
+    }
+    
+    private void updateGrafo() {
+    	updateNodes();
+    	updateGraphs();
+    }
+    
+    private void updateNodes() {
+    	Iterator<Node> it = module.getGraph().getNodes();
+    	while (it.hasNext()) {
+    		Node n = it.next();
+    		MODNode node = new MODNode();
+    		node.setIdVersion(idVersion);
+    		node.setIdNode(n.getId());
+    		node.setTipo(n.getType().ordinal());
+    		node.setNombre(n.getName());
+    		generate(node);
+    	}
+
+    }
+    
+    private void updateGraphs() {
+    	for (SubGraph s : module.getGraph().getSubgraphs()) {
+    		updateGraph(s.getId(), s.getRoot());
+    	}
+    }
+    
+    private void updateGraph(int idGrafo, Node node) {
+    	int nodeFrom = node.getId();
+    	for (Node n : node.getNodes()) {
+    		MODGrafo g = new MODGrafo();
+    		g.setIdVersion(idVersion);
+    		g.setIdGrafo(idGrafo);
+    		g.setNodeFrom(nodeFrom);
+    		g.setNodeTo(n.getId());
+    		generate(g);
+    		updateGraph(idGrafo, n);
+    	}
     }
     
     private void openJMS() {

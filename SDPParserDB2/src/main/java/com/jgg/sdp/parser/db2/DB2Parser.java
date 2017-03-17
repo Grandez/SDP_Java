@@ -58,7 +58,7 @@ public class DB2Parser {
 		   default: return null;
 		}
 	}
-	
+
 	private int getVerbType(Source file) {
 		if (verbs == null) loadVerbs();
 		String wrd = file.getWord(1);

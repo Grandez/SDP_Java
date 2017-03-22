@@ -28,6 +28,12 @@
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPTools</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
        <artifactId>SDPCollector</artifactId>
        <version>${sdp.version}</version>
     </dependency>

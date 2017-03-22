@@ -34,6 +34,7 @@ import com.jgg.sdp.module.graph.Node;
 import com.jgg.sdp.module.graph.SubGraph;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.unit.SDPUnit;
+import com.jgg.sdp.tools.Zipper;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class Serializer {
@@ -391,14 +392,22 @@ public class Serializer {
     }
     
     private void updateGrafo() {
-    	updateNodes();
     	updateGraphs();
+    	updateNodes();
+        updateEdges();
+    }
+
+    private void updateGraphs() {
+/*    	
+    	for (SubGraph s : module.getGraph().getSubgraphs()) {
+    		updateGraph(s.getId(), s.getRoot());
+    	}
+*/    	
     }
     
     private void updateNodes() {
-    	Iterator<Node> it = module.getGraph().getNodes();
-    	while (it.hasNext()) {
-    		Node n = it.next();
+
+    	for (Node n : module.getGraph().getNodes()) {
     		MODNode node = new MODNode();
     		node.setIdVersion(idVersion);
     		node.setIdNode(n.getId());
@@ -408,11 +417,8 @@ public class Serializer {
     	}
 
     }
-    
-    private void updateGraphs() {
-    	for (SubGraph s : module.getGraph().getSubgraphs()) {
-    		updateGraph(s.getId(), s.getRoot());
-    	}
+    private void updateEdges() {
+    	
     }
     
     private void updateGraph(int idGrafo, Node node) {

@@ -15,6 +15,7 @@ import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.graph.Graph;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.tables.*;
+import com.jgg.sdp.tools.Cadena;
 
 public class Module {
 
@@ -31,7 +32,7 @@ public class Module {
 	private Sections        sections     = new Sections();	
 	
 	private TBFiles       tbFiles      = new TBFiles();
-    private Graph         grafo        = new Graph();
+    private Graph         grafo        = new Graph(this);
     private TBBadStmts    tbBad        = new TBBadStmts();
 
 	private TBBloques     tbBloques    = new TBBloques();
@@ -101,7 +102,8 @@ public class Module {
 	public ArrayList<Issue>       getIssues()     { return tbIssues.getIssues();         }
 
 	
-    public TBVars getTBVars()  { return tbVars;           }
+	public TBParagraphs getTBParagraphs()     { return tbParagraphs;   }
+    public TBVars       getTBVars()           { return tbVars;         }
 
     public void   setNewHash(String hash)     { newHash = hash;        }
 	public String getNewHash()                { return newHash;        }
@@ -432,7 +434,7 @@ public class Module {
     
     public Graph           getGraph()           { return grafo;          }
     public void            makeGraph()          { 
-    	grafo.makeGraph();
+    	grafo.parse();
     	
     }
 

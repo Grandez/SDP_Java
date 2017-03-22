@@ -72,8 +72,8 @@
 
         <module>../SDPAnalyzer</module>
         <module>../SDPCalc</module>
-    
-    </modules>
+    <module>SDPTools</module>
+  </modules>
     
 <!--     <pluginRepositories> -->
 <!--         <pluginRepository> -->

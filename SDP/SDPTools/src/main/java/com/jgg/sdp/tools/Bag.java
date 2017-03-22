@@ -1,4 +1,4 @@
-package com.jgg.sdp.core.tools;
+package com.jgg.sdp.tools;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

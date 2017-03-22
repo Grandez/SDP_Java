@@ -13,30 +13,61 @@ import java.util.*;
 
 public class Node {
 
-	private int id;
-	private String name;
-	private String to;
-	private Nodes type;
+	private int   idGraph;   // Grafo en el que aparece
+	private int   graph;     // Grafo al que apunta
+	private int   id;        // Id del nodo
+	private String name;     // Nombre del nodo
+	private String to;       // Casos PERFORM A THRU B
+	private Nodes  type;     // Tipo del nodo
+	private Nodes  subtype;  // Subtipo del nodo
+	
 	private ArrayList<Node> hijos = new ArrayList<Node>();
 	
-    public Node(Nodes type, int id) {
-    	this(type, "", "", id);
+    public Node(Nodes type, int idGraph, int id) {
+    	this(type, "", "", idGraph, id);
     }
     
-    public Node(Nodes type, String name, int id) {
-    	this(type, name, name, id);
+    public Node(Nodes type, String name, int idGraph, int id) {
+    	this(type, name, name, idGraph, id);
     }
 
-    public Node(Nodes type, String from, String to, int id) {
+    public Node(Nodes type, String from, String to, int idGraph, int id) {
+    	this(Nodes.getType(type), type, from, to, idGraph, id);
+    }
+    
+    public Node(Nodes type, Nodes subtype, String from, String to, int idGraph, int id) {
     	this.type = type;
+    	this.subtype = subtype;
     	this.name = from;
     	this.to   = to;
     	this.id = id;
+    	this.idGraph = idGraph - 1;
+    	this.graph = -1;
     }
 
+    public void setChilds(ArrayList<Node> hijos) {
+    	this.hijos = hijos;
+    }
+    
     public void setFromTo(String from, String to) {
     	this.name = from;
     	this.to = to;
+    }
+    
+    public void setGraph(int idGraph) {
+    	this.graph = idGraph;
+    }
+    
+    public int getGraphParent() {
+    	return idGraph;
+    }
+
+    public void setGraphChild(int graph) {
+    	this.graph = graph;
+    }
+    
+    public int getGraphChild() {
+    	return graph;
     }
     
     public int getId() {
@@ -47,19 +78,39 @@ public class Node {
     	this.id = id;
     }
     
+    public void setType(Nodes type) {
+    	this.type = type;
+    }
+    
     public Nodes getType() {
     	return type;
+    }
+
+    public void setSubtype(Nodes subtype) {
+    	this.subtype = subtype;
+    }
+    
+    public Nodes getSubtype() {
+    	return subtype;
     }
     
     public String getName() {
     	return name;
     }
     
+    public String getFrom() {
+    	return name.toUpperCase();
+    }
+    
+    public String getTo() {
+    	return to.toUpperCase();
+    }
+    
     public int getNumNodes() {
     	return hijos.size();
     }
     
-    public List<Node> getNodes() {
+    public ArrayList<Node> getNodes() {
     	return hijos;
     }
 
@@ -89,6 +140,16 @@ public class Node {
     	return hijos.get(hijos.size() - 1);
     }
 
+    public boolean isItem() {
+    	return type.isItem();
+    }
+    public boolean isBegin() {
+    	return type == Nodes.BEGIN;
+    }
+    public boolean isEnd() {
+    	return type == Nodes.END;
+    }
+    
     @Override
     public String toString() {
     	return String.format("+ %03d - %d - %s" , id, type.ordinal(), name);

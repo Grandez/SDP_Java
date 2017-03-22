@@ -1,13 +1,34 @@
 package com.jgg.sdp.module.graph;
 
 public enum Nodes {
-    BEGIN, VIRTUAL, BLOCK, IF, EVALUATE, PERFORM, CALL_STATIC, CALL_DYNAMIC, END;
+    PGMBEG, PGMEND,   // Usado a nivel programa 
+    BEGIN, END,       // subgrafo virtual
+    NODE,             // Nodo real
+    BLOCK,            // Bucle
+    IF, EVALUATE,
+    ELSE, WHEN, OTHER, // Ramas
+    CHOICE, BRANCH,
+    PERFORM, CALL_STATIC, CALL_DYNAMIC;
 
+	public static Nodes getType(Nodes type) {
+		switch(type) {
+		   case PERFORM: return NODE;
+		   case IF:
+		   case EVALUATE: return CHOICE;
+		   case ELSE:   
+		   case WHEN:   return BRANCH;
+		   default: return type;
+		}
+	}
+	
 	public boolean isItem() {
+		return this == NODE;
+	}
+	
+	public boolean isVirtual() {
 		switch(this) {
-		   case PERFORM: return true;
-		   case CALL_STATIC: return true;
-		   case CALL_DYNAMIC: return true;
+		   case BEGIN: return true;
+		   case END: return true;
 		   default: return false;
 		}
 	}

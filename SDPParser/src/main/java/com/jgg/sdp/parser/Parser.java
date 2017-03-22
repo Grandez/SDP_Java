@@ -169,6 +169,8 @@ public class Parser {
 	   calls.parse();
 	   
 	   checkMQAndCalls(module);
+	   
+	   //Procesa el grafo
 	   module.makeGraph();
 	   
 	}

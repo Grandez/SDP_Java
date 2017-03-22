@@ -8,6 +8,7 @@ import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.domain.services.base.*;
 import com.jgg.sdp.excel.data.*;
 import com.jgg.sdp.excel.xls.*;
+import com.jgg.sdp.tools.Numero;
 
 public class XLSMapper {
 

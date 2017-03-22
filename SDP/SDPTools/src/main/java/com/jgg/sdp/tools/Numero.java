@@ -1,4 +1,4 @@
-package com.jgg.sdp.core.tools;
+package com.jgg.sdp.tools;
 
 public class Numero {
 

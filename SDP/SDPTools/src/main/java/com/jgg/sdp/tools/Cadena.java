@@ -6,7 +6,7 @@
  * @date    SEP - 2015
  * 
  */
-package com.jgg.sdp.core.tools;
+package com.jgg.sdp.tools;
 
 import java.util.Arrays;
 

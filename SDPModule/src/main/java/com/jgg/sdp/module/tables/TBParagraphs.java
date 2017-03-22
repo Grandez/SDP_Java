@@ -89,8 +89,18 @@ public class TBParagraphs {
 		}
 		return null;
 	}
+
+	public Paragraph getParagraph(Integer order) {
+		if (order < 1 || order >= lstParrs.size()) return null;
+		return lstParrs.get(order);
+	}
 	
 	public ArrayList<Paragraph> getParagraphs() {
 		return lstParrs;
+	}
+	
+	public int getParagraphOrder(String name) {
+		Integer pos = parrs.get(name);
+		return (pos == null) ? -1 : pos;
 	}
 }

@@ -188,6 +188,7 @@ public class ZCCCode extends ZCZCode {
         // Incluir una llamada a ese Perform
 	    
         if (numStmts == 0) {
+        	grafo.addBlock(Nodes.PERFORM, name, false);
         	grafo.addNode(Nodes.PERFORM, name);
             parrafo = module.getParagraph("");
             if (parrafo != null) {
@@ -258,7 +259,7 @@ public class ZCCCode extends ZCZCode {
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStmts + 1);
 		newBlock(stmt, true, TRAP.INLINE);
 		skipBlock = true;
-        grafo.addBlock(Nodes.PERFORM, "INLINE", "INLINE");
+		addToGraph(stmt, "INLINE");
 	}
 
 	private void performOutline(Statement stmt) {
@@ -275,17 +276,21 @@ public class ZCCCode extends ZCZCode {
         	to = thru.getVar(0).getName();
         }
         module.addParagraphReference(from, to);
-        
-        if (stmt.getOptionByName("UNTIL") != null   ||
-            stmt.getOptionByName("VARYING") != null) {
-        	grafo.addBlock(Nodes.PERFORM, from, to);
-        } else {
-            grafo.addNode(Nodes.PERFORM, from, to);
-        }
-        
+                
         //JGG Mirar esto. Caso procedure perform
         if (currBlock != null) currBlock.addPerform(from);
         
+		addToGraph(stmt, from);
+		grafo.addNode(Nodes.PERFORM, from, to);
+	}
+	
+	private void addToGraph(Statement stmt, String from) {
+		boolean loop = false;
+        if (stmt.getOptionByName("UNTIL") != null   ||
+            stmt.getOptionByName("VARYING") != null) {
+        	loop = true;
+        }
+        grafo.addBlock(Nodes.PERFORM, from, loop);
 	}
 	
 	private void calculatePerformComplexity(Statement stmt) {
@@ -302,7 +307,8 @@ public class ZCCCode extends ZCZCode {
 	}
 	
     public Statement processIf(Statement stmt) {
-    	grafo.openEdge(Nodes.IF);
+    	grafo.addBlock(Nodes.IF);
+    	grafo.addChoice(Nodes.IF, false);
         parrafo.incCiclomatic();
         stackFlujo.push(stmt);
         return stmt;
@@ -316,7 +322,7 @@ public class ZCCCode extends ZCZCode {
     }
 
     public Statement processEvaluate(Statement stmt) {
-    	grafo.openEdge(Nodes.EVALUATE);
+    	grafo.addBlock(Nodes.EVALUATE);
         stackFlujo.push(stmt);
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStmts);
 //        newBlock(true, TRAP.EVALUATE);
@@ -326,11 +332,9 @@ public class ZCCCode extends ZCZCode {
     	
     public Statement processWhen(Statement stmt) {
     	//jgg Si no es OTHER
-    	if (stmt.getOptionByName("OTHER") != null) {
-    		grafo.closeNary(Nodes.EVALUATE);
-    	} else {
-    	   grafo.addEdge("WHEN");
-    	}  
+    	boolean close = false;
+    	if (stmt.getOptionByName("OTHER") != null) close = true;
+    	grafo.addChoice(Nodes.WHEN, close);
     	
         parrafo.incCiclomatic();
         newBlock(stmt, true, TRAP.WHEN);
@@ -338,7 +342,7 @@ public class ZCCCode extends ZCZCode {
     }
     
     public Statement processElse(Statement stmt) {
-    	grafo.closeBinary(Nodes.IF);
+    	grafo.addChoice(Nodes.IF, true);
         newBlock(stmt, true, TRAP.ELSE);
         return stmt;
     }
@@ -762,7 +766,7 @@ public class ZCCCode extends ZCZCode {
 	}
 
 	private SubGraph newGraph(String name) {
-		SubGraph sub = graphs.get(name);
+		SubGraph sub = graphs.getGraph(name);
 		rootGraph.add(sub);
 		return sub;
 	}

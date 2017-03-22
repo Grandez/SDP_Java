@@ -21,6 +21,12 @@
 
      <dependency>
        <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPTools</artifactId>
+       <version>${sdp.version}</version>
+     </dependency>
+
+     <dependency>
+       <groupId>com.jgg.sdp</groupId>
        <artifactId>SDPCore</artifactId>
        <version>${sdp.version}</version>
      </dependency>

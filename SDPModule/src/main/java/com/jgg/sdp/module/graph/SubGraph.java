@@ -13,7 +13,7 @@ package com.jgg.sdp.module.graph;
 
 import java.util.*;
 
-import com.jgg.sdp.core.tools.Cadena;
+import com.jgg.sdp.tools.Cadena;
 
 public class SubGraph {
 	
@@ -23,8 +23,10 @@ public class SubGraph {
     private Node first;    
     private Node current = null;
 
-    private FactoryNodes nodes    = FactoryNodes.getInstance();
+    private FactoryGraphs nodes    = FactoryGraphs.getInstance();
     private Stack<Node>  currents = new Stack<Node>();
+    
+    boolean reduced = true;
     
     public SubGraph() {
     }
@@ -32,8 +34,8 @@ public class SubGraph {
     public SubGraph(String name, int id) {
         this.name = name;
         this.id = id;
-    	first = nodes.get(Nodes.BEGIN, "BEGIN");
-    	first.last(nodes.get(Nodes.END, "END"));
+    	first = nodes.getNode(Nodes.BEGIN, "BEGIN");
+    	first.last(nodes.getNode(Nodes.END, "END"));
     	stackPush(first);
 //    	print("BEGIN");
     }
@@ -59,7 +61,7 @@ public class SubGraph {
     }
     
     public void addNode(Nodes type, String from, String to) {
-	   Node tmp = nodes.get(type, from, to);
+	   Node tmp = nodes.getNode(type, from, to);
        tmp.first(current.getLast());
        current.replace(tmp);
        stackReplace(tmp);
@@ -70,74 +72,44 @@ public class SubGraph {
      * Bucle lineal
      * Son PERFORM VARYING/UNTIL
      * 
-     *       +-------------------+    
-     *       |                   |
-     * PREV -+-> BEG -> NODO -> END -> NEXT
-     * CURRENT                   X
+     *       +------------+
+     *       |            |
+     * PREV -+-> BEG --> NEXT --> END
+     * CURRENT    X
      * STACK: END
      * 
      * @param type Tipo del nodo central
      * @param from Nombre del nodo central
      * @param to   Parte THRU
      */
-    public void addBlock(Nodes type, String from, String to) {
-    	Node beg = nodes.get(Nodes.BLOCK, "BEGIN");
-    	Node end = nodes.get(Nodes.END, "END");
-    	Node blk = nodes.get(type, from);
-    	blk.setFromTo(from, to);
-    	
-    	beg.last(blk);
-    	blk.last(end);
-    	end.last(beg);
+
+    public void addBlock(Nodes type) {
+    	addBlock(type, type.toString(), false);
+    }
+    
+    public void addBlock(Nodes type, String name, boolean loop) {
+    	Node beg = nodes.getNode(Nodes.BLOCK, type, "BEGIN " + name);
+    	Node end = nodes.getNode(Nodes.END, Nodes.BLOCK, "END " + name);
+
+    	beg.last(end);
     	end.last(current.getLast());
     	current.replace(beg);
-    	stackReplace(end);
-    	//print("BLOQUE");
-    }
-
-    /**
-     * Rama de nodo abierta
-     * Subgrafo interno 
-     * Casos IF y EVALUATE sin ELSE o OTHER
-     *    
-     *       +---------------+
-     *       |               |
-     * PREV -+-> BEG -> END -+-> NEXT
-     * CURRENT    X
-     * STACK: PREV - BEG      
-     *       
-     * @param type Tipo del nodo central
-     * @param from Nombre del nodo central
-     * @param to   Parte THRU
-     */
-    
-    public void openEdge(Nodes type) {
-    	String name = type.toString();
-    	Node beg = nodes.get(type, name);
-    	Node end = nodes.get(Nodes.END, "END " + name);
-    	
-    	beg.last(end);    	
-    	end.last(current.getLast());
-
-    	current.first(beg);
     	stackPush(beg);
-    	//print("OPEN");
     }
+
 
     /**
      * Inserta otra rama creando un subgrafo interno 
+     * Hay que cerrar todas las pendientes
      * Caso EVALUATE WHEN
      *    
-     * PREV -+-> BEG -> END -+-> NEXT
-     *       |               |
-     *       +---------------+
+     * PREV --> BEG --> END --> NEXT
+     *       
      * STACK: PREV - BEG
      *       
-     * PREV -+-> BEG -------------+-> END -+-> NEXT
-     *       |    |               |        |
-     *       |    + BEG1 -> END1 -+        |
-     *       |                             |
-     *       +-----------------------------+
+     * PREV ---> BEG -------------+-> END ---> NEXT
+     *            |               |         
+     *            + BEG1 -> END1 -+         
      *       
      * STACK: PREV - BEG - BEG1      
      *       
@@ -146,63 +118,24 @@ public class SubGraph {
      * @param to   Parte THRU
      */
     
-    public void addEdge(String name) {
-    	Node beg = nodes.get(Nodes.VIRTUAL, name);
-    	Node end = nodes.get(Nodes.END, "END " + name);
+    public void addChoice(Nodes type, boolean closeChoice) {
+    	Node beg = nodes.getNode(Nodes.BRANCH, type.toString());
+    	Node end = nodes.getNode(Nodes.END, "END " + type.toString());
 
-    	stackSet(Nodes.EVALUATE, true);
+    	stackSet(Nodes.BLOCK, true);
     	
     	beg.last(end);
     	end.last(current.getLast());
-    	current.first(beg);
+    	if (closeChoice) {
+    		current.replace(beg);
+    	} else {
+    	   current.first(beg);
+    	}
     	stackPush(beg);
     	//print("EDGE");
     }
     
-    /**
-     * Cierra un nodo abierto binario (IF-ELSE)
-     *    
-     *        Situacion previa
-     *        
-     * PREV -+-> IF -> NODO -> ENDIF -+-> NEXT
-     *       |                       |
-     *       +-----------------------+
-     * STACK = PEV - IF [ ... ]
-     *       
-     *        Situacion final
-     *        
-     * PREV -+-> IF -> NODO   -+-> ENDIF -> NEXT
-     *       |                 |
-     *       +---ELSE ---------+
-     * STACK =  PREV - ELSE
-     * 
-     */
-    
-    public void closeBinary(Nodes type) {
-    	Node tmp = nodes.get(type, "ELSE");
-    	tmp.last(current.getLast());
-    	stackSet(type, false);
-    	current.replace(tmp);
-    	stackPush(tmp);
-    	//print("CLOSE");
-    }
-
-    /**
-     * Caso EVALUATE - OTHER
-     * @param type
-     */
-    public void closeNary(Nodes type) {
-    	Node tmp = nodes.get(type, "OTHER");
-    	tmp.last(current.getLast());
-    	stackSet(type, true);
-    	Node eval = current;
-    	stackPop();
-    	current.remove();
-    	stackPush(eval);
-    	stackPush(tmp);
-    	//print("OTHER");
-    }
-    
+        
     /**
      * Casos END-xxxx
      * Ajusta el nodo actual en la pila 
@@ -255,7 +188,43 @@ public class SubGraph {
     	if (!currents.isEmpty()) current = currents.peek();
     	if (keep) stackPush(current);
     }
-    
+/*
+    public SubGraph reduce() {
+    	ArrayList<Node> childs;
+    	ArrayList<Node> newChilds;
+    	Node curr = first;
+    	Node wrk;
+    	
+    	while (reduced) {
+    	   childs = curr.getNodes();
+    	   newChilds = new ArrayList<Node>();
+    	   for (int i = 0; i < childs.size(); i++) {
+    		   wrk = childs.get(i);
+	    		if (wrk.isVirtual()) {
+	    			for (Node n : wrk.getNodes()) newChilds.add(n); 
+	    		}
+	    		else {
+	    			newChilds.add(wrk);
+	    		}
+    	   }
+    	   curr.setChilds(newChilds);
+    	   Node padre = curr;
+ 		   for (Node next: curr.getNodes()) {
+
+// 			   Node hijo = getHijo(next);
+   			
+ 		   }
+    		
+    	}
+    }
+*/    
+    private Node getChild(Node n) {
+    	if (n == null) return null;
+    	Node child = getChild(n);
+    	if (child == null) return null;
+        return n;  	
+    	
+    }
     @Override
     public String toString() {
 

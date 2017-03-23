@@ -17,6 +17,8 @@ import com.jgg.sdp.core.msg.*;
 import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.module.unit.Source;
 
+import java_cup.runtime.Scanner;
+
 public class DB2ParserMain {
 
     
@@ -119,7 +121,8 @@ public class DB2ParserMain {
 	
 	private void analyze(Archivo archivo) throws SDPException, Exception {
 		String d = archivo.getFullPath();
-		DB2Parser parser = new DB2Parser(new Source(new Archivo(d), null));
+ 		Scanner sc = DB2Lexer.getLexer(new Source(new Archivo(d), null));
+		DB2Parser parser = new DB2Parser(sc);
 		parser.parse();
 	}
 	

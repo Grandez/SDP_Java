@@ -1,5 +1,7 @@
 package com.jgg.sdp.parser.cobol.lang;
 
+import java.util.*;
+
 import java_cup.runtime.*;
 
 import com.jgg.sdp.module.base.*;
@@ -7,36 +9,24 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.factorias.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.exceptions.*;
 
 import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.parser.cobol.code.*;
 
 parser code {:
-   Module module     = ModulesFactory.getDefaultModule();
-   Summary summary   = module.getSummary();
-   Configuration cfg = Configuration.getInstance();
-   ParserInfo      info     = ParserInfo.getInstance();
+   Module        module   = ModulesFactory.getDefaultModule();
+   Summary       summary  = module.getSummary();
+   Configuration cfg      = Configuration.getInstance();
+   ParserInfo    info     = ParserInfo.getInstance();
              
-   public void syntax_error(Symbol token) {
-           
-          Symbol s = (Symbol) token.value;
-          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
-          col = col + s.right + 1;
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
 
-          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
-                                   info.getMemberName(), 
-                                   info.getOffset() + s.left + 1,  
-                                   col, 
-                                   (String) s.value);
-      }
-
-      public void unrecovered_syntax_error(Symbol token) throws Exception {
-          Symbol s = (Symbol) token.value;
-          throw new ParseException(MSG.EXCEPTION_CUP, 
-                                  info.getMemberName(), info.getOffset() + s.left + 1, s.right + 1, (String) s.value); 
-      }
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
 :}
 
 action code {:
@@ -55,6 +45,9 @@ action code {:
     
    boolean master     = false;  // El fichero es el maestro?   
    int     numFillers = 0;
+   
+   // Pila para EVALUATE e IF
+   Stack<Statement> stack = new Stack<Statement>();
           
    public void initActionClass() {
       module = ModulesFactory.getMainModule();
@@ -66,7 +59,9 @@ action code {:
    public String getSymbolName(Symbol s)    { return (String) s.value; }
    public int    getSymbolLine(Symbol s)    { return (int)    s.left;  }
    
-   public void debug(String txt) { System.err.println(txt); }
+   public void debug(String txt) { 
+      System.err.println(txt); 
+   }
    public void print(String txt) { 
       System.out.println(txt); 
    }
@@ -457,7 +452,8 @@ non terminal Statement stmtEvaluate   ;
 non terminal Statement stmtEvaluate_object ;
 non terminal Statement stmtEvaluate_condition ;
 non terminal Statement stmtEvaluate_item      ;
-non terminal Statement stmtEvaluate_other     ;
+
+non terminal Symbol    stmtEvaluate_other     ;
 
 non terminal Statement stmtPerform            ; 
 non terminal Statement stmtPerform_verb       ; 
@@ -700,15 +696,17 @@ verbos   ::= stmtControl:s    {: RESULT = s; module.incStmtControl(); :}
 
 noverbos ::= stmtEndP:s        {: RESULT = code.checkFlujo( s, lastStmt);:}
          |   stmtEndIf:s       {: RESULT = code.endIf(s);              :}                       
-         |   stmtEndPerform:s  {: RESULT = code.endPerform(s);        :}
-         |   stmtEndEvaluate:s {: RESULT = code.endEvaluate(s);       :}         
+         |   stmtEndPerform:s  {: RESULT = code.endPerform(s);        :}        
          |   stmtEndVerb:s     {: RESULT = s;                         :}
-         |   stmtWhen:s        {: RESULT = code.processWhen(s);       :}
+         |   stmtWhen:s        {: RESULT = code.processWhen(stack.peek());       :}
          |   stmtElse:s        {: RESULT = code.processElse(s);       :}         
          |   stmtAtEnd:s       {: RESULT = s;                         :}  
          |   stmtInvalid:s     {: RESULT = s;                         :}         
          |   stmtException:s   {: RESULT = s;                         :}         
-         |   stmtEndExec:s     {: RESULT = s;                         :}         
+         |   stmtEndExec:s     {: RESULT = s;                         :}
+         |   stmtEndEvaluate:s {: RESULT = code.endEvaluate(s);  
+                                  stack.pop();     
+                               :}
          ;
   
 /* Verbos que tienen tratamiento especial
@@ -1009,18 +1007,20 @@ stmtDivide_field ::= ident
 
 // EVALUATE
 
-stmtEvaluate    ::=  EVALUATE:s  stmtEvaluate_object  
-                                {: RESULT = new Statement(s, code.getStmts()); :}     
-                ;
+stmtEvaluate ::=  EVALUATE:s {: currStmt = new Statement(s); 
+                                stack.push(currStmt);
+                             :} 
+                             stmtEvaluate_object {: RESULT = new Statement(s, code.getStmts()); :}  
+             ;
 
 stmtEvaluate_object ::= condition
                     ;
 
-stmtWhen ::= WHEN:s stmtEvaluate_condition
+stmtWhen ::= WHEN:s {: stack.peek().addOption(new Option(s)); :} stmtEvaluate_condition
          ;
 
 stmtEvaluate_condition ::= stmtEvaluate_item
-                       |   stmtEvaluate_other
+                       |   stmtEvaluate_other:o {: stack.peek().addOption(new Option(o)); :}
                        ;
                                                      
 stmtEvaluate_item ::= condition:t stmtWhen_thru
@@ -1032,7 +1032,7 @@ stmtEvaluate_item ::= condition:t stmtWhen_thru
                   */  
                 ;
 
-stmtEvaluate_other ::= OTHER 
+stmtEvaluate_other ::= OTHER:o {: RESULT = o; :}
                    ;
                     
 stmtWhen_thru ::= THRU condition

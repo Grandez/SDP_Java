@@ -92,6 +92,10 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
       return symbol(code);
    }
                   
+   public Symbol checkSymbol(int code) {
+      return symbol(checkIndex(code));
+   }
+                  
    public Symbol symbol(int code){
       return symbol(code, yytext());
    }
@@ -101,15 +105,14 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
    }
    
    public Symbol symbol(int code, String txt) {
-      int nCode = checkIndex(code);
-      setLastSymbol(nCode);
+      setLastSymbol(code);
       data = true;
       int col = yycolumn + OFFSET;
       
       if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
       
       if (code != 0) {      
-          print("Devuelve SYMBOL " + nCode + " (" + (yyline + 1) + "," + col + ") " + txt);
+          print("Devuelve SYMBOL " + code + " (" + (yyline + 1) + "," + col + ") " + txt);
       }    
       return symbolFactory.newSymbol(txt, code, new Symbol(code, yyline + 1, col, txt));
    }
@@ -120,15 +123,6 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
       sym.sym = code;
       sym.value = type;
       return sym;
-/*      
-      int col = sym.right + OFFSET;
-      String txt = yytext();
-
-      data = true;      
-      print("Devuelve SYMBOL " + code + " (" + (sym.left + 1) + "," + col + ") " + txt);
-      Symbol s = new Symbol(code, sym.left + 1, col, txt);
-      return symbolFactory.newSymbol(txt, code, s);
-*/  
    }
 
    public int checkIndex(int code) {
@@ -972,8 +966,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /* Simbolos y operadores                               */
 /*******************************************************/
 
- "("               { print("JGG (");return symbol(ZCCSym.LPAR);  }
- ")"               { return symbol(ZCCSym.RPAR); }
+ "("               { print("JGG (");return checkSymbol(ZCCSym.LPAR);  }
+ ")"               { return checkSymbol(ZCCSym.RPAR); }
 
  "**"              { if (yycolumn < 4) pushState(COMMENT); else symbolDummy(0); }
  "*"               { if (yycolumn < 4) pushState(COMMENT); else symbolDummy(0); }

@@ -1,19 +1,15 @@
 package com.jgg.sdp.parser.db2;
 
-import java.util.Properties;
-
 import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.parser.db2.base.DB2Parsers;
 import com.jgg.sdp.parser.db2.lang.*;
 
 import java_cup.runtime.Scanner;
 
-public class DB2Lexer {
+public class DB2Lexer extends DB2Base {
 
-	private static Properties verbs = null;
-	
 	public static Scanner getLexer(Source src) {
-		switch (getLexerType(src)) {
+		switch (getLexerType(src.getWord(1))) {
 		   case DB2Parsers.DML: return new DMLLexer(src);
 		   case DB2Parsers.DCL: return new DCLLexer(src);
 		   case DB2Parsers.DDL: return new DDLLexer(src);
@@ -22,23 +18,4 @@ public class DB2Lexer {
 		   default: return null;
 		}
 	}
-
-	private static int getLexerType(Source src) {		
-		if (verbs == null) loadVerbs();
-		String wrd = src.getWord(1);
-		System.out.print("\t" + wrd + "\t");
-		Object sqlType = verbs.get(wrd);
-		if (sqlType == null) return 0;
-        return Integer.parseInt((String) sqlType);
-	}
-
-	private static void loadVerbs() {
-		verbs = new Properties();
-		try {
-		   verbs.load(Thread.currentThread().getClass().getResourceAsStream("sql.properties"));
-		} catch (Exception e) {
-			System.exit(16);
-		}
-	}
-
 }

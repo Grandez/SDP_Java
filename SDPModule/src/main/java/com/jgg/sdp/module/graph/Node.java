@@ -154,4 +154,58 @@ public class Node {
     public String toString() {
     	return String.format("+ %03d - %d - %s" , id, type.ordinal(), name);
     }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + graph;
+		result = prime * result + ((hijos == null) ? 0 : hijos.hashCode());
+		result = prime * result + id;
+		result = prime * result + idGraph;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((subtype == null) ? 0 : subtype.hashCode());
+		result = prime * result + ((to == null) ? 0 : to.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Node other = (Node) obj;
+		if (graph != other.graph)
+			return false;
+		if (hijos == null) {
+			if (other.hijos != null)
+				return false;
+		} else if (!hijos.equals(other.hijos))
+			return false;
+		if (id != other.id)
+			return false;
+		if (idGraph != other.idGraph)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (subtype != other.subtype)
+			return false;
+		if (to == null) {
+			if (other.to != null)
+				return false;
+		} else if (!to.equals(other.to))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
+	}
+    
+    
 } 

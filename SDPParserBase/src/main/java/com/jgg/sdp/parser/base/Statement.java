@@ -25,11 +25,11 @@ public class Statement {
     
 	// La lista mantiene el orden de las opciones
 	// El map pregunta por su clae
-	private ArrayList<Symbol>  tokens     = new ArrayList<Symbol>();
-    private ArrayList<Option>  lstOptions = new ArrayList<Option>();
-    private HashMap<Integer, Option> options = new HashMap<Integer, Option>();
+	private ArrayList<Symbol> tokens     = new ArrayList<Symbol>();
+    private ArrayList<Option> lstOptions = new ArrayList<Option>();
     private ArrayList<Issue>  issues     = new ArrayList<Issue>();
     
+    private HashMap<Integer, Option> options = new HashMap<Integer, Option>();    
     private String firma = null;
     
     private int id = 0;
@@ -290,6 +290,16 @@ public class Statement {
 	
 	public Option addOption(SymbolExt s) {
  		Option opt = new Option(s.sym, (String) s.value, s);
+		lstOptions.add(opt);
+		options.put(opt.getId(),  opt);
+		return opt;
+	}
+
+	// Caso WHEN / WHEN OTHER
+	// Podria quedarse un WHEN huerfano
+	public Option replaceOption(SymbolExt s) {
+ 		Option opt = new Option(s.sym, (String) s.value, s);
+ 		lstOptions.remove(lstOptions.size() - 1);
 		lstOptions.add(opt);
 		options.put(opt.getId(),  opt);
 		return opt;

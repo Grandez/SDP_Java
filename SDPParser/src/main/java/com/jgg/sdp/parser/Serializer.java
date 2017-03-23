@@ -24,13 +24,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.jgg.sdp.domain.core.*;
+import com.jgg.sdp.domain.graph.DCGEdge;
+import com.jgg.sdp.domain.graph.DCGGraph;
+import com.jgg.sdp.domain.graph.DCGNode;
 import com.jgg.sdp.domain.module.*;
+import com.jgg.sdp.domain.sql.MODSql;
+import com.jgg.sdp.domain.sql.MODSqlStmt;
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CDG;
 // import com.jgg.sdp.core.jms.*;
 import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.module.base.*;
+import com.jgg.sdp.module.graph.Edge;
+import com.jgg.sdp.module.graph.Grafo;
+import com.jgg.sdp.module.graph.Graph;
 import com.jgg.sdp.module.graph.Node;
+import com.jgg.sdp.module.graph.Nodo;
 import com.jgg.sdp.module.graph.SubGraph;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.unit.SDPUnit;
@@ -386,54 +395,45 @@ public class Serializer {
             verb.setIdVersion(idVersion);
             verb.setBegLine(verbo.getBegLine());
             verb.setFirma(verbo.getFirma());
-            verb.setStmt(verb.getStmt());
+            verb.setStmt(verbo.getStmt());
             generate(verb);
         }    	
     }
     
     private void updateGrafo() {
-    	updateGraphs();
-    	updateNodes();
-        updateEdges();
-    }
-
-    private void updateGraphs() {
-/*    	
-    	for (SubGraph s : module.getGraph().getSubgraphs()) {
-    		updateGraph(s.getId(), s.getRoot());
+    	Graph g = module.getGraph();
+    	
+    	for (Grafo grf : g.getGraphs()) {
+    		DCGGraph grafo = new DCGGraph();
+    		grafo.setIdVersion(idVersion);
+    		grafo.setIdGrafo(grf.getId());
+    		grafo.setLevel(grf.getLevel());
+    		grafo.setName(grf.getName());
+    		generate(grafo);
     	}
-*/    	
-    }
-    
-    private void updateNodes() {
-
-    	for (Node n : module.getGraph().getNodes()) {
-    		MODNode node = new MODNode();
+    	
+    	for (Node nodo : g.getNodes()) {
+    		DCGNode node = new DCGNode();
     		node.setIdVersion(idVersion);
-    		node.setIdNode(n.getId());
-    		node.setTipo(n.getType().ordinal());
-    		node.setNombre(n.getName());
+    		node.setIdGrafo(nodo.getGraphParent());
+    		node.setIdNode(nodo.getId());
+    		node.setSubgraph(nodo.getGraphChild());
+    		node.setNombre(nodo.getName());
+    		node.setTipo(nodo.getSubtype().ordinal());
     		generate(node);
     	}
-
-    }
-    private void updateEdges() {
     	
-    }
-    
-    private void updateGraph(int idGrafo, Node node) {
-    	int nodeFrom = node.getId();
-    	for (Node n : node.getNodes()) {
-    		MODGrafo g = new MODGrafo();
-    		g.setIdVersion(idVersion);
-    		g.setIdGrafo(idGrafo);
-    		g.setNodeFrom(nodeFrom);
-    		g.setNodeTo(n.getId());
-    		generate(g);
-    		updateGraph(idGrafo, n);
+    	for (Edge e : g.getEdges()) {
+    		DCGEdge edge = new DCGEdge();
+    		edge.setIdVersion(idVersion);
+    		edge.setIdGrafo(e.getIdGrafo());
+    		edge.setIdFrom(e.getFrom().getId());
+    		edge.setIdTo(e.getTo().getId());
+    		generate(edge);
     	}
     }
-    
+
+        
     private void openJMS() {
 /*
     	jms = JMSFactory.getJMSQueue();

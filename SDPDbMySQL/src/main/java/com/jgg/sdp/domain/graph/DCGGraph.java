@@ -1,16 +1,18 @@
-package com.jgg.sdp.domain.module;
+package com.jgg.sdp.domain.graph;
 
 import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.jgg.sdp.domain.graph.DCGGraph;
+
 @Entity
-@Table(name="MOD_GRAPH")
-public class MODGrafo implements Serializable {
+@Table(name="DCG_GRAPHS")
+public class DCGGraph implements Serializable {
 
-    private static final long serialVersionUID = -3574798070702785374L;
+	private static final long serialVersionUID = -1238086103731821178L;
 
-    @Id
+	@Id
     @Column(name="idVersion")
     Long idVersion;
     
@@ -18,12 +20,12 @@ public class MODGrafo implements Serializable {
     @Column(name="idGrafo")
     Integer idGrafo;
 
-    @Column(name="nodeFrom")
-    Integer nodeFrom;
+    @Column(name="level")
+    Integer level;
 
-    @Column(name="nodeTo")
-    Integer nodeTo;
-
+    @Column(name="name")
+    String name;
+    
 	public Long getIdVersion() {
 		return idVersion;
 	}
@@ -40,20 +42,21 @@ public class MODGrafo implements Serializable {
 		this.idGrafo = idGrafo;
 	}
 
-	public Integer getNodeFrom() {
-		return nodeFrom;
+	
+	public Integer getLevel() {
+		return level;
 	}
 
-	public void setNodeFrom(Integer nodeFrom) {
-		this.nodeFrom = nodeFrom;
+	public void setLevel(Integer level) {
+		this.level = level;
 	}
 
-	public Integer getNodeTo() {
-		return nodeTo;
+	public String getName() {
+		return name;
 	}
 
-	public void setNodeTo(Integer nodeTo) {
-		this.nodeTo = nodeTo;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -62,8 +65,8 @@ public class MODGrafo implements Serializable {
 		int result = 1;
 		result = prime * result + ((idGrafo == null) ? 0 : idGrafo.hashCode());
 		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
-		result = prime * result + ((nodeFrom == null) ? 0 : nodeFrom.hashCode());
-		result = prime * result + ((nodeTo == null) ? 0 : nodeTo.hashCode());
+		result = prime * result + ((level == null) ? 0 : level.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 
@@ -75,7 +78,7 @@ public class MODGrafo implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MODGrafo other = (MODGrafo) obj;
+		DCGGraph other = (DCGGraph) obj;
 		if (idGrafo == null) {
 			if (other.idGrafo != null)
 				return false;
@@ -86,15 +89,15 @@ public class MODGrafo implements Serializable {
 				return false;
 		} else if (!idVersion.equals(other.idVersion))
 			return false;
-		if (nodeFrom == null) {
-			if (other.nodeFrom != null)
+		if (level == null) {
+			if (other.level != null)
 				return false;
-		} else if (!nodeFrom.equals(other.nodeFrom))
+		} else if (!level.equals(other.level))
 			return false;
-		if (nodeTo == null) {
-			if (other.nodeTo != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!nodeTo.equals(other.nodeTo))
+		} else if (!name.equals(other.name))
 			return false;
 		return true;
 	}

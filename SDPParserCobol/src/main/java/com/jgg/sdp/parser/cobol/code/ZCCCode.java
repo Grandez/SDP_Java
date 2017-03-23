@@ -34,7 +34,7 @@ public class ZCCCode extends ZCZCode {
 
 	private Injector injector = InjectorSingleton.getInjector();
 	
-	private FactoryGraphs graphs = FactoryGraphs.getInstance();
+	private FactoryGraphs graphs = FactoryGraphs.getInstance(false);
 	
 	private Graph       rootGraph;
 	private SubGraph    grafo;
@@ -188,7 +188,7 @@ public class ZCCCode extends ZCZCode {
         // Incluir una llamada a ese Perform
 	    
         if (numStmts == 0) {
-        	grafo.addBlock(Nodes.PERFORM, name, false);
+ //       	grafo.addBlock(Nodes.PERFORM, name, false);
         	grafo.addNode(Nodes.PERFORM, name);
             parrafo = module.getParagraph("");
             if (parrafo != null) {

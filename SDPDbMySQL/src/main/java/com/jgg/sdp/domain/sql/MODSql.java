@@ -1,4 +1,4 @@
-package com.jgg.sdp.domain.module;
+package com.jgg.sdp.domain.sql;
 
 import java.io.Serializable;
 

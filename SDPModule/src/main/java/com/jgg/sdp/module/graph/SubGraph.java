@@ -19,11 +19,12 @@ public class SubGraph {
 	
 	private String  name;
 	private int     id;
+	private int     level = Integer.MAX_VALUE;
 	
     private Node first;    
     private Node current = null;
 
-    private FactoryGraphs nodes    = FactoryGraphs.getInstance();
+    private FactoryGraphs nodes    = FactoryGraphs.getInstance(false);
     private Stack<Node>  currents = new Stack<Node>();
     
     boolean reduced = true;
@@ -42,10 +43,14 @@ public class SubGraph {
 
     // GETTERS AND SETTERS
     
-    public String  getName() { return name;  }
-    public int     getId()   { return id;    }
-    public Node    getRoot() { return first; }
-    public boolean isGraph() { return first.getNumNodes() > 1; }
+    public String  getName()  { return name;  }
+    public int     getId()    { return id;    }
+    public Node    getRoot()  { return first; }
+    public int     getLevel() { return level; }
+    public boolean isGraph()  { return first.getNumNodes() > 1; }
+    public void setLevel(int level) {
+    	if (level < this.level) this.level = level;
+    }
     
     /**********************************************************/
     /* GESTION GRAFO                                          */
@@ -61,6 +66,7 @@ public class SubGraph {
     }
     
     public void addNode(Nodes type, String from, String to) {
+       if (to == null) to = from;	
 	   Node tmp = nodes.getNode(type, from, to);
        tmp.first(current.getLast());
        current.replace(tmp);
@@ -229,7 +235,7 @@ public class SubGraph {
     public String toString() {
 
     	StringBuilder str = new StringBuilder();
-    	str.append("\n" + first.toString() + "\n");
+    	str.append(name + "\n" + first.toString() + "\n");
 
     	HashSet<Integer> nodes = new HashSet<Integer>();    	
     	nodes.add(first.getId());

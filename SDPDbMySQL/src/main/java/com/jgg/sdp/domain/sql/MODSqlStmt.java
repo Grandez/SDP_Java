@@ -1,10 +1,11 @@
-package com.jgg.sdp.domain.module;
+package com.jgg.sdp.domain.sql;
 
 import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.persistence.*;
 
+@Entity
 @Table(name="MOD_SQL_STMT")
 public class MODSqlStmt implements Serializable {
 

@@ -1,32 +1,38 @@
-package com.jgg.sdp.domain.module;
+package com.jgg.sdp.domain.graph;
 
 import java.io.Serializable;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name="MOD_NODES")
-public class MODNode implements Serializable {
+import com.jgg.sdp.domain.graph.DCGNode;
 
-	private static final long serialVersionUID = -2526806502868686628L;
+@Entity
+@Table(name="DCG_NODES")
+public class DCGNode implements Serializable {
+
+	private static final long serialVersionUID = -5885991423139457689L;
 
 	@Id
 	@Column(name="idVersion")
 	Long idVersion;
 
 	@Id
+	@Column(name="idGrafo")
+	Integer idGrafo;
+		
+	@Id
 	@Column(name="idNode")
 	Integer idNode;
 
-	@Column(name="idgRAFO")
-	Integer idGrafo;
-	
 	@Column(name="tipo")
 	Integer tipo;
 	
 	@Column(name="nombre")
 	String nombre;
 
+	@Column(name="subgraph")
+	Integer subgraph;
+	
 	public Long getIdVersion() {
 		return idVersion;
 	}
@@ -68,6 +74,14 @@ public class MODNode implements Serializable {
 		this.nombre = nombre;
 	}
 
+	public Integer getSubgraph() {
+		return subgraph;
+	}
+
+	public void setSubgraph(Integer subgraph) {
+		this.subgraph = subgraph;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -76,6 +90,7 @@ public class MODNode implements Serializable {
 		result = prime * result + ((idNode == null) ? 0 : idNode.hashCode());
 		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+		result = prime * result + ((subgraph == null) ? 0 : subgraph.hashCode());
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		return result;
 	}
@@ -88,7 +103,7 @@ public class MODNode implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		MODNode other = (MODNode) obj;
+		DCGNode other = (DCGNode) obj;
 		if (idGrafo == null) {
 			if (other.idGrafo != null)
 				return false;
@@ -108,6 +123,11 @@ public class MODNode implements Serializable {
 			if (other.nombre != null)
 				return false;
 		} else if (!nombre.equals(other.nombre))
+			return false;
+		if (subgraph == null) {
+			if (other.subgraph != null)
+				return false;
+		} else if (!subgraph.equals(other.subgraph))
 			return false;
 		if (tipo == null) {
 			if (other.tipo != null)

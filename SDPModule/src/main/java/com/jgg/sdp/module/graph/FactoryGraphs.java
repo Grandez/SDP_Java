@@ -17,8 +17,12 @@ public class FactoryGraphs {
 		nodes = new Bag<Node>();
 	}
 	
-	public static FactoryGraphs getInstance() {
+	public static FactoryGraphs getInstance(boolean reset) {
 		if (factory == null) factory = new FactoryGraphs();
+		if (reset) {
+			numGraphs = 0;
+			numNodes = 0;
+		}
 		return factory;
 	}
 

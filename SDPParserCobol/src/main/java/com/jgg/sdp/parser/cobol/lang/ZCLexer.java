@@ -5152,6 +5152,10 @@ public class ZCLexer extends GenericLexer implements GenericScanner, ILexer, jav
       return symbol(code);
    }
                   
+   public Symbol checkSymbol(int code) {
+      return symbol(checkIndex(code));
+   }
+                  
    public Symbol symbol(int code){
       return symbol(code, yytext());
    }
@@ -5161,15 +5165,14 @@ public class ZCLexer extends GenericLexer implements GenericScanner, ILexer, jav
    }
    
    public Symbol symbol(int code, String txt) {
-      int nCode = checkIndex(code);
-      setLastSymbol(nCode);
+      setLastSymbol(code);
       data = true;
       int col = yycolumn + OFFSET;
       
       if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
       
       if (code != 0) {      
-          print("Devuelve SYMBOL " + nCode + " (" + (yyline + 1) + "," + col + ") " + txt);
+          print("Devuelve SYMBOL " + code + " (" + (yyline + 1) + "," + col + ") " + txt);
       }    
       return symbolFactory.newSymbol(txt, code, new Symbol(code, yyline + 1, col, txt));
    }
@@ -5180,15 +5183,6 @@ public class ZCLexer extends GenericLexer implements GenericScanner, ILexer, jav
       sym.sym = code;
       sym.value = type;
       return sym;
-/*      
-      int col = sym.right + OFFSET;
-      String txt = yytext();
-
-      data = true;      
-      print("Devuelve SYMBOL " + code + " (" + (sym.left + 1) + "," + col + ") " + txt);
-      Symbol s = new Symbol(code, sym.left + 1, col, txt);
-      return symbolFactory.newSymbol(txt, code, s);
-*/  
    }
 
    public int checkIndex(int code) {
@@ -5852,11 +5846,11 @@ public class ZCLexer extends GenericLexer implements GenericScanner, ILexer, jav
             }
           case 294: break;
           case 23: 
-            { print("JGG (");return symbol(ZCCSym.LPAR);
+            { print("JGG (");return checkSymbol(ZCCSym.LPAR);
             }
           case 295: break;
           case 24: 
-            { return symbol(ZCCSym.RPAR);
+            { return checkSymbol(ZCCSym.RPAR);
             }
           case 296: break;
           case 25: 

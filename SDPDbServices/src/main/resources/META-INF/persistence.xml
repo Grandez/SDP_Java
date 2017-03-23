@@ -37,20 +37,20 @@
         <class>com.jgg.sdp.domain.module.MODCopy</class>                        
         <class>com.jgg.sdp.domain.module.MODCics</class>
         <class>com.jgg.sdp.domain.module.MODFichero</class>
-        <class>com.jgg.sdp.domain.module.MODGrafo</class>
         <class>com.jgg.sdp.domain.module.MODFuente</class>
         <class>com.jgg.sdp.domain.module.MODFuenteError</class>
         <class>com.jgg.sdp.domain.module.MODIssue</class>
         <class>com.jgg.sdp.domain.module.MODMissing</class>
-        <class>com.jgg.sdp.domain.module.MODNode</class>
         <class>com.jgg.sdp.domain.module.MODParrafo</class>
         <class>com.jgg.sdp.domain.module.MODResumen</class>
         <class>com.jgg.sdp.domain.module.MODSecciones</class>
-        <class>com.jgg.sdp.domain.module.MODSql</class>        
-        <class>com.jgg.sdp.domain.module.MODSqlStmt</class>        
         <class>com.jgg.sdp.domain.module.MODSummary</class>        
         <class>com.jgg.sdp.domain.module.MODVersion</class>
 
+        <class>com.jgg.sdp.domain.graph.DCGEdge</class>
+        <class>com.jgg.sdp.domain.graph.DCGGraph</class>
+        <class>com.jgg.sdp.domain.graph.DCGNode</class>
+        
         <class>com.jgg.sdp.domain.rules.RULGroup</class>
         <class>com.jgg.sdp.domain.rules.RULItem</class>        
         <class>com.jgg.sdp.domain.rules.RULIssue</class>
@@ -62,6 +62,9 @@
         <class>com.jgg.sdp.domain.session.SESParrafo</class>
         <class>com.jgg.sdp.domain.session.SESPersistencia</class>
         <class>com.jgg.sdp.domain.session.SESSesion</class>                                        
+
+        <class>com.jgg.sdp.domain.sql.MODSql</class>        
+        <class>com.jgg.sdp.domain.sql.MODSqlStmt</class>        
         
         <class>com.jgg.sdp.domain.summary.SUMArbol</class>        
         <class>com.jgg.sdp.domain.summary.SUMModulo</class>

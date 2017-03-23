@@ -3,6 +3,8 @@ package com.jgg.sdp.module.graph;
 public class Edge {
 
 	private int idGrafo;
+	private int idFrom;
+	private int idTo;
 	private Node from;
 	private Node to;
 	
@@ -10,6 +12,8 @@ public class Edge {
 		this.idGrafo = idGrafo;
 		this.from = from;
 		this.to = to;
+		this.idFrom = from.getId();
+		this.idTo = from.getId();
 	}
 	
 	public int getIdGrafo() {
@@ -47,5 +51,33 @@ public class Edge {
 		String p2 = "\t" + from.getType().toString()  + " -> " + to.getType().toString();
 		return p1 + p2;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + idFrom;
+		result = prime * result + idGrafo;
+		result = prime * result + idTo;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Edge other = (Edge) obj;
+		if (idFrom != other.idFrom)
+			return false;
+		if (idGrafo != other.idGrafo)
+			return false;
+		if (idTo != other.idTo)
+			return false;
+		return true;
+	}
+		
 }

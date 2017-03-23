@@ -50,7 +50,7 @@ public class FactoryParser {
 		   case Parsers.ZCOBOL:     return new GenericParser(new ZCData(lexer), type);
 		   case Parsers.ZCOBOLDATA: return new GenericParser(new ZCData(lexer), type);
 		   case Parsers.ZCOBOLCODE: return new GenericParser(new ZCCode(lexer), type);
-		   case Parsers.DB2:        return new GenericParser(new DB2Parser(source), type);
+		   case Parsers.DB2:        return new GenericParser(new DB2Parser(lexer), type);
 		   case Parsers.CICS:       return new GenericParser(new CICSParser(lexer), type);
 		   case Parsers.COPY:       return new GenericParser(new COPYParser(lexer), type);
 		}

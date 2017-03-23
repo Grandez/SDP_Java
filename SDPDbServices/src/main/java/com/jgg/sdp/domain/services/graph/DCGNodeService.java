@@ -5,16 +5,16 @@
  * @version 3.0
  *   
  */
-package com.jgg.sdp.domain.services.module;
+package com.jgg.sdp.domain.services.graph;
 
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import com.jgg.sdp.domain.module.MODNode;
+import com.jgg.sdp.domain.graph.DCGNode;
 import com.jgg.sdp.domain.services.AbstractService;
 
 @Repository
-public class MODNodeService extends AbstractService<MODNode> {
+public class DCGNodeService extends AbstractService<DCGNode> {
 
 }

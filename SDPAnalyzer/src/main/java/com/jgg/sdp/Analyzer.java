@@ -71,7 +71,7 @@ public class Analyzer {
 //Nada            	if (procesar == MSG.OK)      procesar = unit.isIgnored();
 //Nada              if (procesar == MSG.IGNORED) createIgnoredModule(unit);
   				if (procesar == MSG.OK)      analyze(unit);
-// 				if (procesar == MSG.OK)      procesar = storeModuleInfo(unit, true);
+ 				if (procesar == MSG.OK)      procesar = storeModuleInfo(unit, true);
 				if (cfg.getVerbose() > 1)    msg.progress(procesar);
 			// Caso, alguien ha borrado el fichero entre el find y el proceso
 			} catch (FileException f) {

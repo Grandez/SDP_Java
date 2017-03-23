@@ -228,27 +228,29 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
    private void parseSQL() throws Exception {
 	   info.setIncludeParsed(false);
 	   Symbol s = parseAlter(Parsers.DB2);
-	   System.out.println("Acaba PARSER SQL");
-   	   if (s == null) return;
    	   
-   	   if (postSQL == null) postSQL = new PostSQL(info.module, s.value);
-   	   postSQL.setSource(tmpSource);
-   	   postSQL.parse();
-   	   
+	   if (s == null) {
+   		   System.out.println("SQL PARATE");
+   		   return;
+   	   }
+
    	   s = (Symbol) s.value;
    	   StmtSQL sql = (StmtSQL) s.value;
+
    	   if (sql.isInclude()) {
    		   createCopy(s, CDG.DEP_INCLUDE);
    		   updateCopy(s);
    	       loadCopy(sql.getRValue(0).getName(), null);
+   	       return;
    	   } 
-   	   
-   	   // if (info.isIncludeParsed()) loadCopy(false, CDG.DEP_INCLUDE);
+
+   	   if (postSQL == null) postSQL = new PostSQL(info.module, s.value);
+   	   postSQL.setSource(tmpSource);
+   	   postSQL.parse();   	   
    }
 
    private void parseCICS() throws Exception {
 	   parseAlter(Parsers.CICS);   
-	   System.out.println("Acaba PARSER CICS");
    }
 
    private StmtCopy parseCOPY(String name) throws Exception {
@@ -261,7 +263,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   tmpSource = new Source(new Archivo("embedded.tmp"), true);
 	   tmpSource.setData(info.buffer.toString());
 	   
-	   System.out.println(info.buffer.toString());
+//JGG	   System.out.println(info.buffer.toString());
 	   Scanner scanner = getLexer(type, tmpSource);
 
    	   GenericParser parser = FactoryParser.getParser(scanner, tmpSource, type);

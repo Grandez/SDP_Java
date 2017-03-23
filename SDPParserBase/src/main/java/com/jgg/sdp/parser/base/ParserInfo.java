@@ -6,6 +6,9 @@ package com.jgg.sdp.parser.base;
 
 import java.util.*;
 
+import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.core.ctes.CFG;
+import com.jgg.sdp.core.ctes.MSG;
 import com.jgg.sdp.module.base.Module;
 //import com.jgg.sdp.parser.info.StmtCopy;
 import com.jgg.sdp.module.items.Copy;
@@ -16,6 +19,8 @@ import java_cup.runtime.Symbol;
 public class ParserInfo {
 
 	private static ParserInfo info = null;
+
+	private Configuration cfg = Configuration.getInstance();
 	
     public SDPUnit   unit   = null;
     public Module    module = null;
@@ -198,4 +203,31 @@ public class ParserInfo {
 		return inSearch;
 	}
 
+	/***********************************************************/
+	/***  Gestion de errores                                 ***/
+	/***********************************************************/
+
+	public void syntax_error (Symbol token) {
+        
+       Symbol s = (Symbol) token.value;
+       int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+       col = col + s.right + 1;
+
+       throw new ParseException(MSG.EXCEPTION_SYNTAX, 
+                                info.getMemberName(), 
+                                info.getOffset() + s.left + 1,  
+                                col, 
+                                (String) s.value);
+   }
+
+   public void unrecovered_syntax_error(Symbol token) {
+       Symbol s = (Symbol) token.value;
+       throw new ParseException(MSG.EXCEPTION_CUP, 
+                               getMemberName(), 
+                               getOffset() + s.left + 1, 
+                               s.right + 1, 
+                               (String) s.value); 
+   }
+
+	
 }

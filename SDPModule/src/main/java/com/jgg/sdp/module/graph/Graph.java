@@ -85,11 +85,17 @@ public class Graph {
     
     private void getWorkEdges() {
     	JGGQueue<SubGraph> sigGraph = new JGGQueue<SubGraph>();
+    	HashSet<Integer> mapGraph = new HashSet<Integer>();
+    	
     	sigGraph.enqueue(root);
+    	
         root.setLevel(0);
         
     	while (!sigGraph.isEmpty()) {
        	   SubGraph graph = sigGraph.dequeue();
+       	   if (mapGraph.contains(graph.getId())) continue;
+       	   mapGraph.add(graph.getId());
+//       	   System.out.println("Procesando grafo: " + graph.getName());
            HashSet<Integer> map    = new HashSet<Integer>();
            JGGQueue<Node>  nodes   = new JGGQueue<Node>();           
            processNodes(graph, sigGraph, nodes, map);

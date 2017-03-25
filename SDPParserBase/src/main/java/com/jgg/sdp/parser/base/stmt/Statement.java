@@ -28,7 +28,7 @@ public class Statement {
     
 	// La lista mantiene el orden de las opciones
 	// El map pregunta por su clae
-	private ArrayList<Symbol> tokens     = new ArrayList<Symbol>();
+	protected ArrayList<Symbol> tokens     = new ArrayList<Symbol>();
     private ArrayList<Option> lstOptions = new ArrayList<Option>();
     private ArrayList<Issue>  issues     = new ArrayList<Issue>();
     

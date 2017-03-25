@@ -62,23 +62,23 @@ public class DDLLexer extends GenericLexer implements GenericScanner, java_cup.r
 
   private static final String ZZ_ACTION_PACKED_0 =
     "\3\0\1\1\1\2\1\3\3\2\1\0\3\2\1\4"+
-    "\1\0\6\2\1\5\1\6\1\7\1\10\1\11\1\12"+
-    "\1\11\1\2\1\13\1\0\3\2\1\14\3\2\3\0"+
-    "\7\2\1\0\10\2\1\0\1\2\1\13\1\15\1\2"+
-    "\1\0\4\2\1\0\2\2\3\0\4\2\1\0\4\2"+
-    "\1\0\11\2\1\0\1\2\1\15\1\2\2\16\1\2"+
-    "\1\17\1\2\1\0\1\2\1\0\1\2\3\0\4\2"+
-    "\1\0\1\2\1\0\2\2\1\20\1\0\5\2\1\21"+
-    "\3\2\2\22\2\2\1\23\1\0\1\2\1\0\1\2"+
-    "\3\0\3\2\1\24\2\25\1\0\2\2\2\26\4\2"+
-    "\1\0\3\2\1\27\1\2\1\0\1\2\1\0\1\2"+
-    "\1\0\1\2\3\0\3\2\1\0\1\2\1\30\2\2"+
-    "\1\31\1\2\1\0\2\2\1\0\2\2\1\0\1\2"+
-    "\2\32\2\33\2\0\1\34\2\2\1\34\1\0\1\2"+
-    "\1\35\1\36\1\0\1\2\1\0\2\2\1\0\2\2"+
-    "\1\0\1\2\1\37\1\40\1\37\1\40\1\0\1\2"+
-    "\2\41\1\0\2\2\2\42\1\43\1\0\1\2\2\44"+
-    "\1\0\1\2\1\45\2\46\2\47";
+    "\1\0\6\2\1\5\1\6\1\7\1\10\3\11\1\2"+
+    "\1\12\1\0\3\2\1\13\3\2\3\0\7\2\1\0"+
+    "\10\2\1\0\1\2\1\12\1\14\1\2\1\0\4\2"+
+    "\1\0\2\2\3\0\4\2\1\0\4\2\1\0\11\2"+
+    "\1\0\1\2\1\14\1\2\2\15\1\2\1\16\1\2"+
+    "\1\0\1\2\1\0\1\2\3\0\4\2\1\0\1\2"+
+    "\1\0\2\2\1\17\1\0\5\2\1\20\3\2\2\21"+
+    "\2\2\1\22\1\0\1\2\1\0\1\2\3\0\3\2"+
+    "\1\23\2\24\1\0\2\2\2\25\4\2\1\0\3\2"+
+    "\1\26\1\2\1\0\1\2\1\0\1\2\1\0\1\2"+
+    "\3\0\3\2\1\0\1\2\1\27\2\2\1\30\1\2"+
+    "\1\0\2\2\1\0\2\2\1\0\1\2\2\31\2\32"+
+    "\2\0\1\33\2\2\1\33\1\0\1\2\1\34\1\35"+
+    "\1\0\1\2\1\0\2\2\1\0\2\2\1\0\1\2"+
+    "\1\36\1\37\1\36\1\37\1\0\1\2\2\40\1\0"+
+    "\2\2\2\41\1\42\1\0\1\2\2\43\1\0\1\2"+
+    "\1\44\2\45\2\46";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[237];
@@ -1085,159 +1085,155 @@ public class DDLLexer extends GenericLexer implements GenericScanner, java_cup.r
           case 1: 
             { /* DO NOTHING */
             }
-          case 40: break;
+          case 39: break;
           case 2: 
             { return symbol(ID);
             }
-          case 41: break;
+          case 40: break;
           case 3: 
             { return symbol(PREHOST);
             }
-          case 42: break;
+          case 41: break;
           case 4: 
             { /* eat */
             }
-          case 43: break;
+          case 42: break;
           case 5: 
             { pushState(QUOTE_STRING);
             }
-          case 44: break;
+          case 43: break;
           case 6: 
             { pushState(DQUOTE_STRING);
             }
-          case 45: break;
+          case 44: break;
           case 7: 
             { return symbol(COMMA);
             }
-          case 46: break;
+          case 45: break;
           case 8: 
             { cadena.append(yytext());
             }
-          case 47: break;
+          case 46: break;
           case 9: 
             { return literal(LITERAL);
             }
-          case 48: break;
+          case 47: break;
           case 10: 
-            { popState();
-            }
-          case 49: break;
-          case 11: 
             { return symbol(HOSTVAR1);
             }
-          case 50: break;
-          case 12: 
+          case 48: break;
+          case 11: 
             { return symbol(TO           );
             }
-          case 51: break;
-          case 13: 
+          case 49: break;
+          case 12: 
             { return symbol(HOSTVAR2);
             }
-          case 52: break;
-          case 14: 
+          case 50: break;
+          case 13: 
             { return symbol(MASK         );
             }
-          case 53: break;
-          case 15: 
+          case 51: break;
+          case 14: 
             { return symbol(TYPE         );
             }
-          case 54: break;
-          case 16: 
+          case 52: break;
+          case 15: 
             { return symbol(ROLE         );
             }
-          case 55: break;
-          case 17: 
+          case 53: break;
+          case 16: 
             { return symbol(DROP         );
             }
-          case 56: break;
-          case 18: 
+          case 54: break;
+          case 17: 
             { return symbol(VIEW         );
             }
-          case 57: break;
-          case 19: 
+          case 55: break;
+          case 18: 
             { return symbol(TABLE        );
             }
-          case 58: break;
-          case 20: 
+          case 56: break;
+          case 19: 
             { return symbol(ALTER        );
             }
-          case 59: break;
-          case 21: 
+          case 57: break;
+          case 20: 
             { return symbol(ALIAS        );
             }
-          case 60: break;
-          case 22: 
+          case 58: break;
+          case 21: 
             { return symbol(INDEX        );
             }
-          case 61: break;
-          case 23: 
+          case 59: break;
+          case 22: 
             { return symbol(GLOBAL       );
             }
-          case 62: break;
-          case 24: 
+          case 60: break;
+          case 23: 
             { return symbol(RENAME       );
             }
-          case 63: break;
-          case 25: 
+          case 61: break;
+          case 24: 
             { return symbol(CREATE       );
             }
-          case 64: break;
-          case 26: 
+          case 62: break;
+          case 25: 
             { return symbol(TRIGGER      );
             }
-          case 65: break;
-          case 27: 
+          case 63: break;
+          case 26: 
             { return symbol(TRUSTED      );
             }
-          case 66: break;
-          case 28: 
+          case 64: break;
+          case 27: 
             { return symbol(SYNONIM      );
             }
-          case 67: break;
-          case 29: 
+          case 65: break;
+          case 28: 
             { return symbol(COMMENT      );
             }
-          case 68: break;
-          case 30: 
+          case 66: break;
+          case 29: 
             { return symbol(CONTEXT      );
             }
-          case 69: break;
-          case 31: 
+          case 67: break;
+          case 30: 
             { return symbol(SEQUENCE     );
             }
-          case 70: break;
-          case 32: 
+          case 68: break;
+          case 31: 
             { return symbol(STOGROUP     );
             }
-          case 71: break;
-          case 33: 
+          case 69: break;
+          case 32: 
             { return symbol(DATABASE     );
             }
-          case 72: break;
-          case 34: 
+          case 70: break;
+          case 33: 
             { return symbol(FUNCTION     );
             }
-          case 73: break;
-          case 35: 
+          case 71: break;
+          case 34: 
             { return symbol(TEMPORARY    );
             }
-          case 74: break;
-          case 36: 
+          case 72: break;
+          case 35: 
             { return symbol(AUXILIARY    );
             }
-          case 75: break;
-          case 37: 
+          case 73: break;
+          case 36: 
             { return symbol(PROCEDURE    );
             }
-          case 76: break;
-          case 38: 
+          case 74: break;
+          case 37: 
             { return symbol(TABLESPACE   );
             }
-          case 77: break;
-          case 39: 
+          case 75: break;
+          case 38: 
             { return symbol(PERMISSION   );
             }
-          case 78: break;
+          case 76: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

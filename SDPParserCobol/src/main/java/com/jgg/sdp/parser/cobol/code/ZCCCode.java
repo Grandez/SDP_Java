@@ -21,15 +21,12 @@ import java_cup.runtime.Symbol;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
 
-import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.base.stmt.Option;
-import com.jgg.sdp.parser.base.stmt.Statement;
-import com.jgg.sdp.parser.base.stmt.Tokens;
-import com.jgg.sdp.parser.base.symbol.SymbolExt;
-import com.jgg.sdp.parser.base.symbol.SymbolExtList;
+import com.jgg.sdp.parser.base.stmt.*;
+import com.jgg.sdp.parser.base.symbol.*;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.parser.cobol.base.*;
 import com.jgg.sdp.parser.cobol.lang.ZCCSym;
 import com.jgg.sdp.parser.cobol.lang.ZCZSym;
 import com.jgg.sdp.parser.cobol.tools.*;
@@ -48,7 +45,7 @@ public class ZCCCode extends ZCZCode {
 	private Block currBlock = null;
 	
 	// Pila de controles de flujo: IF, PERFORM, EVALUATE
-    private Stack<Statement> stackFlujo = new Stack<Statement>(); 
+    private Stack<StmtCobol> stackFlujo = new Stack<StmtCobol>(); 
 
     private final ResourceBundle badStmt = ResourceBundle.getBundle(SYS.BAD_STMTS);
     
@@ -84,7 +81,7 @@ public class ZCCCode extends ZCZCode {
         */	
     }
     
-    public Statement setAtEnd(Statement stmt) { 
+    public StmtCobol setAtEnd(StmtCobol stmt) { 
         parrafo.incCiclomatic();
         newBlock(stmt, true, TRAP.ATEND);
         return stmt; 
@@ -124,7 +121,7 @@ public class ZCCCode extends ZCZCode {
 		return newBlock(null, trap, cause);
 	}
 	
-	public int newBlock(Statement stmt, boolean genTrap, Integer cause) {
+	public int newBlock(StmtCobol stmt, boolean genTrap, Integer cause) {
         int bloque = ++bloques;
         int endLine = -1;
 		int stmts   = numStmts;
@@ -146,7 +143,7 @@ public class ZCCCode extends ZCZCode {
 		return bloque;		
 	}
 
-	public Statement processStatement(Statement stmt, Statement last) {
+	public StmtCobol processStatement(StmtCobol stmt, StmtCobol last) {
 
 		checkBadStmt(stmt);
 		
@@ -173,14 +170,14 @@ public class ZCCCode extends ZCZCode {
 		return stmt;
 	}
 	
-	public void checkPerform(Statement stmt) {
+	public void checkPerform(StmtCobol stmt) {
 		parrafo.incCiclomatic();
 		if (stmt.getVerb().sym != ZCCSym.PERFORM) return;
 		injector.setFirstTrap(new Trap(TRAP.BEG_PERFORM));
 		injector.setNextTrap(new Trap(TRAP.END_PERFORM));
 	}
 	
-	public Symbol processParrafo(Symbol s, Statement last) {
+	public Symbol processParrafo(Symbol s, StmtCobol last) {
 	    boolean firstP = false;
         Trap trap = null;
 	    String name = getName(s);
@@ -228,7 +225,7 @@ public class ZCCCode extends ZCZCode {
         return s;
    }
 
-	public Statement processPerform(Statement stmt, Statement last) {
+	public StmtCobol processPerform(StmtCobol stmt, StmtCobol last) {
 
 		if (isInLine(stmt)) {
 			performInline(stmt);
@@ -249,14 +246,14 @@ public class ZCCCode extends ZCZCode {
 	 * @param stmt La sentencia PERFORM a analizar
 	 * @return cierto si el perform es inline
 	 */
-	private boolean isInLine(Statement stmt) {
+	private boolean isInLine(StmtCobol stmt) {
 		if (stmt.hasOptions() == false) return true;
 		Option opt = stmt.getOptionByPos(0);
 		if (opt.getId() != ZCCSym.ID) return true;
 		return false;
 	}	
 
-	private void performInline(Statement stmt) {
+	private void performInline(StmtCobol stmt) {
 	    Symbol verb = stmt.getVerb();
 	    
 		injector.loadTraps(verb.left, verb.right);
@@ -266,7 +263,7 @@ public class ZCCCode extends ZCZCode {
 		addToGraph(stmt, "INLINE");
 	}
 
-	private void performOutline(Statement stmt) {
+	private void performOutline(StmtCobol stmt) {
 		Symbol perform = stmt.getVerb();
 		String from    = stmt.getOptionByPos(0).getName();
 		String to      = null;
@@ -288,7 +285,7 @@ public class ZCCCode extends ZCZCode {
 		grafo.addNode(Nodes.PERFORM, from, to);
 	}
 	
-	private void addToGraph(Statement stmt, String from) {
+	private void addToGraph(StmtCobol stmt, String from) {
 		boolean loop = false;
         if (stmt.getOptionByName("UNTIL") != null   ||
             stmt.getOptionByName("VARYING") != null) {
@@ -297,7 +294,7 @@ public class ZCCCode extends ZCZCode {
         grafo.addBlock(Nodes.PERFORM, from, loop);
 	}
 	
-	private void calculatePerformComplexity(Statement stmt) {
+	private void calculatePerformComplexity(StmtCobol stmt) {
 		for (Option opt : stmt.getOptions()) {
 			switch (opt.getId()) {
 			   case ZCCSym.TIMES:
@@ -310,7 +307,7 @@ public class ZCCCode extends ZCZCode {
 		}
 	}
 	
-    public Statement processIf(Statement stmt) {
+    public StmtCobol processIf(StmtCobol stmt) {
     	grafo.addBlock(Nodes.IF);
     	grafo.addChoice(Nodes.IF, false);
         parrafo.incCiclomatic();
@@ -325,7 +322,7 @@ public class ZCCCode extends ZCZCode {
         */
     }
 
-    public Statement processEvaluate(Statement stmt) {
+    public StmtCobol processEvaluate(StmtCobol stmt) {
     	grafo.addBlock(Nodes.EVALUATE);
         stackFlujo.push(stmt);
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStmts);
@@ -334,7 +331,7 @@ public class ZCCCode extends ZCZCode {
         return stmt;
     }
     	
-    public Statement processWhen(Statement stmt) {
+    public StmtCobol processWhen(StmtCobol stmt) {
     	//jgg Si no es OTHER
     	boolean close = false;
     	if (stmt.getOptionByName("OTHER") != null) close = true;
@@ -345,7 +342,7 @@ public class ZCCCode extends ZCZCode {
         return stmt;
     }
     
-    public Statement processElse(Statement stmt) {
+    public StmtCobol processElse(StmtCobol stmt) {
     	grafo.addChoice(Nodes.IF, true);
         newBlock(stmt, true, TRAP.ELSE);
         return stmt;
@@ -362,7 +359,7 @@ public class ZCCCode extends ZCZCode {
 	 * @param stmt La sentencia a analizar
 	 * @return la sentencia a analizar
 	 */
-	public Statement wrapPerform(Statement stmt) {
+	public StmtCobol wrapPerform(StmtCobol stmt) {
 		parrafo.incCiclomatic();
 		Symbol s = stmt.getVerb();
 		if (s.sym != ZCCSym.PERFORM) return stmt;
@@ -371,8 +368,8 @@ public class ZCCCode extends ZCZCode {
 		return stmt;
 	}
 	
-	public Statement fileAction(int action, Symbol base, Tokens files) {
-        Statement stmt = new Statement(base, numStmts);
+	public StmtCobol fileAction(int action, Symbol base, Tokens files) {
+        StmtCobol stmt = new StmtCobol(base, numStmts);
         return stmt;
         /*JGG
         stmt.addTokens(files);
@@ -384,10 +381,10 @@ public class ZCCCode extends ZCZCode {
         */
 	}
 	
-	public Statement fileAccess(int action, Symbol base, Symbol f) {
+	public StmtCobol fileAccess(int action, Symbol base, Symbol f) {
         Persistence p;
         
-		Statement stmt = new Statement(base, numStmts);
+		StmtCobol stmt = new StmtCobol(base, numStmts);
 /*JGG
 		String name = getName(f);
         stmt.addSymbol(f);
@@ -412,27 +409,27 @@ public class ZCCCode extends ZCZCode {
      * Si EXIT no lleva etiqueta, debe ser la unica sentencia en el parrafo .
      *
      * @param stmt
-     *            Statement EXIT
-     * @return la misma Statement
+     *            StmtCobol EXIT
+     * @return la misma StmtCobol
      */
-	public Statement processExit(Statement stmt) {
+	public StmtCobol processExit(StmtCobol stmt) {
 		if (stmt.getSymbols().size() == 0) return stmt;
         injector.removeTraps();
         parrafo.setExit(true);
 		return stmt;
 	}
 
-    public Statement processExitParrafo(Statement stmt) {
+    public StmtCobol processExitParrafo(StmtCobol stmt) {
 //JGG4        injector.setPrevTrap(new Trap(TRAP.END_PARAGRAPH, parrafo.getName()));
         return stmt;
     }
 	
-	public Statement processCall (Symbol verbo, Symbol rutina) {
+	public StmtCobol processCall (Symbol verbo, Symbol rutina) {
 		int callMode = CDG.CALL_CALL;
 		int callType = CDG.CALL_DYNAMIC;
 		Nodes nodeType = Nodes.CALL_DYNAMIC;
 		
-        Statement stmt = new Statement(verbo);
+        StmtCobol stmt = new StmtCobol(verbo);
         stmt.addSymbol(rutina);
 
 	    String nombre = (String) rutina.value;
@@ -464,7 +461,7 @@ public class ZCCCode extends ZCZCode {
         module.addRoutine(rut);
 	}
 	
-	public void endProgram(Statement endProgram) {
+	public void endProgram(StmtCobol endProgram) {
         Trap trap = new Trap(TRAP.END_MODULE, makeLiteral(module.getName()));
         trap.setEndStatement(true);
         trap = injector.setPrevTrap(trap);
@@ -482,7 +479,7 @@ public class ZCCCode extends ZCZCode {
 //        hasEndProgram = true;
 	}
 
-	public void EndOfFile(Statement last, boolean hasEndCode) {
+	public void EndOfFile(StmtCobol last, boolean hasEndCode) {
 		trapEOF(last, hasEndCode);
         module.setStatements(numStmts);
         module.setParagraphReferences();
@@ -501,7 +498,7 @@ public class ZCCCode extends ZCZCode {
      *            Indicador de si existe sentencias de fin de programa:<br>
      *            STOP RUN, GOBACK, ....
      */
-	public  void trapEOF(Statement last, boolean hasEndCode) {
+	public  void trapEOF(StmtCobol last, boolean hasEndCode) {
 	    module.lastParagraph(last.getEndLine(), numStmts);
         module.lastBlock(last.getEndLine(), numStmts);
 //JGG4	    if ( !parrafo.isExit() && !parrafo.isVirtual() && hasEndProgram == false) {
@@ -534,12 +531,12 @@ public class ZCCCode extends ZCZCode {
 	 * @param last Ultima sentencia procesada 
 	 * @return La sentencia actual
 	 */
-	public Statement checkFlujo(Statement stmt, Statement last) {
+	public StmtCobol checkFlujo(StmtCobol stmt, StmtCobol last) {
 	    Trap trap = null;
 	    Integer cause = null;
 	
 	    if (stackFlujo.isEmpty()) return stmt;
-	    Statement flujo = stackFlujo.pop();
+	    StmtCobol flujo = stackFlujo.pop();
 
 	    while (flujo != null) {
 	        switch (flujo.getVerb().sym) {
@@ -561,20 +558,20 @@ public class ZCCCode extends ZCZCode {
 	    return stmt;
 	}
 	
-	public Statement endIf(Statement stmt) {
+	public StmtCobol endIf(StmtCobol stmt) {
 	    stackFlujo.pop();
         newBlock(stmt, true, TRAP.END_IF);
         grafo.endCycle(Nodes.IF);
         return stmt;
 	}
 	
-    public Statement endPerform(Statement stmt) {
+    public StmtCobol endPerform(StmtCobol stmt) {
         newBlock(stmt, true, TRAP.END_PERFORM);
         grafo.endCycle(Nodes.PERFORM);
         return stmt;
     }
     
-    public Statement endEvaluate(Statement stmt) {
+    public StmtCobol endEvaluate(StmtCobol stmt) {
         stackFlujo.pop();
         newBlock(true, TRAP.END_EVAL);
         grafo.endCycle(Nodes.EVALUATE);
@@ -679,7 +676,7 @@ public class ZCCCode extends ZCZCode {
 	 * Si lo esta la inserta en la lista
 	 * @param stmt
 	 */
-	private void checkBadStmt(Statement stmt) {
+	private void checkBadStmt(StmtCobol stmt) {
 	    String verb = stmt.getVerbName();
 	    if (badStmt.containsKey(verb)) {
 	        module.addBadSentence(verb,

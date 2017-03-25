@@ -119,7 +119,7 @@ HOSTVAR_ATTR = {HOSTVAR}{SPACES}{ATTR}
 <QUOTE_STRING> {
   \'\'          { cadena.append(yytext());  }    
   \'            { return literal(LITERAL);  }  
-  \n            { popState(); } 
+  \n            { return literal(LITERAL);  }
   \r            { /* eat */ }
 
   [^]           { cadena.append(yytext()); }
@@ -128,7 +128,7 @@ HOSTVAR_ATTR = {HOSTVAR}{SPACES}{ATTR}
 <DQUOTE_STRING> {
   \"\"          { cadena.append(yytext());  }    
   \"            { return literal(LITERAL);  }
-  \n            { popState(); }
+  \n            { return literal(LITERAL);  }
   \r            { /* eat */   }
 
   [^]           { cadena.append(yytext()); }

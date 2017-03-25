@@ -235,7 +235,7 @@ public abstract class GenericLexer implements ILexer {
    public boolean isIgnoreReserved() { return ignoreReserved;  }
    
    public void print(String txt) {
-//         System.out.println(txt);
+         System.out.println(txt);
    }   
 
    protected String removeQuotes(String txt) {

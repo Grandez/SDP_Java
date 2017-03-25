@@ -224,18 +224,19 @@ non terminal         choice_abs_rel        ;
 non terminal         var_string            ;
 non terminal         var_int               ;
 non terminal         var_id                ;
+non terminal         literal               ;
 
-non terminal         host_field             ;
-non terminal         host_var_opt           ;
-non terminal         host_var               ;
-non terminal         host_var_base          ;
+non terminal         host_field            ;
+non terminal         host_var_opt          ;
+non terminal         host_var              ;
+non terminal         host_var_base         ;
 
 non terminal         host_label            ;
 
 non terminal         eat                   ;
 non terminal         eat_token             ;
 
-non terminal         non_reserved_words     ;
+non terminal         non_reserved_words    ;
 
 /**********************************************************************/
 /**********************************************************************/
@@ -572,7 +573,11 @@ var_int ::= host_var
 var_id ::= host_var
        |   ID
        ;
-                              
+
+literal ::= LITERAL
+        |   literal LITERAL
+        ;
+                                       
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/

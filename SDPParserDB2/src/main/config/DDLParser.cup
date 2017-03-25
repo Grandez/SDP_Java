@@ -124,6 +124,7 @@ non terminal         object_opt         ;
 
 non terminal host_variable       ;
 non terminal var_id              ;
+non terminal literal             ;
 
 non terminal eat                 ;
 non terminal eat_opt             ;
@@ -245,7 +246,11 @@ host_variable ::= HOSTVAR1
               |   HOSTVAR2
               |   PREHOST ID
               ;
-                     
+
+literal ::= LITERAL
+        |   literal LITERAL
+        ;
+        
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/

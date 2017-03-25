@@ -149,7 +149,7 @@ FULLTABLE   = {ID}\.\*
 <QUOTE_STRING> {
   \'\'          { cadena.append(yytext());  }    
   \'            { return literal(LITERAL);  }  
-  \n            { popState(); } 
+  \n            { return literal(LITERAL);  } 
   \r            { /* eat */ }
 
   [^]           { cadena.append(yytext()); }
@@ -158,7 +158,7 @@ FULLTABLE   = {ID}\.\*
 <DQUOTE_STRING> {
   \"\"          { cadena.append(yytext());  }    
   \"            { return literal(LITERAL);  }
-  \n            { popState(); }
+  \n            { return literal(LITERAL);  }
   \r            { /* eat */   }
 
   [^]           { cadena.append(yytext()); }

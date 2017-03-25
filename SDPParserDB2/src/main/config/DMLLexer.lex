@@ -127,8 +127,7 @@ FULLTABLE   = {ID}\.\*
    DATA                       { return symbol(DATA                ); }
    DAY[Ss]?                   { return symbol(DAYS                ); }
    DEBUG                      { return symbol(DEBUG               ); }   
-   DECLARE                    { print("JGGXXX");
-                                 return symbol(DECLARE             ); }
+   DECLARE                    { return symbol(DECLARE             ); }
                                  
    DEFAULT                    { return symbol(DEFAULT             ); }
    DEGREE                     { return symbol(DEGREE              ); }   
@@ -480,7 +479,7 @@ FULLTABLE   = {ID}\.\*
    XMLPI                                          { return symbol(FUNCTION_SCALAR);    }
    XMLQUERY                                       { return symbol(FUNCTION_SCALAR);    }
    XMLSERIALIZE                                   { return symbol(FUNCTION_SCALAR);    }
-   XMLTABLE                                       { return symbol(XMLTABLE);          }
+   XMLTABLE                                       { return symbol(XMLTABLE);           }
    XMLTEXT                                        { return symbol(FUNCTION_SCALAR);    }
    XMLXSROBJECTID                                 { return symbol(FUNCTION_SCALAR);    }
    XSLTRANSFORM                                   { return symbol(FUNCTION_SCALAR);    }
@@ -517,9 +516,9 @@ FULLTABLE   = {ID}\.\*
   "<>"             { return symbol(NE);        }
   "^="             { return symbol(NE2);       }  
   "^>"             { return symbol(NGT);       }
-  "Âµ>"             { return symbol(NGT);       }
-  "Âµ<"             { return symbol(NGT);       }
-  "Âµ="             { return symbol(NE2);       }
+  "??>"            { return symbol(NGT);       }
+  "??<"            { return symbol(NGT);       }
+  "??="            { return symbol(NE2);       }
   "^<"             { return symbol(NLT);       }
   ">="             { return symbol(GE);        }  
   "<="             { return symbol(LE);        }  
@@ -567,11 +566,8 @@ FULLTABLE   = {ID}\.\*
 
 <QUOTE_STRING> {
   \'\'          { cadena.append(yytext());  }    
-  \'            { popState();  
-                  return literal(LITERAL); 
-                }  
-                // Tiene que haber continuacion
-  \n            { popState(); } 
+  \'            { return literal(LITERAL);  }  
+  \n            { return literal(LITERAL);  }
   \r            { /* eat */ }
 
   [^]           { cadena.append(yytext()); }
@@ -579,11 +575,8 @@ FULLTABLE   = {ID}\.\*
 
 <DQUOTE_STRING> {
   \"\"          { cadena.append(yytext());  }    
-  \"            { popState(); 
-                  return literal(LITERAL); 
-                }
-                // Tiene que haber continuacion
-  \n            { popState(); }
+  \"            { return literal(LITERAL);  }
+  \n            { return literal(LITERAL);  }
   \r            { /* eat */   }
 
   [^]           { cadena.append(yytext()); }

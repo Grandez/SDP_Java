@@ -181,7 +181,7 @@ public class ParserInfo {
 				if (idx > 1) name.append(", ");
 	            name.append(members[idx]);
             }
-			name.append(" [");
+			name.append("] ");
 		}
 		
 		return name.toString();

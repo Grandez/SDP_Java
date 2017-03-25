@@ -32,6 +32,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
 %xstate STEXEC , EMBEDDED , SQL2
 %xstate EMBEDDED_QUOTE , EMBEDDED_DQUOTE
 %xstate CICSSYM
+%xstate FUNCTION
 
 %xstate COMMENT        
 // %xstate COMMENT2 
@@ -128,12 +129,12 @@ import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
    }
    
    public int checkIndexLPAR(int code) {
-
+/*
       if (inIndex == 1) {
           nPars++; 
           // Contruccion FUNCTION NAME(FUNCTION NAME(X))
 //          if (lastSymbol == ZCCSym.ID && prevSymbol == FUNCTION) return LPARID;
-            if (lastSymbol == ZCCSym.ID) return LPARID;
+//            if (lastSymbol == ZCCSym.ID) return LPARID;
           return code;
       }
 
@@ -149,7 +150,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
          nPars = 1;
          return LPARID;
       }
-
+*/
       return code;
    }   
 
@@ -879,10 +880,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   FOREVER           { return symbol(FOREVER);  }    
   FOR               { data = true;             }  
   FROM              { return symbol(FROM);     }
-  FUNCTION          { return symbol(FUNCTION); }
+  FUNCTION          { pushState(FUNCTION); return symbol(FUNCTION); }
  
-  GIVING            { return symbol(GIVING);  }
-  GREATER           { return symbol(OP_REL);  }  
+  GIVING            { return symbol(GIVING);   }
+  GREATER           { return symbol(GREATER);  }  
 
   I-O               { return symbol(IO);      }
   IN                { return symbol(ZCCSym.IN);      }
@@ -895,11 +896,6 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   KEY               { return symbol(KEY);   }
 
   LEADING           { return symbol(LEADING);   }
-  LENGTH[ ]+OF      { data = true; }   
-  LENGTH            { if (lastSymbol == FUNCTION) return symbol(ZCCSym.ID);
-                      lastSymbol = LENGTH;
-                      data = true; 
-                    }
   LESS              { return symbol(LESS);   }
   LINE[sS]?         { data = true; }
   LOCK              { data = true; }
@@ -908,9 +904,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   NOT               { data = true; }
   NUMERIC           { return symbol(NUMERIC);  }
 
-  OF                { data = true;  // Caso LENGTH \n OF
-                      if (lastSymbol != LENGTH) return symbol(ZCCSym.OF);         
-                    }
+  OF                { data = true;             }
   ON                { data = true;  }     
   OR                { return symbol(OR);        }
   OTHER             { return symbol(OTHER);     }
@@ -956,7 +950,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 //  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
 //  EXEC         { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-           
+
+                
 /*******************************************************/  
 /* Simbolos y operadores                               */
 /*******************************************************/
@@ -964,19 +959,21 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
  "("               { return checkSymbol(ZCCSym.LPAR);  }
  ")"               { return checkSymbol(ZCCSym.RPAR); }
 
- "**"              { if (yycolumn < 4) pushState(COMMENT); else symbolDummy(0); }
- "*"               { if (yycolumn < 4) pushState(COMMENT); else symbolDummy(0); }
- "/"               { if (yycolumn < 4) pushState(COMMENT); else symbolDummy(0); }
- ">="              { return symbol(OP_REL); }
- "<="              { return symbol(OP_REL); }
- "+"               { symbolDummy(0);       }
- "-"               { symbolDummy(0);       }
- ">"               { return symbol(OP_REL); }
- "<"               { return symbol(OP_REL); }
- ";"               { data = true; } 
- ","               { data = true; }
- ":"               { data = true; }
- "="               { return symbol(EQUAL); }
+ ">="              { return symbol(REL_GE); }
+ "<="              { return symbol(REL_LE); }
+ "**"              { if (yycolumn < 4) pushState(COMMENT); else return symbol(OP_POW); }
+ "*"               { if (yycolumn < 4) pushState(COMMENT); else return symbol(OP_MUL); }
+ "/"               { if (yycolumn < 4) pushState(COMMENT); else return symbol(OP_DIV); }
+ "+"               { return symbol(OP_ADD); }
+ "-"               { return symbol(OP_SUB); }
+ ">"               { return symbol(REL_GT); }
+ "<"               { return symbol(REL_LT); }
+ "="               { return symbol(REL_EQ); }
+ ","               { return symbol(ZCCSym.COMMA); }
+ "."               { return symbol(ZCCSym.ENDP); }
+
+ ";"               { data = true; }
+ ":"               { data = true; }  
 
 /*******************************************************/  
 /* Patrones                                            */
@@ -1010,7 +1007,6 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                       }   
                     }
  
-  \.                { return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP);    }
   \n       { info.module.incLines(data); }
   \r       { /* do nothing */ }
 
@@ -1023,6 +1019,15 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /***                               otros                                    ***/
 /******************************************************************************/
 /******************************************************************************/
+
+<FUNCTION> {
+  {SPACES}           { /* EAT */ }
+  {TABS}             { /* EAT */ }
+  ^[\*\/]            { pushState(COMMENT);           }
+  {ID}               { popState(); return symbol(INTRINSIC);  }
+  \r                 { /* EAT */ }
+  \n                 { /* EAT */ }
+}
 
 /*
  * Los literales pueden ser con comillas simples o dobles

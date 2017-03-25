@@ -98,12 +98,3 @@ HOSTVAR  = :[ ]*{HID}
   \n            { /* eat */ } 
   \r            { /* eat */ }
   
- /*
- * Los literales pueden ser con comillas simples o dobles
- * Puede ser "O'Donell" o bien 'dijo: "Hola"'
- * Por eso hay que distinguir las dos formas
- */
- 
-
-
- 

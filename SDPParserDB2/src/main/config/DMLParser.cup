@@ -787,6 +787,7 @@ non terminal var_general          ;
 non terminal var_int              ;
 non terminal var_string           ;
 non terminal var_time             ;
+non terminal literal              ;
 
 non terminal eat                 ;
 non terminal eat_opt             ;
@@ -1013,13 +1014,13 @@ set_path ::= var_general
          |   clause_session
          |   CURRENT opt_package PATH
          |   PATH
-         |   LITERAL
+         |   literal
          ;
 
 schema_type ::= var_general
             |   clause_session
             |   DEFAULT
-            |   LITERAL
+            |   literal
             ;
 
 set_current_commands ::= APPLICATION ENCODING:s {: stmt.appendVerb(s); :}  SCHEME:t       {: stmt.appendVerb(t); :}  EQ var_string
@@ -2227,18 +2228,21 @@ and_or ::= AND
        ;
         
 
-var_string ::= LITERAL
+var_string ::= literal
            |   host_var
            ;
 
-        
+literal ::= LITERAL
+        |   literal LITERAL
+        ;
+                
 constant ::= constant_string
          |   constant_numeric
          |   constant_binary
          |   constant_graphic
          ;
          
-constant_string ::= LITERAL
+constant_string ::= literal
                 ;
 
 constant_numeric ::= opt_minus constant_number
@@ -2299,7 +2303,7 @@ var_int ::= constant_numeric
         |   host_var
         ;
         
-var_time ::= LITERAL
+var_time ::= literal
          |   host_var
          ;
 
@@ -2426,7 +2430,7 @@ host_field ::= host_var opt_indicator host_var_indicator
                                                  
 id_general ::= id
            |   NUM_ENTERO
-           |   LITERAL
+           |   literal
            ;
 
 id_lst ::= id

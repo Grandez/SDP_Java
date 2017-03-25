@@ -4,36 +4,18 @@ import java_cup.runtime.*;
 
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.db2.base.*;
+import com.jgg.sdp.parser.db2.stmt.*;
 
 parser code {:
+   ParserInfo    info     = ParserInfo.getInstance();
+   
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
 
-/*
-   Module module     = ModulesFactory.getCurrentModule();
-   Summary summary   = module.getSummary();
-   Configuration cfg = Configuration.getInstance();
-   ParserInfo      info     = ParserInfo.getInstance();          
-      public void syntax_error(Symbol token) {
-           
-          Symbol s = (Symbol) token.value;
-          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
-          col = col + s.right + 1;
-
-          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
-                                   info.getMemberName(), 
-                                   info.getOffset() + s.left + 1, 
-                                   col, 
-                                   (String) s.value);
-      }
-
-      public void unrecovered_syntax_error(Symbol token) throws Exception {
-          Symbol s = (Symbol) token.value;
-          throw new ParseException(MSG.EXCEPTION_CUP, 
-                                  info.getMemberName(), 
-                                  info.getOffset() + s.left + 1,
-                                  s.right + 1, 
-                                  (String) s.value); 
-      }
-      */
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
 :}
 
 action code {:
@@ -41,22 +23,7 @@ action code {:
    ParserInfo      info     = ParserInfo.getInstance();
    StmtSQL         stmt     = new StmtSQL();
    
-/*
-   Module          module   = null;
-   DB2Code         code     = null;
-   ParserInfo      info     = ParserInfo.getInstance();
-         
-   StmtSQL currStmt = new StmtSQL();  // Instruccion en proceso
-   
-
-   public String getSymbolName(Symbol s)    { return (String) s.value; }
-   public int    getSymbolLine(Symbol s)    { return (int)    s.left;  }
-   
-   public void debug(String txt) { System.err.println(txt); }
-*/   
    public void initActionClass() {
-//      module = ModulesFactory.getCurrentModule();
-//      code = new DB2Code(module);
    }
 
    public void print(String txt) { 
@@ -155,7 +122,7 @@ non terminal release_savepoint  ;
 
 
 non terminal Symbol non_reserved_words ;
-non terminal Symbol integer  ;
+non terminal Symbol integer     ;
 
 non terminal opt_clause_queryno ;
 non terminal opt_id             ;
@@ -164,13 +131,13 @@ non terminal opt_sql            ;
 non terminal opt_to             ;
 non terminal opt_work           ;
 
-non terminal id               ;
-non terminal opt_unique       ;
+non terminal id                 ;
+non terminal opt_unique         ;
 
-non terminal table_name      ;
+non terminal table_name         ;
 
-non terminal host_var_simple        ;
-non terminal host_variable          ;
+non terminal host_var_simple    ;
+non terminal host_variable      ;
 
 
 /**********************************************************************/
@@ -183,7 +150,12 @@ non terminal host_variable          ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql ::= sql_tcl      {: RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  :}
+sql ::= sql_tcl  {: String name = stmt.getVerbName();
+                     int id =  stmt.getVerbId();
+                     int line = stmt.getVerb().left;
+                     int col = stmt.getVerb().right;
+                     RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                  :}
     ;
 
 sql_tcl ::= sql_commit

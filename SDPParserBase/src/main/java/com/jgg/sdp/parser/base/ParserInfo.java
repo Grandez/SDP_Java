@@ -32,7 +32,8 @@ public class ParserInfo {
 	public StringBuilder buffer = null;
 	   
 	// Mantiene la linea de inicio de los diferentes parsers
-	private Stack<Integer> offset   = new Stack<Integer>();	
+	private Stack<Integer> stkOffset   = new Stack<Integer>();	
+	protected int offset = 0;
 	
 	private boolean includeParsed = false;
 	
@@ -45,9 +46,10 @@ public class ParserInfo {
 	// Simbolo ultimo.
 	// Usado para COPY e INCLUDE
 	private Symbol prevSymbol = null;
+	private Symbol lastSymbol = null;
 	
 	private ParserInfo() {
-		offset.add(0);
+		stkOffset.add(0);
 	}
 	
 	public static ParserInfo getInstance() {
@@ -137,20 +139,25 @@ public class ParserInfo {
 	public boolean isIncludeParsed()             { return includeParsed; }
 
 	/***********************************************************/
-	/***  Gestion del offset de las lineas                   ***/
+	/***  Gestion del stkOffset de las lineas                   ***/
 	/***********************************************************/
 
 	public void addOffset(int line) {
-		offset.push(line);
+		stkOffset.push(line);
+		offset = line;
 	}
 	
 	public void removeOffset() {
-		if (!offset.empty()) offset.pop();
+		if (!stkOffset.empty()) offset = stkOffset.pop();
 	}
 	
 	public int getOffset() {
-		if (!offset.empty()) return offset.peek() + 1;
-		return 1;
+		return getOffset(stkOffset.size() - 1);
+	}
+	
+	public int getOffset(int pos) {
+		if (pos >= stkOffset.size()) pos = stkOffset.size() - 1;
+		return (pos < 0) ? 0 : stkOffset.get(pos);
 	}
 	
 	public void removeMember() {
@@ -180,12 +187,22 @@ public class ParserInfo {
 		return name.toString();
 	}
 	
-	public void setPrevSymbol(Symbol s) {
+	public Symbol setPrevSymbol(Symbol s) {
 		prevSymbol = s;
+		return s;
 	}
 	
 	public Symbol getPrevSymbol() {
 		return prevSymbol;
+	}
+	
+	public Symbol setLastSymbol(Symbol s) {
+		lastSymbol = s;
+		return s;
+	}
+	
+	public Symbol getLastSymbol() {
+		return lastSymbol;
 	}
 	
 	/***********************************************************/

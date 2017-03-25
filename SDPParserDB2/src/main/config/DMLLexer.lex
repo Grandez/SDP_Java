@@ -1,6 +1,5 @@
 package com.jgg.sdp.parser.db2.lang;
 
-import java.util.*;
 import java_cup.runtime.Symbol;
 
 import com.jgg.sdp.parser.base.*;
@@ -27,50 +26,13 @@ import static com.jgg.sdp.parser.db2.lang.DMLSym.*;
 
 %{
 
-   Stack<Integer> pars = new Stack<Integer>();
-   HashSet<Integer> words = new HashSet<Integer>();
-
    // Auxiliares para distinguir entre funcion o ID
    Symbol  symWord;
    Symbol  symFunction;
+
    // Controla si la ultima palabra esta en cache  
    boolean hasCache = false;
          
-   public void resetLiteral(String txt) {
-      data = true;
-      litLine = yyline;
-      litColumn = yycolumn;
-      cadena = new StringBuilder(txt);
-   }
-
-   public Symbol literal(boolean clean) { 
-       String txt = cadena.toString();
-       if (clean) cadena.setLength(0);
-       return literal(txt); 
-   }
-
-   public Symbol literal(String txt) {
-      lastID = LITERAL;
-      cadena.append(txt);
-      String texto = cadena.toString();
-      cadena.setLength(0);
-      print("Devuelve LITERAL (" + LITERAL + ") - " + texto);
-      Symbol s = new Symbol(LITERAL, litLine, litColumn, texto);
-      return symbolFactory.newSymbol(texto, LITERAL, s);
-   }
-
-   public Symbol symbol(int code){
-      return symbol(code, yytext());
-   }
-   
-   public Symbol symbol(int code, String txt) {
-      data = true;
-      lastID = code;
-      print("Devuelve SYMBOL(" + code + ") - (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(code, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, code, s);
-   }
-   
    private void cacheSymbol(int codeWord, int codeFunction) {
       symWord     = symbol(codeWord);
       symFunction = symbol(codeFunction);
@@ -85,15 +47,10 @@ import static com.jgg.sdp.parser.db2.lang.DMLSym.*;
       return (function) ? symFunction : symWord;
    }   
    
-/*
-   public Symbol symbolic(int value) {
-      data = true;
-      String txt = Integer.toString(value);
-      print("Devuelve SYMBOL (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(ENTERO, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, ENTERO, s);
+   public Symbol symbol(int code){
+      return makeSymbol(code, yyline, yycolumn, yytext());
    }
-*/
+   
 %}
 
 
@@ -117,9 +74,8 @@ SIGNED=[-]{1}{ENTERO}
 DECNUM=[|-]?[0-9]+[\.]?[0-9]+
 NUMFLOAT={DECNUM}[Ee]{ENTERO}
 NUMBIN=[Bb][Xx]
-//\'[0-9A-Fa-f]+\'
 NUMGRAPHIC=[UuGg][Xx]
-// \'[0-9A-Fa-f]+\'
+
 
 HOSTVAR1    = :{ID}
 HOSTVAR2    = :[ ]+{ID}
@@ -171,7 +127,9 @@ FULLTABLE   = {ID}\.\*
    DATA                       { return symbol(DATA                ); }
    DAY[Ss]?                   { return symbol(DAYS                ); }
    DEBUG                      { return symbol(DEBUG               ); }   
-   DECLARE                    { return symbol(DECLARE             ); }
+   DECLARE                    { print("JGGXXX");
+                                 return symbol(DECLARE             ); }
+                                 
    DEFAULT                    { return symbol(DEFAULT             ); }
    DEGREE                     { return symbol(DEGREE              ); }   
    DELETE                     { return symbol(DELETE              ); }
@@ -610,7 +568,7 @@ FULLTABLE   = {ID}\.\*
 <QUOTE_STRING> {
   \'\'          { cadena.append(yytext());  }    
   \'            { popState();  
-                  return literal(true); 
+                  return literal(LITERAL); 
                 }  
                 // Tiene que haber continuacion
   \n            { popState(); } 
@@ -622,7 +580,7 @@ FULLTABLE   = {ID}\.\*
 <DQUOTE_STRING> {
   \"\"          { cadena.append(yytext());  }    
   \"            { popState(); 
-                  return literal(true); 
+                  return literal(LITERAL); 
                 }
                 // Tiene que haber continuacion
   \n            { popState(); }

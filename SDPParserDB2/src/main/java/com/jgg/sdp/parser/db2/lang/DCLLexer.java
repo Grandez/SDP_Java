@@ -2,7 +2,6 @@
 
 package com.jgg.sdp.parser.db2.lang;
 
-import java.util.*;
 import java_cup.runtime.Symbol;
 import com.jgg.sdp.parser.base.*;
 import static com.jgg.sdp.parser.db2.lang.DCLSym.*;
@@ -63,31 +62,31 @@ public class DCLLexer extends GenericLexer implements GenericScanner, java_cup.r
 
   private static final String ZZ_ACTION_PACKED_0 =
     "\3\0\1\1\7\2\1\0\3\2\1\3\4\2\1\0"+
-    "\4\2\1\4\1\5\1\6\1\7\1\10\1\11\2\2"+
-    "\1\12\4\2\1\0\3\2\1\13\1\2\1\0\1\2"+
+    "\4\2\1\4\1\5\1\6\1\7\1\10\1\7\2\2"+
+    "\1\11\4\2\1\0\3\2\1\12\1\2\1\0\1\2"+
     "\2\0\13\2\1\0\5\2\1\0\3\2\1\0\2\2"+
-    "\1\14\1\2\1\0\1\2\1\15\2\16\3\2\1\0"+
-    "\1\2\3\0\3\2\1\17\6\2\1\0\1\2\1\20"+
+    "\1\13\1\2\1\0\1\2\1\14\2\15\3\2\1\0"+
+    "\1\2\3\0\3\2\1\16\6\2\1\0\1\2\1\17"+
     "\2\2\1\0\3\2\1\0\3\2\2\0\4\2\1\0"+
-    "\3\2\1\0\2\2\1\0\2\2\2\21\3\0\4\2"+
-    "\1\22\1\23\1\24\1\2\1\0\2\2\1\0\2\2"+
-    "\1\25\1\0\1\2\1\0\2\2\1\0\1\2\1\26"+
-    "\1\2\2\0\2\2\1\27\1\0\1\2\2\30\1\2"+
-    "\1\31\1\0\2\2\1\0\1\2\1\32\1\0\1\2"+
-    "\3\0\3\2\1\0\1\2\1\33\1\0\2\2\1\0"+
+    "\3\2\1\0\2\2\1\0\2\2\2\20\3\0\4\2"+
+    "\1\21\1\22\1\23\1\2\1\0\2\2\1\0\2\2"+
+    "\1\24\1\0\1\2\1\0\2\2\1\0\1\2\1\25"+
+    "\1\2\2\0\2\2\1\26\1\0\1\2\2\27\1\2"+
+    "\1\30\1\0\2\2\1\0\1\2\1\31\1\0\1\2"+
+    "\3\0\3\2\1\0\1\2\1\32\1\0\2\2\1\0"+
     "\2\2\1\0\1\2\1\0\2\2\1\0\1\2\1\0"+
-    "\1\2\1\0\1\34\1\2\1\34\1\0\1\2\1\0"+
-    "\1\2\1\0\1\2\1\35\2\36\1\0\1\2\3\0"+
-    "\3\2\2\37\2\40\1\2\1\0\2\2\1\0\1\2"+
-    "\1\0\2\2\1\0\1\2\2\41\1\0\1\2\1\0"+
-    "\1\2\2\42\1\0\1\2\1\0\1\2\2\0\1\43"+
-    "\2\2\1\43\1\44\1\0\2\2\1\0\1\2\2\45"+
-    "\1\2\1\0\1\2\1\0\1\2\2\46\1\0\1\2"+
-    "\1\0\1\2\1\47\1\0\1\47\1\2\2\50\1\2"+
+    "\1\2\1\0\1\33\1\2\1\33\1\0\1\2\1\0"+
+    "\1\2\1\0\1\2\1\34\2\35\1\0\1\2\3\0"+
+    "\3\2\2\36\2\37\1\2\1\0\2\2\1\0\1\2"+
+    "\1\0\2\2\1\0\1\2\2\40\1\0\1\2\1\0"+
+    "\1\2\2\41\1\0\1\2\1\0\1\2\2\0\1\42"+
+    "\2\2\1\42\1\43\1\0\2\2\1\0\1\2\2\44"+
+    "\1\2\1\0\1\2\1\0\1\2\2\45\1\0\1\2"+
+    "\1\0\1\2\1\46\1\0\1\46\1\2\2\47\1\2"+
     "\1\0\2\2\1\0\1\2\1\0\1\2\1\0\1\2"+
-    "\2\51\2\52\1\53\1\0\1\2\1\54\1\0\1\2"+
-    "\2\55\1\0\1\2\1\0\1\2\2\56\1\0\1\2"+
-    "\2\57\2\60";
+    "\2\50\2\51\1\52\1\0\1\2\1\53\1\0\1\2"+
+    "\2\54\1\0\1\2\1\0\1\2\2\55\1\0\1\2"+
+    "\2\56\2\57";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[311];
@@ -672,47 +671,9 @@ public class DCLLexer extends GenericLexer implements GenericScanner, java_cup.r
   }
 
   /* user code: */
-
-   Stack<Integer> pars = new Stack<Integer>();
-   HashSet<Integer> words = new HashSet<Integer>();
-      
-   public void resetLiteral(String txt) {
-      data = true;
-      litLine = yyline;
-      litColumn = yycolumn;
-      cadena = new StringBuilder(txt);
-   }
-
-   public Symbol literal(boolean clean) { 
-       String txt = cadena.toString();
-       if (clean) cadena.setLength(0);
-       return literal(txt); 
-   }
-
-   public Symbol literal(String txt) {
-      return null;
-   }
-
    public Symbol symbol(int code){
-      return symbol(code, yytext());
-   }
-   
-   public Symbol symbol(int code, String txt) {
-      data = true;
-      lastID = code;
-      print("Devuelve SYMBOL(" + code + ") - (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(code, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, code, s);
-   }
-/*
-   public Symbol symbolic(int value) {
-      data = true;
-      String txt = Integer.toString(value);
-      print("Devuelve SYMBOL (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(ENTERO, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, ENTERO, s);
-   }
-*/
+      return makeSymbol(code, yyline, yycolumn, yytext());
+   } 
 
 
   /**
@@ -1175,197 +1136,191 @@ public class DCLLexer extends GenericLexer implements GenericScanner, java_cup.r
           case 1: 
             { /* DO NOTHING */
             }
-          case 49: break;
+          case 48: break;
           case 2: 
             { return symbol(ID);
             }
-          case 50: break;
+          case 49: break;
           case 3: 
             { /* eat */
             }
-          case 51: break;
+          case 50: break;
           case 4: 
             { pushState(QUOTE_STRING);
             }
-          case 52: break;
+          case 51: break;
           case 5: 
             { pushState(DQUOTE_STRING);
             }
-          case 53: break;
+          case 52: break;
           case 6: 
             { cadena.append(yytext());
             }
-          case 54: break;
+          case 53: break;
           case 7: 
-            { popState();  
-                  return literal(true);
+            { return literal(LITERAL);
             }
-          case 55: break;
+          case 54: break;
           case 8: 
             { popState();
             }
-          case 56: break;
+          case 55: break;
           case 9: 
-            { popState(); 
-                  return literal(true);
-            }
-          case 57: break;
-          case 10: 
             { return symbol(BY            );
             }
-          case 58: break;
-          case 11: 
+          case 56: break;
+          case 10: 
             { return symbol(TO            );
             }
-          case 59: break;
-          case 12: 
+          case 57: break;
+          case 11: 
             { return symbol(GET           );
             }
-          case 60: break;
-          case 13: 
+          case 58: break;
+          case 12: 
             { return symbol(MAX           );
             }
-          case 61: break;
-          case 14: 
+          case 59: break;
+          case 13: 
             { return symbol(MIN           );
             }
-          case 62: break;
-          case 15: 
+          case 60: break;
+          case 14: 
             { return symbol(ALL           );
             }
-          case 63: break;
-          case 16: 
+          case 61: break;
+          case 15: 
             { return symbol(DEC           );
             }
-          case 64: break;
-          case 17: 
+          case 62: break;
+          case 16: 
             { return symbol(TIME          );
             }
-          case 65: break;
-          case 18: 
+          case 63: break;
+          case 17: 
             { return symbol(ROLE          );
             }
-          case 66: break;
-          case 19: 
+          case 64: break;
+          case 18: 
             { return symbol(RPAR          );
             }
-          case 67: break;
-          case 20: 
+          case 65: break;
+          case 19: 
             { return symbol(LPAR          );
             }
-          case 68: break;
-          case 21: 
+          case 66: break;
+          case 20: 
             { return symbol(DATE          );
             }
-          case 69: break;
-          case 22: 
+          case 67: break;
+          case 21: 
             { return symbol(PLAN          );
             }
-          case 70: break;
-          case 23: 
+          case 68: break;
+          case 22: 
             { return symbol(FROM          );
             }
-          case 71: break;
-          case 24: 
+          case 69: break;
+          case 23: 
             { return symbol(WITH          );
             }
-          case 72: break;
-          case 25: 
+          case 70: break;
+          case 24: 
             { return symbol(GRANT         );
             }
-          case 73: break;
-          case 26: 
+          case 71: break;
+          case 25: 
             { return symbol(TABLE         );
             }
-          case 74: break;
-          case 27: 
+          case 72: break;
+          case 26: 
             { return symbol(COMMA         );
             }
-          case 75: break;
-          case 28: 
+          case 73: break;
+          case 27: 
             { return symbol(INPUT         );
             }
-          case 76: break;
-          case 29: 
+          case 74: break;
+          case 28: 
             { return symbol(OUTPUT        );
             }
-          case 77: break;
-          case 30: 
+          case 75: break;
+          case 29: 
             { return symbol(OPTION        );
             }
-          case 78: break;
-          case 31: 
+          case 76: break;
+          case 30: 
             { return symbol(REVOKE        );
             }
-          case 79: break;
-          case 32: 
+          case 77: break;
+          case 31: 
             { return symbol(CURSOR        );
             }
-          case 80: break;
-          case 33: 
+          case 78: break;
+          case 32: 
             { return symbol(PUBLIC        );
             }
-          case 81: break;
-          case 34: 
+          case 79: break;
+          case 33: 
             { return symbol(EXPLAIN       );
             }
-          case 82: break;
-          case 35: 
+          case 80: break;
+          case 34: 
             { return symbol(STACKED       );
             }
-          case 83: break;
-          case 36: 
+          case 81: break;
+          case 35: 
             { return symbol(CURRENT       );
             }
-          case 84: break;
-          case 37: 
+          case 82: break;
+          case 36: 
             { return symbol(PACKAGE       );
             }
-          case 85: break;
-          case 38: 
+          case 83: break;
+          case 37: 
             { return symbol(VERSION       );
             }
-          case 86: break;
-          case 39: 
+          case 84: break;
+          case 38: 
             { return symbol(SMALLINT      );
             }
-          case 87: break;
-          case 40: 
+          case 85: break;
+          case 39: 
             { return symbol(DESCRIBE      );
             }
-          case 88: break;
-          case 41: 
+          case 86: break;
+          case 40: 
             { return symbol(TIMESTAMP     );
             }
-          case 89: break;
-          case 42: 
+          case 87: break;
+          case 41: 
             { return symbol(STMTCACHE     );
             }
-          case 90: break;
-          case 43: 
+          case 88: break;
+          case 42: 
             { return symbol(DEPENDENT     );
             }
-          case 91: break;
-          case 44: 
+          case 89: break;
+          case 43: 
             { return symbol(PROCEDURE     );
             }
-          case 92: break;
-          case 45: 
+          case 90: break;
+          case 44: 
             { return symbol(INCLUDING     );
             }
-          case 93: break;
-          case 46: 
+          case 91: break;
+          case 45: 
             { return symbol(PRIVILEGES    );
             }
-          case 94: break;
-          case 47: 
+          case 92: break;
+          case 46: 
             { return symbol(DIAGNOSTICS   );
             }
-          case 95: break;
-          case 48: 
+          case 93: break;
+          case 47: 
             { return symbol(MESSAGE_TEXT  );
             }
-          case 96: break;
+          case 94: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

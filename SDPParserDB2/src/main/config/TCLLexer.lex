@@ -1,7 +1,5 @@
 package com.jgg.sdp.parser.db2.lang;
 
-import java.util.*;
-
 import java_cup.runtime.Symbol;
 
 import com.jgg.sdp.parser.base.*;
@@ -26,60 +24,9 @@ import static com.jgg.sdp.parser.db2.lang.TCLSym.*;
 
 %{
 
-   Stack<Integer> pars = new Stack<Integer>();
-   HashSet<Integer> words = new HashSet<Integer>();
-      
-   public void resetLiteral(String txt) {
-      data = true;
-      litLine = yyline;
-      litColumn = yycolumn;
-      cadena = new StringBuilder(txt);
-   }
-   public Symbol literal(String txt) {
-      return null;
-   }
-
-/*
-   public Symbol literal(boolean clean) { 
-       String txt = cadena.toString();
-       if (clean) cadena.setLength(0);
-       return literal(txt); 
-   }
-
-   public Symbol literal(String txt) {
-      lastID = LITERAL;
-      cadena.append(txt);
-      String texto = cadena.toString();
-      cadena.setLength(0);
-      print("Devuelve LITERAL (" + LITERAL + ") - " + texto);
-      Symbol s = new Symbol(LITERAL, litLine, litColumn, texto);
-//      if (texto.contains("%")) {
-//          return symbolFactory.newSymbol(texto, MASK, s);
-//      }
-      return symbolFactory.newSymbol(texto, LITERAL, s);
-   }
-*/
-
    public Symbol symbol(int code){
-      return symbol(code, yytext());
+      return makeSymbol(code, yyline, yycolumn, yytext());
    }
-   
-   public Symbol symbol(int code, String txt) {
-      data = true;
-      lastID = code;
-      print("Devuelve SYMBOL(" + code + ") - (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(code, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, code, s);
-   }
-/*
-   public Symbol symbolic(int value) {
-      data = true;
-      String txt = Integer.toString(value);
-      print("Devuelve SYMBOL (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(ENTERO, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, ENTERO, s);
-   }
-*/
 %}
 
 
@@ -102,19 +49,9 @@ SIGNED=[+-]{1}{ENTERO}
 DECNUM=[+|-]?[0-9]+[\.]?[0-9]+
 DECFLOAT={DECNUM}[Ee]{ENTERO}
 NUMBIN=[Bb][Xx]
-//\'[0-9A-Fa-f]+\'
 NUMGRAPHIC=[UuGg][Xx]
-// \'[0-9A-Fa-f]+\'
 
 HOSTVAR  = :[ ]*{HID}
-
-ATTR = MONTHS
-     | MONTH
-     | YEARS
-     | YEAR
-     | {HOSTVAR}
-
-HOSTVAR_ATTR = {HOSTVAR}{SPACES}{ATTR}
 
 %% 
 

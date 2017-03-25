@@ -8,12 +8,15 @@
  * @version 3.0
  *   
  */
-package com.jgg.sdp.parser.base;
+package com.jgg.sdp.parser.base.stmt;
 
 import java.util.*;
 
 import com.jgg.sdp.core.tools.Firma;
 import com.jgg.sdp.module.items.Issue;
+import com.jgg.sdp.parser.base.symbol.SymbolExt;
+import com.jgg.sdp.parser.base.symbol.SymbolExtList;
+import com.jgg.sdp.parser.base.symbol.SymbolList;
 
 import java_cup.runtime.Symbol;
 
@@ -41,6 +44,10 @@ public class Statement {
 	private int endLine;
 	private int endColumn;
 	
+
+	/***************************************************************/
+	/***     CONSTRUCTORES                                       ***/
+	/***************************************************************/
 	
 	public Statement() {
 	}
@@ -75,6 +82,26 @@ public class Statement {
 		orden  = s.getOrden();
 	}
 
+	/**
+	 * Rellena la instruccion con los datos del verbo
+	 */
+	public void adjust(Symbol last) {
+
+		begLine = verbo.left;
+		begColumn = verbo.right;
+		endLine = begLine;
+		endColumn = begColumn;
+		if (last != null) {
+		   endLine = ((Symbol) last.value).left;
+		   endColumn = ((Symbol) last.value).right;
+		}
+		
+	}
+
+	/***************************************************************/
+	/***     RVALUES / VARIABLES DE LECTURA                      ***/
+	/***************************************************************/
+	
 	public Statement addRValue(Symbol s) {
 		rvalues.add(new SymbolExt(s));
 		return this;

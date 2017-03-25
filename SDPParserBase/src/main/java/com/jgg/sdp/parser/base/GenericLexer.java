@@ -22,21 +22,20 @@ import java_cup.runtime.*;
 
 public abstract class GenericLexer implements ILexer {
 
-   public abstract void   yybegin(int newState);
-   public abstract String yytext();
-   public abstract int    yylength();
+   protected abstract void   yybegin(int newState);
+   protected abstract String yytext();
+   protected abstract int    yylength();
+   
    public abstract Symbol next_token() throws java.io.IOException;
    public abstract void   yypushStream(java.io.Reader reader);
 
-   public abstract Symbol literal(String txt);
-   
    protected Stack<Integer>       stack = new Stack<Integer>();
    protected ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
 
    protected SDPUnit         unit   = null;
    protected boolean         data   = false;
    protected int             lastID = -1; 
-   
+
    // Usado para generar tokens de tipo cadena (con espacios)
    protected StringBuilder cadena  = new StringBuilder("");
    protected int           cadLine = 0;
@@ -66,9 +65,11 @@ public abstract class GenericLexer implements ILexer {
 
    protected ParserInfo  info = ParserInfo.getInstance();
    
+   protected       int offset;   
+   protected final int COLOFFSET = cfg.getMarginLeft();
+   
    private boolean ignoreReserved = false;
    
-   protected final int OFFSET = cfg.getMarginLeft();
    
    // Control de bloques de comentarios
    private int lastLineComment    = -1;
@@ -87,6 +88,7 @@ public abstract class GenericLexer implements ILexer {
    protected void initLexer() {
 	   data = false;
        stack.push(0);
+       offset = info.getOffset();
    }
 
    
@@ -99,10 +101,42 @@ public abstract class GenericLexer implements ILexer {
    /*******************************************************/
    /*** GESTION DE ESTADOS                              ***/
    /*******************************************************/
-   
+
+   // JGG Debug Issues
+   private void yybegin2(int state) {
+/*
+	      switch(state) {
+		       case   0:                   System.out.println("Estado: YYINITIAL"); break;
+		       case   2:                 System.out.println("Estado: ID_DIVISION"); break;
+		       case   4:                System.out.println("Estado: ENV_DIVISION"); break;
+		       case   6:               System.out.println("Estado: DATA_DIVISION"); break;
+		       case   8:               
+		    	   System.out.println("Estado: PROC_DIVISION"); break;
+		       case  10:                  System.out.println("Estado: CONF_SECT"); break;
+		       case  12:                    System.out.println("Estado: IO_SECT"); break;
+		       case  14:                        System.out.println("Estado: PIC"); break;
+		       case  16:                   System.out.println("Estado: BLOBSIZE"); break;
+		       case  18:                    System.out.println("Estado: ENDLINE"); break;
+		       case  20:                    System.out.println("Estado: EATLINE"); break;
+		       case  22:                     System.out.println("Estado: STEXEC"); break;
+		       case  24:                   System.out.println("Estado: EMBEDDED"); break;
+		       case  26:                       System.out.println("Estado: SQL2"); break;
+		       case  28:             System.out.println("Estado: EMBEDDED_QUOTE"); break; 
+		       case  30:            System.out.println("Estado: EMBEDDED_DQUOTE"); break;
+		       case  32:                    System.out.println("Estado: CICSSYM"); break;
+		       case  34:                    System.out.println("Estado: COMMENT"); break;
+		       case  36:               System.out.println("Estado: QUOTE_STRING"); break;
+		       case  38:              System.out.println("Estado: DQUOTE_STRING"); break;
+		       case  40:                        System.out.println("Estado: SDP"); break;
+		       case  42:                      System.out.println("Estado: COPYS"); break;
+		       default: System.out.println("Estado: " + state);
+	     }
+*/
+	      yybegin(state);
+	   }
    protected void pushState(int newState) {
-	     stack.push(newState);
-	     yybegin(newState);
+       stack.push(newState);
+       yybegin2(newState);
    	}
 	
     protected void popState(int times) {
@@ -115,13 +149,13 @@ public abstract class GenericLexer implements ILexer {
     
     public void popState() {
        if (!stack.isEmpty()) stack.pop();
-       yybegin(stack.peek().intValue());
+       yybegin2(stack.peek().intValue());
    }    
 
    public void resetState(int newState) {
-	      while (!stack.empty()) stack.pop();
-	      stack.push(0);  // Estado inicial
-	      pushState(newState);
+      while (!stack.empty()) stack.pop();
+      stack.push(0);  // Estado inicial
+      pushState(newState);
    }
 
    public int getState() {
@@ -129,17 +163,47 @@ public abstract class GenericLexer implements ILexer {
    }
 
    /*******************************************************/
+   /*** GESTION DE SIMBOLOS                             ***/
+   /*******************************************************/
+   
+   protected Symbol makeSymbol(int code, int yyline, int yycolumn, String token) {
+	      data = true;
+	      lastID = code;
+	      
+	      int line = offset + 1 + yyline;
+	      int col = yycolumn + COLOFFSET;
+	      
+	      print("Devuelve SYMBOL(" + code + ") - (" + line + "," + col + ") " + token);
+	      Symbol s = new Symbol(code, line, col, token);
+	      return info.setLastSymbol(symbolFactory.newSymbol(token, code, s));
+   }
+   
+   // code = LITERAL, pero depende del parser
+   // Se procesa en su estado, por lo que hay que quitarlo
+   protected Symbol literal(int code) {
+	      lastID = code;
+	      String texto = cadena.toString();
+	      cadena.setLength(0);
+	      
+	      popState();
+	      
+	      print("Devuelve LITERAL (" + code + ") - " + texto);
+	      Symbol s = new Symbol(code, litLine, litColumn, texto);
+	      return info.setLastSymbol(symbolFactory.newSymbol(texto, code, s));
+	   }
+
+   /*******************************************************/
    /*** GESTION DE COMENTARIOS                          ***/
    /*******************************************************/
    
    protected void checkSymbol(Symbol sym) {
 	   Symbol s = (Symbol) sym.value;
-	   rules.checkSymbol((String) s.value,  s.left, s.right);
+//	   rules.checkSymbol((String) s.value,  s.left, s.right);
    }
    
    protected void checkLiteral(Symbol sym) {
 	   Symbol s = (Symbol) sym.value;
-	   rules.checkSymbol(" ",  s.left, s.right);
+//	   rules.checkSymbol(" ",  s.left, s.right);
    }
    
    protected void setComment(String txt , int yyline, int yycolumn) {
@@ -160,12 +224,12 @@ public abstract class GenericLexer implements ILexer {
 	   }
 	   lastLineComment = yyline;
    }
-   
+/*   
    public Symbol symbolic(String value) {
 	   cadena.setLength(0);
 	   return literal(value);
    }
-   
+   */
    public void setIgnoreReserved()   { ignoreReserved = true;  }
    public void unsetIgnoreReserved() { ignoreReserved = false; }
    public boolean isIgnoreReserved() { return ignoreReserved;  }

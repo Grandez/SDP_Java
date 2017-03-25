@@ -12,9 +12,7 @@ package com.jgg.sdp.parser;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import javax.persistence.Subgraph;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -24,23 +22,17 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.jgg.sdp.domain.core.*;
-import com.jgg.sdp.domain.graph.DCGEdge;
-import com.jgg.sdp.domain.graph.DCGGraph;
-import com.jgg.sdp.domain.graph.DCGNode;
+import com.jgg.sdp.domain.graph.*;
 import com.jgg.sdp.domain.module.*;
-import com.jgg.sdp.domain.sql.MODSql;
-import com.jgg.sdp.domain.sql.MODSqlStmt;
+import com.jgg.sdp.domain.sql.*;
+
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CDG;
 // import com.jgg.sdp.core.jms.*;
+
 import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.module.base.*;
-import com.jgg.sdp.module.graph.Edge;
-import com.jgg.sdp.module.graph.Grafo;
-import com.jgg.sdp.module.graph.Graph;
-import com.jgg.sdp.module.graph.Node;
-import com.jgg.sdp.module.graph.Nodo;
-import com.jgg.sdp.module.graph.SubGraph;
+import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.jgg.sdp.tools.Zipper;

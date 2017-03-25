@@ -7,39 +7,17 @@ import com.jgg.sdp.core.ctes.*;
 
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.db2.base.*;
+import com.jgg.sdp.parser.db2.stmt.*;
 
 parser code {:
-   Configuration cfg = Configuration.getInstance();
-   ParserInfo      info     = ParserInfo.getInstance();
+   ParserInfo    info     = ParserInfo.getInstance();
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
 
-      
-/*
-   Module module     = ModulesFactory.getCurrentModule();
-   Summary summary   = module.getSummary();
-
-          
-*/
-      public void syntax_error(Symbol token) {
-           
-          Symbol s = (Symbol) token.value;
-          int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
-          col = col + s.right + 1;
-
-          throw new ParseException(MSG.EXCEPTION_SYNTAX, 
-                                   info.getMemberName(), 
-                                   info.getOffset() + s.left + 1, 
-                                   col, 
-                                   (String) s.value);
-      }
-
-      public void unrecovered_syntax_error(Symbol token) throws Exception {
-          Symbol s = (Symbol) token.value;
-          throw new ParseException(MSG.EXCEPTION_CUP, 
-                                  info.getMemberName(), 
-                                  info.getOffset() + s.left + 1,
-                                  s.right + 1, 
-                                  (String) s.value); 
-      }
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
       
 :}
 
@@ -48,22 +26,7 @@ action code {:
    ParserInfo      info     = ParserInfo.getInstance();
    StmtSQL         stmt     = new StmtSQL();
    
-/*
-   Module          module   = null;
-   DB2Code         code     = null;
-   ParserInfo      info     = ParserInfo.getInstance();
-         
-   StmtSQL currStmt = new StmtSQL();  // Instruccion en proceso
-   
-
-   public String getSymbolName(Symbol s)    { return (String) s.value; }
-   public int    getSymbolLine(Symbol s)    { return (int)    s.left;  }
-   
-   public void debug(String txt) { System.err.println(txt); }
-*/   
    public void initActionClass() {
-//      module = ModulesFactory.getCurrentModule();
-//      code = new DB2Code(module);
    }
 
    public void print(String txt) { 
@@ -543,8 +506,8 @@ non terminal clause_where_opt        ;
 non terminal clause_where            ;
 non terminal clause_where_condition  ;
 non terminal clause_group            ;
-non terminal expr_grouping_lst ;
-non terminal expr_grouping     ;
+non terminal expr_grouping_lst       ;
+non terminal expr_grouping           ;
 
 non terminal clause_having           ;
 
@@ -599,7 +562,7 @@ non terminal table_item              ;
 non terminal table_locator           ;
 non terminal table_single            ;
 non terminal table_nested            ;
-non terminal table_nested_item            ;
+non terminal table_nested_item       ;
 non terminal table_change            ;
 non terminal table_change_sql        ;
 non terminal               table_function                   ;
@@ -658,6 +621,7 @@ non terminal insert_columns_lst     ;
 non terminal insert_columns         ;
 non terminal insert_override_opt    ;
 non terminal data_type              ;
+non terminal data_type_base         ;
 non terminal insert_mode            ;
 non terminal insert_values          ;
 non terminal insert_fullselect      ;
@@ -680,7 +644,7 @@ non terminal expression_attribute   ;
 
 non terminal operator               ;
 non terminal Symbol comparator      ;
-non terminal Symbol comparator_verb      ;
+non terminal Symbol comparator_verb ;
 
 non terminal constant               ;
 non terminal constant_string        ;
@@ -722,7 +686,7 @@ non terminal table_designator ;
 
 non terminal expr_case                 ;
 non terminal expr_case_type            ;
-non terminal expr_case_else_opt   ;
+non terminal expr_case_else_opt        ;
 
 non terminal expr_case_searched        ;
 non terminal expr_case_searched_lst    ;
@@ -734,18 +698,18 @@ non terminal expr_case_result          ;
 
 non terminal expr_common_table_lst     ;
 
-non terminal include_columns_opt     ;
-non terminal include_columns_lst     ;
-non terminal include_columns         ;
-non terminal include_column_id       ;
+non terminal include_columns_opt       ;
+non terminal include_columns_lst       ;
+non terminal include_columns           ;
+non terminal include_column_id         ;
 
-non terminal queryno                 ;
+non terminal queryno                   ;
 
 non terminal Symbol non_reserved_words ;
 non terminal Symbol reserved_words     ;
 non terminal Symbol other_words        ;
 
-non terminal timestamp     ;
+non terminal timestamp          ;
 
 non terminal data_type_def      ;
 non terminal data_type_name     ;
@@ -782,7 +746,7 @@ non terminal opt_as           ;
 non terminal opt_multiplier   ;
 non terminal opt_outer        ;
 non terminal opt_of           ;
-non terminal opt_return_caller   ;
+non terminal opt_return_caller;
 non terminal opt_rows         ;
 non terminal opt_indicator    ;
 
@@ -813,11 +777,11 @@ non terminal id_general             ;
 non terminal            wrd_current            ;
 non terminal            wrd_of                 ;
 
-non terminal            host_var_indicator           ;
+non terminal            host_var_indicator     ;
 non terminal            host_var               ;
 non terminal            host_var_negated       ;
 non terminal            host_var_base          ;
-non terminal            host_field       ;
+non terminal            host_field             ;
                  
 non terminal var_general          ;
 non terminal var_int              ;
@@ -847,7 +811,13 @@ precedence nonassoc LPAR, RPAR ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql_stmt ::= sql_dml      {: RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  :}
+sql_stmt ::= sql_dml      {: stmt.adjust(info.getLastSymbol());
+                             String name = stmt.getVerbName();
+                             int id =  stmt.getVerbId();
+                             int line = stmt.getVerb().left;
+                             int col = stmt.getVerb().right;
+                             RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                          :}
          ;
 
 sql_dml ::= sql_declare
@@ -2120,17 +2090,20 @@ predicate_selectivity ::= SELECTIVITY var_int
 /**********************************************************************/
 /**********************************************************************/
 
-data_type ::=   SMALLINT
-          |     INTEGER
-          |     INT
-          |     REAL
-          |     DATE
-          |     TIME
-          |     NUMERIC
-          |     timestamp
-          |     data_type_def
+data_type ::=  data_type_base 
+          |    timestamp
+          |    data_type_def
           ;
-          
+
+data_type_base ::= SMALLINT
+               |     INTEGER
+               |     INT
+               |     REAL
+               |     DATE
+               |     TIME
+               |     NUMERIC
+               ;
+                          
 data_type_def ::= data_type_name data_type_prec_opt
               ;
               
@@ -2673,8 +2646,10 @@ reserved_words ::= ACCELERATION
                |   ZONE                
                ;
                    
-// Palabras que hay que comer y que no se muy bien
-// donde caen                   
+// Palabras que hay que comer y provocan conflictos
+// por el contexto
+ 
 other_words ::= NUMERIC
+            |   INTEGER
             ;
                                                                                                 

@@ -3,8 +3,8 @@ package com.jgg.sdp.parser.cics.base;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.jgg.sdp.parser.base.Option;
-import com.jgg.sdp.parser.base.Statement;
+import com.jgg.sdp.parser.base.stmt.Option;
+import com.jgg.sdp.parser.base.stmt.Statement;
 
 import java_cup.runtime.Symbol;
 

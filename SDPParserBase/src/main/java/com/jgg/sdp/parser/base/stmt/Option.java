@@ -3,9 +3,12 @@
  * Por ejemplo: PERFORM XX UNTIL xxx
  */
 
-package com.jgg.sdp.parser.base;
+package com.jgg.sdp.parser.base.stmt;
 
 import java.util.*;
+
+import com.jgg.sdp.parser.base.symbol.SymbolExt;
+import com.jgg.sdp.parser.base.symbol.SymbolList;
 
 import java_cup.runtime.Symbol;
 

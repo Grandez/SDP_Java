@@ -1,6 +1,5 @@
 package com.jgg.sdp.parser.db2.lang;
 
-import java.util.*;
 import java_cup.runtime.Symbol;
 import com.jgg.sdp.parser.base.*;
 import static com.jgg.sdp.parser.db2.lang.DDLSym.*;
@@ -23,46 +22,10 @@ import static com.jgg.sdp.parser.db2.lang.DDLSym.*;
 
 %{
 
-   Stack<Integer> pars = new Stack<Integer>();
-   HashSet<Integer> words = new HashSet<Integer>();
-      
-   public void resetLiteral(String txt) {
-      data = true;
-      litLine = yyline;
-      litColumn = yycolumn;
-      cadena = new StringBuilder(txt);
-   }
-
-   public Symbol literal(boolean clean) { 
-       String txt = cadena.toString();
-       if (clean) cadena.setLength(0);
-       return literal(txt); 
-   }
-
-   public Symbol literal(String txt) {
-      return null;
-   }
-
    public Symbol symbol(int code){
-      return symbol(code, yytext());
+      return makeSymbol(code, yyline, yycolumn, yytext());
    }
-   
-   public Symbol symbol(int code, String txt) {
-      data = true;
-      lastID = code;
-      print("Devuelve SYMBOL(" + code + ") - (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(code, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, code, s);
-   }
-/*
-   public Symbol symbolic(int value) {
-      data = true;
-      String txt = Integer.toString(value);
-      print("Devuelve SYMBOL (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(ENTERO, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, ENTERO, s);
-   }
-*/
+
 %}
 
 
@@ -87,10 +50,7 @@ SIGNED=[+-]{1}{ENTERO}
 DECNUM=[+|-]?[0-9]+[\.]?[0-9]+
 DECFLOAT={DECNUM}[Ee]{ENTERO}
 NUMBIN=[Bb][Xx]
-//\'[0-9A-Fa-f]+\'
 NUMGRAPHIC=[UuGg][Xx]
-// \'[0-9A-Fa-f]+\'
-
 
 
 ATTR = MONTHS
@@ -156,13 +116,9 @@ HOSTVAR_ATTR = {HOSTVAR}{SPACES}{ATTR}
  * Por eso hay que distinguir las dos formas
  */
  
-
 <QUOTE_STRING> {
   \'\'          { cadena.append(yytext());  }    
-  \'            { popState();  
-                  return literal(true); 
-                }  
-                // Tiene que haber continuacion
+  \'            { return literal(LITERAL);  }  
   \n            { popState(); } 
   \r            { /* eat */ }
 
@@ -171,10 +127,7 @@ HOSTVAR_ATTR = {HOSTVAR}{SPACES}{ATTR}
 
 <DQUOTE_STRING> {
   \"\"          { cadena.append(yytext());  }    
-  \"            { popState(); 
-                  return literal(true); 
-                }
-                // Tiene que haber continuacion
+  \"            { return literal(LITERAL);  }
   \n            { popState(); }
   \r            { /* eat */   }
 

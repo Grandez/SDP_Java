@@ -46,7 +46,7 @@ import static com.jgg.sdp.parser.copy.lang.COPYSym.*;
 
    public Symbol symbol(int code, String txt) {
       data = true;
-      int col = yycolumn + OFFSET;
+      int col = yycolumn + COLOFFSET;
       
       if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
       

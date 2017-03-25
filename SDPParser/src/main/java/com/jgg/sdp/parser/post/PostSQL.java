@@ -2,10 +2,10 @@ package com.jgg.sdp.parser.post;
 
 import com.jgg.sdp.core.tools.*;
 
-import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.unit.*;
+import com.jgg.sdp.parser.base.ParserInfo;
 import com.jgg.sdp.parser.db2.stmt.StmtSQL;
 import com.jgg.sdp.tools.Zipper;
 
@@ -14,6 +14,8 @@ public class PostSQL {
 	private StmtSQL stmt   = null;
 	private Module  module = null;
 	private Source  source = null;
+	
+	private ParserInfo info = ParserInfo.getInstance();
 	
 	public PostSQL(Module module, Object stmt) {
 		this.module = module;
@@ -27,8 +29,17 @@ public class PostSQL {
 		prepareVariables();
 		
 		String hash = Firma.calculate(new String(source.getData()).getBytes());
+
+		/*
+		 * Cada sentencia SQL se procesa en su parser
+		 * Asi que en la pila de offsets hay al menos 2: Modulo principal + Inicio parser
+		 * Si hay COPYS/INCLUDES anidadas la profundidad sube, pero la primera siempre
+		 * es el segundo nivel
+		 */
 		
+		stmt.setBegLine(info.getOffset(1));
 		calculateComplexity();
+		
 		SQLCode sqlc = storeStatementCode(hash);
 		SQLItem sqli = storeStatementInfo(hash);
 		module.addSql(sqli, sqlc);
@@ -43,20 +54,20 @@ public class PostSQL {
 	}
 	
 	private SQLCode storeStatementCode(String hash) {
-		SQLCode sqlStmt = new SQLCode();
-		sqlStmt.setBegLine(stmt.getBegLine());
-		sqlStmt.setFirma(hash);
-		sqlStmt.setStmt(Zipper.zip(stmt.getVerbName(), source.getData()));
-		return sqlStmt;
+		SQLCode sqlCode = new SQLCode();
+		sqlCode.setBegLine(stmt.getBegLine());
+		sqlCode.setFirma(hash);
+		sqlCode.setStmt(Zipper.zip(stmt.getVerbName(), source.getData()));
+		return sqlCode;
 	}
 	
 	private SQLItem storeStatementInfo(String hash) {
-		SQLItem sqlStmt = new SQLItem();
-		sqlStmt.setBegLine(stmt.getBegLine());
-		sqlStmt.setFirma(hash);
-		sqlStmt.setComplexity(0);
-		sqlStmt.setExplanation(0);
-		sqlStmt.setVerb(stmt.getVerbName());
-		return sqlStmt;
+		SQLItem sqlItem = new SQLItem();
+		sqlItem.setBegLine(stmt.getBegLine());
+		sqlItem.setFirma(hash);
+		sqlItem.setComplexity(0);
+		sqlItem.setExplanation(0);
+		sqlItem.setVerb(stmt.getVerbName());
+		return sqlItem;
 	}
 }

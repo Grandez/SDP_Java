@@ -1,7 +1,7 @@
 /**
  * Se utiliza para mantener las variables del tipo A OF B
  */
-package com.jgg.sdp.parser.base;
+package com.jgg.sdp.parser.base.symbol;
 
 import java.util.ArrayList;
 

@@ -2,9 +2,9 @@ package com.jgg.sdp.parser.db2.stmt;
 
 import java.util.*;
 
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.base.stmt.Statement;
 
-import com.jgg.sdp.parser.base.Statement;
+import java_cup.runtime.Symbol;
 
 public class StmtSQL extends Statement {
 

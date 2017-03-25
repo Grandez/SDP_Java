@@ -3,6 +3,7 @@ package com.jgg.sdp.parser.cobol.blocks;
 import java.util.*;
 
 import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.base.stmt.Statement;
 
 import java_cup.runtime.Symbol;
 

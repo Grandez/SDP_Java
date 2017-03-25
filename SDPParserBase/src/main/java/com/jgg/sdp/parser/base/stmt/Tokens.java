@@ -7,7 +7,7 @@
  * @version 3.0
  *   
  */
-package com.jgg.sdp.parser.base;
+package com.jgg.sdp.parser.base.stmt;
 
 import java.util.ArrayList;
 

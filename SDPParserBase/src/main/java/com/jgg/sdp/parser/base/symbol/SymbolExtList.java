@@ -1,7 +1,7 @@
 /**
  * Lista de variables
  */
-package com.jgg.sdp.parser.base;
+package com.jgg.sdp.parser.base.symbol;
 
 import java.util.ArrayList;
 

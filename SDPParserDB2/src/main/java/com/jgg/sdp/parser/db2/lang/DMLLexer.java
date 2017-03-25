@@ -2,7 +2,6 @@
 
 package com.jgg.sdp.parser.db2.lang;
 
-import java.util.*;
 import java_cup.runtime.Symbol;
 
 import com.jgg.sdp.parser.base.*;
@@ -3284,50 +3283,13 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
 
   /* user code: */
 
-   Stack<Integer> pars = new Stack<Integer>();
-   HashSet<Integer> words = new HashSet<Integer>();
-
    // Auxiliares para distinguir entre funcion o ID
    Symbol  symWord;
    Symbol  symFunction;
+
    // Controla si la ultima palabra esta en cache  
    boolean hasCache = false;
          
-   public void resetLiteral(String txt) {
-      data = true;
-      litLine = yyline;
-      litColumn = yycolumn;
-      cadena = new StringBuilder(txt);
-   }
-
-   public Symbol literal(boolean clean) { 
-       String txt = cadena.toString();
-       if (clean) cadena.setLength(0);
-       return literal(txt); 
-   }
-
-   public Symbol literal(String txt) {
-      lastID = LITERAL;
-      cadena.append(txt);
-      String texto = cadena.toString();
-      cadena.setLength(0);
-      print("Devuelve LITERAL (" + LITERAL + ") - " + texto);
-      Symbol s = new Symbol(LITERAL, litLine, litColumn, texto);
-      return symbolFactory.newSymbol(texto, LITERAL, s);
-   }
-
-   public Symbol symbol(int code){
-      return symbol(code, yytext());
-   }
-   
-   public Symbol symbol(int code, String txt) {
-      data = true;
-      lastID = code;
-      print("Devuelve SYMBOL(" + code + ") - (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(code, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, code, s);
-   }
-   
    private void cacheSymbol(int codeWord, int codeFunction) {
       symWord     = symbol(codeWord);
       symFunction = symbol(codeFunction);
@@ -3342,15 +3304,10 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
       return (function) ? symFunction : symWord;
    }   
    
-/*
-   public Symbol symbolic(int value) {
-      data = true;
-      String txt = Integer.toString(value);
-      print("Devuelve SYMBOL (" + (yyline + 1) + "," + (yycolumn + 1) + ") " + txt);
-      Symbol s = new Symbol(ENTERO, yyline, yycolumn, txt);
-      return symbolFactory.newSymbol(txt, ENTERO, s);
+   public Symbol symbol(int code){
+      return makeSymbol(code, yyline, yycolumn, yytext());
    }
-*/
+   
 
 
   /**
@@ -3890,7 +3847,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
           case 265: break;
           case 20: 
             { popState();  
-                  return literal(true);
+                  return literal(LITERAL);
             }
           case 266: break;
           case 21: 
@@ -3899,7 +3856,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
           case 267: break;
           case 22: 
             { popState(); 
-                  return literal(true);
+                  return literal(LITERAL);
             }
           case 268: break;
           case 23: 
@@ -4535,7 +4492,8 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 426: break;
           case 181: 
-            { return symbol(DECLARE             );
+            { print("JGGXXX");
+                                 return symbol(DECLARE             );
             }
           case 427: break;
           case 182: 

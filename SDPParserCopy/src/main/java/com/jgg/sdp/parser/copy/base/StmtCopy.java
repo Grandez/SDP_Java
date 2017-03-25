@@ -2,7 +2,8 @@ package com.jgg.sdp.parser.copy.base;
 
 import java.util.ArrayList;
 
-import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.base.stmt.*;
+import com.jgg.sdp.parser.base.symbol.*;
 
 import java_cup.runtime.Symbol;
 
@@ -15,7 +16,7 @@ public class StmtCopy extends Statement {
 	}
 	
 	public String getCopyName() {
-		return getRValue(0).getName();
+		return getVerbName();
 	}
 	
 	public ArrayList<String> getReplacingTokens() {

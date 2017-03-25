@@ -322,7 +322,7 @@ public class COPYLexer extends GenericLexer implements GenericScanner, java_cup.
 
    public Symbol symbol(int code, String txt) {
       data = true;
-      int col = yycolumn + OFFSET;
+      int col = yycolumn + COLOFFSET;
       
       if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
       

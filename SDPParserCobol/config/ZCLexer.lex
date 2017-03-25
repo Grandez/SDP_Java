@@ -8,7 +8,6 @@ import com.jgg.sdp.parser.base.*;
 
 import static com.jgg.sdp.parser.cobol.lang.ZCDSym.*;
 import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
-import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
 
 %%
 
@@ -107,7 +106,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
    public Symbol symbol(int code, String txt) {
       setLastSymbol(code);
       data = true;
-      int col = yycolumn + OFFSET;
+      int col = yycolumn + COLOFFSET;
       
       if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
       
@@ -115,14 +114,6 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
           print("Devuelve SYMBOL " + code + " (" + (yyline + 1) + "," + col + ") " + txt);
       }    
       return symbolFactory.newSymbol(txt, code, new Symbol(code, yyline + 1, col, txt));
-   }
-
-  // Para ajustar el EXEC
-   public Symbol symbol(int code, Symbol sym, int oCode) {
-      Symbol type = symbol(oCode);
-      sym.sym = code;
-      sym.value = type;
-      return sym;
    }
 
    public int checkIndex(int code) {
@@ -195,6 +186,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
 
     if (yymoreStreams()) {
         info.unit.removeSource();
+        info.removeOffset();
         yypopStream();
     }
     else {    
@@ -289,8 +281,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 \n                 { info.module.incLines(data); data = false; }
 \r                 { /* do nothing */ }
 
-  [^]                            { System.out.println("JGGERR INIT caracter: " + yytext()); }
-  .                            { System.out.println("JGGERR INIT caracter: " + yytext()); }                             
+  [^]                            { System.out.println("JGGERR INIT caracter: " + yytext() + "(" + yyline + "," + yycolumn + ")"); }
+//  .                            { System.out.println("JGGERR INIT caracter: " + yytext()); }                             
 
 
 /******************************************************************************/
@@ -752,7 +744,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   ^\-                 { checkSymbol(symbol("-"));  }  
 
   ^[ ]+EXECUTE        { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-  ^[ ]+EXEC           { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
+  ^[ ]+EXEC           { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
 
   \'               { pushState(QUOTE_STRING);  }  
   \"               { pushState(DQUOTE_STRING); }
@@ -772,7 +764,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   CONVERTING        { return symbol(CONVERTING); }  
 
   // Capturar COPY en una linea
-  COPY              { inCopy = true; initEmbedded(); pushState(COPYS);   return symbol(ZCZSym.COPY); }
+  COPY              { inCopy = true; initEmbedded(); 
+                      pushState(COPYS);   
+                      return symbol(ZCZSym.COPY); 
+                    }
       
   DELETE            { return symbol(DELETE);    }
   DISPLAY           { return symbol(ZCCSym.DISPLAY);   }
@@ -959,14 +954,14 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
          
   SKIP[0-9]?        { data = true;            }
 
-  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
+//  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
+//  EXEC         { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
            
 /*******************************************************/  
 /* Simbolos y operadores                               */
 /*******************************************************/
 
- "("               { print("JGG (");return checkSymbol(ZCCSym.LPAR);  }
+ "("               { return checkSymbol(ZCCSym.LPAR);  }
  ")"               { return checkSymbol(ZCCSym.RPAR); }
 
  "**"              { if (yycolumn < 4) pushState(COMMENT); else symbolDummy(0); }
@@ -990,7 +985,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {SPACES}      { /* nada */ }
   {TABS}        { checkSymbol(symbol("TAB")); }
 
-  // Capturar COPY al inicio de linea
+  // Capturar  al inicio de linea
   ^[ ]+COPY{BLANKS}              { inCopy = true; initEmbedded(); pushState(COPYS);   return symbol(ZCZSym.COPY); }
 
   ^{PARAGRAPH}                   { return symbol(PARRAFO); }
@@ -1155,17 +1150,16 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 <STEXEC> {
   ^[\*\/dD]       { pushState(COMMENT);       }
    CICS           { info.module.setCICS();
-                    info.addOffset(yyline); 
                     initEmbedded();  
                     pushState(EMBEDDED);
-                    return symbol((inCode) ? ZCCSym.EXEC_CICS : ZCDSym.EXEC_CICS, begExec, ZCZSym.CICS);
+                    return symbol((inCode) ? ZCCSym.EXEC_CICS : ZCDSym.EXEC_CICS);
                   } 
                       
    SQL            { info.module.setSQL(); 
-                    info.addOffset(yyline);
                     initEmbedded();  
                     pushState(EMBEDDED);
-                    return symbol((inCode) ? ZCCSym.EXEC_SQL : ZCDSym.EXEC_SQL, begExec, ZCZSym.SQL);
+                    print("JGG SQL");
+                    return symbol((inCode) ? ZCCSym.EXEC_SQL : ZCDSym.EXEC_SQL);
                   } 
    {SPACES}       { /* DO NOTHING */ }
   {TABS}          { checkSymbol(symbol("TAB")); }

@@ -101,26 +101,31 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 
        switch (s.sym) {
          case ZCDSym.EXEC_CICS:	    	  
-         case ZCCSym.EXEC_CICS:	        	 
-       	      if (((String) ((Symbol) ((Symbol) s.value).value).value).startsWith("CICS") ) {
-    	          parserType = Parsers.CICS; 
+         case ZCCSym.EXEC_CICS:
+        	  Symbol cic = (Symbol) s.value;
+        	  if (((String) cic.value).startsWith("CICS") ) {
+    	          parserType = Parsers.CICS;
+    	          info.addOffset(s.left);
     	          break;
        	      }
          case ZCDSym.EXEC_SQL:	    	  
          case ZCCSym.EXEC_SQL:	        
-        	  if (((String) ((Symbol) ((Symbol) s.value).value).value).startsWith("SQL") ) {
+        	  Symbol sql = (Symbol) s.value;
+        	  if (((String) sql.value).startsWith("SQL") ) {
     	          parserType = Parsers.DB2; 
+    	          info.addOffset(sql.left);
     	          break;
         	  }
          case ZCZSym.COPY:	    	          	 
     	      parserType = Parsers.COPY;
-    	 	  createCopy(s, CDG.DEP_COPY);  // Aqui pone el inicio en COPY
+	          info.addOffset(s.left);
+//    	 	  createCopy(s, CDG.DEP_COPY);  // Aqui pone el inicio en COPY
     	 	  s =  next_token();
     	      break;
          case ZCZSym.END_COPY:	
-        	  parseCopy(s);
-    	 	  s =  next_token();
-    	      break;
+             alterParser();
+	         s =  next_token();
+	         break;
          case ZCDSym.END_EXEC:	    	  
          case ZCCSym.END_EXEC:		    
 	          if (((String) ((Symbol) s.value).value).toUpperCase().startsWith("END-EXEC") ) {
@@ -221,8 +226,9 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   switch (parserType) {
             case Parsers.CICS: parseCICS(); break;
             case Parsers.DB2:  parseSQL();  break;
+            case Parsers.COPY: parseCOPY(); break;
 	   }
-	   info.removeOffset();
+ 	   info.removeOffset();
    }
 	   
    private void parseSQL() throws Exception {
@@ -234,7 +240,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
    		   return;
    	   }
 
-   	   s = (Symbol) s.value;
+   	   s = (Symbol) ((Symbol) s.value).value;
    	   StmtSQL sql = (StmtSQL) s.value;
 
    	   if (sql.isInclude()) {
@@ -244,7 +250,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
    	       return;
    	   } 
 
-   	   if (postSQL == null) postSQL = new PostSQL(info.module, s.value);
+   	   if (postSQL == null) postSQL = new PostSQL(info.module, sql);
    	   postSQL.setSource(tmpSource);
    	   postSQL.parse();   	   
    }
@@ -253,10 +259,14 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   parseAlter(Parsers.CICS);   
    }
 
-   private StmtCopy parseCOPY(String name) throws Exception {
+   private void parseCOPY() throws Exception {
 	   Symbol s = parseAlter(Parsers.COPY);
-	   info.removeOffset();
-   	   return (StmtCopy) ((Symbol) s.value).value;
+   	   s = (Symbol) s.value;
+   	   StmtCopy cpy = (StmtCopy) s.value;
+
+	   createCopy(s, CDG.DEP_COPY);
+       updateCopy(s);
+       loadCopy(cpy.getCopyName(), cpy.getReplacingTokens());
    }
    
    private Symbol parseAlter(int type) throws Exception {
@@ -289,12 +299,6 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   return s;
    }
    
-   private void parseCopy(Symbol cpy) throws Exception {
-	   updateCopy(cpy);
-       StmtCopy s = parseCOPY(copy.getNombre());
-       loadCopy(s.getVerbName(), s.getReplacingTokens());  
-   }
-
    private void loadCopy(String name, ArrayList<String> tokens) {
    
 	   // La copy esta marcada como ignorada
@@ -313,7 +317,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   if (source == null) {
 	       info.module.setStatus(CDG.STATUS_PARTIAL);
 	       copy.setEstado(CDG.CPY_ST_MISSING);
-		   lexer.popState();
+//		   lexer.popState();
 		   return;
 	   }
 	   
@@ -322,6 +326,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   copy.setEstado(CDG.CPY_ST_FULL);
 	   
 	   lexer.yypushStream(source);
+	   info.addOffset(0);
 //	   lexer.popState();
 	   
    }

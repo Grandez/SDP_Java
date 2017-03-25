@@ -15,10 +15,10 @@ import com.jgg.sdp.module.unit.SDPUnit;
 
 public interface ILexer {
 
-	public void   setParseUnit(SDPUnit unit);
-	public void setModule(Module module);
-	public void setIgnoreReserved();
-    public void unsetIgnoreReserved();
+	public void    setParseUnit(SDPUnit unit);
+	public void    setModule(Module module);
+	public void    setIgnoreReserved();
+    public void    unsetIgnoreReserved();
     public boolean isIgnoreReserved();
     
     public void popState();

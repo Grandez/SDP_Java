@@ -371,19 +371,21 @@ public class Serializer {
     private void updateSQLInfo() {
         for (SQLItem verbo : module.getTableSql()) {
             MODSql verb = new MODSql();
+//            System.out.println("SQL: " + verbo.getBegLine() + " - " + verbo.getVerb());
             verb.setIdVersion(idVersion);
             verb.setBegLine(verbo.getBegLine());
             verb.setVerb(verbo.getVerb());
             verb.setComplexity(verbo.getComplexity());
             verb.setExplanation(verbo.getExplanation());
             verb.setFirma(verbo.getFirma());
-            generate(verb);
+            generate(verb);           
         }
     }
 
     private void updateSQLCode() {
         for (SQLCode verbo : module.getTableSqlCode()) {
             MODSqlStmt verb = new MODSqlStmt();
+//            System.out.println("SQLSTMT: " + verbo.getBegLine() );
             verb.setIdVersion(idVersion);
             verb.setBegLine(verbo.getBegLine());
             verb.setFirma(verbo.getFirma());

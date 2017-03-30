@@ -16,6 +16,7 @@ import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.parser.cics.lang.CICSLexer;
 import com.jgg.sdp.parser.cobol.lang.*;
+
 import com.jgg.sdp.parser.copy.base.StmtCopy;
 import com.jgg.sdp.parser.copy.lang.COPYLexer;
 import com.jgg.sdp.parser.db2.*;
@@ -25,6 +26,10 @@ import com.jgg.sdp.parser.work.CopyLoader;
 
 import java_cup.runtime.Scanner;
 import java_cup.runtime.Symbol;
+
+import static com.jgg.sdp.parser.cobol.lang.ZCDSym.*;
+import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
+import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
 
 public class ProxyLexer implements java_cup.runtime.Scanner {
 	
@@ -89,6 +94,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	
    public Symbol tokenCobol() throws Exception {
 
+	   // DETECTOR DE PROCEDURE
 	   switch (continueParsing) {
 	       case 0: break;
 	       case 1: continueParsing++;
@@ -99,128 +105,58 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   
 	   Symbol s = scanner.next_token();
 
-       switch (s.sym) {
-         case ZCDSym.EXEC_CICS:	    	  
-         case ZCCSym.EXEC_CICS:
+       switch (s.sym) {    	  
+         case CICSCODE:
         	  Symbol cic = (Symbol) s.value;
-        	  if (((String) cic.value).startsWith("CICS") ) {
-    	          parserType = Parsers.CICS;
-    	          info.addOffset(s.left);
-    	          break;
-       	      }
-         case ZCDSym.EXEC_SQL:	    	  
-         case ZCCSym.EXEC_SQL:	        
+       		  info.addOffset(cic.left);
+   	          parserType = Parsers.CICS;
+        	  break;
+         case EXECSQL:	    	  
         	  Symbol sql = (Symbol) s.value;
-        	  if (((String) sql.value).startsWith("SQL") ) {
-    	          parserType = Parsers.DB2; 
-    	          info.addOffset(sql.left);
-    	          break;
-        	  }
-         case ZCZSym.COPY:	    	          	 
+       		  info.addOffset(sql.left);        		  
+   	          parserType = Parsers.DB2; 
+   	          s = changeSymbol(s);
+        	  break;
+         case COPY:	    	        
+       	      Symbol cpy = (Symbol) s.value;
+       	      info.addOffset(cpy.left);
     	      parserType = Parsers.COPY;
-	          info.addOffset(s.left);
-//    	 	  createCopy(s, CDG.DEP_COPY);  // Aqui pone el inicio en COPY
     	 	  s =  next_token();
     	      break;
-         case ZCZSym.END_COPY:	
-             alterParser();
-	         s =  next_token();
-	         break;
-         case ZCDSym.END_EXEC:	    	  
-         case ZCCSym.END_EXEC:		    
-	          if (((String) ((Symbol) s.value).value).toUpperCase().startsWith("END-EXEC") ) {
-                 alterParser();
-    	         s =  next_token();
-    	         break;
-        	  }
-        case ZCCSym.DIV_PROC:
-	         if (((String) ((Symbol) s.value).value).toUpperCase().startsWith("PROCEDURE") ) {
-	             continueSymbol = s;
-	             continueParsing++;
-                 return new Symbol(ZCZSym.EOF);
-	         }
-	         return s;
-
+         case ENDCOPY:	
+              alterParser();
+              s =  next_token();
+	          break;
+         case ENDEXEC:	    	  		    
+              alterParser();
+              s =  next_token();
+ 	          break;	          
+        case DIVPROC:
+             continueSymbol = changeSymbol(s);
+             continueParsing++;
+             return new Symbol(ZCZSym.EOF);
        }
-/*
-       // Casos: SQL | COPY
-	   while (specialDataSymbol(s.sym)) {
-		 switch (s.sym) {
-	         case ZCDSym.END_EXEC:	    	  
-	         case ZCCSym.END_EXEC:		        	 
-	         case ZCZSym.END_COPY:
-                  alterParser();
-	    	      s =  next_token();
-	    	      break;
-            case ZCCSym.DIV_PROC:
-        	     Symbol ss = (Symbol) s.value;
-    	         if (((String) ss.value).toUpperCase().startsWith("PROCEDURE") ) {
-    	             sendEOF = true;
-    	             begParser = true;
-    	             lastSym = s;
-	                 return new Symbol(ZCZSym.EOF);
-    	         }
-    	         return s;
-		 }    
-	   }
-*/	   
 	   return s;
    }
 
-	   public Symbol tokenCobolCode() throws Exception {
-/*
-		   if (begParser ) {
-			   begParser = false;
-			   return lastSym;
-		   }
-	*/	   
-		   Symbol s = next_token();
-
-	       switch (s.sym) {
-	         case ZCCSym.EXEC_CICS:	    	  
-	    	      parserType = Parsers.CICS; 
-	    	      break;
-	         case ZCCSym.EXEC_SQL:	    	  
-	    	      parserType = Parsers.DB2;  
-	    	      break;
-	       }
-
-	       // Casos: SQL | COPY
-	       //        SQL | COPY
-		   while (specialCodeSymbol(s.sym)) {
-			 switch (s.sym) {
-		         case ZCCSym.END_EXEC:	    	  
-		    	      alterParser();
-		    	      s =  next_token();
-		    	      break;
-		         case ZCZSym.COPY:
-//		        	  sym = createCopy(s);
-		    	      //parseCopy();
-		    	      s =  next_token();
-	                  break;
-		       }
-		   }
-		   return s;
+   private Symbol changeSymbol(Symbol s) {
+	   switch (s.sym) {
+           case EXECSQL:   return alterSymbol(s, info.inCode() ? SQLCODE : SQLDATA); 
+           case DIVPROC:   return alterSymbol(s, DIV_PROC);
+//           case EXECCICS:  return alterSymbol(s, info.inCode() ? SQLCODE : SQLDATA);
 	   }
-
-	   private boolean specialDataSymbol (int sym) {
-		   switch (sym) {
-		      case ZCDSym.END_EXEC:	    	  
-		      case ZCZSym.COPY:
-		      case ZCCSym.DIV_PROC:	    	  
-		    	   return true;
-		   }
-		   return false;
+	   return s;
+   }
+   
+   private Symbol alterSymbol(Symbol s, int id) {
+	   s.sym = id;
+	   Symbol aux = s;
+	   while (aux.value instanceof Symbol) {
+		   aux = (Symbol) aux.value;
+		   aux.sym = id;
 	   }
-
-	   private boolean specialCodeSymbol (int sym) {
-		   switch (sym) {
-		      case ZCCSym.END_EXEC:	    	  
-		      case ZCZSym.COPY:
-		    	   return true;
-		   }
-		   return false;
-	   }
+	   return s;
+   }
 
    private void alterParser() throws Exception { 
 	   switch (parserType) {
@@ -228,7 +164,6 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
             case Parsers.DB2:  parseSQL();  break;
             case Parsers.COPY: parseCOPY(); break;
 	   }
- 	   info.removeOffset();
    }
 	   
    private void parseSQL() throws Exception {
@@ -240,7 +175,10 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
    		   return;
    	   }
 
-   	   s = (Symbol) ((Symbol) s.value).value;
+	   // En funcion de los EOF puede incluir stmtSQL en niveles
+	   // mas internos
+	   while (!(s.value instanceof StmtSQL)) s = (Symbol) s.value;
+	   
    	   StmtSQL sql = (StmtSQL) s.value;
 
    	   if (sql.isInclude()) {
@@ -250,9 +188,13 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
    	       return;
    	   } 
 
-   	   if (postSQL == null) postSQL = new PostSQL(info.module, sql);
-   	   postSQL.setSource(tmpSource);
-   	   postSQL.parse();   	   
+   	   // No se pueden guardar las sentencias que estan en un include
+   	   if (info.getOffsetDepth() < 2) {
+   	       if (postSQL == null) postSQL = new PostSQL(info.module);
+   	       postSQL.setStatement(sql);
+   	       postSQL.setSource(tmpSource);
+   	       postSQL.parse();
+   	   }    
    }
 
    private void parseCICS() throws Exception {
@@ -260,6 +202,7 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
    }
 
    private void parseCOPY() throws Exception {
+
 	   Symbol s = parseAlter(Parsers.COPY);
    	   s = (Symbol) s.value;
    	   StmtCopy cpy = (StmtCopy) s.value;
@@ -273,11 +216,13 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   tmpSource = new Source(new Archivo("embedded.tmp"), true);
 	   tmpSource.setData(info.buffer.toString());
 	   
-//JGG	   System.out.println(info.buffer.toString());
+//	   System.out.println("Datos: " + info.buffer.toString());
+
 	   Scanner scanner = getLexer(type, tmpSource);
 
    	   GenericParser parser = FactoryParser.getParser(scanner, tmpSource, type);
    	   Symbol s = parser.parse();
+   	   info.removeOffset();
    	   return s;
    }
    
@@ -317,7 +262,6 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 	   if (source == null) {
 	       info.module.setStatus(CDG.STATUS_PARTIAL);
 	       copy.setEstado(CDG.CPY_ST_MISSING);
-//		   lexer.popState();
 		   return;
 	   }
 	   
@@ -325,9 +269,9 @@ public class ProxyLexer implements java_cup.runtime.Scanner {
 
 	   copy.setEstado(CDG.CPY_ST_FULL);
 	   
+//	   info.removeOffset();
+	   info.addOffset(0);	   
 	   lexer.yypushStream(source);
-	   info.addOffset(0);
-//	   lexer.popState();
 	   
    }
    

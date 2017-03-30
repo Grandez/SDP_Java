@@ -3,7 +3,15 @@
  * Contiene una lista tokens o una lista statements
  * Pero siempre tiene al menos un token, el verbo y siempre es el primero
  * <br>
- *
+ * Una sentencia tiene:
+ *     A) un Verbo
+ *     B) Un conjunto de lvalues (Values que son modificados)
+ *     C) Un conjunto de rvalues (Values que son leidos)
+ *     D) Un conjunto de opciones
+ *     
+ *     Las opciones pueden estar duplicadas, por lo que se mantiene una lista
+ *     junto con un map para averiguar si existe
+ *     
  * @author Javier Gonzalez Grandez
  * @version 3.0
  *   
@@ -14,25 +22,20 @@ import java.util.*;
 
 import com.jgg.sdp.core.tools.Firma;
 import com.jgg.sdp.module.items.Issue;
-import com.jgg.sdp.parser.base.symbol.SymbolExt;
-import com.jgg.sdp.parser.base.symbol.SymbolExtList;
-import com.jgg.sdp.parser.base.symbol.SymbolList;
+import com.jgg.sdp.parser.base.symbol.*;
 
 import java_cup.runtime.Symbol;
 
-public class Statement {
+public abstract class Statement<T> {
 
-    private SymbolExt             verbo       = null;
-    private ArrayList<SymbolExt>  lvalues     = new ArrayList<SymbolExt>();
-    private ArrayList<SymbolExt>  rvalues     = new ArrayList<SymbolExt>();
-    
-	// La lista mantiene el orden de las opciones
-	// El map pregunta por su clae
-	protected ArrayList<Symbol> tokens     = new ArrayList<Symbol>();
-    private ArrayList<Option> lstOptions = new ArrayList<Option>();
-    private ArrayList<Issue>  issues     = new ArrayList<Issue>();
+    private SymbolExt             verbo      = null;
+    private ArrayList<SymbolExt>  lvalues    = new ArrayList<SymbolExt>();
+    private ArrayList<SymbolExt>  rvalues    = new ArrayList<SymbolExt>();    
+    protected ArrayList<Option>   lstOptions = new ArrayList<Option>();
+    protected ArrayList<Issue>    issues     = new ArrayList<Issue>();
     
     private HashMap<Integer, Option> options = new HashMap<Integer, Option>();    
+    
     private String firma = null;
     
     private int id = 0;
@@ -66,17 +69,10 @@ public class Statement {
 	public Statement (Symbol s, SymbolList list) {
 		verbo = new SymbolExt(s);
 		id = s.sym;
-        addRValues(list);		
+        addRValue(list);		
 	}
 	
-	public Statement(Tokens tokens) {
-		for (Symbol token : tokens.getTokens()) {
-		    this.tokens.add(token);	
-		}
-	}
-
-	public Statement (Statement s) {
-		tokens = s.getSymbols();
+	public Statement (Statement<T> s) {
 		verbo  = s.getVerb();
 		id     = s.getId();
 		orden  = s.getOrden();
@@ -94,30 +90,54 @@ public class Statement {
 		if (last != null) {
 		   endLine = ((Symbol) last.value).left;
 		   endColumn = ((Symbol) last.value).right;
-		}
-		
+		}		
 	}
 
 	/***************************************************************/
 	/***     RVALUES / VARIABLES DE LECTURA                      ***/
 	/***************************************************************/
 	
-	public Statement addRValue(Symbol s) {
+	public T addRValue(Symbol s) {
 		rvalues.add(new SymbolExt(s));
-		return this;
+		return (T) this;
 	}
 	
-	public Statement addRValue(SymbolExt s) {
+	public T addRValue(SymbolExt s) {
 		rvalues.add(s);
-		return this;
+		return (T) this;
 	}
 
-	public Statement addRValues(SymbolList list) {
+	public T addRValue(SymbolList list) {
 		for (Symbol s : list.getVarList()) {
 			addRValue(s);
 		}
-		return this;
+		return (T) this;
 	}
+	
+	public T addLValue(Symbol s) {
+		lvalues.add(new SymbolExt(s));
+		return (T) this;
+	}
+	
+	public T addLValue(SymbolExt s) {
+		lvalues.add(s);
+		return (T) this;
+	}
+
+	public T addLValue(SymbolExtList l) {
+		for (Symbol s : l.getVarList()) {
+			addLValue(s);
+		}
+		return (T) this;
+	}
+	
+	public T addLValue(SymbolList list) {
+		for (Symbol s : list.getVarList()) {
+			addLValue(s);
+		}
+		return (T) this;
+	}
+
 	public SymbolExt getRValue(int index) {
 		return rvalues.get(index);
 	}
@@ -126,35 +146,18 @@ public class Statement {
 		return rvalues;
 	}
 	
-	public Statement addTokens(Tokens tokens) {
-		if (tokens == null) return this;
-		return addSymbols(tokens.getTokens());
-	}
-	
-	public Statement addSymbols(ArrayList<Symbol> lista) {
-		for (Symbol s: lista) {
-			tokens.add(s);
-		}
-		return this;
-	}
-	
-	public Statement addVariables(SymbolExtList vars) {
-		/* JGG
-	    for (Variable v : vars.getVarList()) {
-	        tokens.add(v);
-	    }
-	    */
-	    return this;
-	}
-
 	/**
 	 * Establece el verbo 
 	 * @param s Verbo
 	 * @param replace si es true replaza el verbo existente (en caso de que exista)
 	 */
     public void setVerb(Symbol s, boolean replace) {
-    	if (replace || verbo == null) {
-    		verbo = new SymbolExt(s);
+    	if (replace && verbo != null) {
+    		verbo.value = s.value;
+    	} else {
+    		if (verbo == null) {
+    		    verbo = new SymbolExt(s);
+    		}    
     	}
     }
 	
@@ -194,22 +197,6 @@ public class Statement {
 		return verbo.sym;
 	}
 	
-	/**
-     * Obtiene la posicion de un determinado simbolo identificado por su Id.
-     *
-     * @param id
-     *            ID del simbolo
-     * @return La posicion del simbolo si existe<br>
-     *         -1 si no existe
-     */
-	public int getSymbolById(int id) {
-		for (int idx = 0; idx < tokens.size(); idx ++ ) {
-			if (tokens.get(idx).sym == id) return idx;
-		}
-		return -1;
-	}
-	
-    
 	public int getBegLine() {
 		return begLine;
 	}
@@ -263,35 +250,6 @@ public class Statement {
 		return endPoint;
 	}
 	
-	public Statement addSymbol(Symbol s) {
-		tokens.add(s);
-		return this;
-	}
-
-	public Symbol getSymbol(int pos) {
-		if (pos < tokens.size()) return tokens.get(pos);
-		return null;
-	}
-	
-	public ArrayList<Symbol> getSymbols() {
-		return tokens;
-	}
-		
-	public boolean hasSymbol(int id) {
-		for (Symbol s : tokens) {
-			if (s.sym == id) return true;
-		}
-		return false;
-	}
-	
-	public void replaceSymbol(int pos, Symbol s) {
-		Symbol tok = tokens.get(pos);
-		tok.left = s.left;
-		tok.right = s.right;
-		tok.sym = s.sym;
-		tok.value = s.value;
-	}		
-	
 	public void addIssue(int id) {
 		issues.add(new Issue(id));
 	}
@@ -322,26 +280,6 @@ public class Statement {
 		return opt;
 	}
 
-	// Caso WHEN / WHEN OTHER
-	// Podria quedarse un WHEN huerfano
-	public Option replaceOption(SymbolExt s) {
- 		Option opt = new Option(s.sym, (String) s.value, s);
- 		lstOptions.remove(lstOptions.size() - 1);
-		lstOptions.add(opt);
-		options.put(opt.getId(),  opt);
-		return opt;
-	}
-
-	// Caso n times, hay que quitar la opcion n y poner times n
-	public Option mergeOption(Option opt) {
-		Option last = lstOptions.get(lstOptions.size() - 1);
-	    opt.addSymbol(last.getAsSymbolExt());
-	    lstOptions.remove(lstOptions.size() - 1);
-	    options.remove(last.getId());
-	    
-	    return addOption(opt);
-	}
-		
     public Option getOption(int idOption) {
     	return options.get(idOption);
     }

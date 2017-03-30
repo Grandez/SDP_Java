@@ -88,6 +88,8 @@ public class Analyzer {
 				if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
 				unit.setStatus(CDG.STATUS_SDP_ERROR);
 			    msg.exception(s);
+			    s.printStackTrace();
+			    System.exit(16);
 			    if (maxRC < RC.WARNING) maxRC = RC.WARNING;
 			} catch (Exception e) {
 				if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
@@ -115,21 +117,15 @@ public class Analyzer {
 	}
 	
 	private void analyze(SDPUnit unit) throws SDPException, Exception {
-		ParserInfo info = ParserInfo.getInstance();
+		ParserInfo info = ParserInfo.getInstance(true);
 		info.setUnit(unit);
 		info.setModule(module);
 		
-		try {
-		   Parser parser = new Parser(unit);
-		   parser.process();
-		   if (module.getStatus() == CDG.STATUS_UNDEF) {
-			   module.setStatus(CDG.STATUS_FULL);
-		   }
-		}
-		catch (Exception e) {
-			System.out.println(e.getMessage());
-			e.printStackTrace();
-		}
+	   Parser parser = new Parser(unit);
+	   parser.process();
+	   if (module.getStatus() == CDG.STATUS_UNDEF) {
+		   module.setStatus(CDG.STATUS_FULL);
+	   }
 	}
 
 	

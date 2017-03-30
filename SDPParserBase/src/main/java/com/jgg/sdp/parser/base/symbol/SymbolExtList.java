@@ -9,11 +9,11 @@ public class SymbolExtList {
 	private ArrayList<SymbolExt> lista = new ArrayList<SymbolExt>();
 
     public SymbolExtList (SymbolExt v) {
-        lista.add(v);
+        if (v != null) lista.add(v);
     }
 
 	public SymbolExtList add(SymbolExt v) {
-		lista.add(v);
+		if (v != null) lista.add(v);
 		return this;
 	}
 	

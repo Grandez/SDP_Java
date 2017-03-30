@@ -47,6 +47,8 @@ public class ParserInfo {
 	// Usado para COPY e INCLUDE
 	private Symbol prevSymbol = null;
 	private Symbol lastSymbol = null;
+
+	private boolean inCode = false;
 	
 	private ParserInfo() {
 		stkOffset.add(0);
@@ -144,20 +146,23 @@ public class ParserInfo {
 
 	public void addOffset(int line) {
 		stkOffset.push(line);
-		offset = line;
 	}
-	
+
 	public void removeOffset() {
-		if (!stkOffset.empty()) offset = stkOffset.pop();
+		if (!stkOffset.empty()) stkOffset.pop();
 	}
 	
 	public int getOffset() {
 		return getOffset(stkOffset.size() - 1);
 	}
+	public int getOffsetDepth() {
+		return stkOffset.size();
+	}
 	
 	public int getOffset(int pos) {
 		if (pos >= stkOffset.size()) pos = stkOffset.size() - 1;
-		return (pos < 0) ? 0 : stkOffset.get(pos);
+		int off = (pos < 0) ? 0 : stkOffset.get(pos);
+		return (off < 0) ? 0 : off;
 	}
 	
 	public void removeMember() {
@@ -247,4 +252,11 @@ public class ParserInfo {
    }
 
 	
+   public void setInCode() {
+	   inCode = true;
+   }
+   
+   public boolean inCode() {
+	   return inCode;
+   }
 }

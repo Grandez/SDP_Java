@@ -9,9 +9,11 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.config.*;
 
 import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.base.stmt.*;
+import com.jgg.sdp.parser.base.symbol.*;
 
+import com.jgg.sdp.parser.cobol.base.*;
 import com.jgg.sdp.parser.cobol.blocks.*;
-
 import com.jgg.sdp.parser.cobol.code.*;
 
 parser code {:
@@ -40,8 +42,8 @@ action code {:
    ParserInfo      info     = ParserInfo.getInstance();
       
    Variable    currVar  = null;
-   Statement lastStmt = null;  // Ultima instruccion
-   Statement currStmt = null;  // Instruccion en proceso
+   StmtCobol lastStmt = null;  // Ultima instruccion
+   StmtCobol currStmt = null;  // Instruccion en proceso
    
    boolean   hasEndProgram = false; // Hay STOPRUN o GOBACK?
     
@@ -184,7 +186,7 @@ terminal Symbol NULL    ;
 terminal Symbol CLASS     ;
 terminal Symbol DEC_POINT ;
 terminal Symbol DISPLAY   ;
-terminal Symbol ENDP      ;
+terminal Symbol ENDD      ;
 terminal Symbol THRU      ;
 
 /* Simbolos gramaticales y palabras comunes */
@@ -195,9 +197,8 @@ terminal Symbol TO     ;
 terminal Symbol IN     ;
 terminal Symbol OF     ;
 
-terminal Symbol EXEC_CICS ;
-terminal Symbol EXEC_SQL  ;
-terminal Symbol END_EXEC  ;
+terminal Symbol SQLDATA  ;
+terminal Symbol END_SQL  ;
 
 /* SDP */
 
@@ -223,26 +224,26 @@ non terminal data_division       ;
 non terminal identification_division            ;
 non terminal ident_div_header , ident_bloque    ;
 
-non terminal Statement ident_sentences  ;
-non terminal Statement ident_sentence   ;
+non terminal StmtCobol ident_sentences  ;
+non terminal StmtCobol ident_sentence   ;
 
 
-non terminal Statement programId       ;
-non terminal Statement programId_verb  ;
-non terminal Statement author          ;
-non terminal Statement author_verb     ;
+non terminal StmtCobol programId       ;
+non terminal StmtCobol programId_verb  ;
+non terminal StmtCobol author          ;
+non terminal StmtCobol author_verb     ;
 
 non terminal SymbolList  author_opt      ;
 non terminal SymbolList  open_string     ;
 non terminal SymbolList  open_string_opt ;
 
 non terminal Symbol nombre   ;
-non terminal Statement date_written       ;
-non terminal Statement date_compiled      ;
-non terminal Statement installation       ;
-non terminal Statement remarks            ;
+non terminal StmtCobol date_written       ;
+non terminal StmtCobol date_compiled      ;
+non terminal StmtCobol installation       ;
+non terminal StmtCobol remarks            ;
 
-non terminal Statement sdpDesc       ;
+non terminal StmtCobol sdpDesc       ;
 non terminal Symbol sdpDescData   ;
 non terminal Symbol sdpDescLineas ;
 non terminal Symbol sdpDescLinea  ;          
@@ -269,13 +270,11 @@ non terminal linkage_data ;
 // Generales
 /////////////////////////////////////////////////////
 
-non terminal Statement   cobolData   ; 
+non terminal StmtCobol   cobolData   ; 
 non terminal descripcion ;
 non terminal module      ;
 
 non terminal endp_opt ;
-
-non terminal SymbolExtList rvalue_list ;
 
 /***********************************************************/
 /*                   VARIABLES                             */
@@ -435,7 +434,7 @@ identification_division ::= ident_div_header ident_bloque {: issues.checkIdentif
                         |
                         ;
 
-ident_div_header ::= DIV_ID:s  ENDP  {: code.setDivision(CDG.SECT_ID, s.left); 
+ident_div_header ::= DIV_ID:s  ENDD  {: code.setDivision(CDG.SECT_ID, s.left); 
                                         currBlock = new BlockID(s);
                                      :}
                  ;                      
@@ -465,13 +464,13 @@ programId ::= programId_verb:p endp_opt ID:s endp_opt  {: RESULT = p.addRValue(s
 */  
           ;
 
-programId_verb ::= PGMID:p {: RESULT = new Statement(p); :}
+programId_verb ::= PGMID:p {: RESULT = new StmtCobol(p); :}
                ;
                
-author    ::= author_verb:a author_opt:o {: RESULT = a.addRValues(o); :} 
+author    ::= author_verb:a author_opt:o {: RESULT = a.addRValue(o); :} 
           ;
 
-author_verb ::= AUTHOR:s   {: RESULT = new Statement(s); :}
+author_verb ::= AUTHOR:s   {: RESULT = new StmtCobol(s); :}
             ;
             
 author_opt ::= open_string:s {: RESULT = s; 
@@ -480,13 +479,13 @@ author_opt ::= open_string:s {: RESULT = s;
            |                 {: RESULT = null; :}  
            ;
                        
-date_written ::= DATEW:d open_string_opt:o         {: RESULT = new Statement(d, o); :}
+date_written ::= DATEW:d open_string_opt:o         {: RESULT = new StmtCobol(d, o); :}
              ;
 
-date_compiled ::= DATEC:d open_string_opt:o        {: RESULT = new Statement(d, o); :}
+date_compiled ::= DATEC:d open_string_opt:o        {: RESULT = new StmtCobol(d, o); :}
              ;
              
-installation ::= INSTALLATION:i open_string_opt:o  {: RESULT = new Statement(i, o); :}
+installation ::= INSTALLATION:i open_string_opt:o  {: RESULT = new StmtCobol(i, o); :}
              ;
                    
 remarks ::= REMARKS open_string_opt {: ILexer ilex = (ILexer) this.parser.getScanner();
@@ -515,7 +514,7 @@ StringBuilder sb = new StringBuilder();
 nombre ::= ID:i      {: RESULT = i; :}
        |   NUMERO:i  {: RESULT = i; :}
        |   LITERAL:i {: RESULT = i; :}       
-       |   ENDP:p    {: RESULT = p; :}
+       |   ENDD:p    {: RESULT = p; :}
        ;
        
                                                                                
@@ -542,7 +541,7 @@ environment_division  ::= env_div_header bloque_env
                       |
                       ;
                      
-env_div_header        ::= DIV_ENV:s {: code.setDivision(CDG.SECT_ENV, s.left); :} ENDP 
+env_div_header        ::= DIV_ENV:s {: code.setDivision(CDG.SECT_ENV, s.left); :} ENDD 
                       ;
 
 bloque_env            ::= configuration_section
@@ -553,7 +552,7 @@ configuration_section ::= conf_sect_header conf_sect_data_opt
                       |
                       ;
                       
-conf_sect_header      ::= CONF_SECTION:s ENDP {: code.setSection(CDG.SECT_CONF, s.left); :}
+conf_sect_header      ::= CONF_SECTION:s ENDD {: code.setSection(CDG.SECT_CONF, s.left); :}
                       ;
 
 conf_sect_data_opt ::= conf_sect_data
@@ -569,20 +568,20 @@ conf_sect_item ::= conf_sect_source
                |   conf_sect_special
                ;
                
-conf_sect_source ::= SOURCE_COMPUTER ENDP computer_name_opt
+conf_sect_source ::= SOURCE_COMPUTER ENDD computer_name_opt
                  ;
                  
-conf_sect_object ::= OBJECT_COMPUTER ENDP computer_name_opt
+conf_sect_object ::= OBJECT_COMPUTER ENDD computer_name_opt
                  ;
 
 computer_name_opt ::= computer_name
                   |
                   ;
                   
-computer_name ::= ID ENDP
+computer_name ::= ID ENDD
               ;
               
-conf_sect_special ::= SPECIAL_NAMES ENDP special_names_lst_opt
+conf_sect_special ::= SPECIAL_NAMES ENDD special_names_lst_opt
                   ;
 
 special_names_lst_opt ::= special_names_lst
@@ -610,7 +609,7 @@ section_io ::= sect_io_header sect_io_bloques
            |
            ;
 
-sect_io_header ::= IO_SECTION:s {: code.setSection(CDG.SECT_IO, s.left); :} ENDP 
+sect_io_header ::= IO_SECTION:s {: code.setSection(CDG.SECT_IO, s.left); :} ENDD 
                ;
 
 sect_io_bloques ::= file_control_decl
@@ -620,7 +619,7 @@ sect_io_bloques ::= file_control_decl
 file_control_decl ::= file_control_header select_file_list
                   ;
                       
-file_control_header ::= FILE_CONTROL ENDP 
+file_control_header ::= FILE_CONTROL ENDD 
                     ;
 
 select_file_list ::= select_files
@@ -635,7 +634,7 @@ select_file_mark ::= SDPMASTER    {: master = true; :}
                  |   select_file
                  ;
                       
-select_file ::= file_select  file_attrs  ENDP 
+select_file ::= file_select  file_attrs  ENDD 
             ;         
 
 file_select ::= SELECT ID:s {: fichero = new Persistence(getSymbolName(s), master);
@@ -703,7 +702,7 @@ data_division   ::= data_div_header bloque_data
                 |
                 ;
 
-data_div_header ::=  DIV_DATA:s {: code.setDivision(CDG.SECT_DATA, s.left); :} ENDP 
+data_div_header ::=  DIV_DATA:s {: code.setDivision(CDG.SECT_DATA, s.left); :} ENDD 
                 ;
                 
 bloque_data     ::= section_file 
@@ -720,7 +719,7 @@ section_file ::= sect_file_header file_data
              |
              ;
 
-sect_file_header ::= FILE_SECTION:s {: code.setSection(CDG.SECT_FILE, s.left); :} ENDP
+sect_file_header ::= FILE_SECTION:s {: code.setSection(CDG.SECT_FILE, s.left); :} ENDD
                  ;
                  
 
@@ -735,7 +734,7 @@ fd_list   ::= fd
 fd        ::= fd_def:d fd_fields  
           ;
 
-fd_def ::= fd_desc ID:s fd_attrs_opt:a ENDP  
+fd_def ::= fd_desc ID:s fd_attrs_opt:a ENDD  
                    {: module.setRecordName(s.value, a.getOptionValues(ZCDSym.DATA)); :}  
        ;
 
@@ -827,7 +826,7 @@ section_working ::= sect_working_header working_data
                 |
                 ;
 
-sect_working_header ::= WORKING_SECTION:s {: code.setSection(CDG.SECT_WORK, s.left); :} ENDP  
+sect_working_header ::= WORKING_SECTION:s {: code.setSection(CDG.SECT_WORK, s.left); :} ENDD  
                     ;
 
 working_data        ::= variables
@@ -842,7 +841,7 @@ section_local     ::= sect_local_header local_data
                   |
                   ;
 
-sect_local_header ::= LOCAL_SECTION:s {: code.setSection(CDG.SECT_LOCAL, s.left); :} ENDP 
+sect_local_header ::= LOCAL_SECTION:s {: code.setSection(CDG.SECT_LOCAL, s.left); :} ENDD 
                   ;
 
 local_data        ::= variables
@@ -857,7 +856,7 @@ section_linkage     ::= sect_linkage_header linkage_data
                     |
                     ; 
 
-sect_linkage_header ::= LINKAGE_SECTION:s {: code.setSection(CDG.SECT_LINK, s.left); :} ENDP 
+sect_linkage_header ::= LINKAGE_SECTION:s {: code.setSection(CDG.SECT_LINK, s.left); :} ENDD 
                     ;
 
 linkage_data        ::= variables
@@ -872,10 +871,9 @@ variables ::= variable
           |   variables variable 
           ;
            
-variable ::= var_def:v var_data_def ENDP  {: RESULT = module.addVariable(v); :} 
-         |   EXEC_SQL 
-         |   EXEC_CICS 
-         |   END_EXEC endp_opt
+variable ::= var_def:v var_data_def ENDD  {: RESULT = module.addVariable(v); :} 
+         |   SQLDATA 
+         |   END_SQL endp_opt
          ;
            
 var_def    ::= nivel:n var_name:s  {: currVar = code.createVar(n,s);
@@ -1078,7 +1076,7 @@ figurative ::= SPACES:f   {: RESULT = f; :}
            |   NULL:f     {: RESULT = f; :}
            ;
 
-endp_opt ::= ENDP
+endp_opt ::= ENDD
          |
          ;
 

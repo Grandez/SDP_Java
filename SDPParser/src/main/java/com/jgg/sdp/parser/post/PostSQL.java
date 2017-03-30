@@ -17,15 +17,19 @@ public class PostSQL {
 	
 	private ParserInfo info = ParserInfo.getInstance();
 	
-	public PostSQL(Module module, Object stmt) {
+	public PostSQL(Module module) {
 		this.module = module;
-		this.stmt = (StmtSQL) stmt;
 	}
 
+	public void setStatement(StmtSQL sql) {
+		this.stmt = sql;
+	}
+	
 	public void setSource(Source src) {
 		source = src;
 	}
 	public void parse() {
+//		System.out.println("SQL: " + stmt.getVerbName());
 		prepareVariables();
 		
 		String hash = Firma.calculate(new String(source.getData()).getBytes());
@@ -37,7 +41,7 @@ public class PostSQL {
 		 * es el segundo nivel
 		 */
 		
-		stmt.setBegLine(info.getOffset(1));
+		stmt.setBegLine(info.getOffset(1) + stmt.getBegLine());
 		calculateComplexity();
 		
 		SQLCode sqlc = storeStatementCode(hash);

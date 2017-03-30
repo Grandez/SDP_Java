@@ -8,6 +8,7 @@ import com.jgg.sdp.parser.base.*;
 
 import static com.jgg.sdp.parser.cobol.lang.ZCDSym.*;
 import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
+import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
 
 %%
 
@@ -29,7 +30,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
 
 %xstate PIC , BLOBSIZE
 %xstate ENDLINE , EATLINE 
-%xstate STEXEC , EMBEDDED , SQL2
+%xstate STEXEC , EMBEDDED 
 %xstate EMBEDDED_QUOTE , EMBEDDED_DQUOTE
 %xstate CICSSYM
 %xstate FUNCTION
@@ -71,7 +72,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCCSym.*;
    }
    
    public Symbol literal(String txt) {
-      int litCode = (inCode) ? ZCCSym.LITERAL : ZCDSym.LITERAL;
+      int litCode = (info.inCode()) ? ZCCSym.LITERAL : ZCDSym.LITERAL;
       
       setLastSymbol(litCode);
       print("Devuelve LITERAL - " + txt);
@@ -202,6 +203,7 @@ BLANKS=[ \t]+
 
 // Generico para cargar buffer
 WORD=[a-zA-Z0-9\_\-]+
+ENDVERB=END-[a-zA-Z]+
 
 ALPHA=[a-zA-Z]+
 
@@ -249,9 +251,12 @@ ID{BLANKS}DIVISION              { checkDivision();
                                   return symbol(DIV_ID);
                                 }
 
-COPY         { inCopy = true; initEmbedded(); pushState(COPYS); return symbol(ZCZSym.COPY);     }
+COPY         { initEmbedded(); 
+               pushState(COPYS); 
+               return symbol(ZCZSym.COPY);     
+             }
 EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC);   pushState(STEXEC);    }
-EXEC         { begExec = symbolDummy(ZCZSym.EXEC);      pushState(STEXEC);    }
+EXEC         { begExec = symbolDummy(ZCZSym.EXEC);   pushState(STEXEC);    }
 
 
  ^\*{SDPEND}       { info.module.incComments(true);
@@ -314,7 +319,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   RECURSIVE        { data = true; }
   REMARKS          { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   
-  COPY         { inCopy = true; initEmbedded(); pushState(COPYS); return symbol(ZCZSym.COPY);           }
+  COPY         { initEmbedded(); 
+                 pushState(COPYS); 
+                 return symbol(ZCZSym.COPY);           
+               }
   EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC);  pushState(STEXEC);    }
   EXEC         { begExec = symbolDummy(ZCZSym.EXEC);     pushState(STEXEC);    }
 
@@ -329,9 +337,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                                   }
 
   PROCEDURE{BLANKS}DIVISION       { resetState(PROC_DIVISION);
-                                    inCode = true;
+                                    info.setInCode();
                                     inDesc = false;                                  
-                                    return symbol(ZCCSym.DIV_PROC);
+                                    return symbol(DIVPROC);
                                   }
   
   {ID}             { return symbol(ZCDSym.ID);     }
@@ -339,7 +347,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {SPACES}         { /* nada */ }
   {TABS}           { checkSymbol(symbol("TAB")); }
 
-  \.               { return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP);   }
+  \.               { return symbol(ENDD);   }
   "-"              { data = true;  }
   ","              { data = true;  }
   \n               { info.module.incLines(data); data = false; }
@@ -375,16 +383,19 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                                  }
 
   PROCEDURE{BLANKS}DIVISION      { resetState(PROC_DIVISION);
-                                   inCode = true;
+                                   info.setInCode();
                                    inDesc = false;                                  
-                                   return symbol(ZCCSym.DIV_PROC);
+                                   return symbol(DIVPROC);
                                  }
 
-  COPY         { inCopy = true; initEmbedded(); pushState(COPYS);   return symbol(ZCZSym.COPY);         }
+  COPY         { initEmbedded(); 
+                 pushState(COPYS);   
+                 return symbol(ZCZSym.COPY);         
+               }
   EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
 
-  \.               { return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP); }                                   
+  \.               { return symbol(ENDD); }                                   
  
   {SPACES}         { /* nada */ }
   {TABS}           { checkSymbol(symbol("TAB")); }
@@ -425,7 +436,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   THRU             { data = true; } 
   WITH             { data = true; }
 
-  COPY         { inCopy = true; initEmbedded(); pushState(COPYS); return symbol(ZCZSym.COPY);     }
+  COPY         { initEmbedded(); 
+                 pushState(COPYS); 
+                 return symbol(ZCZSym.COPY);     
+               }
   EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
 
@@ -440,16 +454,16 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                                  }
 
   PROCEDURE{BLANKS}DIVISION      { resetState(PROC_DIVISION);
-                                   inCode = true;
+                                   info.setInCode();
                                    inDesc = false;                                  
-                                   return symbol(ZCCSym.DIV_PROC);
+                                   return symbol(DIVPROC);
                                  }
 
   {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
   {ID}             { return symbol(ZCDSym.ID);     }
   {SPACES}         { /* nada */ }
   {TABS}           { checkSymbol(symbol("TAB")); }
-  \.               { return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP);   }
+  \.               { return symbol(ENDD);   }
   \,               { data = true; }
 
   \n               { info.module.incLines(data); data = false; }
@@ -495,7 +509,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   TO             { data = true;                 }
   WITH           { data = true;                 }
 
-  COPY         { inCopy = true; initEmbedded(); pushState(COPYS);  return symbol(ZCZSym.COPY);          }
+  COPY         { initEmbedded(); 
+                 pushState(COPYS);  
+                 return symbol(ZCZSym.COPY);          
+               }
   EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
 
@@ -505,9 +522,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                                  }
 
   PROCEDURE{BLANKS}DIVISION      { resetState(PROC_DIVISION);
-                                   inCode = true;
+                                   info.setInCode();
                                    inDesc = false;                                  
-                                   return symbol(ZCCSym.DIV_PROC);
+                                   return symbol(DIVPROC);
                                  }
   
  ^\*{SDPMASTER}    { pushState(SDP);
@@ -521,7 +538,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {TABS}           { checkSymbol(symbol("TAB")); }
   {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
   {ID}             { return symbol(ZCDSym.ID);     }
-  \.               { return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP);   }
+  \.               { return symbol(ENDD);          }
   \,               { data = true; }
 
   \n               { info.module.incLines(data); data = false; }
@@ -551,9 +568,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   LOCAL-STORAGE{BLANKS}SECTION   { return symbol(LOCAL_SECTION);   }
   LINKAGE{BLANKS}SECTION         { return symbol(LINKAGE_SECTION); }
   PROCEDURE{BLANKS}DIVISION      { resetState(PROC_DIVISION);
-                                   inCode = true;
+                                   info.setInCode();
                                    inDesc = false;                                  
-                                   return symbol(ZCCSym.DIV_PROC);
+                                   return symbol(DIVPROC);
                                  }
   
   ALL                            { data = true;              }
@@ -671,9 +688,12 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   HIGH\-VALUE[sS]?               { return symbol(ZCDSym.HIGHVAL); } 
   QUOTE[sS]?                     { return symbol(ZCDSym.QUOTE);   }
 
-  COPY         { inCopy = true; initEmbedded(); pushState(COPYS);         return symbol(ZCZSym.COPY);  }
+  COPY         { initEmbedded(); 
+                 pushState(COPYS);         
+                 return symbol(ZCZSym.COPY);  
+               }
   EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
+  EXEC         { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
 
   {DECIMAL}                      { return symbol(ZCDSym.NUMERO);  }
   {DECIMAL2}                     { return symbol(ZCDSym.NUMERO);  }  
@@ -685,7 +705,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
   "("              { return symbol(ZCDSym.LPAR);    }
   ")"              { return symbol(ZCDSym.RPAR);    }
-  \.               { return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP);   }
+  \.               { return symbol(ENDD);   }
   \,               { data = true; }
   \'               { print("ENTRA EN QUOTE"); pushState(QUOTE_STRING);  }  
   \"               { pushState(DQUOTE_STRING); }
@@ -714,7 +734,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   [vV]{NUMERO}                   { beginPic = false; return symbol(PIC_V);        }
   V                              { beginPic = false; return symbol(PIC_DEC_EMPTY);      }
 
-  \.                             { popState(); return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP); }
+  \.                             { popState(); return symbol(ENDD); }
   
   \n                             { info.module.incLines(data); }
   \r                             { /* do nothing */ }
@@ -756,6 +776,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   ADD               { return symbol(ADD);        }
   ALLOCATE          { return symbol(ALLOCATE);   }
 
+  ALPHABETIC-LOWER  { return symbol(ALPHABETIC); }
+  ALPHABETIC-UPPER  { return symbol(ALPHABETIC); }  
+  ALPHABETIC        { return symbol(ALPHABETIC); }       
   CALL              { return symbol(CALL);       }
   CANCEL            { return symbol(CANCEL);     }
   CLOSE             { return symbol(CLOSE );     }
@@ -765,11 +788,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   CONVERTING        { return symbol(CONVERTING); }  
 
   // Capturar COPY en una linea
-  COPY              { inCopy = true; initEmbedded(); 
+  COPY              { initEmbedded(); 
                       pushState(COPYS);   
                       return symbol(ZCZSym.COPY); 
                     }
-      
+  DCBS              { return symbol(DCBS);      }      
   DELETE            { return symbol(DELETE);    }
   DISPLAY           { return symbol(ZCCSym.DISPLAY);   }
   DIVIDE            { return symbol(DIVIDE);    }
@@ -791,13 +814,18 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   INITIALIZE        { return symbol(INITIALIZE); }
   INSPECT           { return symbol(INSPECT);    }
 
+  KANJI             { return symbol(KANJI);      }
+  
+  LENGTH            { return symbol(LENGTH);      }
+  
   MERGE             { return symbol(MERGE);      }  
   MOVE              { return symbol(MOVE);       }
   MULTIPLY          { return symbol(MULTIPLY);   }
                                            
   NEXT[ ]+SENTENCE  { return symbol(NEXT);       }
   NULL[sS]?         { return symbol(ZCCSym.NULL);}
-
+  NUMERIC           { return symbol(ZCCSym.NUMERIC);}
+  
   OPEN              { return symbol(OPEN);       }   
 
   PERFORM           { return symbol(PERFORM);    }
@@ -841,8 +869,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   BEFORE            { return symbol(BEFORE);     }
   
   CHARACTER[sS]?    { return symbol(CHARACTER);  }
-  CORRESPONDING     { data = true;  }
-  CORR              { data = true;  }
+  CORRESPONDING     { return symbol(CORR);       }
+  CORR              { return symbol(CORR);       }
   COUNT             { return symbol(COUNT);      }
   CYCLE             { data = true; }
 
@@ -854,104 +882,89 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   
   DFHRESP           { cicsVerb = "DFHRESP";  pushState(CICSSYM);   }  
   DFHVALUE          { cicsVerb = "DFHVALUE"; pushState(CICSSYM);   }
-   
-  END-CALL         { return symbol(ENDVERB);    }
-  END-COMPUTE      { return symbol(ENDVERB);    }  
+
   END-EVALUATE     { return symbol(ENDEVAL);    }
-  END-IF           { return symbol(ENDIF);      }    
-  END-MULTIPLY     { return symbol(ENDVERB);    }  
-  END-PERFORM      { return symbol(ENDPERFORM); }
-  END-READ         { return symbol(ENDVERB);    }
-  END-RETURN       { return symbol(ENDVERB);    }  
-  END-REWRITE      { return symbol(ENDVERB);    }  
-  END-SEARCH       { return symbol(ENDVERB);    }
-  END-START        { return symbol(ENDVERB);    }
-  END-STRING       { return symbol(ENDVERB);    }  
-  END-UNSTRING     { return symbol(ENDVERB);    }  
-  END-WRITE        { return symbol(ENDVERB);    }  
+  END-IF           { return symbol(ENDIF);      }  
+  END-PERFORM      { return symbol(ENDPERFORM); }  
+  {ENDVERB}        { return symbol(ENDVERB);        }
   
-  END               { return symbol(ATEND);      } 
-  EOP               { return symbol(EOP);        }
+  END              { return symbol(ATEND);     } 
+  EOP              { return symbol(EOP);       }
 
-  EQUAL             { return symbol(EQUAL);      }
-  EXTEND            { return symbol(EXTEND);     }
+  EQUAL            { return symbol(EQUAL);     }
+  EXTEND           { return symbol(EXTEND);    }
 
-  FIRST             { return symbol(FIRST);    }
-  FOREVER           { return symbol(FOREVER);  }    
-  FOR               { data = true;             }  
-  FROM              { return symbol(FROM);     }
-  FUNCTION          { pushState(FUNCTION); return symbol(FUNCTION); }
+  FIRST            { return symbol(FIRST);    }
+  FOREVER          { return symbol(FOREVER);  }    
+  FOR              { data = true;             }  
+  FROM             { return symbol(FROM);     }
+  FUNCTION         { pushState(FUNCTION); return symbol(FUNCTION); }
  
-  GIVING            { return symbol(GIVING);   }
-  GREATER           { return symbol(GREATER);  }  
+  GIVING           { return symbol(GIVING);   }
+  GREATER          { return symbol(GREATER);  }  
 
-  I-O               { return symbol(IO);      }
-  IN                { return symbol(ZCCSym.IN);      }
-  INITIAL           { data = true; }  
-  INPUT             { return symbol(INPUT);   }
-  INTO              { return symbol(INTO);    }
-  INVALID           { return symbol(INVALID);   }
-  IS                { data = true; }
+  I-O              { return symbol(IO);      }
+  IN               { return symbol(ZCCSym.IN);      }
+  INITIAL          { data = true; }  
+  INPUT            { return symbol(INPUT);   }
+  INTO             { return symbol(INTO);    }
+  INVALID          { return symbol(INVALID);   }
+  IS               { data = true; }
   
-  KEY               { return symbol(KEY);   }
+  KEY              { return symbol(KEY);   }
 
-  LEADING           { return symbol(LEADING);   }
-  LESS              { return symbol(LESS);   }
-  LINE[sS]?         { data = true; }
-  LOCK              { data = true; }
+  LEADING          { return symbol(LEADING);   }
+  LESS             { return symbol(LESS);   }
+  LINE[sS]?        { data = true; }
+  LOCK             { data = true; }
 
-  NEXT              { data = true; }
-  NOT               { data = true; }
-  NUMERIC           { return symbol(NUMERIC);  }
+  NEXT             { data = true; }
+  NOT              { data = true; }
 
-  OF                { data = true;             }
-  ON                { data = true;  }     
-  OR                { return symbol(OR);        }
-  OTHER             { return symbol(OTHER);     }
-  OUTPUT            { return symbol(OUTPUT);    }
-  OVERFLOW          { return symbol(OVERFLOW);  }
+  OF               { data = true;             }
+  ON               { data = true;  }     
+  OR               { return symbol(OR);        }
+  OTHER            { return symbol(OTHER);     }
+  OUTPUT           { return symbol(OUTPUT);    }
+  OVERFLOW         { return symbol(OVERFLOW);  }
 
-  PAGE              { data = true;  }
-  POINTER           { return symbol(ZCCSym.POINTER);  }
-  PROCEDURE         { data = true;  }
+  PAGE             { data = true;  }
+  POINTER          { return symbol(ZCCSym.POINTER);  }
+  PROCEDURE        { data = true;  }
      
-  RECORD            { data = true; }
-  REEL              { data = true; }
-  REFERENCE         { return symbol(REFERENCE); }
-  REMOVAL           { data = true; }
-  RETURNING         { return symbol(RETURNING); }
-  REWIND            { data = true; }
-  ROUNDED           { data = true; }  
+  RECORD           { data = true; }
+  REEL             { data = true; }
+  REFERENCE        { return symbol(REFERENCE); }
+  REMOVAL          { data = true; }
+  RETURNING        { return symbol(RETURNING); }
+  REWIND           { data = true; }
+  ROUNDED          { return symbol(ROUNDED);    }  
 
-  SECTION           { return symbol(SECTION);    }
-  SIZE[ ]+ERROR     { return symbol(SIZE_ERROR); }
-  SIZE              { return symbol(SIZE);       }  
+  SECTION          { return symbol(SECTION);    }
+  SIZE[ ]+ERROR    { return symbol(SIZE_ERROR); }
+  SIZE             { return symbol(SIZE);       }  
 
-  TEST              { return symbol(TEST);    }
-  THAN              { data = true; }  
-  THEN              { data = true; }
-  THROUGH           { return symbol(ZCCSym.THRU);    }
-  THRU              { return symbol(ZCCSym.THRU);    }
-  TIMES             { return symbol(ZCCSym.TIMES);   }
-  TO                { return symbol(ZCCSym.TO);      }
+  TEST             { return symbol(TEST);    }
+  THAN             { data = true; }  
+  THEN             { data = true; }
+  THROUGH          { return symbol(ZCCSym.THRU);    }
+  THRU             { return symbol(ZCCSym.THRU);    }
+  TIMES            { return symbol(ZCCSym.TIMES);   }
+  TO               { return symbol(ZCCSym.TO);      }
 
-  UP                { data = true; }
-  UNIT              { data = true; }
-  UNTIL             { return symbol(UNTIL);   }  
-  USING             { return symbol(USING);   }
+  UP               { data = true; }
+  UNIT             { data = true; }
+  UNTIL            { return symbol(UNTIL);   }  
+  USING            { return symbol(USING);   }
   
-  VALUE             { return symbol(ZCCSym.VALUE);   }
-  VARYING           { return symbol(VARYING); }
+  VALUE            { return symbol(ZCCSym.VALUE);   }
+  VARYING          { return symbol(VARYING); }
   
-  WHEN              { return symbol(WHEN);    }
-  WITH              { data = true; }
+  WHEN             { return symbol(WHEN);    }
+  WITH             { data = true; }
          
-  SKIP[0-9]?        { data = true;            }
+  SKIP[0-9]?       { data = true;            }
 
-//  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-//  EXEC         { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-
-                
 /*******************************************************/  
 /* Simbolos y operadores                               */
 /*******************************************************/
@@ -973,7 +986,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
  "."               { return symbol(ZCCSym.ENDP); }
 
  ";"               { data = true; }
- ":"               { data = true; }  
+ ":"               { return symbol(OP_COL); }  
 
 /*******************************************************/  
 /* Patrones                                            */
@@ -983,7 +996,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {TABS}        { checkSymbol(symbol("TAB")); }
 
   // Capturar  al inicio de linea
-  ^[ ]+COPY{BLANKS}              { inCopy = true; initEmbedded(); pushState(COPYS);   return symbol(ZCZSym.COPY); }
+  ^[ ]+COPY{BLANKS}              { initEmbedded(); 
+                                   pushState(COPYS);   
+                                   return symbol(ZCZSym.COPY); 
+                                 }
 
   ^{PARAGRAPH}                   { return symbol(PARRAFO); }
   ^[ ]{1}END{BLANKS}PROGRAM      { return symbol(END_PGM); }
@@ -1069,7 +1085,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
   {TABS}        { checkSymbol(symbol("TAB")); }
-  \n            { popState(); return symbol((inCode) ? ZCCSym.ENDP : ZCDSym.ENDP); }  
+  \n            { popState(); return symbol((info.inCode()) ? ENDP : ENDD); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
   .             { /* comer */ }
@@ -1131,7 +1147,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   */
 <COPYS> {
   ^[\*\/]            { pushState(COMMENT);           }
-  \.                 { popState(); return symbol(ZCZSym.END_COPY);  }
+  \.                 { popState(); return symbol(ENDCOPY);  }
   \r                 { info.buffer.append(yytext()); }
   \n                 { info.buffer.append(yytext()); }
   {WORD}             { info.buffer.append(yytext()); }
@@ -1143,7 +1159,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <CICSSYM> {
    ")"  { popState(); 
-          if (inCode) return symbol(ZCCSym.DFHCICS, cicsVerb);
+          if (info.inCode()) return symbol(ZCCSym.DFHCICS, cicsVerb);
           return symbol(ZCDSym.DFHCICS);
         }
    .    { /* do nothing */ }
@@ -1157,14 +1173,13 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
    CICS           { info.module.setCICS();
                     initEmbedded();  
                     pushState(EMBEDDED);
-                    return symbol((inCode) ? ZCCSym.EXEC_CICS : ZCDSym.EXEC_CICS);
+                    return symbol(CICSCODE);
                   } 
                       
    SQL            { info.module.setSQL(); 
                     initEmbedded();  
                     pushState(EMBEDDED);
-                    print("JGG SQL");
-                    return symbol((inCode) ? ZCCSym.EXEC_SQL : ZCDSym.EXEC_SQL);
+                    return symbol(EXECSQL);
                   } 
    {SPACES}       { /* DO NOTHING */ }
   {TABS}          { checkSymbol(symbol("TAB")); }
@@ -1177,7 +1192,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   ^[\*\/dD]          { pushState(COMMENT);       }
 //  \'                 { info.buffer.append(yytext()); pushState(EMBEDDED_QUOTE); }
 //  \"                 { info.buffer.append(yytext()); pushState(EMBEDDED_DQUOTE); }  
-  END-EXEC[ ]*[\.]?  { popState(2); return symbol((inCode) ? ZCCSym.END_EXEC : ZCDSym.END_EXEC); }
+  END-EXEC[ ]*[\.]?  { popState(2); return symbol(ENDEXEC); }
 
   \r           { /* do nothing */ }
   \n           { info.buffer.append(yytext());
@@ -1205,23 +1220,6 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
              data = false;  
            }
   [^]      { info.buffer.append(yytext()); }
-}
-
-<SQL2> {
-  ^[\*\/]      { pushState(COMMENT);       }
-  INCLUDE      { setBegCopy(yyline, false); inCopy = true; pushState(COPYS); }
-  END-EXEC     { if (inCopy) inCopy = false;
-                 popState(2);
-                 return symbol((inCode) ? ZCCSym.END_EXEC : ZCDSym.END_EXEC);  
-               }
-  {SPACES}     { /* nada */   }  
-  {TABS}       { checkSymbol(symbol("TAB")); }
-   \r          { /* nada */   }
-   \n          { info.module.incLines(data);
-                 data = false;  
-               }
-   .           { /* nada */   }                        
-   [^]         { /* nada */   }                  
 }
 
 <SDP> {

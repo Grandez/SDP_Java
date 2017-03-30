@@ -150,12 +150,13 @@ non terminal host_variable      ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql ::= sql_tcl  {: String name = stmt.getVerbName();
-                     int id =  stmt.getVerbId();
-                     int line = stmt.getVerb().left;
-                     int col = stmt.getVerb().right;
-                     RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
-                  :}
+sql ::= sql_tcl  {: stmt.adjust(info.getLastSymbol()); 
+                    String name = stmt.getVerbName();
+                    int id =  stmt.getVerbId();
+                    int line = stmt.getVerb().left;
+                    int col = stmt.getVerb().right;
+                    RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                 :}
     ;
 
 sql_tcl ::= sql_commit

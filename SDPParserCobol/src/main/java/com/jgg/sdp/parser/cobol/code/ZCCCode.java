@@ -413,7 +413,7 @@ public class ZCCCode extends ZCZCode {
      * @return la misma StmtCobol
      */
 	public StmtCobol processExit(StmtCobol stmt) {
-		if (stmt.getSymbols().size() == 0) return stmt;
+//		if (stmt.getSymbols().size() == 0) return stmt;
         injector.removeTraps();
         parrafo.setExit(true);
 		return stmt;
@@ -430,7 +430,7 @@ public class ZCCCode extends ZCZCode {
 		Nodes nodeType = Nodes.CALL_DYNAMIC;
 		
         StmtCobol stmt = new StmtCobol(verbo);
-        stmt.addSymbol(rutina);
+        stmt.addRValue(rutina);
 
 	    String nombre = (String) rutina.value;
 	    if (rutina.sym == ZCCSym.LITERAL) {
@@ -712,16 +712,21 @@ public class ZCCCode extends ZCZCode {
 	}
 */
 	public Symbol setVarRead(SymbolExt s) {
+		/*JGG
 		if (s.sym == ZCCSym.FUNCTION) return s;
 		String name = (String) s.value;
 		module.setVarRead(name, s.getParentName());
+		*/
 		return s;
 	}
 
 	public Symbol setVarWrite(SymbolExt s) {
+		return s;
+		/*JGG
 		String name = (String) s.value;
 		module.setVarWrite(name);
 		return s;
+		*/
 	}
 	
 	public Variable setVarWrite(Variable v) {

@@ -46,9 +46,7 @@ public abstract class GenericLexer implements ILexer {
    protected boolean       litQuote;
    protected boolean       litTrim = false;
    
-   protected boolean inCode      = false;  // Estamos en PROCEDURE DIVISION?
-   protected boolean inDesc      = false;  // Procesando Descripcion?
-   protected boolean inCopy      = false;  // Estamos en estado COPY?       
+   protected boolean inDesc      = false;  // Procesando Descripcion?      
    
    protected Configuration cfg = Configuration.getInstance();
 
@@ -235,7 +233,10 @@ public abstract class GenericLexer implements ILexer {
    public boolean isIgnoreReserved() { return ignoreReserved;  }
    
    public void print(String txt) {
-         System.out.println(txt);
+//         System.out.println(txt);
+   }   
+   public void debug(String txt) {
+     System.out.println(txt);
    }   
 
    protected String removeQuotes(String txt) {

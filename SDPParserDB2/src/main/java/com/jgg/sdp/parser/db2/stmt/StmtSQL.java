@@ -9,7 +9,6 @@ import java_cup.runtime.Symbol;
 public class StmtSQL extends Statement {
 
 	private HashMap<String, SQLTable> tables    = new HashMap<String, SQLTable>();
-	private HashMap<String, Integer> functions  = new HashMap<String, Integer>();
 	
 	public StmtSQL() {
 		super();

@@ -8,10 +8,15 @@ public interface ZCZSym {
   public static final int LITERAL  = 30001;
   public static final int END_COPY = 30010;
   
+  public static final int DIVPROC    = 50010;
   public static final int FIGURATIVE = 50000;
   public static final int EXEC       = 60000;
   public static final int CICS       = 60001;
   public static final int SQL        = 60002;
+  public static final int EXECSQL    = 60005;
+  public static final int EXECCICS   = 60006;
+  public static final int ENDEXEC    = 60010;
+  public static final int ENDCOPY    = 60011;
   
   public static final int DIRECTIVE = 50001;
   public static final int TAB       = 50002;

@@ -138,12 +138,13 @@ non terminal eat_token           ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql ::= sql_ddl   {: String name = stmt.getVerbName();
-                     int id =  stmt.getVerbId();
-                     int line = stmt.getVerb().left;
-                     int col = stmt.getVerb().right;
-                     RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
-                  :}
+sql ::= sql_ddl {: stmt.adjust(info.getLastSymbol()); 
+                    String name = stmt.getVerbName();
+                    int id =  stmt.getVerbId();
+                    int line = stmt.getVerb().left;
+                    int col = stmt.getVerb().right;
+                    RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                :}
     ;
 
 sql_ddl ::= sql_alter 

@@ -40,7 +40,7 @@ action code {:
    Sections        sections = null;
    ParserInfo      info     = ParserInfo.getInstance();
       
-   Variable    currVar  = null;
+   Variable  currVar  = null;
    StmtCobol lastStmt = null;  // Ultima instruccion
    StmtCobol currStmt = null;  // Instruccion en proceso
    
@@ -100,6 +100,7 @@ terminal Symbol OP_MUL       ;
 terminal Symbol OP_DIV       ;
 terminal Symbol OP_SUB       ;
 terminal Symbol OP_ADD       ;
+terminal Symbol OP_COL       ;
 
 terminal Symbol REL_GE  ;
 terminal Symbol REL_LE  ;
@@ -119,6 +120,7 @@ terminal Symbol KANJI        ;
 terminal Symbol POSITIVE     ;
 terminal Symbol NEGATIVE     ;
 terminal Symbol NULL         ;
+terminal Symbol DCBS         ;
 
 terminal Symbol DUPLICATES ;
 
@@ -182,6 +184,7 @@ terminal Symbol BY         ;
 terminal Symbol CHARACTER  ;
 // terminal Symbol CLASS      ;
 terminal Symbol CONVERTING ;
+terminal Symbol CORR       ;
 terminal Symbol COUNT      ;
 //terminal Symbol DEC_POINT  ;
 terminal Symbol DEPENDING    ;
@@ -195,6 +198,7 @@ terminal Symbol ENDPERFORM ;
 terminal Symbol ENDP       ;
 terminal Symbol ENDVERB    ;
 terminal Symbol EOP        ;
+terminal Symbol EQUAL      ;
 terminal Symbol EXCEPTION  ;
 terminal Symbol EXTEND     ;
 terminal Symbol FIRST      ;
@@ -227,6 +231,7 @@ terminal Symbol PROGRAM    ;
 terminal Symbol REFERENCE  ;
 terminal Symbol REPLACING  ;
 terminal Symbol RETURNING  ;
+terminal Symbol ROUNDED    ;
 terminal Symbol SECTION    ;
 terminal Symbol SIZE       ;
 terminal Symbol TALLYING   ;
@@ -245,7 +250,6 @@ terminal Symbol LPAR   ;
 terminal Symbol RPAR   ;
 terminal Symbol TO     ;
 terminal Symbol WITH   ;
-terminal Symbol EQUAL  ;
 terminal Symbol LESS   ;    
 
 
@@ -254,19 +258,13 @@ terminal Symbol SIZE_ERROR  ;
 terminal Symbol FUNCTION ;
 terminal Symbol INTRINSIC ;
 
-terminal Symbol EXEC_CICS ;
-terminal Symbol EXEC_SQL  ;
+terminal Symbol CICSCODE ;
+terminal Symbol SQLCODE  ;
 terminal Symbol END_EXEC  ;
 
 /* CICS  Caso especial DFHxxx*/
 
 terminal Symbol DFHCICS ;
-
-/****************************************************************************/
-/****************************************************************************/
-/*               LOS SIMBOLOS SON COMUNES                                   */
-/****************************************************************************/
-/****************************************************************************/
 
 ///////////////////////////////////////////////////////
 // Division 
@@ -284,9 +282,10 @@ non terminal        bloque_procedure;
 
 non terminal Tokens stmtAccept_detail ;
 
-non terminal Tokens stmtAdd_detail  ;
-non terminal Tokens stmtAdd_options ;
-non terminal Tokens stmtAdd_option  ;
+non terminal Statement add_verb  ;
+non terminal Tokens add_options_opt  ;
+non terminal Tokens add_options   ;
+non terminal Tokens add_option   ;
 
 non terminal Symbol stmtCompute_detail  ;
 non terminal Symbol stmtCompute_rvalues ;
@@ -296,9 +295,11 @@ non terminal Symbol stmtCompute_options     ;
 non terminal Symbol stmtCompute_option      ;
 
 non terminal StmtCobol stmtDivide        ;
-non terminal Tokens    stmtDivide_detail ;
-non terminal Tokens    stmtDivide_fields ;
-non terminal Tokens    stmtDivide_field  ;
+non terminal StmtCobol divide_verb       ;
+non terminal Symbol    divide_mode       ;
+non terminal Option    divide_options_opt;
+non terminal Option    divide_options    ;
+non terminal Option    divide_option     ;
 
 non terminal Tokens stmtIf_detail     ;
 
@@ -384,8 +385,7 @@ non terminal        option_position     ;
 non terminal        option_order        ;
 
 non terminal Tokens option_giving_opt  ;
-non terminal Tokens option_giving      ;
-non terminal Tokens option_to_multiple ;
+
                    
 non terminal Tokens eatClose   , eatCloseLst , eatCloseItem ;
 non terminal Tokens eatWrite   , eatWriteLst , eatWriteItem ;
@@ -412,9 +412,6 @@ non terminal StmtCobol stmt     ;
 non terminal StmtCobol verbos   ;
 non terminal StmtCobol noverbos ;
 
-non terminal Tokens    perform_test    ;
-non terminal Tokens    perform_tokens  ;
-non terminal Tokens    perform_token   ;
 non terminal Tokens    resto_call      ;
 non terminal Tokens    list_parms_opt  ;
 non terminal Tokens    list_parms      ;
@@ -448,15 +445,20 @@ non terminal StmtCobol stmtEvaluate_item      ;
 
 non terminal Symbol    stmtEvaluate_other     ;
 
-non terminal StmtCobol stmtPerform            ; 
-non terminal StmtCobol stmtPerform_verb       ; 
-non terminal StmtCobol stmtPerform_from_opt   ;
-non terminal Option    stmtPerform_from       ;
-non terminal StmtCobol stmtPerform_thru_opt   ;
-non terminal Option    stmtPerform_thru       ;
-non terminal StmtCobol stmtPerform_options_opt;
-non terminal Option    stmtPerform_options    ;
-non terminal Option    stmtPerform_option     ;
+non terminal StmtCobol stmtPerform           ; 
+non terminal StmtCobol perform_verb          ;
+non terminal Option    stmtPerform_from      ;
+non terminal Option    perform_options_opt   ;
+non terminal Option    perform_options       ;
+non terminal Option    perform_option_first  ;
+non terminal Option    perform_option_second ;
+non terminal           perform_label         ;
+non terminal Option    perform_test          ;
+non terminal Option    perform_until         ;
+non terminal Option    perform_thru          ;
+non terminal Option    perform_varying       ;
+non terminal Option    perform_after         ;
+
                                
 non terminal StmtCobol stmtFree     ;                               
 non terminal StmtCobol stmtRelease  ;
@@ -527,8 +529,12 @@ non terminal Tokens    stmtWhen_thru ;
 non terminal StmtCobol stmtEndVerb ;         
 
 non terminal StmtCobol stmtDatos   , stmtDatos1   , stmtDatos2   ;
-non terminal StmtCobol stmtIO      , stmtIO1      , stmtIO2      ;
-non terminal StmtCobol stmtControl , stmtControl1 , stmtControl2 ;
+non terminal StmtCobol stmtIO      ;
+non terminal StmtCobol stmtIO1     ;
+non terminal StmtCobol stmtIO2     ;
+non terminal StmtCobol stmtControl ;
+non terminal StmtCobol stmtControl1 ;
+non terminal StmtCobol  stmtControl2 ;
 non terminal StmtCobol stmtFlujo   ;
 non terminal StmtCobol stmtArit    ; 
 non terminal StmtCobol stmtLang    ;
@@ -546,11 +552,16 @@ non terminal           expression_arit    ;
 non terminal           expr_operand       ;
 non terminal           expr_primary       ;
 
+non terminal           logical_op         ;
+non terminal           logical_oper       ;
+non terminal           logical_not        ;
+non terminal           logical_condition  ;
+non terminal           logical_expression ;
+non terminal           logical_class      ;
+non terminal           logical_class_opt  ;
+non terminal           logical_unary      ;
+
 non terminal           operator_arit      ;
-non terminal           operator_rel       ;
-non terminal           operator_rel_type  ;
-non terminal           operator_rel_neg   ;
-non terminal           operator_rel_pos   ;
 
 /***********************************************************/
 /*    OTRAS SENTENCIAS                                     */
@@ -568,32 +579,39 @@ non terminal SymbolExt     figurative  ;
 non terminal SymbolExt     constantes  ;
 non terminal SymbolExt     constante   ;
 non terminal SymbolExt     ident       ;
-non terminal SymbolExt     ident_base  ;
+
 non terminal SymbolExt     lvalue      ; 
 non terminal SymbolExtList lvalue_list ; 
 non terminal SymbolExtList rvalue_list ;
 
-non terminal SymbolExt      id                     ;
+non terminal SymbolExt     var                     ;
+non terminal SymbolExt     var_base                ;
+non terminal SymbolExt     var_int                 ;
+
+non terminal SymbolExt     id                     ;
 non terminal SymbolExt     id_base                ;
 non terminal               literal                ;
+non terminal               indices_opt            ;
+non terminal               indices                ;
 non terminal               indice                 ;
 non terminal               indice_lst             ;
 non terminal               indice_item            ;
-non terminal SymbolExt     padres            ;
-non terminal SymbolExt     padre             ;
+non terminal SymbolExt     padres_opt             ;
 non terminal               padre_indicator        ;
+non terminal SymbolExt     padres                 ;
+non terminal SymbolExt     padre                  ;
+
+
+
+non terminal Option     option_corr     ; 
+non terminal Option     option_giving   ;
+non terminal Option     option_rounded  ;
 
 /***  WORK  ***/
 
 non terminal Tokens token ;
 non terminal Tokens tokens;
 non terminal Tokens optTokens ;
-
-// CONDITION
-
-non terminal StmtCobol condition      ;
-non terminal           cond_tokens    ;
-non terminal cond_operando ;
 
 non terminal        opt_all  ;
 non terminal        opt_by   ;
@@ -738,7 +756,7 @@ noverbos ::= stmtEndP:s        {: RESULT = code.checkFlujo( s, lastStmt);:}
 
 /* Sentencias de control de programa */
 
-stmtControl ::= stmtControl1:s optTokens:t {: RESULT = s.addTokens(t);          :}
+stmtControl ::= stmtControl1:s optTokens:t {: RESULT = s;          :}
              |  stmtExit:s                 {: RESULT =  code.processExit(s);    :}    
              |  stmtControl2:s             {: hasEndProgram = true; RESULT = s; :}
              ;
@@ -769,7 +787,7 @@ stmtFlujo ::= stmtPerform:s     {: RESULT = s; :}
              
 /* Sentencias de manipulacion de datos */
 
-stmtDatos ::= stmtDatos1:s  optTokens:t {: RESULT = s.addTokens(t); :}
+stmtDatos ::= stmtDatos1:s  optTokens:t {: RESULT = s; :}
           |   stmtDatos2:s              {: RESULT = s;              :}
           ;
 
@@ -787,8 +805,8 @@ stmtDatos2 ::= stmtMove:s           {: RESULT = s; :}
             
 /* Sentencias de entrada/salida */
 
-stmtIO    ::= stmtIO1:s optTokens:t {: RESULT = s.addTokens(t); :}
-          |   stmtIO2:s             {: RESULT = s;              :}
+stmtIO    ::= stmtIO1:s optTokens:t {: RESULT = s; :}
+          |   stmtIO2:s             {: RESULT = s; :}
           ;
           
 stmtIO1   ::= stmtCommit:s         {: RESULT = s; :}
@@ -866,17 +884,17 @@ exitTypes ::= stmtExitG:s {: RESULT = s; :}
           ;  
                         
 stmtExitG ::=  EXIT:s  exitType:t   {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
-                                       RESULT = stmt.addSymbol(t); 
+                                       RESULT = stmt.addRValue(t); 
                                     :}    
           ;
 
 stmtExitP ::=  EXITP:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
-                           RESULT = stmt.addSymbol(code.makeSymbol(ZCCSym.PERFORM, -1, -1, "PERFORM")); 
+                           RESULT = stmt.addRValue(code.makeSymbol(ZCCSym.PERFORM, -1, -1, "PERFORM")); 
                         :}    
           ;
 
 stmtExitPgm ::=  EXITPGM:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
-                               RESULT = stmt.addSymbol(s); 
+                               RESULT = stmt.addRValue(s); 
                             :}
             ;                    
 
@@ -893,11 +911,11 @@ stmtNext     ::=  NEXT:s       {: RESULT = new StmtCobol(s, code.getStmts()); :}
 
 stmtReturn   ::=  RETURN:r  ID:i stmtRead_detail:j     
                   {: StmtCobol stmt = code.fileAccess(TRAP.ACC_READ, r, i);
-                     RESULT = stmt.addTokens(j); 
+                     RESULT = stmt; // .addTokens(j); 
                   :}
              ;
-stmtExec ::= EXEC_CICS:s {: module.incStmtCics(); RESULT = new StmtCobol(s, code.getStmts()); :}     
-         |   EXEC_SQL:s  {: module.incStmtSql();  RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtExec ::= CICSCODE:s {: module.incStmtCics(); RESULT = new StmtCobol(s, code.getStmts()); :}     
+         |   SQLCODE:s  {: module.incStmtSql();  RESULT = new StmtCobol(s, code.getStmts()); :}     
          ;
 
 stmtEndExec ::= END_EXEC:s {: RESULT = new StmtCobol(s, code.getStmts()); :}     
@@ -917,21 +935,23 @@ stmtAccept_detail ::= FROM rvalue stmtAcceptOpt
 
 // ADD
 
-stmtAdd ::=  ADD:s stmtAdd_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtAdd ::=  add_verb option_corr rvalue_list TO lvalue_list add_options_opt {: RESULT = currStmt; :}     
         ;
              
-                  
-stmtAdd_detail ::=  rvalue_list stmtAdd_options
-               ;
-
-stmtAdd_options ::= stmtAdd_option
-                |   stmtAdd_options stmtAdd_option
+add_verb ::= ADD:s  {: currStmt = new StmtCobol(s); :}
+         ;
+         
+add_options_opt ::= add_options
+                |
                 ;
+                                  
+add_options ::= add_option
+            |   add_options add_option
+            ;
                 
-stmtAdd_option ::= option_giving
-               |   option_to_multiple
-               |   option_size_error
-               ;
+add_option ::= option_giving
+           |   option_rounded
+           ;
 
 // CALL
 
@@ -974,19 +994,19 @@ stmtCancel ::= CANCEL:s rvalue  {: RESULT = new StmtCobol(s, code.getStmts()); :
 
 stmtCompute  ::=  COMPUTE:s stmtCompute_detail:i
                    {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
-                      stmt.addSymbol(i);
+//                      stmt.addSymbol(i);
                       RESULT = stmt; 
                    :}     
               ;
 
-stmtCompute_detail ::= lvalue:i EQUAL stmtCompute_rvalues stmtCompute_options_opt {: RESULT = i; :} 
+stmtCompute_detail ::= lvalue:i REL_EQ stmtCompute_rvalues stmtCompute_options_opt {: RESULT = i; :} 
                    ;
 
 stmtCompute_rvalues ::= stmtCompute_rvalue
                     |   stmtCompute_rvalues stmtCompute_rvalue
                     ;                   
                    
-stmtCompute_rvalue ::= rvalue
+stmtCompute_rvalue ::= expression
                    ;
 
 stmtCompute_options_opt ::= stmtCompute_options
@@ -1006,23 +1026,28 @@ stmtDisplay ::= DISPLAY:s   rvalue_list {: RESULT = new StmtCobol(s, code.getStm
                                                                                               
 // DIVIDE
 
-stmtDivide ::=  DIVIDE:s stmtDivide_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtDivide ::= divide_verb rvalue divide_mode lvalue_list divide_options_opt      
            ;
 
-stmtDivide_detail ::= rvalue stmtDivide_fields option_size_error_opt
-                  ;
-                  
-stmtDivide_fields ::= stmtDivide_field
-                  |   stmtDivide_fields stmtDivide_field
-                  ;
-                  
-stmtDivide_field ::= ident
-                 |   NUMERO
-                 |   GIVING
-                 |   INTO
-                 |   BY
-                 ;
+divide_verb ::= DIVIDE:s {: RESULT = new StmtCobol(s, currStmt); :}
+            ;
 
+divide_mode ::= INTO
+            |   BY
+            ;
+
+divide_options_opt ::= divide_options
+                   |
+                   ;
+
+divide_options ::= divide_option:o                
+               |   divide_options divide_option:o 
+               ;
+
+divide_option ::= option_giving:o  {: currStmt.addOption(o); :}
+              |   option_rounded:o {: currStmt.addOption(o); :}
+              ;
+                                                                      
 // EVALUATE
 
 stmtEvaluate ::=  EVALUATE:s {: currStmt = new StmtCobol(s); 
@@ -1031,7 +1056,7 @@ stmtEvaluate ::=  EVALUATE:s {: currStmt = new StmtCobol(s);
                              stmtEvaluate_object {: RESULT = new StmtCobol(s, code.getStmts()); :}  
              ;
 
-stmtEvaluate_object ::= condition
+stmtEvaluate_object ::= logical_condition
                     ;
 
 stmtWhen ::= WHEN:s {: stack.peek().addOption(new Option(s)); :} stmtEvaluate_condition
@@ -1041,8 +1066,8 @@ stmtEvaluate_condition ::= stmtEvaluate_item
                        |   stmtEvaluate_other:o {: stack.peek().addOption(new Option(o)); :}
                        ;
                                                      
-stmtEvaluate_item ::= condition:t stmtWhen_thru
-//                  |   stmtEvaluate_item ALSO condition:t stmtWhen_thru
+stmtEvaluate_item ::= logical_condition:t stmtWhen_thru
+//                  |   stmtEvaluate_item ALSO logical_condition:t stmtWhen_thru
                   /*
                     {: StmtCobol stmt  = new StmtCobol(s);
                        RESULT = stmt; // stmt.addTokens(t);   
@@ -1053,7 +1078,7 @@ stmtEvaluate_item ::= condition:t stmtWhen_thru
 stmtEvaluate_other ::= OTHER:o {: RESULT = o; :}
                    ;
                     
-stmtWhen_thru ::= THRU condition
+stmtWhen_thru ::= THRU logical_condition
               |
               ;
                   
@@ -1083,7 +1108,7 @@ stmtIf ::= IF:s stmtIf_detail {: StmtCobol stmt = new StmtCobol(s, code.getStmts
                               :}
        ;
 
-stmtIf_detail ::= condition
+stmtIf_detail ::= logical_condition
               ;
               
 // INITIALIZE
@@ -1137,8 +1162,8 @@ stmtInspect_token ::= ALL
 stmtMove ::= MOVE:s opt_all rvalue:r TO lvalue_list:l      
                    {: code.checkCall(l, r);
                       StmtCobol stmt = new StmtCobol(s, code.getStmts());
-                      stmt.addSymbol(r);
-                      stmt.addVariables(l);
+                      stmt.addRValue(r);
+                      stmt.addLValue(l);
                       RESULT = stmt; 
                    :}     
               ;
@@ -1208,64 +1233,63 @@ stmtOpen_files ::= ID:s                    {: RESULT = new Tokens(s); :}
 // Caso 4: PERFORM PARRAFO OPCIONES X TIMES
 // El caso TIMES NECESITA TRATAMIENTO ESPECIAL
 
-stmtPerform ::=  stmtPerform_verb stmtPerform_from_opt stmtPerform_thru_opt stmtPerform_options_opt:p {: RESULT = code.processPerform(currStmt, lastStmt); :} 
+stmtPerform ::=  perform_verb stmtPerform_from   {: RESULT = code.processPerform(currStmt, lastStmt); :} 
             ;
-            
-stmtPerform_verb ::= PERFORM:s  {: currStmt = new StmtCobol(s); :}
+
+perform_verb ::= PERFORM:s  {: currStmt = new StmtCobol(s); :}
                  ;
 
-stmtPerform_from_opt ::= stmtPerform_from
-                     |
-                     ;
-                     
-stmtPerform_from ::= rvalue:o                   {: RESULT = currStmt.addOption(new Option(o)); :}
-                 |   stmtPerform_from rvalue:o  {: RESULT = currStmt.addOption(new Option(o)); :}
+stmtPerform_from ::= perform_label perform_options_opt
+                 |   perform_options
+                 |
                  ;
 
-stmtPerform_thru_opt ::= stmtPerform_thru
-                     |
-                     ;
-                     
-stmtPerform_thru ::= THRU:o ID:i                       {: RESULT = currStmt.addOption(new Option(o, i)); :}
-                 |   stmtPerform_thru rvalue:o         {: RESULT = currStmt.addOption(new Option(o));    :}
-                 ;
-                                      
-stmtPerform_options_opt ::= stmtPerform_options
-                        |
-                        ;
-                        
-stmtPerform_options ::= stmtPerform_option:o                     {: RESULT = currStmt.addOption(o); :}
-                    |   stmtPerform_options stmtPerform_option:o {: RESULT = currStmt.addOption(o); :}
+perform_label ::= var:v {: currStmt.addOption(new Option(v)); :}
+              ;
+
+perform_options_opt ::= perform_options
+                    |
                     ;
-                    
-stmtPerform_option ::= FOREVER:o                    {: RESULT = new Option(o); :}
-                   |   TIMES:o                      {: RESULT = currStmt.mergeOption(new Option(o)); :}
-                   |   UNTIL:o   condition:t        {: RESULT = new Option(o, t); :}
-                   |   VARYING:o perform_tokens:t   {: RESULT = new Option(o, t); :}
-                   |   AFTER:o   perform_tokens:t   {: RESULT = new Option(o, t); :}
-                   |   TEST:o    perform_test:t     {: RESULT = new Option(o);    :}
-//                   |   THRU:o    stmtPerform_from:s               {: RESULT = new Option(o, s); :}
-//                   |   ID:r                      {: RESULT = new Option(r);    :}
-                   ;
+                                  
+perform_options ::= perform_option_first:o                    {: currStmt.addOption(o); :}
+                |   perform_options perform_option_second:o   {: currStmt.addOption(o); :}
+                ;
 
-perform_test ::= BEFORE
-             |   AFTER
+perform_option_first ::= FOREVER:o           {: RESULT = new Option(o); :}
+                     |   TIMES:o             {: currStmt.replaceOption(new Option(o)); :}
+                     |   perform_until:o     {: RESULT = o; :} 
+                     |   perform_thru:o      {: RESULT = o; :}
+                     |   perform_varying:o   {: RESULT = o; :}
+                     |   perform_after:o     {: RESULT = o; :}                         
+                     |   perform_test:o      {: RESULT = o; :}
+                     ;
+                   
+perform_option_second ::= perform_option_first:o  {: RESULT = o;                :}
+                      |   var_int:v               {: RESULT = new Option(v); :}
+                      ;
+
+perform_test ::= TEST:o    BEFORE {: RESULT = new Option(o);    :}
+             |   TEST:o    AFTER  {: RESULT = new Option(o);    :}
+             ;
+
+perform_thru ::= THRU:o id:i                   {: RESULT = new Option(o, i); :}
              ;
              
-perform_tokens ::= perform_token:t   {: RESULT = t; :}
-               |   perform_tokens:v perform_token:t  {: v.add(t); RESULT = v; :}
-               ;
-               
-perform_token ::= rvalue:t {: RESULT = new Tokens(t); :}
-              |   FROM:f  {: RESULT = new Tokens(f); :}
-              |   BY:f    {: RESULT = new Tokens(f); :}
+perform_until ::= UNTIL:o   logical_condition:t        {: RESULT = new Option(o); :}
               ;
+              
+perform_varying ::= VARYING:o var_int FROM var_int BY var_int
+                ; 
+
+perform_after ::= AFTER:o var_int FROM var_int BY var_int
+                ; 
+                                     
 
 // READ
 
 stmtRead     ::=  READ:r  ID:i stmtRead_detail:s     
                   {: StmtCobol stmt = code.fileAccess(TRAP.ACC_READ, r, i);
-                     RESULT = stmt.addTokens(s); 
+                     RESULT = stmt; 
                   :}
              ;
 
@@ -1354,7 +1378,7 @@ stmtSort_procedure ::= INPUT ID
 
 stmtStart ::= START:s ID stmtStart_key    {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 
-stmtStart_key ::= KEY operator_rel rvalue
+stmtStart_key ::= KEY logical_oper rvalue
               |
               ;        
 
@@ -1503,8 +1527,7 @@ stmtWrite_eop ::= EOP:s {: code.setImperative();
                      
 stmtRelease  ::=  RELEASE:s  ID:i eatWrite:e  
                   {: StmtCobol stmt = new StmtCobol(s);
-                     stmt.addSymbol(i);
-                     RESULT = stmt.addTokens(e);
+                     RESULT = stmt.addLValue(i);
                   :}     
              ;
 
@@ -1549,6 +1572,21 @@ stmtException ::= EXCEPTION:s  {: RESULT = new StmtCobol(s); :}
 /* Opciones comunes                                           */
 /**************************************************************/
 
+
+option_corr ::= CORR:o {: RESULT = new Option(o); :}
+            |
+            ;
+
+option_giving_opt ::= option_giving
+                  |
+                  ;                                   
+
+option_giving ::= GIVING:o lvalue_list {: RESULT = new Option(o); :}
+              ;
+             
+option_rounded ::= ROUNDED:r  {: RESULT = new Option(r); :}
+               ;
+               
 optionOverflow_opt ::= optionOverflow
                    |
                    ;
@@ -1567,16 +1605,7 @@ option_size_error ::= SIZE_ERROR:i {: code.setImperative();
                                 :}
                   ;
                   
-option_giving_opt ::= option_giving
-                  |
-                  ;                                   
-
-option_giving ::= GIVING lvalue_list
-              ;
                        
-option_to_multiple ::= TO rvalue_list
-                   ;
-
 option_position ::= BEFORE
                 |   AFTER
                 ;
@@ -1662,20 +1691,25 @@ expr_primary ::= rvalue
 /*****************************************************************/
 /*****************************************************************/
 
-condition ::= cond_tokens
-          |   condition option_and_or cond_tokens
-          ;                
+logical_condition ::= logical_expression                
+                 |    logical_condition option_and_or logical_expression
+                 ;
 
-cond_tokens ::= cond_operando
-            |   cond_tokens cond_operando
-            ;
-            
-cond_operando ::= ident_base
-//              |   function
-              |   constantes
-              |   ALL
-              |   operator_rel
-              ;            
+logical_expression ::= logical_class
+                   |   logical_expression logical_oper logical_class
+                   ;
+
+logical_class ::= logical_unary logical_class_opt
+              ;
+
+logical_class_opt ::= figurative
+                  |
+                  ;
+                                 
+logical_unary ::= expression
+              |   figurative
+              |   LPAR logical_condition RPAR
+              ;                   
 
 ///////////////////////////////////////////////////////
 // WORK
@@ -1697,23 +1731,19 @@ token ::= ID:s                {: RESULT = new Tokens(s); :}
 //      |   FILLER:f            {: RESULT = new Tokens(f); :}
       ;
 
-figurative ::= SPACES:f       {: RESULT = new SymbolExt(f); :}
-           |   ZERO:f         {: RESULT = new SymbolExt(f); :}
-           |   HIGHVAL:f      {: RESULT = new SymbolExt(f); :}
-           |   LOWVAL:f       {: RESULT = new SymbolExt(f); :} 
-           |   QUOTE:f        {: RESULT = new SymbolExt(f); :}
+figurative ::= QUOTE:f        {: RESULT = new SymbolExt(f); :}
            |   POSITIVE:f     {: RESULT = new SymbolExt(f); :}
            |   NEGATIVE:f     {: RESULT = new SymbolExt(f); :}
            |   ALPHABETIC:f   {: RESULT = new SymbolExt(f); :}
            |   ALPHANUMERIC:f {: RESULT = new SymbolExt(f); :}           
            |   NUMERIC:f      {: RESULT = new SymbolExt(f); :}           
            |   KANJI:f        {: RESULT = new SymbolExt(f); :}
+           |   DCBS:f         {: RESULT = new SymbolExt(f); :}           
            |   NULL:f         {: RESULT = new SymbolExt(f); :}
-           |   DFHCICS:i      {: RESULT = new SymbolExt(i); :}
            ;
 
 function ::= FUNCTION:f INTRINSIC:i function_parms {: RESULT = f; :} 
-         |   LENGTH rvalue
+         |   LENGTH:l rvalue {: RESULT = l; :} 
          ;
 
 function_parms ::= LPAR function_parms_lst_opt RPAR
@@ -1736,27 +1766,25 @@ operator_arit ::= OP_ADD
               |   OP_MUL
               |   OP_DIV
               |   OP_POW
+              |   OP_COL
               ;
 
-operator_rel ::= operator_rel_type
+logical_oper ::= logical_not
              ;
              
-operator_rel_type ::= operator_rel_neg
-                  |   operator_rel_pos
-                  ;
+logical_not ::= NOT logical_op
+            |   logical_op
+            ;
              
-operator_rel_neg ::= NOT operator_rel_pos
-                 ;
-                              
-operator_rel_pos ::= REL_GT
-                 |   REL_GE
-                 |   REL_LT
-                 |   REL_LE
-                 |   REL_EQ
-                 |   GREATER
-                 |   LESS  
-                 |   EQUAL   opt_to
-                 ;                                          
+logical_op ::= REL_EQ
+           |   REL_GT
+           |   REL_GE
+           |   REL_LT
+           |   REL_LE
+           |   EQUAL opt_to
+           |   GREATER
+           |   LESS  
+           ;                                          
 
 /*****************************************************************/
 /*****************************************************************/
@@ -1764,29 +1792,44 @@ operator_rel_pos ::= REL_GT
 /*****************************************************************/
 /*****************************************************************/
 
-lvalue ::= ident:i  {: RESULT = i; code.setVarWrite(i); :}  
+lvalue ::= var:i  {: RESULT = i; code.setVarWrite(i); :}  
        ;
        
 lvalue_list ::= lvalue:i                {: RESULT = new SymbolExtList(i); :}
             |   lvalue_list:l lvalue:i  {: RESULT = l.add(i);       :}
             ;
-
-/* Se come todo lo que haya como variables de lectura */                    
+                   
 rvalue_list ::= rvalue 
             |   rvalue_list rvalue
             ;
 
-rvalue ::= id:i          {: RESULT = i;  code.setVarRead(i); :}
+rvalue ::= var:i         {: RESULT = i;  code.setVarRead(i); :}
        |   constantes:c  {: RESULT = c; :}
        |   function:f    {: RESULT = new SymbolExt(f);    :}
+//       |   figurative:f  {: RESULT = f; :}
        ;
 
-id ::= id_base:i  padres {: RESULT = i;    :}
-   ;
+var ::= var_base:i  padres_opt {: RESULT = i;    :}
+    ;
 
-id_base ::= ID:i indice 
+var_base ::= id:i indices_opt {: RESULT = i; :}
         ;
 
+var_int ::= rvalue
+        ;
+             
+id ::= ID:i  {: RESULT = new SymbolExt(i); :} 
+   ;
+
+
+indices_opt ::= indices
+            |
+            ;
+            
+indices ::= indice
+        |   indices indice
+        ;
+        
 indice ::= LPAR indice_lst RPAR
        ;
 
@@ -1796,7 +1839,11 @@ indice_lst ::= indice_item
 
 indice_item ::= expression
             ;
-                                        
+
+padres_opt ::= padres
+           |
+           ;
+                                                   
 padres ::= padre
        |   padres padre
        ;
@@ -1809,11 +1856,16 @@ padre_indicator ::= OF
                 ;
 
 constantes ::= constante:c   {: RESULT = c; :}
-           |   figurative:f  {: f.setId(ZCZSym.FIGURATIVE); RESULT = f; :}
+//           |   figurative:f  {: f.setId(ZCZSym.FIGURATIVE); RESULT = f; :}
            ;
             
 constante  ::= LITERAL:l     {: RESULT = new SymbolExt(l); :}
            |   NUMERO:n      {: RESULT = new SymbolExt(n); :}
+           |   DFHCICS:d     {: RESULT = new SymbolExt(d); :}
+           |   SPACES:f      {: RESULT = new SymbolExt(f); :}
+           |   ZERO:f        {: RESULT = new SymbolExt(f); :}
+           |   HIGHVAL:f     {: RESULT = new SymbolExt(f); :}
+           |   LOWVAL:f      {: RESULT = new SymbolExt(f); :}           
            ;
 
 
@@ -1821,23 +1873,23 @@ constante  ::= LITERAL:l     {: RESULT = new SymbolExt(l); :}
 /***  TERMINOS OPCIONALES                                      ***/
 /*****************************************************************/
 
-opt_all ::= ALL
+opt_all ::= ALL:s {: RESULT = s; :}
         |
         ;
                                                       
-opt_by ::= BY
+opt_by ::= BY:s {: RESULT = s; :}
        |
        ;
 
-opt_in ::= IN
+opt_in ::= IN:s {: RESULT = s; :}
        |
        ;
 
-opt_to ::= TO
+opt_to ::= TO:s {: RESULT = s; :}
        |
        ;
                                                                                    
-opt_key ::= KEY
+opt_key ::= KEY:s {: RESULT = s; :}
         |
         ;
-                 
+

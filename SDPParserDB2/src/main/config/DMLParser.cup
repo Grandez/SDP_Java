@@ -46,8 +46,8 @@ init with {:
 /****************************************************************************/
 /****************************************************************************/
 
-terminal Symbol XX ;
-terminal Symbol ID        ;
+
+terminal Symbol ID           ;
 
 terminal Symbol HOSTVAR1     ;
 terminal Symbol HOSTVAR2     ;
@@ -628,7 +628,6 @@ non terminal insert_fullselect      ;
 non terminal insert_value_lst       ;
 non terminal insert_value           ;
 
-
 non terminal verb_delete            ;
 non terminal del_object             ;
 
@@ -719,7 +718,6 @@ non terminal id              ;
 non terminal id_base         ;
 non terminal id_lst          ;
 non terminal id_qualified    ;
-
 
 /**********************************************************************/
 /**********************************************************************/
@@ -841,18 +839,18 @@ sql_declare ::= DECLARE:v {: stmt.setVerb(v); :}  declare_clauses
             ;
 
 declare_clauses ::= declare_vars  declare_type             
-                |   GLOBAL TEMPORARY TABLE id
+                |   GLOBAL TEMPORARY:t TABLE id {: stmt.appendVerb(t); :}
                 ;
 
 declare_vars ::= id_lst
 //             |   hvar_lst
              ;
                               
-declare_type ::= CURSOR declare_cursor
-             |   STATEMENT
-             |   TABLE eat_full
-             |   VARIABLE eat_opt
-             |   cursor_opc declare_cursor
+declare_type ::= CURSOR:t declare_cursor            {: stmt.appendVerb(t); :}
+             |   STATEMENT:t                        {: stmt.appendVerb(t); :}
+             |   TABLE:t eat_full                   {: stmt.appendVerb(t); :}
+             |   VARIABLE:t eat_opt                 {: stmt.appendVerb(t); :}
+             |   cursor_opc CURSOR:t declare_cursor {: stmt.appendVerb(t); :}
              ;
                
                
@@ -998,7 +996,7 @@ verb_refresh ::= REFRESH:v TABLE {: stmt.setVerb(v); :}  table_name clause_query
 sql_set ::= SET:v {: stmt.setVerb(v); :} sql_set_verbs
         ;
 
-sql_set_verbs ::= CONNECTION:s     {: stmt.appendVerb(s); :}  var_general
+sql_set_verbs ::= CONNECTION:s     {: stmt.appendVerb(s); :} var_general
              |    PATH:s           {: stmt.appendVerb(s); :} EQ set_path
              |    SCHEMA:s         {: stmt.appendVerb(s); :} opt_eq schema_type
              |    CURRENT_SCHEMA:s {: stmt.appendVerb(s); :} opt_eq schema_type
@@ -1288,25 +1286,7 @@ qry_fullselect_clauses_item ::= clause_fetch_first
              
 qry_select ::= clause_with_opt qry_fullselect // qry_select_clauses_opt 
            ;              
-/*
-qry_select_clauses_opt ::= qry_select_clauses
-                       |
-                       ;
-                       
-qry_select_clauses ::= qry_select_clause
-                   |   qry_select_clauses qry_select_clause
-                   ;
 
-qry_select_clause ::= clause_update
-                  |   clause_read_only
-                  |   clause_optimize
-                  |   clause_isolation 
-                  |   clause_queryno
-                  |   clause_skip
-                  |   clause_fetch_first
-                  ;
-*/
-                                                           
 /**********************************************************************/
 /*                  TABLES                                            */
 /**********************************************************************/
@@ -1525,7 +1505,7 @@ clause_schema ::= clause_sqlid
 clause_select ::= clause_select_verb  opt_all_distinct clause_select_data
               ;
 
-clause_select_verb ::= SELECT:v {: stmt.setVerb(v); :}
+clause_select_verb ::= SELECT:v {: stmt.setVerb(v, false); :}
                    ;
 
 clause_select_data ::= MULTIPLY
@@ -1612,8 +1592,8 @@ clause_with_opt ::= clause_with
                 |
                 ;
                  
-clause_with ::= WITH expr_common_table_lst
-              ;
+clause_with ::= WITH:w expr_common_table_lst
+            ;
 
 /*****************************************************************/
 /*                       ORDER                                   */
@@ -2081,7 +2061,6 @@ predicate_search ::= predicate predicate_selectivity
 predicate_selectivity ::= SELECTIVITY var_int
                       |
                       ;
-
                      
 /**********************************************************************/
 /**********************************************************************/

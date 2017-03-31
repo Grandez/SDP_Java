@@ -8,7 +8,7 @@ import com.jgg.sdp.parser.base.stmt.Statement;
 
 import java_cup.runtime.Symbol;
 
-public class StmtCICS  extends Statement {
+public class StmtCICS  extends Statement<StmtCICS> {
 
 		private String fullVerb;
 		private int    qrType;

@@ -164,7 +164,7 @@ public class ZCCCode extends ZCZCode {
 		
 		skipBlock = false;
 		
-		injector.loadTraps(stmt.getBegLine(), stmt.getBegColumn());
+//		injector.loadTraps(stmt.getBegLine(), stmt.getBegColumn());
 
 		imperative = false;
 		return stmt;
@@ -677,6 +677,7 @@ public class ZCCCode extends ZCZCode {
 	 * @param stmt
 	 */
 	private void checkBadStmt(StmtCobol stmt) {
+		/*
 	    String verb = stmt.getVerbName();
 	    if (badStmt.containsKey(verb)) {
 	        module.addBadSentence(verb,
@@ -684,6 +685,7 @@ public class ZCCCode extends ZCZCode {
 	                              stmt.getEndLine(), 
 	                              stmt.getBegColumn());
 	    }
+	    */
 	}
 	
 	public void notSupportedSection(Symbol s) {

@@ -33,7 +33,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
 %xstate STEXEC , EMBEDDED 
 %xstate EMBEDDED_QUOTE , EMBEDDED_DQUOTE
 %xstate CICSSYM
-%xstate FUNCTION
+%xstate ST_FUNCTION
 
 %xstate COMMENT        
 // %xstate COMMENT2 
@@ -792,7 +792,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                       pushState(COPYS);   
                       return symbol(ZCZSym.COPY); 
                     }
-  DCBS              { return symbol(DCBS);      }      
+                          
   DELETE            { return symbol(DELETE);    }
   DISPLAY           { return symbol(ZCCSym.DISPLAY);   }
   DIVIDE            { return symbol(DIVIDE);    }
@@ -875,6 +875,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   CYCLE             { data = true; }
 
   DATA              { data = true; }
+  DCBS              { return symbol(DCBS);       }
   DELIMITED[ ]+BY   { return symbol(DELIMITED);  }
   DELIMITED         { return symbol(DELIMITED);  }
   DELIMITER         { return symbol(DELIMITER);  }
@@ -898,7 +899,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   FOREVER          { return symbol(FOREVER);  }    
   FOR              { data = true;             }  
   FROM             { return symbol(FROM);     }
-  FUNCTION         { pushState(FUNCTION); return symbol(FUNCTION); }
+  FUNCTION         { pushState(ST_FUNCTION); return symbol(FUNCTION); }
  
   GIVING           { return symbol(GIVING);   }
   GREATER          { return symbol(GREATER);  }  
@@ -921,7 +922,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   NEXT             { data = true; }
   NOT              { data = true; }
 
-  OF               { data = true;             }
+  OF               { return symbol(ZCCSym.OF); }
   ON               { data = true;  }     
   OR               { return symbol(OR);        }
   OTHER            { return symbol(OTHER);     }
@@ -1036,7 +1037,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 /******************************************************************************/
 
-<FUNCTION> {
+<ST_FUNCTION> {
   {SPACES}           { /* EAT */ }
   {TABS}             { /* EAT */ }
   ^[\*\/]            { pushState(COMMENT);           }

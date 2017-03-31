@@ -7,7 +7,7 @@ import com.jgg.sdp.parser.base.symbol.*;
 
 import java_cup.runtime.Symbol;
 
-public class StmtCopy extends Statement {
+public class StmtCopy extends Statement<StmtCopy> {
 
 	private boolean ignored = false;
 	

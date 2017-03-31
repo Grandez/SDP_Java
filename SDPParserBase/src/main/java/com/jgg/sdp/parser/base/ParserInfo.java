@@ -237,7 +237,7 @@ public class ParserInfo {
 
        throw new ParseException(MSG.EXCEPTION_SYNTAX, 
                                 info.getMemberName(), 
-                                info.getOffset() + s.left + 1,  
+                                info.getOffset() + s.left,  
                                 col, 
                                 (String) s.value);
    }
@@ -246,7 +246,7 @@ public class ParserInfo {
        Symbol s = (Symbol) token.value;
        throw new ParseException(MSG.EXCEPTION_CUP, 
                                getMemberName(), 
-                               getOffset() + s.left + 1, 
+                               getOffset() + s.left, 
                                s.right + 1, 
                                (String) s.value); 
    }

@@ -57,18 +57,20 @@ public abstract class Statement<T> {
 	
 	public Statement (Symbol s) {
 		verbo = new SymbolExt(s);
+		begLine = s.left;
+		endLine = s.left;
+		begColumn = s.right;
+		endColumn = s.right;
 		id = s.sym;
 	}
 
 	public Statement (Symbol s, int count) {
-		verbo = new SymbolExt(s);
-		id = s.sym;
+		this(s);
         orden = count;		
 	}
 
 	public Statement (Symbol s, SymbolList list) {
-		verbo = new SymbolExt(s);
-		id = s.sym;
+		this(s);
         addRValue(list);		
 	}
 	
@@ -97,16 +99,19 @@ public abstract class Statement<T> {
 	/***     RVALUES / VARIABLES DE LECTURA                      ***/
 	/***************************************************************/
 	
+	@SuppressWarnings("unchecked")
 	public T addRValue(Symbol s) {
 		rvalues.add(new SymbolExt(s));
 		return (T) this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T addRValue(SymbolExt s) {
 		rvalues.add(s);
 		return (T) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public T addRValue(SymbolList list) {
 		for (Symbol s : list.getVarList()) {
 			addRValue(s);
@@ -114,16 +119,19 @@ public abstract class Statement<T> {
 		return (T) this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T addLValue(Symbol s) {
 		lvalues.add(new SymbolExt(s));
 		return (T) this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T addLValue(SymbolExt s) {
 		lvalues.add(s);
 		return (T) this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public T addLValue(SymbolExtList l) {
 		for (Symbol s : l.getVarList()) {
 			addLValue(s);
@@ -131,6 +139,7 @@ public abstract class Statement<T> {
 		return (T) this;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public T addLValue(SymbolList list) {
 		for (Symbol s : list.getVarList()) {
 			addLValue(s);

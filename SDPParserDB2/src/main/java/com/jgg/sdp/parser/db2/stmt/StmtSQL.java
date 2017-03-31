@@ -6,10 +6,10 @@ import com.jgg.sdp.parser.base.stmt.Statement;
 
 import java_cup.runtime.Symbol;
 
-public class StmtSQL extends Statement {
+public class StmtSQL extends Statement<StmtSQL> {
 
 	private HashMap<String, SQLTable> tables    = new HashMap<String, SQLTable>();
-	
+
 	public StmtSQL() {
 		super();
 	}

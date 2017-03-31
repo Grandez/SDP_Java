@@ -215,9 +215,9 @@ terminal Symbol IO         ;
 terminal Symbol KEY        ;
 terminal Symbol LEADING    ;
 terminal Symbol LENGTH     ;
-terminal Symbol LINE     ;
-terminal Symbol LOCK         ;
-terminal Symbol NOT         ;
+terminal Symbol LINE       ;
+terminal Symbol LOCK       ;
+terminal Symbol NOT        ;
 terminal Symbol NO         ;
 terminal Symbol OF         ;
 terminal Symbol OR         ;
@@ -226,7 +226,7 @@ terminal Symbol OUTPUT     ;
 terminal Symbol OVERFLOW   ;
 terminal Symbol PAGE       ;
 terminal Symbol PARAGRAPH  ;
-terminal Symbol POINTER      ;
+terminal Symbol POINTER    ;
 terminal Symbol PROGRAM    ;
 terminal Symbol REFERENCE  ;
 terminal Symbol REPLACING  ;
@@ -287,12 +287,12 @@ non terminal Tokens add_options_opt  ;
 non terminal Tokens add_options   ;
 non terminal Tokens add_option   ;
 
-non terminal Symbol stmtCompute_detail  ;
-non terminal Symbol stmtCompute_rvalues ;
-non terminal Symbol stmtCompute_rvalue  ;
-non terminal Symbol stmtCompute_options_opt ;
-non terminal Symbol stmtCompute_options     ;
-non terminal Symbol stmtCompute_option      ;
+non terminal Symbol compute_lvalue  ;
+non terminal Symbol compute_rvalues ;
+non terminal Symbol compute_rvalue  ;
+non terminal Symbol compute_options_opt ;
+non terminal Symbol compute_options     ;
+non terminal Symbol compute_option      ;
 
 non terminal StmtCobol stmtDivide        ;
 non terminal StmtCobol divide_verb       ;
@@ -301,15 +301,16 @@ non terminal Option    divide_options_opt;
 non terminal Option    divide_options    ;
 non terminal Option    divide_option     ;
 
-non terminal Tokens stmtIf_detail     ;
-
 non terminal Tokens stmtInitialize_detail        ;
 non terminal Tokens stmtInitialize_replacing_opt ;
 non terminal Tokens stmtInitialize_resto         ;
 non terminal Tokens stmtInitialize_tokens        ;
 
-non terminal Tokens stmtMultiply_detail ;
-non terminal Tokens stmtMultiply_by     ;
+non terminal Tokens stmtMultiply_detail  ;
+non terminal Tokens stmtMultiply_by      ;
+non terminal        multiply_options_opt ;
+non terminal        multiply_options     ;
+non terminal        multiply_option      ;
                    
 non terminal StmtCobol stmtRead            ;                   
 non terminal Tokens    stmtRead_detail     ;
@@ -383,8 +384,6 @@ non terminal        stmtWrite_eop      ;
 non terminal Symbol option_and_or       ;
 non terminal        option_position     ;
 non terminal        option_order        ;
-
-non terminal Tokens option_giving_opt  ;
 
                    
 non terminal Tokens eatClose   , eatCloseLst , eatCloseItem ;
@@ -468,9 +467,9 @@ non terminal           stmtGoto_procs         ;
 non terminal           stmtGoto_depending_opt ;
 non terminal           stmtGoto_depending     ;
  
-non terminal StmtCobol stmtRewrite    ;
-non terminal StmtCobol stmtString     ;
-non terminal StmtCobol stmtMove       ;
+non terminal StmtCobol stmtRewrite      ;
+non terminal StmtCobol stmtString       ;
+non terminal StmtCobol stmtMove         ;
 non terminal StmtCobol stmtMultiply   ;
 non terminal StmtCobol stmtAccept     ;
 non terminal StmtCobol stmtUnlock     ;
@@ -511,8 +510,6 @@ non terminal StmtCobol stmtSet    ;
 non terminal StmtCobol optionOverflow_opt ;
 non terminal StmtCobol optionOverflow     ;
 
-non terminal StmtCobol option_size_error_opt    ;
-non terminal StmtCobol option_size_error    ;
 non terminal StmtCobol stmtAtEnd;
 non terminal StmtCobol stmtInvalid;
 non terminal StmtCobol stmtException;
@@ -547,8 +544,11 @@ non terminal StmtCobol stmtOpen_mode     ;
 
 non terminal Tokens closeFile , closeLstFiles ;
 
-non terminal           expression         ;
+non terminal SymbolExt expression         ;
 non terminal           expression_arit    ;
+non terminal           expr_colon         ;
+non terminal           expr_colon_opt     ;
+non terminal           expr_colon_value   ;
 non terminal           expr_operand       ;
 non terminal           expr_primary       ;
 
@@ -560,6 +560,10 @@ non terminal           logical_expression ;
 non terminal           logical_class      ;
 non terminal           logical_class_opt  ;
 non terminal           logical_unary      ;
+non terminal           logical_figurative ;
+non terminal           logical_rel        ;
+non terminal           logical_expr       ;
+non terminal           logical_operand    ;
 
 non terminal           operator_arit      ;
 
@@ -578,18 +582,16 @@ non terminal SymbolExt     rvalue      ;
 non terminal SymbolExt     figurative  ;
 non terminal SymbolExt     constantes  ;
 non terminal SymbolExt     constante   ;
-non terminal SymbolExt     ident       ;
 
 non terminal SymbolExt     lvalue      ; 
 non terminal SymbolExtList lvalue_list ; 
 non terminal SymbolExtList rvalue_list ;
 
-non terminal SymbolExt     var                     ;
-non terminal SymbolExt     var_base                ;
-non terminal SymbolExt     var_int                 ;
+non terminal SymbolExt     variable               ;
+non terminal SymbolExt     var_base               ;
+non terminal SymbolExt     var_int                ;
 
 non terminal SymbolExt     id                     ;
-non terminal SymbolExt     id_base                ;
 non terminal               literal                ;
 non terminal               indices_opt            ;
 non terminal               indices                ;
@@ -597,15 +599,19 @@ non terminal               indice                 ;
 non terminal               indice_lst             ;
 non terminal               indice_item            ;
 non terminal SymbolExt     padres_opt             ;
-non terminal               padre_indicator        ;
+// non terminal               padre_indicator        ;
 non terminal SymbolExt     padres                 ;
 non terminal SymbolExt     padre                  ;
 
+non terminal Option rvalue_options_opt  ;
+non terminal Option rvalue_options      ;
+non terminal Option rvalue_option       ;
+non terminal Option option_all          ;
+non terminal Option option_corr         ; 
+non terminal Option option_giving       ;
+non terminal Option option_rounded      ;
 
-
-non terminal Option     option_corr     ; 
-non terminal Option     option_giving   ;
-non terminal Option     option_rounded  ;
+non terminal Option option_size_error   ;
 
 /***  WORK  ***/
 
@@ -788,7 +794,7 @@ stmtFlujo ::= stmtPerform:s     {: RESULT = s; :}
 /* Sentencias de manipulacion de datos */
 
 stmtDatos ::= stmtDatos1:s  optTokens:t {: RESULT = s; :}
-          |   stmtDatos2:s              {: RESULT = s;              :}
+          |   stmtDatos2:s              {: RESULT = s; :}
           ;
 
 stmtDatos1 ::= stmtTransform:s      {: RESULT = s; :}
@@ -868,9 +874,10 @@ stmtAccept ::=  ACCEPT:s lvalue stmtAccept_detail    {: RESULT = new StmtCobol(s
 stmtAcceptOpt ::= ID
               |
               ;
-moduloCall      ::= ident:i  {: RESULT = i; :}
-                |   LITERAL:l {: RESULT = l; :}
-                ;
+
+moduloCall ::= variable:i  {: RESULT = i; :}
+           |   LITERAL:l {: RESULT = l; :}
+           ;
                 
 // EXIT PERFORM crea un conflicto. por eso se controla EXIT PERFORM
 // en el analizador lexico
@@ -935,7 +942,7 @@ stmtAccept_detail ::= FROM rvalue stmtAcceptOpt
 
 // ADD
 
-stmtAdd ::=  add_verb option_corr rvalue_list TO lvalue_list add_options_opt {: RESULT = currStmt; :}     
+stmtAdd ::=  add_verb rvalue_options_opt rvalue_list TO lvalue_list add_options_opt {: RESULT = currStmt; :}     
         ;
              
 add_verb ::= ADD:s  {: currStmt = new StmtCobol(s); :}
@@ -951,6 +958,7 @@ add_options ::= add_option
                 
 add_option ::= option_giving
            |   option_rounded
+           |   option_corr
            ;
 
 // CALL
@@ -992,48 +1000,48 @@ stmtCancel ::= CANCEL:s rvalue  {: RESULT = new StmtCobol(s, code.getStmts()); :
 
 // COMPUTE 
 
-stmtCompute  ::=  COMPUTE:s stmtCompute_detail:i
+stmtCompute  ::=  COMPUTE:s compute_lvalue REL_EQ compute_rvalues compute_options_opt
                    {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
 //                      stmt.addSymbol(i);
                       RESULT = stmt; 
                    :}     
               ;
 
-stmtCompute_detail ::= lvalue:i REL_EQ stmtCompute_rvalues stmtCompute_options_opt {: RESULT = i; :} 
-                   ;
+compute_lvalue ::= lvalue:i rvalue_options_opt
+               ;
 
-stmtCompute_rvalues ::= stmtCompute_rvalue
-                    |   stmtCompute_rvalues stmtCompute_rvalue
-                    ;                   
+compute_rvalues ::= compute_rvalue
+                |   compute_rvalues compute_rvalue
+                ;                   
                    
-stmtCompute_rvalue ::= expression
-                   ;
+compute_rvalue ::= expression
+               ;
 
-stmtCompute_options_opt ::= stmtCompute_options
-                        |
-                        ;
-                        
-stmtCompute_options ::= stmtCompute_option
-                    |   stmtCompute_options stmtCompute_option
+compute_options_opt ::= compute_options
+                    |
                     ;
+                        
+compute_options ::= compute_option
+                |   compute_options compute_option
+                ;
 
-stmtCompute_option ::= option_size_error
+compute_option ::= option_size_error
                    ;
 // DISPLAY
 
-stmtDisplay ::= DISPLAY:s   rvalue_list {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtDisplay ::= DISPLAY:s rvalue_list {: RESULT = new StmtCobol(s, code.getStmts()); :}     
             ;
                                                                                               
 // DIVIDE
 
-stmtDivide ::= divide_verb rvalue divide_mode lvalue_list divide_options_opt      
+stmtDivide ::= divide_verb rvalue divide_mode divide_options_opt      
            ;
 
 divide_verb ::= DIVIDE:s {: RESULT = new StmtCobol(s, currStmt); :}
             ;
 
-divide_mode ::= INTO
-            |   BY
+divide_mode ::= INTO lvalue_list
+            |   BY   rvalue_list
             ;
 
 divide_options_opt ::= divide_options
@@ -1103,13 +1111,11 @@ stmtGoto_depending ::= DEPENDING rvalue
                                                           
 // IF
 
-stmtIf ::= IF:s stmtIf_detail {: StmtCobol stmt = new StmtCobol(s, code.getStmts());      
+stmtIf ::= IF:s logical_condition {: StmtCobol stmt = new StmtCobol(s, code.getStmts());      
                                  RESULT = code.processIf(stmt);
                               :}
        ;
 
-stmtIf_detail ::= logical_condition
-              ;
               
 // INITIALIZE
 
@@ -1127,7 +1133,7 @@ stmtInitialize_resto ::= stmtInitialize_tokens
                      |   stmtInitialize_resto stmtInitialize_tokens
                      ;                                       
 
-stmtInitialize_tokens ::= ident
+stmtInitialize_tokens ::= variable
                       |   constantes
                       |   BY
                       |   ALL
@@ -1159,7 +1165,7 @@ stmtInspect_token ::= ALL
 
 // MOVE
 
-stmtMove ::= MOVE:s opt_all rvalue:r TO lvalue_list:l      
+stmtMove ::= MOVE:s rvalue_options_opt expression:r TO lvalue_list:l      
                    {: code.checkCall(l, r);
                       StmtCobol stmt = new StmtCobol(s, code.getStmts());
                       stmt.addRValue(r);
@@ -1168,19 +1174,29 @@ stmtMove ::= MOVE:s opt_all rvalue:r TO lvalue_list:l
                    :}     
               ;
 
-                
 // MULTIPLY
 
 stmtMultiply ::=  MULTIPLY:s stmtMultiply_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}
              ;
              
-stmtMultiply_detail ::= stmtMultiply_by option_giving_opt option_size_error_opt
+stmtMultiply_detail ::= stmtMultiply_by multiply_options_opt
                    ;
                    
 stmtMultiply_by ::= rvalue BY rvalue
                 ;
 
-
+multiply_options_opt ::= multiply_options
+                     |
+                     ;
+                     
+multiply_options ::= multiply_option
+                 |   multiply_options multiply_option
+                 ;
+                 
+multiply_option ::= option_giving
+                |   option_size_error
+                ;
+                
 // OPEN
 
 stmtOpen ::=  OPEN:o stmtOpen_list:l 
@@ -1244,7 +1260,7 @@ stmtPerform_from ::= perform_label perform_options_opt
                  |
                  ;
 
-perform_label ::= var:v {: currStmt.addOption(new Option(v)); :}
+perform_label ::= variable:v {: currStmt.addOption(new Option(v)); :}
               ;
 
 perform_options_opt ::= perform_options
@@ -1572,19 +1588,29 @@ stmtException ::= EXCEPTION:s  {: RESULT = new StmtCobol(s); :}
 /* Opciones comunes                                           */
 /**************************************************************/
 
+rvalue_options_opt ::= rvalue_options
+                   |
+                   ;
+
+rvalue_options ::= rvalue_option
+               |   rvalue_options rvalue_option    
+               ;
+               
+rvalue_options ::= option_all
+               |   option_corr
+               |   option_rounded
+               ;
+                              
+option_all ::= ALL:o {: RESULT = new Option(o); :}
+           ;
 
 option_corr ::= CORR:o {: RESULT = new Option(o); :}
-            |
             ;
-
-option_giving_opt ::= option_giving
-                  |
-                  ;                                   
 
 option_giving ::= GIVING:o lvalue_list {: RESULT = new Option(o); :}
               ;
              
-option_rounded ::= ROUNDED:r  {: RESULT = new Option(r); :}
+option_rounded ::= ROUNDED:r  {: currStmt.addOption(new Option(r)); :}
                ;
                
 optionOverflow_opt ::= optionOverflow
@@ -1596,12 +1622,8 @@ optionOverflow  ::= OVERFLOW:i  {: code.setImperative();
                                 :}
                 ;
                 
-option_size_error_opt ::= option_size_error
-                      |
-                      ;
-                      
 option_size_error ::= SIZE_ERROR:i {: code.setImperative(); 
-                                   RESULT = new StmtCobol(i); 
+                                   RESULT = new Option(i); 
                                 :}
                   ;
                   
@@ -1678,13 +1700,25 @@ expression_arit ::= expr_operand
                 |   expression_arit operator_arit expr_operand
                 ;
 
+expr_colon ::= expression expr_colon_opt
+           ;
+           
+expr_colon_opt ::= OP_COL expr_colon_value
+               |
+               ;
+
+expr_colon_value ::= expr_primary
+                 |
+                 ;
+                                           
 expr_operand ::= expr_primary
-             |   LPAR expression_arit RPAR
+             |   LPAR expr_colon RPAR
              ;
 
 expr_primary ::= rvalue
              ;
-                         
+
+                                        
 /*****************************************************************/
 /*****************************************************************/
 /***              EXPRESION LOGICA                             ***/
@@ -1706,10 +1740,41 @@ logical_class_opt ::= figurative
                   |
                   ;
                                  
-logical_unary ::= expression
+logical_unary ::= logical_expr
               |   figurative
               |   LPAR logical_condition RPAR
               ;                   
+
+logical_expr ::= logical_operand
+             |   logical_expr operator_arit logical_operand
+             ;
+
+logical_operand ::= expr_primary
+            ;
+                        
+logical_oper ::= logical_not
+             ;
+             
+logical_not ::= NOT logical_op
+            |   logical_op
+            ;
+             
+logical_op ::= REL_EQ
+           |   REL_GT
+           |   REL_GE
+           |   REL_LT
+           |   REL_LE
+           |   logical_rel
+           ;
+
+logical_rel ::= logical_figurative 
+            |   logical_rel OR logical_figurative
+            ;
+            
+logical_figurative ::= EQUAL opt_to
+                   |   GREATER
+                   |   LESS 
+                   ;                                          
 
 ///////////////////////////////////////////////////////
 // WORK
@@ -1743,7 +1808,7 @@ figurative ::= QUOTE:f        {: RESULT = new SymbolExt(f); :}
            ;
 
 function ::= FUNCTION:f INTRINSIC:i function_parms {: RESULT = f; :} 
-         |   LENGTH:l rvalue {: RESULT = l; :} 
+         |   LENGTH:l OF rvalue {: RESULT = l; :} 
          ;
 
 function_parms ::= LPAR function_parms_lst_opt RPAR
@@ -1757,7 +1822,7 @@ function_parms_lst ::= function_parm
                    |   function_parms_lst COMMA function_parm
                    ;
                    
-function_parm ::= expression
+function_parm ::= expr_colon
               |   literal
               ;
 
@@ -1766,25 +1831,7 @@ operator_arit ::= OP_ADD
               |   OP_MUL
               |   OP_DIV
               |   OP_POW
-              |   OP_COL
               ;
-
-logical_oper ::= logical_not
-             ;
-             
-logical_not ::= NOT logical_op
-            |   logical_op
-            ;
-             
-logical_op ::= REL_EQ
-           |   REL_GT
-           |   REL_GE
-           |   REL_LT
-           |   REL_LE
-           |   EQUAL opt_to
-           |   GREATER
-           |   LESS  
-           ;                                          
 
 /*****************************************************************/
 /*****************************************************************/
@@ -1792,7 +1839,7 @@ logical_op ::= REL_EQ
 /*****************************************************************/
 /*****************************************************************/
 
-lvalue ::= var:i  {: RESULT = i; code.setVarWrite(i); :}  
+lvalue ::= variable:i  {: RESULT = i; code.setVarWrite(i); :}  
        ;
        
 lvalue_list ::= lvalue:i                {: RESULT = new SymbolExtList(i); :}
@@ -1803,14 +1850,14 @@ rvalue_list ::= rvalue
             |   rvalue_list rvalue
             ;
 
-rvalue ::= var:i         {: RESULT = i;  code.setVarRead(i); :}
+rvalue ::= variable:i         {: RESULT = i;  code.setVarRead(i); :}
        |   constantes:c  {: RESULT = c; :}
        |   function:f    {: RESULT = new SymbolExt(f);    :}
 //       |   figurative:f  {: RESULT = f; :}
        ;
 
-var ::= var_base:i  padres_opt {: RESULT = i;    :}
-    ;
+variable ::= var_base:i  padres_opt {: RESULT = i;    :}
+         ;
 
 var_base ::= id:i indices_opt {: RESULT = i; :}
         ;
@@ -1837,9 +1884,9 @@ indice_lst ::= indice_item
            |   indice_lst COMMA indice_item
            ;
 
-indice_item ::= expression
+indice_item ::= expr_colon 
             ;
-
+                                 
 padres_opt ::= padres
            |
            ;
@@ -1848,13 +1895,10 @@ padres ::= padre
        |   padres padre
        ;
 
-padre ::= padre_indicator id_base
+padre ::= IN var_base
+      |   OF var_base
       ;
              
-padre_indicator ::= OF
-                |   IN
-                ;
-
 constantes ::= constante:c   {: RESULT = c; :}
 //           |   figurative:f  {: f.setId(ZCZSym.FIGURATIVE); RESULT = f; :}
            ;

@@ -14,7 +14,7 @@
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
-    <version>4.0</version>
+    <version>5.0</version>
     <relativePath>../SDP</relativePath>
   </parent>
 
@@ -63,11 +63,11 @@
         <version>${log4j.version}</version>
     </dependency>
     
-    <dependency>
-       <groupId>org.slf4j</groupId>
-       <artifactId>slf4j-log4j12</artifactId>
-       <version>${slf4j.version}</version>
-    </dependency>
+<!--     <dependency> -->
+<!--        <groupId>org.slf4j</groupId> -->
+<!--        <artifactId>slf4j-log4j12</artifactId> -->
+<!--        <version>${slf4j.version}</version> -->
+<!--     </dependency> -->
     
     <dependency>
         <groupId>org.javassist</groupId>
@@ -97,6 +97,37 @@
          </execution>
       </executions>
    </plugin>
-</plugins>
-</build>
+   
+   <!-- La copia al directorio destino -->
+   <plugin>
+       <groupId>org.apache.maven.plugins</groupId>
+             <artifactId>maven-dependency-plugin</artifactId>
+             <version>2.10</version>
+          
+             <executions>
+                 <execution>
+                    <id>copy-installed</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                       <artifactItems>
+                           <artifactItem>
+                              <groupId>${project.groupId}</groupId>
+                              <artifactId>${project.artifactId}</artifactId>
+                              <version>${project.version}</version>
+                              <type>${project.packaging}</type>
+                              <destFileName>SDPCore.jar</destFileName>
+                           </artifactItem>
+                       </artifactItems>
+               
+                       <outputDirectory>${sdp.lib}</outputDirectory>
+                   </configuration>
+                 </execution>
+             </executions>
+          </plugin>
+   
+      </plugins>
+   </build>
 </project>

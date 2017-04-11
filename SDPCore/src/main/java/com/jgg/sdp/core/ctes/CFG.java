@@ -19,9 +19,12 @@ public class CFG {
     public static final String MAX_VERSIONS   = "sdp.max.versions";	
 	
 	public static final String SDP_LANG       = "sdp.lang";
-
+	public static final String AUTO_APP       = "sdp.auto.application";
+	public static final String APP_BASE       = "sdp.application.base";
+	
 	public static final String OUTPUT_ISOLATED = "sdp.output.isolated";
-    public static final String SQL_INCLUDE     = "sql.extract.include";
+    
+	public static final String SQL_INCLUDE     = "sql.extract.include";
 	
 	public static final String CFG_DEFAULT  = "SDPDefault.properties";
 	public static final String CFG_SDP      = "sdp.properties";

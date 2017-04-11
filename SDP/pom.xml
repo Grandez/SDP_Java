@@ -5,7 +5,7 @@
 
   <groupId>com.jgg</groupId>
   <artifactId>sdp</artifactId>
-  <version>4.0</version>
+  <version>5.0</version>
   <packaging>pom</packaging>
   <name>Serendipity</name>
   
@@ -16,13 +16,13 @@
         
     <base>sdp</base>
     
-    <sdp.version>4.0</sdp.version>
+    <sdp.version>5.0</sdp.version>
     <sdp.lib>P:\SDP\Lib</sdp.lib>
     
     <mq.dir>E:\Program Files\IBM\WebSphere MQ\java\lib</mq.dir>
     
     <junit.version>[3.8.2,)</junit.version>
-    <spring.version>[4.0.3.RELEASE,)</spring.version>
+    <spring.version>[4.3.7.RELEASE,)</spring.version>
     <spring.security.version>[4.0.2.RELEASE,)</spring.security.version>
     <hibernate.version>4.3.5.Final</hibernate.version>
     <javassist.version>3.19.0-GA</javassist.version>
@@ -45,116 +45,39 @@
   </dependencies>
   
     <modules>
-        <module>../parsers</module>
-    	<module>../SDPCollector</module>
-    	<module>../SDPCore</module>
-    	<module>../SDPDbMySQL</module>
-    	<module>../SDPDbServices</module>
-    	<module>../SDPModule</module>
-    	<module>../SDPParser</module>
+      <module>../parsers</module>
+      <module>../SDPCollector</module>
+      <module>../SDPCore</module>
+      <module>../SDPDbMySQL</module>
+      <module>../SDPDbServices</module>
+      <module>../SDPModule</module>
 
-     	<module>../SDPBatch</module>
-        <module>../SDPTS</module>     	
-        <module>../SDPCall</module>
-        <module>../SDPRules</module>
-        <module>../SDPSQL</module>
+      <module>../SDPBatch</module>
+<!--       <module>../SDPTS</module>     	 -->
+<!--       <module>../SDPCall</module> -->
+      <module>../SDPRules</module>
+<!--       <module>../SDPSQL</module> -->
         
-        <module>../SDPParserBase</module>
-        <module>../SDPParserCics</module>
-        <module>../SDPParserCobol</module>
-        <module>../SDPParserCopy</module>
-        <module>../SDPParserDB2</module>
+      <module>../SDPParserBase</module>
+      <module>../SDPParserCics</module>
+      <module>../SDPParserCobol</module>
+      <module>../SDPParserCopy</module>
+      <module>../SDPParserDB2</module>
+      <module>../SDPParser</module>
 
-        <module>../SDPAnalyzer</module>
-        <module>../SDPCalc</module>
-        <module>../SDPTools</module>
+      <module>../SDPAnalyzer</module>
+      <module>../SDPCalc</module>
+      <module>../SDPTools</module>
 
-        <module>../SDPLite</module>
+      <module>../SDPLite</module>
 <!--         <module>../SDPCics</module>      -->
-        <module>../SDPExcel</module>        
+      <module>../SDPExcel</module>        
         
+<!--     <module>SDPWebAdm</module> -->
+<!--     <module>SDPWebBase</module> -->
+<!--     <module>SDPWebClient</module> -->
+<!--     <module>SDPWebManager</module> -->
 
-  </modules>
+    </modules>
     
-<!--     <pluginRepositories> -->
-<!--         <pluginRepository> -->
-<!--             <id>onejar-maven-plugin.googlecode.com</id> -->
-<!--             <url>http://onejar-maven-plugin.googlecode.com/svn/mavenrepo</url> -->
-<!--         </pluginRepository> -->
-<!--     </pluginRepositories> -->
-<!-- 
-   <build>
-     <plugins>
-         <plugin>
-            <groupId>org.maven.apache.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <version>2.10.3</version>
-            <configuration>
-            </configuration>
-            <executions>
-                <execution>
-                   <id>aggregate</id>
-                   <phase>site</phase>
-                   <goals>
-                       <goal>aggregate-jar</goal>
-                   </goals>
-                   <configuration>
-                      <links>
-                         <link>http://docs.oracle.com/javase/6/docs/api</link>
-                         <link>http://static.netty.io/3.5/api</link>
-                         <link>http://google-guice.googlecode.com/git/javadoc</link>
-                         <link>http://docs.guava-libraries.googlecode.com/git-history/release/javadoc</link>
-                         <link>http://fasterxml.github.com/jackson-databind/javadoc/2.0.4</link>
-                         <link>https://developers.google.com/protocol-buffers/docs/reference/java</link>
-                      </links>
-                      <bootclasspath>${sun.boot.class.path}</bootclasspath>
-                      <additionalJOption>-J-Xmx1024m</additionalJOption>
-                      <detectJavaApiLink>true</detectJavaApiLink>
-                      <detectLinks>true</detectLinks>
-                      <excludePackageNames>*.testing.*</excludePackageNames>
-                  </configuration>
-              </execution>
-          </executions>
-     </plugin>
-   </plugins>
-</build>    
-
-<reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.10.3</version>
-        <configuration>
-           Default configuration for all reports 
-          ...
-        </configuration>
-        <reportSets>
-          <reportSet>
-            <id>non-aggregate</id>
-            <configuration>
-               Specific configuration for the non aggregate report 
-              ...
-            </configuration>
-            <reports>
-              <report>javadoc</report>
-            </reports>
-          </reportSet>
-          <reportSet>
-            <id>aggregate</id>
-            <configuration>
-              Specific configuration for the aggregate report 
-              ...
-            </configuration>
-            <reports>
-              <report>aggregate</report>
-            </reports>
-          </reportSet>
-          ...
-        </reportSets>
-      </plugin>
-      ...
-    </plugins>
-  </reporting>
-  -->
 </project>

@@ -5,7 +5,7 @@ public enum Nodes {
     BEGIN, END,       // subgrafo virtual
     NODE,             // Nodo real
     BLOCK,            // Bucle
-    IF, EVALUATE,
+    IF, EVALUATE, SEARCH,
     ELSE, WHEN, OTHER, // Ramas
     CHOICE, BRANCH,
     PERFORM, CALL_STATIC, CALL_DYNAMIC;
@@ -14,7 +14,8 @@ public enum Nodes {
 		switch(type) {
 		   case PERFORM: return NODE;
 		   case IF:
-		   case EVALUATE: return CHOICE;
+		   case EVALUATE: 
+		   case SEARCH:  return CHOICE;
 		   case ELSE:   
 		   case WHEN:   return BRANCH;
 		   default: return type;

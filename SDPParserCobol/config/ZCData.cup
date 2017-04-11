@@ -301,6 +301,7 @@ non terminal Symbol init_val_num         ;
 non terminal Variable variables     ;
 non terminal Variable variable      ;
 non terminal Variable var_def       ;
+non terminal          var_end       ;
 non terminal Var      var_data      ;
 non terminal Var      var_data_def  ;
 non terminal          var_usage     ;
@@ -498,18 +499,8 @@ open_string_opt ::= open_string:o {: RESULT = o;    :}
                 ;
                 
 open_string ::= nombre:s       {: RESULT = new SymbolList(s); :}
-/*
-StringBuilder sb = new StringBuilder();
-                                  sb.append((String) s.value);
-                                  RESULT = sb;
-                               :}
-*/  
             |   open_string:a nombre:s {: RESULT = a.add(s); :}
-/*             
-                                   {: a.append(" "); a.append((String) s.value);
-                                          RESULT= a;
-                                       :}
-*/            ;
+            ;
 
 nombre ::= ID:i      {: RESULT = i; :}
        |   NUMERO:i  {: RESULT = i; :}
@@ -871,7 +862,7 @@ variables ::= variable
           |   variables variable 
           ;
            
-variable ::= var_def:v var_data_def ENDD  {: RESULT = module.addVariable(v); :} 
+variable ::= var_def:v var_data_def ENDD   {: RESULT = module.addVariable(v); :} 
          |   SQLDATA 
          |   END_SQL endp_opt
          ;
@@ -899,11 +890,10 @@ nivel ::= NUMERO:n        {: RESULT = n; :}
 var_data_def ::= var_data
              |
              ;
-                        
+
 var_data   ::= var_attr
            |   var_data var_attr
            ;
-
 var_attr   ::= var_redefines
            |   var_renames
            |   var_picture
@@ -915,7 +905,6 @@ var_attr   ::= var_redefines
            |   var_usage
            ;
 
-                          
 var_redefines ::= REDEFINES var_name:i  {: module.setRedefines(currVar, (String)i.value); :}
               ;
 

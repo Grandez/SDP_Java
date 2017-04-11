@@ -10,6 +10,7 @@ import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.jgg.sdp.parser.*;
+import com.jgg.sdp.parser.base.ParseException;
 import com.jgg.sdp.parser.base.ParserInfo;
 
 public class Analyzer {
@@ -84,19 +85,23 @@ public class Analyzer {
 				unit.setStatus(CDG.STATUS_NOT_SUPPORTED);
 			    msg.exception(s);
 			    if (maxRC < RC.NOT_SUP) maxRC = RC.NOT_SUP;
+            } catch (ParseException s) {
+                if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
+                msg.exception(s);
+                unit.setStatus(CDG.STATUS_SDP_ERROR);
+                if (maxRC < RC.SEVERE) maxRC = RC.SEVERE;
 			} catch (SDPException s) {
 				if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
 				unit.setStatus(CDG.STATUS_SDP_ERROR);
 			    msg.exception(s);
 			    s.printStackTrace();
-			    System.exit(16);
-			    if (maxRC < RC.WARNING) maxRC = RC.WARNING;
+			    if (maxRC < RC.ERROR) maxRC = RC.ERROR;
 			} catch (Exception e) {
 				if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
 				unit.setStatus(CDG.STATUS_ERROR);
                 msg.exception(new SDPException(e, MSG.EXCEPTION_PARSER, module.getName()));
                 e.printStackTrace();
-                if (maxRC < RC.ERROR) maxRC = RC.ERROR;
+                if (maxRC < RC.FATAL) maxRC = RC.FATAL;
 			}
 			finally {
 //				storeCompileUnit(unit);

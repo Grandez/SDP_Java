@@ -4,7 +4,6 @@
 
   <groupId>com.jgg.sdp</groupId>
   <artifactId>SDPModule</artifactId>
-  <version>4.0</version>
   <packaging>jar</packaging>
 
   <name>Serendipity Module</name>
@@ -13,7 +12,7 @@
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
-    <version>4.0</version>
+    <version>5.0</version>
     <relativePath>../SDP</relativePath>
   </parent>
 
@@ -31,36 +30,48 @@
        <version>${sdp.version}</version>
      </dependency>
 
-     <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
-    </dependency>
+<!--      <dependency> -->
+<!--         <groupId>log4j</groupId> -->
+<!--         <artifactId>log4j</artifactId> -->
+<!--         <version>${log4j.version}</version> -->
+<!--     </dependency> -->
     
   </dependencies>
 
   <build>
-      <plugins>
+     <plugins>
+          <!-- La copia al directorio destino -->
           <plugin>
              <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-jar-plugin</artifactId>
-             <version>2.6</version>
-             
+             <artifactId>maven-dependency-plugin</artifactId>
+             <version>2.10</version>
+          
              <executions>
-                <execution>
-                   <phase>package</phase>
-                   <goals>
-                      <goal>jar</goal>
-                   </goals>
-                   <configuration>
-                      <finalName>${project.artifactId}</finalName>
+                 <execution>
+                    <id>copy-installed</id>
+                    <phase>install</phase>
+                    <goals>
+                        <goal>copy</goal>
+                    </goals>
+                    <configuration>
+                       <artifactItems>
+                           <artifactItem>
+                              <groupId>${project.groupId}</groupId>
+                              <artifactId>${project.artifactId}</artifactId>
+                              <version>${project.version}</version>
+                              <type>${project.packaging}</type>
+                              <destFileName>SDPModule.jar</destFileName>
+                           </artifactItem>
+                       </artifactItems>
+               
+                       <outputDirectory>${sdp.lib}</outputDirectory>
                    </configuration>
-               </execution>
-            </executions>
-         </plugin>
+                 </execution>
+             </executions>
+          </plugin>
+            
+    </plugins>
 
-</plugins>
-
-</build>
+  </build>
 
 </project>

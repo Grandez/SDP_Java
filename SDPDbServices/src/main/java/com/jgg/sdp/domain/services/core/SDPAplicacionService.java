@@ -53,11 +53,18 @@ public class SDPAplicacionService extends AbstractService<SDPAplicacion> {
 	public void updateVolumen(String appName) {
 	    nativeUpdate(SDPAplicacion.updVolumen, appName);	    
 	}
-	
+
+	public int getNextApplicationId() {
+		Object[] data = getRecordAbstract(SDPAplicacion.maxAppId);
+        return ((Integer) data[0]) + 1;
+		
+	}
 	private void cargaHijos(Set<Long> datos, Long id) {
 	    for (Object item : nativeQueryItem(SDPAplicacion.listaHijos, id)) {
 	        datos.add(((BigInteger) item).longValue());
 	        cargaHijos(datos, ((BigInteger) item).longValue());
 	    }
 	}
+	
+
 }

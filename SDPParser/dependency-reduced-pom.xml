@@ -3,7 +3,7 @@
   <parent>
     <artifactId>sdp</artifactId>
     <groupId>com.jgg</groupId>
-    <version>4.0</version>
+    <version>5.0</version>
     <relativePath>../SDP/pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>

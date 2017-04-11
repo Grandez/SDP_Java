@@ -36,19 +36,18 @@ public class SYS {
 	// Afecta a SDPTRAPx
 	public static final int    MAX_PARR_NAME = 48;
 
-    // Id de la aplicacion web
-    public static final long APPL_WEB     =  0;
 
+
+	public static final long APPL_GENERAL     =  1;  // Id de la aplicacion general
+	public static final long APPL_AUTO        =  2;  // Id del area que agrupa las aplicaciones automaticas
+	public static final long APPL_NOT_MONITOR =  3;  // Id de la aplicacion para modulos no monitorizados
+    public static final long APPL_WEB         =  5;  // Id de la aplicacion web
+    
     // Identificador de los modulos web
     public static final long MOD_USER     =  1;
     public static final long MOD_CONFIG   =  2;
 	
-	// Id de la aplicacion general
-	public static final long APPL_GENERAL     =  1;
 	
-	// Id de la aplicacion para modulos no monitorizados
-	public static final long APPL_NOT_MONITOR = 11;
-
 	// Roles
 	public static final int ROLE_ADMIN = 1;
 	public static final int ROLE_USER  = 0;

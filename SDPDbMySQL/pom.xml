@@ -6,7 +6,6 @@
 
   <groupId>com.jgg.sdp</groupId>
   <artifactId>SDPDbMySQL</artifactId>
-<!--   <version>${sdp.version}</version> -->
   <packaging>jar</packaging>
 
   <name>Serendipity Persistence Layer for MySQL</name>
@@ -14,7 +13,7 @@
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
-    <version>4.0</version>
+    <version>5.0</version>
     <relativePath>../SDP</relativePath>
   </parent>
 

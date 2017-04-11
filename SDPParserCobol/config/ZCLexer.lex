@@ -35,8 +35,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
 %xstate CICSSYM
 %xstate ST_FUNCTION
 
-%xstate COMMENT        
-// %xstate COMMENT2 
+%xstate COMMENT, COMMENT2        
 %xstate QUOTE_STRING   
 %xstate DQUOTE_STRING 
   
@@ -93,16 +92,26 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
       return symbol(code);
    }
                   
-   public Symbol checkSymbol(int code) {
-      return symbol(checkIndex(code));
+   public void checkCharacters() {
+      //JGG mirar tabs  No hace nada
    }
-                  
+     
+   public void checkSymbol() {
+      // Chequea el uso de SKIP, EJECT, etc
+   }                  
+   
    public Symbol symbol(int code){
       return symbol(code, yytext());
    }
-   
+/*   
    public Symbol symbol(String txt){
       return symbol(0, txt);
+   }
+   */
+
+   public Symbol symbolCheck(int code) {
+      checkSymbol();
+      return symbol(code);
    }
    
    public Symbol symbol(int code, String txt) {
@@ -110,64 +119,13 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
       data = true;
       int col = yycolumn + COLOFFSET;
       
-      if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
+//      if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
       
       if (code != 0) {      
           print("Devuelve SYMBOL " + code + " (" + (yyline + 1) + "," + col + ") " + txt);
       }    
       return symbolFactory.newSymbol(txt, code, new Symbol(code, yyline + 1, col, txt));
    }
-
-   public int checkIndex(int code) {
-   
-      if (code == ZCCSym.LPAR) return checkIndexLPAR(code);
-      if (code == ZCCSym.RPAR) return checkIndexRPAR(code);
-      if (inIndex == 2) {
-          inIndex = 0;
-          nPars = 0;
-      }
-      return code;
-   }
-   
-   public int checkIndexLPAR(int code) {
-/*
-      if (inIndex == 1) {
-          nPars++; 
-          // Contruccion FUNCTION NAME(FUNCTION NAME(X))
-//          if (lastSymbol == ZCCSym.ID && prevSymbol == FUNCTION) return LPARID;
-//            if (lastSymbol == ZCCSym.ID) return LPARID;
-          return code;
-      }
-
-      // Construcion VAR(i)(j)
-      if (inIndex == 2) {
-          nPars = 1;
-          inIndex = 1;
-          return LPARID;
-      }
-
-      if (lastSymbol == ZCCSym.ID && inIndex == 0) {
-         inIndex = 1;
-         nPars = 1;
-         return LPARID;
-      }
-*/
-      return code;
-   }   
-
-   public int checkIndexRPAR(int code) {
-      if (inIndex == 1) {
-          nPars--;
-          if (nPars == 0) inIndex = 2;
-      }
-      else {
-        if (inIndex == 2) {
-            inIndex = 0;
-            nPars = 0;
-        }
-     }   
-      return code;
-   }   
 
    private void setLastSymbol(int id) {
       prevSymbol = lastSymbol;
@@ -181,7 +139,7 @@ import static com.jgg.sdp.parser.cobol.lang.ZCZSym.*;
 %}
 
 %init{
-   initLexer();
+   initLexer(COMMENT);
 %init}
 
 %eofval{
@@ -215,7 +173,6 @@ HEXVALUE=[xX][\'\"][0-9aAbBcCdDeEfF]+[\'\"]
 ALPHANUM=[a-zA-Z0-9]
 ID = {ALPHANUM}({ALPHANUM}|\-|\_)*
 SP=[ ]{1}
-SP2=[ ]{1,5}
 PARAGRAPH  = {SP}{ID} 
 
 SIZE=\({BLANKS}*{NUMERO}[kKmM]?{BLANKS}*\)
@@ -234,11 +191,11 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /******************************************************************************/
 /******************************************************************************/
 
- ^[\*]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
- ^[\/]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
- ^[dD]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
- ^[ ]+SKIP[1-9]?     { checkSymbol(symbol("SKIP"));  }
- ^[ ]+EJECT[ ]*[\.]? { checkSymbol(symbol("EJECT")); }
+ ^[\*]               { commentInit(yytext(), yyline);  }
+ ^[\/]               { commentInit(yytext(), yyline);  }  
+ ^[dD]               { commentInit(yytext(), yyline);  }
+ ^[ ]+SKIP[1-9]?     { checkSymbol();                  }
+ ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                  }
 
 IDENTIFICATION{BLANKS}DIVISION  { checkDivision(); 
                                   inDesc = false;
@@ -274,13 +231,13 @@ EXEC         { begExec = symbolDummy(ZCZSym.EXEC);   pushState(STEXEC);    }
                    }
 
   
-// ^\*>               { pushState(COMMENT2);   }
+ ^\*>               { pushState(COMMENT2);   }
 
-CBL                { checkSymbol(symbol("DIRECTIVE")); pushState(EATLINE);  }
+CBL                { checkSymbol(); pushState(EATLINE);  }
 REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 {SPACES}           { /* nada */ }
-{TABS}             { checkSymbol(symbol("TAB")); }
-{ID}               { checkSymbol(symbol("DIRECTIVE"));  pushState(EATLINE);    }
+{TABS}             { checkCharacters(); }
+{ID}               { checkSymbol();  pushState(EATLINE);    }
 
 
 
@@ -298,11 +255,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <ID_DIVISION> {
-  ^[\*]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[\/]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
-  ^[dD]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[ ]+SKIP[1-9]?     { checkSymbol(symbol("SKIP"));  }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol(symbol("EJECT")); }
+  ^[\*]               { commentInit(yytext(), yyline); }
+  ^[\/]               { commentInit(yytext(), yyline); }  
+  ^[dD]               { commentInit(yytext(), yyline); }
+  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
+  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
 
   AUTHOR           { inDesc = false; return symbol(AUTHOR); }
   COMMON           { data = true; }
@@ -345,7 +302,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {ID}             { return symbol(ZCDSym.ID);     }
   {NUMERO}         { return symbol(ZCDSym.NUMERO); }
   {SPACES}         { /* nada */ }
-  {TABS}           { checkSymbol(symbol("TAB")); }
+  {TABS}           { checkCharacters();   }
 
   \.               { return symbol(ENDD);   }
   "-"              { data = true;  }
@@ -363,11 +320,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <ENV_DIVISION> {
 
-  ^[\*]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[\/]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
-  ^[dD]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[ ]+SKIP[1-9]?     { checkSymbol(symbol("SKIP"));  }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol(symbol("EJECT")); }
+  ^[\*]               { commentInit(yytext(), yyline); }
+  ^[\/]               { commentInit(yytext(), yyline); }  
+  ^[dD]               { commentInit(yytext(), yyline); }
+  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
+  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
                                    
   CONFIGURATION{BLANKS}SECTION   { pushState(CONF_SECT);   
                                    return symbol(CONF_SECTION); 
@@ -397,9 +354,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
   \.               { return symbol(ENDD); }                                   
  
-  {SPACES}         { /* nada */ }
-  {TABS}           { checkSymbol(symbol("TAB")); }
-
+  {SPACES}         { /* nada */          }
+  {TABS}           { checkCharacters();   }
   \n               { info.module.incLines(data); data = false; }
   \r               { /* do nothing */ }
 
@@ -415,11 +371,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <CONF_SECT> {
-  ^[\*]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[\/]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
-  ^[dD]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[ ]+SKIP[1-9]?     { checkSymbol(symbol("SKIP"));  }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol(symbol("EJECT")); }
+  ^[\*]               { commentInit(yytext(), yyline); }
+  ^[\/]               { commentInit(yytext(), yyline); }  
+  ^[dD]               { commentInit(yytext(), yyline); }
+  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
+  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
 
   \'               { pushState(QUOTE_STRING);  }  
   \"               { pushState(DQUOTE_STRING); }
@@ -462,7 +418,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
   {ID}             { return symbol(ZCDSym.ID);     }
   {SPACES}         { /* nada */ }
-  {TABS}           { checkSymbol(symbol("TAB")); }
+  {TABS}           { checkCharacters();   }
   \.               { return symbol(ENDD);   }
   \,               { data = true; }
 
@@ -477,11 +433,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <IO_SECT> {
-  ^[\*]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[\/]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
-  ^[dD]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[ ]+SKIP[1-9]?     { checkSymbol(symbol("SKIP"));  }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol(symbol("EJECT")); }
+  ^[\*]               { commentInit(yytext(), yyline); }
+  ^[\/]               { commentInit(yytext(), yyline); }  
+  ^[dD]               { commentInit(yytext(), yyline); }
+  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
+  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
 
   ACCESS         { return symbol(ACCESS);       }
   ALTERNATE      { return symbol(ALTERNATE);    }  
@@ -535,7 +491,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                    }
 
   {SPACES}         { /* nada */ }
-  {TABS}           { checkSymbol(symbol("TAB")); }
+  {TABS}           { checkCharacters();            }
   {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
   {ID}             { return symbol(ZCDSym.ID);     }
   \.               { return symbol(ENDD);          }
@@ -556,13 +512,13 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <DATA_DIVISION> {
 
-  ^[\*]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[\/]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
-  ^[dD]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[ ]+SKIP[1-9]?     { checkSymbol(symbol("SKIP"));  }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol(symbol("EJECT")); }
-  ^\-                 { checkSymbol(symbol("-")); }  
-
+  ^[\*]                 { commentInit(yytext(), yyline);    }
+  ^[\/]                 { commentInit(yytext(), yyline);    }  
+  ^[dD]                 { commentInit(yytext(), yyline);    }
+  ^[ \t]+SKIP[1-9]?     { checkSymbol();  }
+  ^[ \t]+EJECT[ ]*[\.]? { checkSymbol(); }
+  ^\-                   { checkSymbol();     }  
+  
   FILE{BLANKS}SECTION            { return symbol(FILE_SECTION);    }
   WORKING-STORAGE{BLANKS}SECTION { return symbol(WORKING_SECTION); }
   LOCAL-STORAGE{BLANKS}SECTION   { return symbol(LOCAL_SECTION);   }
@@ -696,13 +652,13 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   EXEC         { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
 
   {DECIMAL}                      { return symbol(ZCDSym.NUMERO);  }
-  {DECIMAL2}                     { return symbol(ZCDSym.NUMERO);  }  
-  {NUMERO}                       { return symbol(ZCDSym.NUMERO);  }
-  {HEXVALUE}                     { return symbol(ZCDSym.HEX_VAL); }
-  {ID}                           { return symbol(ZCDSym.ID);      }
+  {DECIMAL2}       { return symbol(ZCDSym.NUMERO);  }  
+  {NUMERO}         { return symbol(ZCDSym.NUMERO);  }
+  {HEXVALUE}       { return symbol(ZCDSym.HEX_VAL); }
+  {ID}             { return symbol(ZCDSym.ID);      }
   {SPACES}         { /* nada */ }
-  {TABS}           { checkSymbol(symbol("TAB")); }
-  {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
+  {TABS}           { checkCharacters();             }
+  {NUMERO}         { return symbol(ZCDSym.NUMERO);  }   
   "("              { return symbol(ZCDSym.LPAR);    }
   ")"              { return symbol(ZCDSym.RPAR);    }
   \.               { return symbol(ENDD);   }
@@ -717,18 +673,18 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 /* PICTURE es PIC espacios formato [espacios|punto] con comentarios o sin ellos */
 <PIC> {
-  ^[\*]                   { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[\/]                   { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
-  ^[dD][dD][a-zA-Z0-9 ]*  { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
+  ^[\*]                   { commentInit(yytext(), yyline);    }
+  ^[\/]                   { commentInit(yytext(), yyline);    }  
+  ^[dD][dD][a-zA-Z0-9 ]*  { commentInit(yytext(), yyline);    }
 
   {SPACES}      { if (beginPic == false) popState();  }
-  {TABS}        { checkSymbol(symbol("TAB")); 
+  {TABS}        { checkCharacters();  
                   if (beginPic == false) popState(); 
                 }  
   {PICLEN}      { beginPic = false; return symbol(PIC_LEN);      }
 
   [\.\,\$][\-\+\*\$zZ09]+        { beginPic = false; return symbol(PIC_FMT);      }
-  [sS\+\-]?[09bBaAxXzZ\-\+\$]+  { beginPic = false; return symbol(PIC_FMT);      }              
+  [sS\+\-]?[09bBaAxXzZ\-\+\$]+   { beginPic = false; return symbol(PIC_FMT);      }              
   [Ee][+-]?[9]+                  { beginPic = false; return symbol(PIC_FMT);      }
   [sSvV]+                        { beginPic = false; return symbol(PIC_DEC_EMPTY);      }
   [vV]{NUMERO}                   { beginPic = false; return symbol(PIC_V);        }
@@ -757,12 +713,12 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <PROC_DIVISION> {
 
-  ^[\*]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[\/]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }  
-  ^[dD]               { setComment(yytext(), yyline, yycolumn); pushState(COMMENT);    }
-  ^[ ]+SKIP[1-9]?     { checkSymbol(symbol("SKIP"));  }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol(symbol("EJECT")); }
-  ^\-                 { checkSymbol(symbol("-"));  }  
+  ^[\*]               { commentInit(yytext(), yyline);  }
+  ^[\/]               { commentInit(yytext(), yyline);  }  
+  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[ ]+SKIP[1-9]?     { checkSymbol();                  }
+  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                  }
+  ^\-                 { checkSymbol();                  }  
 
   ^[ ]+EXECUTE        { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   ^[ ]+EXEC           { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
@@ -919,6 +875,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   LINE[sS]?        { data = true; }
   LOCK             { data = true; }
 
+  NEGATIVE         { return symbol(NEGATIVE); }
   NEXT             { data = true; }
   NOT              { data = true; }
 
@@ -931,6 +888,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
   PAGE             { data = true;  }
   POINTER          { return symbol(ZCCSym.POINTER);  }
+  POSITIVE         { return symbol(POSITIVE);        }
   PROCEDURE        { data = true;  }
      
   RECORD           { data = true; }
@@ -970,14 +928,14 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /* Simbolos y operadores                               */
 /*******************************************************/
 
- "("               { return checkSymbol(ZCCSym.LPAR);  }
- ")"               { return checkSymbol(ZCCSym.RPAR); }
+ "("               { return symbol(ZCCSym.LPAR);  }
+ ")"               { return symbol(ZCCSym.RPAR);  }
 
  ">="              { return symbol(REL_GE); }
  "<="              { return symbol(REL_LE); }
- "**"              { if (yycolumn < 4) pushState(COMMENT); else return symbol(OP_POW); }
- "*"               { if (yycolumn < 4) pushState(COMMENT); else return symbol(OP_MUL); }
- "/"               { if (yycolumn < 4) pushState(COMMENT); else return symbol(OP_DIV); }
+ "**"              { if (yycolumn < 4) commentInit(yytext(), yyline); else return symbol(OP_POW); }
+ "*"               { if (yycolumn < 4) commentInit(yytext(), yyline); else return symbol(OP_MUL); }
+ "/"               { if (yycolumn < 4) commentInit(yytext(), yyline); else return symbol(OP_DIV); }
  "+"               { return symbol(OP_ADD); }
  "-"               { return symbol(OP_SUB); }
  ">"               { return symbol(REL_GT); }
@@ -994,7 +952,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /*******************************************************/
 
   {SPACES}      { /* nada */ }
-  {TABS}        { checkSymbol(symbol("TAB")); }
+  {TABS}        { checkCharacters();   }
 
   // Capturar  al inicio de linea
   ^[ ]+COPY{BLANKS}              { initEmbedded(); 
@@ -1012,7 +970,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
  {HEXVALUE}         { return symbol(ZCCSym.NUMERO);  }
  {ID}               { if (yycolumn == 0) {
                           char c = yytext().charAt(0);
-                          if (c == 'D' || c == 'd') pushState(COMMENT);
+                          if (c == 'D' || c == 'd') commentInit(yytext(), yyline); 
                       }
                       else {     
                          if (yycolumn <= 4) {
@@ -1039,8 +997,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <ST_FUNCTION> {
   {SPACES}           { /* EAT */ }
-  {TABS}             { /* EAT */ }
-  ^[\*\/]            { pushState(COMMENT);           }
+  {TABS}             { checkCharacters();   }
+  ^[\*\/]            { commentInit(yytext(), yyline, true);   }
   {ID}               { popState(); return symbol(INTRINSIC);  }
   \r                 { /* EAT */ }
   \n                 { /* EAT */ }
@@ -1085,7 +1043,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 */
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
-  {TABS}        { checkSymbol(symbol("TAB")); }
+  {TABS}        { checkCharacters();   }
   \n            { popState(); return symbol((info.inCode()) ? ENDP : ENDD); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -1097,7 +1055,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 <EATLINE> {
 
   {SPACES}      { /* Nada */  }
-  {TABS}        { checkSymbol(symbol("TAB")); }
+  {TABS}        { checkCharacters();   }
   \n            { popState(); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -1105,36 +1063,24 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <COMMENT> {
-  {SPACES}      { if (inDesc) cadena.append(yytext());  }
-  {TABS}        { if (inDesc) cadena.append(yytext()); 
-                  checkSymbol(symbol("TAB")); 
-                }  
-  \n            { info.module.incComments(data);        
-                  cadena.setLength(0);
-                  popState();
-                  if (inDesc) return literal("");
-                }  
-  \r            { }                
-  [a-zA-Z0-9]+  { if (inDesc) cadena.append(yytext());
-                  data = true;  
-                }
-   [^]            { if (inDesc) cadena.append(yytext()); 
-                  data = true; 
-                }    
+  {BLANKS}      { commentAppend(yytext()); }
+  \n            { commentEnd();            }                 
+  [a-zA-Z0-9]+  { commentAppend(yytext()); }
+  [^]           { commentAppend(yytext()); }    
 }
 
 /*
  * Caso especial para concatenar lineas de descripcion
  */
- /*
+ 
 <COMMENT2> {
   {SPACES}      { if (inDesc) cadena.append(yytext());  }
-  {TABS}        { checkSymbol(symbol("TAB")); 
+  {TABS}        { checkCharacters();   
                   if (inDesc) cadena.append(yytext());  
                 }  
   \n            { info.module.incComments(data);
                   popState();
-                  if (inDesc) return literalEx("");
+                  if (inDesc) return literal("");
                 }  
 \r              { /* do nothing */ }
   [a-zA-Z0-9]+  { if (inDesc) cadena.append(yytext());
@@ -1145,7 +1091,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                 }    
 }
   
-  */
+ 
 <COPYS> {
   ^[\*\/]            { pushState(COMMENT);           }
   \.                 { popState(); return symbol(ENDCOPY);  }
@@ -1183,7 +1129,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                     return symbol(EXECSQL);
                   } 
    {SPACES}       { /* DO NOTHING */ }
-  {TABS}          { checkSymbol(symbol("TAB")); }
+   {TABS}         { checkCharacters(); }
    \n             { info.module.incLines(data); data = false; }
    \r             { /* do nothing */ }
     

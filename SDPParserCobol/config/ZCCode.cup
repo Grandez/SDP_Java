@@ -49,9 +49,6 @@ action code {:
    boolean master     = false;  // El fichero es el maestro?   
    int     numFillers = 0;
    
-   // Pila para EVALUATE e IF
-   Stack<StmtCobol> stack = new Stack<StmtCobol>();
-          
    public void initActionClass() {
       module = ModulesFactory.getMainModule();
       summary = module.getSummary();
@@ -196,6 +193,7 @@ terminal Symbol ENDEVAL    ;
 terminal Symbol ENDIF      ;
 terminal Symbol ENDPERFORM ;
 terminal Symbol ENDP       ;
+terminal Symbol ENDSEARCH  ;
 terminal Symbol ENDVERB    ;
 terminal Symbol EOP        ;
 terminal Symbol EQUAL      ;
@@ -320,11 +318,12 @@ non terminal Tokens    stmtRead_into       ;
 non terminal Tokens    stmtRead_key        ;
 
 non terminal StmtCobol stmtSearch         ;
-non terminal Tokens    stmtSearch_detail  ;
-non terminal Tokens    stmtSearch_options ;
-non terminal Tokens    stmtSearch_option  ;
-non terminal Tokens    stmtSearch_opt     ;
-non terminal Tokens    stmtSearch_varying ;
+non terminal StmtCobol search_verb        ;
+non terminal Tokens    search_detail  ;
+non terminal Tokens    search_options ;
+non terminal Tokens    search_option  ;
+non terminal Tokens    search_opt     ;
+non terminal Tokens    search_varying ;
 
 non terminal Tokens stmtSet_detail ;
 non terminal Tokens stmtSet_resto  ;
@@ -430,25 +429,28 @@ non terminal StmtCobol stmtDelete     ;
 non terminal StmtCobol stmtAllocate   ;
 non terminal StmtCobol stmtDisplay    ;
 
-non terminal StmtCobol stmtContinue   ;
-non terminal StmtCobol stmtGoback     ;
-non terminal StmtCobol stmtExit       ;
-non terminal StmtCobol stmtExitP      ; 
-non terminal StmtCobol stmtExitG      ;
-non terminal StmtCobol stmtExitPgm    ;
-non terminal StmtCobol exitTypes      ;
-non terminal StmtCobol stmtEvaluate   ;
-non terminal StmtCobol stmtEvaluate_object ;
-non terminal StmtCobol stmtEvaluate_condition ;
-non terminal StmtCobol stmtEvaluate_item      ;
+non terminal StmtCobol stmtContinue    ;
+non terminal StmtCobol stmtGoback      ;
+non terminal StmtCobol stmtExit        ;
+non terminal StmtCobol stmtExitP       ; 
+non terminal StmtCobol stmtExitG       ;
+non terminal StmtCobol stmtExitPgm     ;
+non terminal StmtCobol exitTypes       ;
+non terminal StmtCobol stmtEvaluate    ;
+non terminal StmtCobol evaluate_verb   ;
+non terminal StmtCobol evaluate_object ;
+non terminal StmtCobol when_condition ;
+non terminal StmtCobol when_item      ;
 
-non terminal Symbol    stmtEvaluate_other     ;
+non terminal Symbol    when_other     ;
 
 non terminal StmtCobol stmtPerform           ; 
 non terminal StmtCobol perform_verb          ;
-non terminal Option    stmtPerform_from      ;
+non terminal Option    perform_from      ;
 non terminal Option    perform_options_opt   ;
 non terminal Option    perform_options       ;
+non terminal Option    perform_options_label_opt ;
+non terminal Option    perform_options_label ;
 non terminal Option    perform_option_first  ;
 non terminal Option    perform_option_second ;
 non terminal           perform_label         ;
@@ -495,10 +497,15 @@ non terminal           stmtCall_parm_type     ;
 
 non terminal Symbol    moduloCall ;
 
-non terminal StmtCobol stmtEndP    ;
-non terminal StmtCobol stmtExec    ;
-non terminal StmtCobol stmtEndExec ;
 
+non terminal StmtCobol stmtEndEvaluate ;
+non terminal StmtCobol stmtEndExec   ;
+non terminal StmtCobol stmtEndIf     ;
+non terminal StmtCobol stmtEndPerform ; 
+non terminal StmtCobol stmtEndP      ;
+non terminal StmtCobol stmtEndSearch ;
+
+non terminal StmtCobol stmtExec      ;
 non terminal StmtCobol stmtRollback  ;
 
 non terminal StmtCobol stmtReturn ;             
@@ -515,13 +522,12 @@ non terminal StmtCobol stmtInvalid;
 non terminal StmtCobol stmtException;
 
 non terminal StmtCobol stmtIf    ;
+non terminal StmtCobol if_verb   ;
 non terminal StmtCobol stmtElse  ;
-non terminal StmtCobol stmtEndIf ;
 
-non terminal StmtCobol stmtEndPerform ; 
-non terminal StmtCobol stmtEndEvaluate ;
-non terminal StmtCobol stmtWhen;
-non terminal Tokens    stmtWhen_thru ;
+non terminal StmtCobol stmtWhen  ;
+non terminal StmtCobol when_verb ;
+non terminal Tokens    when_thru ;
 
 non terminal StmtCobol stmtEndVerb ;         
 
@@ -716,7 +722,7 @@ parrafo_name     ::= PARRAFO:p parr_section:b ENDP
                         RESULT = code.processParrafo(p, lastStmt); 
                      :}   
                  ;  
-
+ 
 parr_section     ::= SECTION:s {: RESULT = true;  :}
                  |             {: RESULT = false; :}
                  ;                               
@@ -725,8 +731,8 @@ lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(s, lastStm
            |   lista_stmt stmt:s  {: lastStmt = code.processStatement(s, lastStmt); :}
            ;
 
-stmt     ::= verbos:s       {: RESULT = s; code.incStmt(); :}
-         |   noverbos:s     {: RESULT = s; :}
+stmt     ::= verbos:s         {: RESULT = s; code.incStmt(); :}
+         |   noverbos:s       {: RESULT = s; :}
          ;  
 
 verbos   ::= stmtControl:s    {: RESULT = s; module.incStmtControl(); :}
@@ -742,15 +748,15 @@ noverbos ::= stmtEndP:s        {: RESULT = code.checkFlujo( s, lastStmt);:}
          |   stmtEndIf:s       {: RESULT = code.endIf(s);              :}                       
          |   stmtEndPerform:s  {: RESULT = code.endPerform(s);        :}        
          |   stmtEndVerb:s     {: RESULT = s;                         :}
-         |   stmtWhen:s        {: RESULT = code.processWhen(stack.peek());       :}
+         |   stmtWhen:s        {: RESULT = code.processWhen(s);       :}
          |   stmtElse:s        {: RESULT = code.processElse(s);       :}         
          |   stmtAtEnd:s       {: RESULT = s;                         :}  
          |   stmtInvalid:s     {: RESULT = s;                         :}         
          |   stmtException:s   {: RESULT = s;                         :}         
          |   stmtEndExec:s     {: RESULT = s;                         :}
-         |   stmtEndEvaluate:s {: RESULT = code.endEvaluate(s);  
-                                  stack.pop();     
-                               :}
+         |   stmtEndEvaluate:s {: RESULT = code.endEvaluate(s);       :}
+         |   stmtEndSearch:s   {: RESULT = code.endSearch(s);         :}
+
          ;
   
 /* Verbos que tienen tratamiento especial
@@ -786,9 +792,10 @@ stmtControl2 ::= stmtStop:s         {: hasEndProgram = true;
 stmtFlujo ::= stmtPerform:s     {: RESULT = s; :}
           |   stmtCall:s        {: RESULT = s; :}
           |   stmtIf:s          {: RESULT = s; :}
-          |   stmtEvaluate:s    {: RESULT = code.processEvaluate(s); :}
+          |   stmtEvaluate:s    {: RESULT = s; :}
           |   stmtGoTo:s        {: RESULT = s; :}
           |   stmtContinue:s    {: RESULT = s; :}
+          |   stmtSearch:s      {: RESULT = s; :}          
           ;
              
 /* Sentencias de manipulacion de datos */
@@ -803,7 +810,6 @@ stmtDatos1 ::= stmtTransform:s      {: RESULT = s; :}
 stmtDatos2 ::= stmtMove:s           {: RESULT = s; :}
            |   stmtString:s         {: RESULT = s; :}
            |   stmtInspect:s        {: RESULT = s; :}
-           |   stmtSearch:s         {: RESULT = s; :}
            |   stmtUnstring:s       {: RESULT = s; :}
            |   stmtInitialize:s     {: RESULT = s; :}
            |   stmtSet:s            {: RESULT = s; :}
@@ -1058,37 +1064,40 @@ divide_option ::= option_giving:o  {: currStmt.addOption(o); :}
                                                                       
 // EVALUATE
 
-stmtEvaluate ::=  EVALUATE:s {: currStmt = new StmtCobol(s); 
-                                stack.push(currStmt);
-                             :} 
-                             stmtEvaluate_object {: RESULT = new StmtCobol(s, code.getStmts()); :}  
+stmtEvaluate ::=  evaluate_verb:s evaluate_object {: RESULT = code.processEvaluate(s); :}  
              ;
 
-stmtEvaluate_object ::= logical_condition
+evaluate_verb ::= EVALUATE:s {: RESULT = currStmt = new StmtCobol(s);  :}
+              ;
+              
+evaluate_object ::= logical_condition
                     ;
 
-stmtWhen ::= WHEN:s {: stack.peek().addOption(new Option(s)); :} stmtEvaluate_condition
+stmtWhen ::=  when_verb:s when_condition {: RESULT = s; :}
          ;
 
-stmtEvaluate_condition ::= stmtEvaluate_item
-                       |   stmtEvaluate_other:o {: stack.peek().addOption(new Option(o)); :}
-                       ;
+when_verb ::= WHEN:s {: RESULT = currStmt = new StmtCobol(s); :}
+          ; 
+          
+when_condition ::= when_item
+               |   when_other:o {: currStmt.addOption(new Option(o)); :}
+               ;
                                                      
-stmtEvaluate_item ::= logical_condition:t stmtWhen_thru
-//                  |   stmtEvaluate_item ALSO logical_condition:t stmtWhen_thru
+when_item ::= logical_condition:t when_thru
+//        |   when_item ALSO logical_condition:t when_thru
                   /*
                     {: StmtCobol stmt  = new StmtCobol(s);
                        RESULT = stmt; // stmt.addTokens(t);   
                     :} 
                   */  
-                ;
+          ;
 
-stmtEvaluate_other ::= OTHER:o {: RESULT = o; :}
-                   ;
+when_other ::= OTHER:o {: RESULT = o; :}
+           ;
                     
-stmtWhen_thru ::= THRU logical_condition
-              |
-              ;
+when_thru ::= THRU logical_condition
+          |
+          ;
                   
 // GO TO
 
@@ -1111,12 +1120,12 @@ stmtGoto_depending ::= DEPENDING rvalue
                                                           
 // IF
 
-stmtIf ::= IF:s logical_condition {: StmtCobol stmt = new StmtCobol(s, code.getStmts());      
-                                 RESULT = code.processIf(stmt);
-                              :}
+stmtIf ::= if_verb:s logical_condition {:  RESULT = code.processIf(s); :}
        ;
 
-              
+if_verb ::= IF:s {: RESULT = currStmt = new StmtCobol(s); :}
+        ;
+                       
 // INITIALIZE
 
 stmtInitialize  ::=  INITIALIZE:s stmtInitialize_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}     
@@ -1249,16 +1258,15 @@ stmtOpen_files ::= ID:s                    {: RESULT = new Tokens(s); :}
 // Caso 4: PERFORM PARRAFO OPCIONES X TIMES
 // El caso TIMES NECESITA TRATAMIENTO ESPECIAL
 
-stmtPerform ::=  perform_verb stmtPerform_from   {: RESULT = code.processPerform(currStmt, lastStmt); :} 
+stmtPerform ::=  perform_verb perform_from   {: RESULT = code.processPerform(currStmt, lastStmt); :} 
             ;
 
 perform_verb ::= PERFORM:s  {: currStmt = new StmtCobol(s); :}
-                 ;
+             ;
 
-stmtPerform_from ::= perform_label perform_options_opt
-                 |   perform_options
-                 |
-                 ;
+perform_from ::= perform_label perform_options_label_opt
+             |   perform_options_opt
+             ;
 
 perform_label ::= variable:v {: currStmt.addOption(new Option(v)); :}
               ;
@@ -1266,7 +1274,16 @@ perform_label ::= variable:v {: currStmt.addOption(new Option(v)); :}
 perform_options_opt ::= perform_options
                     |
                     ;
-                                  
+
+perform_options_label_opt ::= perform_options_label
+                          |
+                          ;
+
+perform_options_label ::= perform_option_first:o                         {: currStmt.addOption(o); :}
+                      |   NUMERO:o                                       {: currStmt.addOption(new Option(o)); :}
+                      |   perform_options_label perform_option_second:o  {: currStmt.addOption(o); :}
+                      ;
+                                                     
 perform_options ::= perform_option_first:o                    {: currStmt.addOption(o); :}
                 |   perform_options perform_option_second:o   {: currStmt.addOption(o); :}
                 ;
@@ -1284,10 +1301,6 @@ perform_option_second ::= perform_option_first:o  {: RESULT = o;                
                       |   var_int:v               {: RESULT = new Option(v); :}
                       ;
 
-perform_test ::= TEST:o    BEFORE {: RESULT = new Option(o);    :}
-             |   TEST:o    AFTER  {: RESULT = new Option(o);    :}
-             ;
-
 perform_thru ::= THRU:o id:i                   {: RESULT = new Option(o, i); :}
              ;
              
@@ -1300,6 +1313,9 @@ perform_varying ::= VARYING:o var_int FROM var_int BY var_int
 perform_after ::= AFTER:o var_int FROM var_int BY var_int
                 ; 
                                      
+perform_test ::= TEST:o    BEFORE {: RESULT = new Option(o);    :}
+             |   TEST:o    AFTER  {: RESULT = new Option(o);    :}
+             ;
 
 // READ
 
@@ -1329,25 +1345,28 @@ stmtRead_key ::= KEY rvalue
 
 // SEARCH
 
-stmtSearch ::= SEARCH:s opt_all stmtSearch_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}
+stmtSearch ::= search_verb:s opt_all search_detail {: RESULT = code.processSearch(s); :}
            ;
-           
-stmtSearch_detail ::= rvalue stmtSearch_options 
-                  ;
+
+search_verb ::= SEARCH:s  {: RESULT = currStmt = new StmtCobol(s); :}
+            ;
+                       
+search_detail ::= rvalue search_options 
+              ;
                   
-stmtSearch_options ::= stmtSearch_option
-                   |
-                   ;
-                                     
-stmtSearch_option ::= stmtSearch_opt
-                  |   stmtSearch_option stmtSearch_opt
-                  ;
-                  
-stmtSearch_opt ::= stmtSearch_varying
+search_options ::= search_option
+               |
                ;
+                                     
+search_option ::= search_opt
+              |   search_option search_opt
+              ;
+                  
+search_opt ::= search_varying
+           ;
                
-stmtSearch_varying ::= VARYING rvalue
-                   ;
+search_varying ::= VARYING rvalue
+               ;
                    
 // SET
 
@@ -1651,6 +1670,7 @@ stmtEndIf       ::= ENDIF:s       {: RESULT = new StmtCobol(s); :} ;
 stmtEndPerform  ::= ENDPERFORM:s  {: RESULT = new StmtCobol(s); :} ;
 stmtEndEvaluate ::= ENDEVAL:s     {: RESULT = new StmtCobol(s); :} ;
 stmtEndVerb     ::= ENDVERB:s     {: RESULT = new StmtCobol(s); :} ;
+stmtEndSearch   ::= ENDSEARCH:s   {: RESULT = new StmtCobol(s); :} ;
                                        
 ///////////////////////////////////////////////////////
 // No terminales para eliminar el resto de las sentencias
@@ -1731,6 +1751,7 @@ logical_condition ::= logical_expression
 
 logical_expression ::= logical_class
                    |   logical_expression logical_oper logical_class
+                   |   logical_oper logical_class
                    ;
 
 logical_class ::= logical_unary logical_class_opt
@@ -1853,7 +1874,6 @@ rvalue_list ::= rvalue
 rvalue ::= variable:i         {: RESULT = i;  code.setVarRead(i); :}
        |   constantes:c  {: RESULT = c; :}
        |   function:f    {: RESULT = new SymbolExt(f);    :}
-//       |   figurative:f  {: RESULT = f; :}
        ;
 
 variable ::= var_base:i  padres_opt {: RESULT = i;    :}

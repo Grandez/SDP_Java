@@ -215,6 +215,7 @@ terminal Symbol RIGHT                      ;
 terminal Symbol ROUND_MODE                 ;
 terminal Symbol ROUNDING                   ;
 terminal Symbol ROUTINE                    ;
+terminal Symbol ROWID                      ;
 terminal Symbol ROWSET                     ;
 terminal Symbol RULES                      ;
 terminal Symbol SCHEMA                     ;
@@ -2596,6 +2597,7 @@ reserved_words ::= ACCELERATION
                |   ROUND_MODE          
                |   ROUNDING            
                |   ROUTINE             
+               |   ROWID
                |   ROWSET              
                |   RULES               
                |   SCHEMA              

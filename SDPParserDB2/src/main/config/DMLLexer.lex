@@ -416,7 +416,7 @@ FULLTABLE   = {ID}\.\*
    RIGHT                                          { cacheSymbol(RIGHT                               , FUNCTION_SCALAR);    }
    ROUND_TIMESTAMP                                { return symbol(FUNCTION_SCALAR);    }
    ROUND                                          { return symbol(FUNCTION_SCALAR);    }   
-   ROWID                                          { return symbol(FUNCTION_SCALAR);    }
+   ROWID                                          { cacheSymbol(ROWID                               , FUNCTION_SCALAR);    }
    RPAD                                           { return symbol(FUNCTION_SCALAR);    }
    RTRIM                                          { return symbol(FUNCTION_SCALAR);    }
    SCORE                                          { return symbol(FUNCTION_SCALAR);    }

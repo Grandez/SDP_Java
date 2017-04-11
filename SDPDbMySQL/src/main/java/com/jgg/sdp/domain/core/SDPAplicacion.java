@@ -22,6 +22,8 @@ public class SDPAplicacion implements Serializable {
 	public static final String listaHijos = "Select id FROM SDP_APLICACIONES WHERE padre = ?1";
 	public static final String updVolumen = 
 	       "UPDATE SDP_APLICACIONES SET volumen = volumen + 1 WHERE aplicacion = ?1";
+	public static final String maxAppId = 
+		       "SELECT MAX(a.idAppl)  FROM SDP_APLICACIONES a";
 	
 	@Id
 	@Column(name="aplicacion")

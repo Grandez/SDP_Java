@@ -3,6 +3,7 @@ package com.jgg.sdp.parser.db2.stmt;
 public class SQLTable {
 	
 	private String  name;
+	private String  alias;
 	private boolean temporary;
 	private int     references = 0;
 	
@@ -19,6 +20,12 @@ public class SQLTable {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getAlias() {
+		return alias;
+	}
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 	public void setTemporary(boolean temporary) {
 		this.temporary = temporary;

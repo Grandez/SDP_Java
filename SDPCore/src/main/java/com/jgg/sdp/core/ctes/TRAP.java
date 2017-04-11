@@ -52,6 +52,7 @@ public class TRAP {
 	public static final int FIRST      =     0x20;
 	public static final int IF         =     0x40;
 	public static final int EVAL       =     0x80;
+	public static final int SEARCH     =     0x100;
 	
 	// Mascara de ACCESS
 	
@@ -73,6 +74,7 @@ public class TRAP {
 	public static final int FIRST_PARR  = HCODE + FIRST;
 	public static final int END_IF      = HCODE + IF;
 	public static final int END_EVAL    = HCODE + EVAL;
+    public static final int END_SEARCH  = HCODE + SEARCH;	
 	
 	// Valores BEG
 	

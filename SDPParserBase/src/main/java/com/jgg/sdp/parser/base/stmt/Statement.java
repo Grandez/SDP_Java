@@ -80,6 +80,11 @@ public abstract class Statement<T> {
 		orden  = s.getOrden();
 	}
 
+	public Option asOption() {
+	    Option opt = new Option(this.verbo);
+	    return opt;
+	}
+	
 	/**
 	 * Rellena la instruccion con los datos del verbo
 	 */

@@ -1,0 +1,627 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.base.symbol.*;
+import com.jgg.sdp.parser.stmt.*;
+
+parser code {:
+   ParserInfo    info     = ParserInfo.getInstance();
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
+
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
+:}
+
+action code {:
+   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   ParserInfo      info     = ParserInfo.getInstance();
+   StmtSQL         stmt     = new StmtSQL();
+   
+   public void initActionClass() {
+   }
+
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               TERMINALES                                                 */
+/****************************************************************************/
+/****************************************************************************/
+
+/****************************************************************************/
+/***                    PATRONES                                          ***/
+/****************************************************************************/
+
+terminal Symbol ID                                    ;
+terminal Symbol HOSTVAR1                              ;
+terminal Symbol HOSTVAR2                              ;
+terminal Symbol IDQUALIFIED                           ;
+terminal Symbol PREHOST                               ;
+
+terminal Symbol LITERAL                               ;
+terminal Symbol NUM_ENTERO                            ;
+
+terminal Symbol COMMA                                 ;
+
+/****************************************************************************/
+/***                    SIMBOLOS                                         ***/
+/****************************************************************************/
+
+terminal Symbol ABSOLUTE                              ;
+terminal Symbol AFTER                                 ;
+terminal Symbol ALLOCATE                              ;
+terminal Symbol ASSOCIATE                             ; 
+terminal Symbol AT                                    ;
+
+terminal Symbol BEFORE                                ;
+terminal Symbol BEGIN                                 ;
+
+terminal Symbol CALL                                  ;
+terminal Symbol CLOSE                                 ;
+
+terminal Symbol CONNECT                               ;
+terminal Symbol CONTINUE                              ;
+terminal Symbol CURRENT                               ;
+terminal Symbol CURSOR                                ;
+
+terminal Symbol DECLARE                               ;
+terminal Symbol DESCRIPTOR                            ;
+
+terminal Symbol END                                   ;
+terminal Symbol EXECUTE                               ;
+
+terminal Symbol FETCH                                 ;
+terminal Symbol FIRST                                 ;
+terminal Symbol FOR                                   ;
+terminal Symbol FOUND                                 ;
+terminal Symbol FREE                                  ;
+terminal Symbol FROM                                  ;
+
+terminal Symbol GOTO                                  ;
+
+terminal Symbol HOLD                                  ;
+
+terminal Symbol IMMEDIATE                             ;
+terminal Symbol INCLUDE                               ;
+terminal Symbol INSENSITIVE                           ;
+terminal Symbol INTO                                  ;
+
+terminal Symbol LAST                                  ;
+terminal Symbol LOCATOR                               ;
+terminal Symbol LPAR                                  ;
+
+terminal Symbol NEXT                                  ;
+terminal Symbol NOT                                   ;
+
+terminal Symbol OPEN                                  ;
+
+terminal Symbol PREPARE                               ;
+terminal Symbol PRIOR                                 ;
+terminal Symbol PROCEDURE                             ;
+
+terminal Symbol RELATIVE                              ;
+terminal Symbol RESET                                 ;
+terminal Symbol RESULT                                ;
+terminal Symbol RPAR                                  ;
+terminal Symbol ROWSET                                ;
+terminal Symbol ROWS                                  ;
+
+terminal Symbol SECTION                               ;
+terminal Symbol SENSITIVE                             ;
+terminal Symbol SET                                   ;
+terminal Symbol SIGNAL                                ;
+terminal Symbol SQLERROR                              ;
+terminal Symbol SQLWARNING                            ;
+terminal Symbol STARTING                              ;
+
+terminal Symbol TO                                    ;
+
+terminal Symbol USER                                  ;
+terminal Symbol USING                                 ;
+
+terminal Symbol WHENEVER                              ;
+
+terminal Symbol WITH                                  ;
+
+non terminal Symbol  sql                   ;
+non terminal         sql_pcl               ;
+non terminal         sql_allocate          ;
+
+non terminal         sql_associate_locator ;
+non terminal         sql_hold_locator      ;
+non terminal         sql_free_locator      ;
+
+non terminal         sql_call              ;
+non terminal         call_opt              ;
+
+non terminal         sql_close             ;
+
+non terminal         sql_connect           ;
+non terminal         connect_opt           ;
+non terminal         connect_mode          ;
+non terminal         connect_to            ;
+non terminal         connect_reset         ;
+non terminal         connect_auth          ;
+non terminal         connect_auth_opt      ;             
+
+non terminal         sql_declare_begin     ;
+non terminal         sql_declare_end       ;
+non terminal         declare_section       ;
+
+non terminal         sql_execute           ;
+non terminal         execute_verb          ;
+non terminal         execute_type          ;
+
+non terminal         sql_fetch             ;
+non terminal         sql_fetch_verb        ;
+non terminal         sql_fetch_options     ;
+non terminal         sql_fetch_cursor      ;
+non terminal         sql_fetch_opt_lst     ;
+non terminal         sql_fetch_opt         ;
+non terminal         sql_fetch_sensitive   ;
+non terminal         sql_fetch_continue    ;
+non terminal         sql_fetch_orientation ;
+non terminal         sql_fetch_rows        ;
+non terminal         sql_fetch_count_opt   ;
+non terminal         sql_fetch_fields      ;
+non terminal         sql_fetch_fields_lst  ;
+
+non terminal         sql_include           ;
+
+non terminal         sql_open              ;
+non terminal         sql_open_using_opt    ;
+non terminal         sql_open_using_type   ;
+non terminal         sql_open_using_fields ;
+
+non terminal         sql_prepare           ;
+
+non terminal         sql_signal            ;
+
+non terminal         sql_whenever          ;
+non terminal         whenever_type         ;
+non terminal         whenever_action       ;
+
+non terminal         cursor_name           ;
+
+non terminal         locator_variable_lst   ;
+
+non terminal         opt_result_set          ;
+
+non terminal         procedure_name   ;
+
+non terminal         result_set            ;
+non terminal         id_base               ;
+non terminal         id_qualified          ;
+non terminal         id                    ;
+             
+non terminal         clause_using_opt      ;
+non terminal         clause_using_for_opt  ;
+
+non terminal         opt_descriptor        ;
+non terminal         descriptor_values     ;
+
+non terminal         opt_continue          ;
+non terminal         opt_from              ;
+ 
+non terminal         choice_abs_rel        ;
+ 
+non terminal         var_string            ;
+non terminal         var_int               ;
+non terminal         var_id                ;
+non terminal         literal               ;
+
+non terminal         host_field            ;
+non terminal         host_var_opt          ;
+non terminal         host_var              ;
+non terminal         host_var_base         ;
+
+non terminal         host_label            ;
+
+non terminal         eat                   ;
+non terminal         eat_token             ;
+
+non terminal         non_reserved_words    ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/* Devuelve el nombre de la copy si es include                        */
+/* Si no devuelve la cadena vacia                                     */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+sql ::= sql_pcl {: stmt.adjust(info.getLastSymbol()); 
+                   String name = stmt.getVerbName();
+                   int id =  stmt.getVerbId();
+                   int line = stmt.getVerb().left;
+                   int col = stmt.getVerb().right;
+                   RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                :}
+    ;
+
+sql_pcl ::= sql_allocate
+        |   sql_associate_locator
+        |   sql_call
+        |   sql_close
+        |   sql_connect        
+        |   sql_declare_begin
+        |   sql_declare_end
+        |   sql_execute
+        |   sql_fetch
+        |   sql_free_locator
+        |   sql_hold_locator
+        |   sql_include
+        |   sql_open
+        |   sql_prepare        
+        |   sql_signal
+        |   sql_whenever        
+        ; 
+
+/********************************************************************/
+/*                 ALLOCATE                                         */
+/********************************************************************/
+
+sql_allocate ::= ALLOCATE:s {: stmt.setVerb(s); :}  cursor_name CURSOR FOR RESULT SET host_var
+             ;
+
+/********************************************************************/
+/*                 ASSOCIATE                                       */
+/********************************************************************/
+
+sql_associate_locator ::= ASSOCIATE:s {: stmt.setVerb(s); :}  opt_result_set LOCATOR LPAR locator_variable_lst RPAR WITH PROCEDURE procedure_name
+                      ;
+
+procedure_name ::= id
+               |   host_var
+               ;
+
+/********************************************************************/
+/*                 CALL                                             */
+/********************************************************************/
+
+sql_call ::= CALL procedure_name call_opt
+         ;
+         
+call_opt ::= eat
+         |
+         ;
+
+/********************************************************************/
+/*                 CLOSE                                            */
+/********************************************************************/
+
+sql_close ::= CLOSE:v {: stmt.setVerb(v); :}  ID
+          ;
+                                             
+/**********************************************************************/
+/*                         CONNECT                                    */
+/**********************************************************************/
+
+sql_connect ::= CONNECT connect_opt
+            ;
+            
+connect_opt ::= connect_mode
+            |
+            ;
+            
+connect_mode ::= connect_to
+             |   connect_reset
+             |   connect_auth
+             ;
+             
+connect_to ::= TO var_string connect_auth_opt
+           ;
+           
+connect_reset ::= RESET
+              ;
+              
+connect_auth ::= USER host_var USING host_var
+             ;
+             
+connect_auth_opt ::= connect_auth 
+                 |
+                 ;
+                                                                                  
+/********************************************************************/
+/*                 DECLARE                                          */
+/********************************************************************/
+
+sql_declare_begin ::= BEGIN:s {: stmt.setVerb(s); :}  declare_section
+                  ;
+                  
+sql_declare_end ::= END:s {: stmt.setVerb(s); :}  declare_section
+                ;
+                
+declare_section ::= DECLARE:s {: stmt.appendVerb(s); :}  SECTION
+                ;                                   
+
+/********************************************************************/
+/*                 EXECUTE                                          */
+/********************************************************************/
+
+sql_execute ::= execute_verb execute_type locator_variable_lst
+            ;
+ 
+execute_verb ::= EXECUTE:p  {: stmt.setVerb(p); :}
+             ;
+             
+execute_type ::= ID clause_using_opt
+             |   IMMEDIATE var_string
+             ;
+
+clause_using_opt ::= USING opt_descriptor descriptor_values clause_using_for_opt
+                 | 
+                 ;
+
+descriptor_values ::= var_id
+                  |   descriptor_values COMMA var_id
+                  ;
+
+clause_using_for_opt ::= FOR var_int ROWS
+                     |
+                     ;
+                                                                                  
+
+/********************************************************************/
+/*                 FETCH                                            */
+/********************************************************************/
+
+sql_fetch ::= sql_fetch_verb sql_fetch_options opt_from sql_fetch_cursor sql_fetch_rows 
+          ;
+
+sql_fetch_verb ::= FETCH:i {: stmt.setVerb(i); 
+//JGG                                  stmt.addRValue(new SymbolExt(m));
+                            :}
+               ;
+
+sql_fetch_options ::= sql_fetch_opt_lst
+                  |
+                  ;
+                  
+sql_fetch_opt_lst ::= sql_fetch_opt
+                  |   sql_fetch_opt_lst sql_fetch_opt
+                  ;
+                  
+sql_fetch_opt ::= sql_fetch_continue  
+              |   sql_fetch_orientation
+              |   sql_fetch_sensitive              
+              ;
+              
+sql_fetch_sensitive ::= INSENSITIVE
+                    |   SENSITIVE
+                    ;
+                    
+sql_fetch_continue ::= WITH CONTINUE
+                   ;
+                   
+sql_fetch_orientation ::= NEXT 
+                      |   PRIOR 
+                      |   FIRST
+                      |   LAST
+                      |   AFTER
+                      |   BEFORE
+                      |   CURRENT opt_continue
+                      |   ABSOLUTE var_int
+                      |   RELATIVE var_int
+                      |   ROWSET STARTING AT choice_abs_rel var_int
+                      ;
+
+sql_fetch_cursor ::= id
+                 ;
+
+sql_fetch_rows ::= sql_fetch_count_opt INTO sql_fetch_fields
+               ;
+               
+sql_fetch_fields ::= sql_fetch_fields_lst
+                 |   DESCRIPTOR id
+                 ;
+                     
+sql_fetch_fields_lst ::= host_field
+                     |   sql_fetch_fields_lst COMMA host_field
+                     ;
+
+sql_fetch_count_opt ::= FOR var_int ROWS
+                    |
+                    ;
+                    
+                                  
+/********************************************************************/
+/*                 INCLUDE                                          */
+/********************************************************************/
+
+sql_include ::= INCLUDE:i ID:m {: stmt.setVerb(i); 
+                                  stmt.addRValue(new SymbolExt(m));
+                               :}
+            ;
+
+/********************************************************************/
+/*                 LOCATOR                                          */
+/********************************************************************/
+
+sql_free_locator ::= FREE:p LOCATOR:s {: stmt.setVerb(p, s); :}  locator_variable_lst
+                 ;
+
+sql_hold_locator ::= HOLD:p LOCATOR:s {: stmt.setVerb(p, s); :}  locator_variable_lst
+                 ;
+
+locator_variable_lst ::= host_var
+                     |   locator_variable_lst COMMA  host_var
+                     ;
+
+/********************************************************************/
+/*                 PREPARE                                          */
+/********************************************************************/
+
+sql_open ::= OPEN:v {: stmt.setVerb(v); :} id sql_open_using_opt
+         ;
+
+sql_open_using_opt ::= USING sql_open_using_type
+                   |
+                   ;
+
+sql_open_using_type ::= DESCRIPTOR ID
+                    |   sql_open_using_fields
+                    ;
+                    
+sql_open_using_fields ::= host_var
+                      |   sql_open_using_fields COMMA host_var
+                      ;
+                                                           
+/********************************************************************/
+/*                 PREPARE                                          */
+/********************************************************************/
+
+sql_prepare ::= PREPARE:s eat
+            ;
+
+/********************************************************************/
+/*                 SIGNAL                                           */
+/********************************************************************/
+
+sql_signal ::= SIGNAL eat
+           ;
+           
+/********************************************************************/
+/*                 WHENEVER                                         */
+/********************************************************************/
+
+sql_whenever ::= WHENEVER:s {: stmt.setVerb(s); :}  whenever_type whenever_action
+             ;
+
+whenever_type ::= NOT FOUND
+              |   SQLERROR
+              |   SQLWARNING
+              ;
+              
+whenever_action ::= CONTINUE
+                |   GOTO host_label
+                ;
+                               
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*          CLAUSULAS                                                 */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+                                               
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             COMUNES                                                */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+cursor_name ::= id
+            ;
+
+host_field ::= host_var host_var_opt
+           ;
+                 
+
+host_var_opt ::= host_var
+             |
+             ;
+             
+host_var ::= host_var_base id_qualified
+         ;
+         
+host_var_base ::= HOSTVAR1
+              |   HOSTVAR2
+              |   PREHOST ID
+              ;
+                          
+id ::= id_base id_qualified
+   ;
+
+id_base ::= ID 
+        |   non_reserved_words
+        ;
+
+id_qualified ::= IDQUALIFIED
+             |
+             ;
+
+
+var_string ::= host_var
+           |   LITERAL
+           ;
+
+var_int ::= host_var
+        |   NUM_ENTERO
+        ;
+
+var_id ::= host_var
+       |   ID
+       ;
+
+literal ::= LITERAL
+        |   literal LITERAL
+        ;
+                                       
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             PALABRAS OPCIONALES                                    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+opt_result_set ::= result_set
+               |
+               ;
+
+result_set ::= RESULT SET
+           ;
+
+opt_descriptor ::= DESCRIPTOR
+               |
+               ;
+
+opt_from ::= FROM
+         |
+         ;
+
+choice_abs_rel ::= ABSOLUTE
+               |   RELATIVE
+               ;
+                                                                                                                       
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*            RESTO - SE COME TODO LO QUE HALLA                       */
+/*         FUNCIONES Y VERBOS NO ADMITIDOS EN PROGRAMAS               */     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+eat ::= eat_token
+    |   eat eat_token
+    ;
+    
+eat_token ::= ID
+          |   LPAR
+          |   RPAR
+          |   COMMA
+          ;                              
+          
+non_reserved_words ::= CURSOR
+                   ;
+          

@@ -1,0 +1,2639 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.core.ctes.*;
+
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.stmt.*;
+
+parser code {:
+   ParserInfo    info     = ParserInfo.getInstance();
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
+
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
+      
+:}
+
+action code {:
+   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   ParserInfo      info     = ParserInfo.getInstance();
+   StmtSQL         stmt     = new StmtSQL();
+   
+   public void initActionClass() {
+   }
+
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               PATRONES                                                   */
+/****************************************************************************/
+/****************************************************************************/
+
+
+terminal Symbol ID           ;
+
+terminal Symbol HOSTVAR1     ;
+terminal Symbol HOSTVAR2     ;
+terminal Symbol IDQUALIFIED  ;
+terminal Symbol PREHOST      ;
+terminal Symbol FULLTABLE    ;
+
+terminal Symbol LITERAL      ;
+
+// Wrapper para ( ..... ) ASC/DESC
+terminal Symbol ASCENDING    ;
+terminal Symbol DESCENDING   ;
+
+terminal Symbol FUNCTION_SCALAR     ;
+terminal Symbol FUNCTION_AGGREGATE  ;
+terminal Symbol FUNCTION_TABLE      ;
+terminal Symbol FUNCTION_ROW        ;
+terminal Symbol FUNCTION_BOTH       ;
+
+terminal Symbol NUM_ENTERO    ;
+terminal Symbol NUM_SIGNED  ;
+terminal Symbol NUM_DECIMAL   ;
+terminal Symbol NUM_FLOAT     ;
+terminal Symbol NUM_BINARY    ;
+terminal Symbol NUM_GRAPHIC   ;
+
+
+terminal Symbol EQ      ;
+terminal Symbol GT      ;
+terminal Symbol LT      ;
+terminal Symbol NE      ;
+terminal Symbol NE2     ;
+terminal Symbol NGT     ;
+terminal Symbol NLT     ;
+terminal Symbol GE      ;
+terminal Symbol LE      ;
+terminal Symbol CONCAT_SYM      ;
+
+terminal Symbol LPAR                                  ;
+terminal Symbol RPAR                                  ;
+terminal Symbol COMMA                                 ;
+
+terminal Symbol PLUS       ;
+terminal Symbol SUBTRACT   ;
+terminal Symbol MULTIPLIER ;
+terminal Symbol MULTIPLY   ;
+terminal Symbol DIVIDE     ;
+
+terminal Symbol QUESTION_MARK                         ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*          PALABRAS RESERVADAS                                             */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol ACCELERATION               ;
+terminal Symbol AGE                        ;
+terminal Symbol ALLOW                      ;
+terminal Symbol ALL                        ;
+terminal Symbol AND                        ;
+terminal Symbol ANY                        ;
+terminal Symbol APPLICATION                ;
+terminal Symbol AS                         ;
+terminal Symbol ASENSITIVE                 ;
+terminal Symbol BETWEEN                    ;
+terminal Symbol BY                         ;
+terminal Symbol CARDINALITY                ;
+terminal Symbol CASE                       ;
+terminal Symbol CAST                       ;
+terminal Symbol CHARACTER                  ;
+terminal Symbol CHAR                       ;
+terminal Symbol CLIENT_APPLNAME            ;
+terminal Symbol CLIENT_ACCTNG              ;
+terminal Symbol CLIENT_USERID              ;
+terminal Symbol CLIENT_WRKSTNNAME          ;
+terminal Symbol CONNECTION                 ;
+terminal Symbol CURRENT                    ;
+terminal Symbol CURRENT_DATE               ;
+terminal Symbol CURRENT_LC_CTYPE           ;
+terminal Symbol CURRENT_PATH               ;
+terminal Symbol CURRENT_SCHEMA             ;
+terminal Symbol CURRENT_TIME               ;
+terminal Symbol CURRENT_TIMESTAMP          ;
+terminal Symbol CURSOR                     ;
+terminal Symbol DATA                       ;
+terminal Symbol DAYS                       ;
+terminal Symbol DEBUG                      ;
+terminal Symbol DECLARE                    ;
+terminal Symbol DEFAULT                    ;
+terminal Symbol DEGREE                     ;
+terminal Symbol DELETE                     ;
+terminal Symbol DISABLE                    ;
+terminal Symbol DISALLOW                   ;
+terminal Symbol DISTINCT                   ;
+terminal Symbol DOUBLE                     ;
+terminal Symbol DYNAMIC                    ;
+terminal Symbol ELIGIBLE                   ;
+terminal Symbol ELSE                       ;
+terminal Symbol ENABLE                     ;
+terminal Symbol ENCODING                   ;
+terminal Symbol ENCRYPTION                 ;
+terminal Symbol END                        ;
+terminal Symbol ESCAPE                     ;
+terminal Symbol EXCEPT                     ;
+terminal Symbol EXISTS                     ;
+terminal Symbol EXPLAIN                    ;
+terminal Symbol FAILBACK                   ;
+terminal Symbol FETCH                      ;
+terminal Symbol FINAL                      ;
+terminal Symbol FIRST                      ;
+terminal Symbol FOR                        ;
+terminal Symbol FROM                       ;
+terminal Symbol FULL                       ;
+terminal Symbol GET_ACCEL_ARCHIVE          ;
+terminal Symbol GLOBAL                     ;
+terminal Symbol GROUP                      ;
+terminal Symbol HAVING                     ;
+terminal Symbol HINT                       ;
+terminal Symbol HOLD                       ;
+terminal Symbol HOURS                      ;
+terminal Symbol IN                         ;
+terminal Symbol INNER                      ;
+terminal Symbol INSENSITIVE                ;
+terminal Symbol INSERT                     ;
+terminal Symbol INTERSECT                  ;
+terminal Symbol INTO                       ;
+terminal Symbol IS                         ;
+terminal Symbol JOIN                       ;
+terminal Symbol LC_CTYPE                   ;
+terminal Symbol LC_TYPE                    ;
+terminal Symbol LEFT                       ;
+terminal Symbol LIKE                       ;
+terminal Symbol LOCALE                     ;
+terminal Symbol MAINTAINED                 ;
+terminal Symbol MEMBER                     ;
+terminal Symbol MICROSECONDS               ;
+terminal Symbol MINUTES                    ;
+terminal Symbol MODE                       ;
+terminal Symbol MONTHS                     ;
+terminal Symbol NEXT                       ;
+terminal Symbol NEXTVAL                    ;
+terminal Symbol NO                         ;
+terminal Symbol NONE                       ;
+terminal Symbol NOT                        ;
+terminal Symbol NULL                       ;
+terminal Symbol OF                         ;
+terminal Symbol OLD                        ;
+terminal Symbol ON                         ;
+terminal Symbol OPTIMIZATION               ;
+terminal Symbol OPTIMIZE                   ;
+terminal Symbol ORDER                      ;
+terminal Symbol OR                         ;
+terminal Symbol OUTER                      ;
+terminal Symbol PACKAGESET                 ;
+terminal Symbol PACKAGE                    ;
+terminal Symbol PASSWORD                   ;
+terminal Symbol PATH                       ;
+terminal Symbol PRECISION                  ;
+terminal Symbol QUERYNO                    ;
+terminal Symbol QUERY                      ;
+terminal Symbol REFRESH                    ;
+terminal Symbol RETURN                     ;
+terminal Symbol RIGHT                      ;
+terminal Symbol ROUND_MODE                 ;
+terminal Symbol ROUNDING                   ;
+terminal Symbol ROUTINE                    ;
+terminal Symbol ROWID                      ;
+terminal Symbol ROWSET                     ;
+terminal Symbol RULES                      ;
+terminal Symbol SCHEMA                     ;
+terminal Symbol SCHEME                     ;
+terminal Symbol SECONDS                    ;
+terminal Symbol SEQUENCE                   ;
+terminal Symbol SELECT                     ;
+terminal Symbol SENSITIVE                  ;
+terminal Symbol SERVER                     ;
+terminal Symbol SESSION_USER               ;
+terminal Symbol SET                        ;
+terminal Symbol SOME                       ;
+terminal Symbol SQLID                      ;
+terminal Symbol STATIC                     ;
+terminal Symbol STATEMENT                  ;
+terminal Symbol SYSTEM                     ;
+terminal Symbol TABLE                      ;
+terminal Symbol THEN                       ;
+terminal Symbol TO                         ;
+terminal Symbol TYPES                      ;
+terminal Symbol UNION                      ;
+terminal Symbol UPDATE                     ;
+terminal Symbol USER                       ;
+terminal Symbol VALUES                     ;
+terminal Symbol VALUE                      ;
+terminal Symbol VARIABLE                   ;
+terminal Symbol WHEN                       ;
+terminal Symbol WHERE                      ;
+terminal Symbol WITH                       ;
+terminal Symbol XMLCAST                    ;
+terminal Symbol XMLEXISTS                  ;
+terminal Symbol XMLTABLE                   ;
+terminal Symbol YEARS                      ;
+terminal Symbol ZONE                       ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*          PALABRAS NO RESERVADAS                                          */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol ASC                                   ;
+terminal Symbol CALLER                                ;
+terminal Symbol CLIENT                                ;
+terminal Symbol CONCAT                                ;
+terminal Symbol DECFLOAT                              ;
+terminal Symbol DESC                                  ;
+terminal Symbol EXCHANGE                              ;
+terminal Symbol INCLUDE                               ;
+terminal Symbol LOCKED                                ;
+terminal Symbol MERGE                                 ;
+terminal Symbol OVERRIDING                            ;
+terminal Symbol POSITIONING                           ;
+terminal Symbol READ                                  ;
+terminal Symbol SCROLL                                ;
+terminal Symbol SESSION                               ;
+terminal Symbol TEMPORARY                             ;
+terminal Symbol BINARY                                ;
+terminal Symbol BUSINESS_TIME                         ;
+terminal Symbol CROSS                                 ;
+terminal Symbol CS                                    ;
+terminal Symbol DATE                                  ;
+terminal Symbol DEC                                   ;
+terminal Symbol DECIMAL                               ;
+terminal Symbol FLOAT                                 ;
+terminal Symbol GRAPHIC                               ;
+terminal Symbol INDICATOR                             ;
+terminal Symbol INPUT                                 ;
+terminal Symbol INTEGER                               ;
+terminal Symbol INT                                   ;
+terminal Symbol MAX                                   ;
+terminal Symbol MIN                                   ;
+terminal Symbol NUMERIC                               ;
+terminal Symbol ONLY                                  ;
+terminal Symbol PREVIOUS                              ;
+terminal Symbol PREVVAL                               ;
+terminal Symbol PORTION                               ;
+terminal Symbol REAL                                  ;
+terminal Symbol ROWS                                  ;
+terminal Symbol RR                                    ;
+terminal Symbol RS                                    ;
+terminal Symbol SELECTIVITY                           ;
+terminal Symbol SKIP                                  ;
+terminal Symbol SMALLINT                              ;
+terminal Symbol SYSTEM_TIME                           ;
+terminal Symbol TIME                                  ;
+terminal Symbol TIMESTAMP                             ;
+terminal Symbol UR                                    ;
+terminal Symbol VARBINARY                             ;
+terminal Symbol VARCHAR                               ;
+terminal Symbol VARGRAPHIC                            ;
+terminal Symbol VERSION                               ;
+terminal Symbol WITHOUT                               ;
+terminal Symbol YES                                   ;
+
+
+/****************************************************************************/
+/****************************************************************************/
+/*               NO TERMINALES                                              */
+/****************************************************************************/
+/****************************************************************************/
+
+non terminal Symbol  sql_stmt      ;
+
+non terminal         sql_dml       ;
+non terminal         sql_declare   ;
+non terminal         sql_delete    ;
+non terminal         sql_exchange  ;
+non terminal         sql_insert    ;
+non terminal         sql_merge     ;
+non terminal         sql_refresh   ;
+non terminal         sql_select    ;
+non terminal         sql_set       ;
+non terminal         sql_truncate  ;
+non terminal         sql_update    ;
+
+// DECLARE
+
+non terminal         declare_clauses           ;
+non terminal         declare_vars              ;
+non terminal         declare_type              ;
+            
+non terminal         declare_cursor            ; 
+
+non terminal         cursor_opc                ;
+non terminal         cursor_opc_item           ;
+non terminal         cursor_type               ;
+non terminal         cursor_attr_opt           ;
+non terminal         cursor_attr               ;
+non terminal         cursor_attr_with          ;
+non terminal         cursor_attr_item          ;
+
+
+non terminal         verb_refresh              ;
+
+non terminal         select_queries    ;
+non terminal         select_query      ;
+
+/**********************************************************************/
+/*                           SET                                      */
+/**********************************************************************/
+
+non terminal         sql_set_verbs             ;
+non terminal         set_path                  ;
+non terminal         set_current_commands      ;
+non terminal         set_host_variable         ;
+non terminal         set_host_var_multiple     ;
+non terminal         set_host_var_simple       ;
+non terminal         set_host_var_id           ;
+non terminal         set_host_var              ;
+non terminal         set_host_var_lst          ;
+non terminal         set_host_var_value_lst    ;
+non terminal         set_host_var_value        ;
+
+non terminal         package_lst               ;
+non terminal         package_item              ;
+
+non terminal         acceleration_opc          ;
+non terminal         refresh_opc               ;
+
+non terminal         schema_type               ;
+
+
+/**********************************************************************/
+/*                           SELECT                                   */
+/**********************************************************************/
+ 
+non terminal         select_into           ;
+non terminal         select_clauses_opt    ;
+non terminal         select_into_lst       ;
+non terminal         select_column         ;
+non terminal         select_clauses        ;
+non terminal         select_clause         ;
+
+/**********************************************************************/
+/*                           UPDATE                                   */
+/**********************************************************************/
+
+non terminal          sql_update_period_opt       ; 
+non terminal          sql_update_correlation_opt  ;
+non terminal          sql_update_include_opt      ;
+non terminal          sql_update_set              ;
+non terminal          sql_update_clauses          ;
+non terminal          sql_update_columns          ;
+non terminal          sql_update_assign           ;
+non terminal          sql_update_left             ;
+non terminal          sql_update_right            ;
+non terminal          sql_update_left_lst         ;
+non terminal          sql_update_value            ;
+non terminal          sql_update_right_value      ;
+non terminal          sql_update_right_lst        ;
+non terminal          sql_update_clauses_opt      ;
+non terminal          sql_update_clause           ;
+
+non terminal          function                    ;
+non terminal          function_value              ;
+non terminal          function_value_parms        ;
+non terminal          function_cast               ;
+non terminal          function_cast_verb          ;
+non terminal          function_cast_parm          ;
+non terminal          function_time               ;
+non terminal          function_type               ;
+non terminal          function_parms              ;
+non terminal          func_parms_lst_opt          ;    
+non terminal          func_parms_lst              ;
+non terminal          func_parm_item              ;
+non terminal          func_parm_quantifier        ;
+
+non terminal          register                    ;
+non terminal          register_word               ;
+non terminal          register_words              ;
+non terminal          reg_zone_opt                ;
+
+non terminal          time_words_opt              ;
+non terminal          time_words                  ;
+
+/**********************************************************************/
+/*          QUERIES                                                   */
+/**********************************************************************/
+
+non terminal           qry_fullselect              ;
+non terminal           qry_fullselect_left         ;
+non terminal           qry_fullselect_right_opt    ;
+non terminal           qry_fullselect_right_lst    ;
+non terminal           qry_fullselect_right        ;
+non terminal           qry_fullselect_clauses_opt  ;
+non terminal           qry_fullselect_clauses      ;
+non terminal           qry_fullselect_clauses_item ;
+non terminal           qry_fullselect_qry          ;
+
+non terminal           qry_subselect               ;
+non terminal           qry_subselect_clauses_opt   ;
+non terminal           qry_subselect_clauses       ;
+non terminal           qry_subselect_clause        ;
+
+non terminal           qry_select            ;
+
+non terminal           qry_select_clauses_opt          ;
+non terminal           qry_select_clauses              ;
+non terminal           qry_select_clause               ;
+
+/**********************************************************************/
+/*          CLAUSES                                                   */
+/**********************************************************************/
+
+non terminal           clause_allow                ;
+non terminal           clause_cardinality          ;
+non terminal           clause_encryption_opc       ;
+non terminal           clause_encryption           ;
+non terminal           clause_escape               ;
+non terminal           clause_explain              ; 
+non terminal           clause_hint                 ;
+
+non terminal           clause_isolation_opt        ;
+non terminal           clause_isolation            ;
+non terminal           clause_isolation_type       ;
+
+
+non terminal           clause_maintained           ;
+non terminal           clause_packageset           ;
+non terminal           clause_round                ;
+non terminal           clause_schema               ;
+
+non terminal           clause_select               ;
+non terminal           clause_select_verb          ;
+non terminal           clause_select_data          ;
+non terminal           clause_select_lst           ;
+non terminal           clause_select_item          ;
+non terminal           clause_select_column        ;
+
+non terminal           clause_session           ;
+non terminal           clause_skip              ;
+non terminal           clause_sqlid             ;
+non terminal           clause_union             ;
+non terminal           clause_union_type        ;
+non terminal           clause_values            ;
+non terminal           clause_values_data       ;
+non terminal           clause_yes_no            ;
+
+non terminal           sequence_lst             ;
+non terminal           sequence                 ;
+non terminal           sequence_type            ;
+non terminal           sequence_value           ;
+non terminal           sequence_from_opt        ;
+non terminal           sequence_from            ;
+
+non terminal clause_from             ;
+non terminal clause_where_opt        ; 
+non terminal clause_where            ;
+non terminal clause_where_condition  ;
+non terminal clause_group            ;
+non terminal expr_grouping_lst       ;
+non terminal expr_grouping           ;
+
+non terminal clause_having           ;
+
+non terminal clause_optimize         ;
+
+non terminal clause_update ;
+non terminal clause_update_opt ;
+non terminal clause_update_lst ;
+
+
+non terminal clause_order            ;
+non terminal order_clause            ;
+non terminal order_lst               ;
+non terminal order_key               ;
+non terminal order_field             ;
+non terminal order_mode_opt          ;
+non terminal order_mode              ;
+non terminal clause_fetch_first      ;
+
+non terminal fetch_first_opt         ;
+
+
+non terminal clause_for              ;
+non terminal clause_for_type         ;
+non terminal clause_for_read_only    ;
+non terminal clause_read_only        ;
+non terminal clause_read             ;
+non terminal clause_for_update       ;
+non terminal clause_for_update_columns ;
+
+non terminal clause_for_row_opt      ;
+
+non terminal clause_period_opt       ;
+non terminal clause_period           ;
+non terminal clause_period_time      ;
+non terminal clause_period_mode      ;
+
+non terminal clause_portion_opt      ;
+non terminal clause_portion          ;
+
+non terminal clause_queryno_opt ;
+non terminal clause_queryno     ;
+
+non terminal             clause_with_opt      ;
+non terminal             clause_with          ;
+
+non terminal table_reference_lst     ;
+non terminal table_reference         ;
+non terminal table_table_prfx        ;
+non terminal table_table             ;
+non terminal table_item              ;
+non terminal table_locator           ;
+non terminal table_single            ;
+non terminal table_nested            ;
+non terminal table_nested_item       ;
+non terminal table_change            ;
+non terminal table_change_sql        ;
+non terminal               table_function                   ;
+non terminal               table_function_data              ;
+non terminal               table_function_item              ;
+non terminal               table_xml                        ;
+
+
+/**************************************************************/
+/*               JOIN                                         */
+/**************************************************************/
+
+
+non terminal               table_join                       ;
+non terminal               table_join_mode                  ;
+non terminal               table_join_type                  ;
+non terminal               table_join_verb                  ;
+non terminal               table_join_cross                 ;
+non terminal               table_join_full                  ;
+non terminal               table_join_not_full              ;
+non terminal               table_join_condition             ;
+non terminal               table_join_condition_expr        ;
+non terminal               table_join_condition_right       ;
+non terminal               table_join_condition_unary       ;
+non terminal               table_join_condition_item        ;
+
+non terminal               predicate                        ;
+non terminal               predicate_search                 ;
+non terminal               predicate_common                 ;
+non terminal               predicate_exists                 ;
+non terminal               predicate_xmlexists              ;
+non terminal               predicate_left                   ;
+non terminal               predicate_right                  ; 
+non terminal               predicate_values                 ; 
+non terminal               predicate_lst                    ;
+non terminal               predicate_basic                  ;
+non terminal               predicate_negated                ;
+non terminal               predicate_basic_right            ;
+non terminal               predicate_types                  ;
+non terminal               predicate_between                ;
+non terminal               predicate_distinct_null          ;
+non terminal               predicate_in                     ;
+non terminal               predicate_like                   ;
+non terminal               predicate_is                     ;                
+non terminal               predicate_d_n                    ;
+non terminal               predicate_in_value               ;
+non terminal               predicate_selectivity            ;
+
+non terminal               search_condition                 ;
+non terminal               search_condition_not             ;
+non terminal               search_condition_unary           ;
+
+non terminal verb_insert            ;
+non terminal insert_columns_opt     ;
+non terminal insert_columns_lst     ;
+non terminal insert_columns         ;
+non terminal insert_override_opt    ;
+non terminal data_type              ;
+non terminal data_type_base         ;
+non terminal insert_mode            ;
+non terminal insert_values          ;
+non terminal insert_fullselect      ;
+non terminal insert_value_lst       ;
+non terminal insert_value           ;
+
+non terminal verb_delete            ;
+non terminal del_object             ;
+
+non terminal verb_merge             ;
+
+non terminal expression             ;
+non terminal expression_arit        ;
+non terminal expression_signed      ;
+non terminal expression_primary     ;
+non terminal expression_id          ;
+non terminal expression_var         ;
+non terminal expression_attribute   ;
+
+non terminal operator               ;
+non terminal Symbol comparator      ;
+non terminal Symbol comparator_verb ;
+
+non terminal constant               ;
+non terminal constant_string        ;
+non terminal constant_numeric       ;
+non terminal constant_number        ;
+non terminal constant_binary        ;
+non terminal constant_graphic       ;
+
+non terminal clause_assignment                 ;
+non terminal clause_assignment_lst             ;
+non terminal clause_assignment_id              ;
+non terminal clause_assignment_id_simple       ;
+non terminal clause_assignment_id_multiple     ;
+non terminal clause_assignment_id_simple_value ;
+non terminal clause_assignment_id_left         ;
+non terminal clause_assignment_id_right        ;
+non terminal clause_assignment_id_list         ;
+non terminal clause_assignment_id_item         ;
+non terminal clause_assignment_host            ;
+non terminal clause_assignment_lst_host        ;
+non terminal clause_assignment_id_host         ;
+
+non terminal correlation_name_opt              ;
+non terminal correlation_name                  ;
+
+non terminal set_opt                           ;
+non terminal set                               ;
+
+non terminal row_fullselect  ;
+
+non terminal table_designator ;
+
+/**********************************************************************/
+/*          EXPRESIONES                                               */
+/**********************************************************************/
+
+// CASE EXPRESSION  
+
+
+non terminal expr_case                 ;
+non terminal expr_case_type            ;
+non terminal expr_case_else_opt        ;
+
+non terminal expr_case_searched        ;
+non terminal expr_case_searched_lst    ;
+non terminal expr_case_searched_item   ;
+non terminal expr_case_simple          ;
+non terminal expr_case_simple_lst      ;
+non terminal expr_case_simple_item     ;
+non terminal expr_case_result          ;
+
+non terminal expr_common_table_lst     ;
+
+non terminal include_columns_opt       ;
+non terminal include_columns_lst       ;
+non terminal include_columns           ;
+non terminal include_column_id         ;
+
+non terminal queryno                   ;
+
+non terminal Symbol non_reserved_words ;
+non terminal Symbol reserved_words     ;
+non terminal Symbol other_words        ;
+
+non terminal timestamp          ;
+
+non terminal data_type_def      ;
+non terminal data_type_name     ;
+non terminal data_type_prec_opt ;
+              
+non terminal id              ;
+non terminal id_base         ;
+non terminal id_lst          ;
+non terminal id_qualified    ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                 OPCIONES                                           */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+non terminal opt_acceleration_enable   ;
+non terminal opt_all_distinct          ;
+non terminal opt_not                   ;
+
+non terminal        opt_quantifier   ;
+non terminal Symbol quantifier       ;
+non terminal opt_eq           ;
+non terminal opt_minus        ;
+non terminal opt_table        ;
+non terminal opt_optimization ;
+non terminal opt_package      ;
+
+non terminal and_or           ;
+non terminal opt_as           ;
+non terminal opt_multiplier   ;
+non terminal opt_outer        ;
+non terminal opt_of           ;
+non terminal opt_return_caller;
+non terminal opt_rows         ;
+non terminal opt_indicator    ;
+
+non terminal with_without     ;
+non terminal final_old        ;
+
+non terminal parameter_marker ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                 COMUNES                                           */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+non terminal          column_lst      ;
+non terminal          column          ;
+
+non terminal table_name      ;
+non terminal column_name     ;
+non terminal column_list     ;
+non terminal sequence_name   ;
+non terminal field_name      ;
+
+non terminal id_general             ;
+
+non terminal            wrd_current            ;
+non terminal            wrd_of                 ;
+
+non terminal            host_var_indicator     ;
+non terminal            host_var               ;
+non terminal            host_var_negated       ;
+non terminal            host_var_base          ;
+non terminal            host_field             ;
+                 
+non terminal var_general          ;
+non terminal var_int              ;
+non terminal var_string           ;
+non terminal var_time             ;
+non terminal literal              ;
+
+non terminal eat                 ;
+non terminal eat_opt             ;
+non terminal eat_token           ;
+
+non terminal eat_full            ;
+non terminal eat_token_full      ;
+
+non terminal eat_functions       ;
+non terminal not_functions       ;
+
+precedence nonassoc LPAR, RPAR ;
+
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/* Devuelve el nombre de la copy si es include                        */
+/* Si no devuelve la cadena vacia                                     */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+sql_stmt ::= sql_dml      {: stmt.adjust(info.getLastSymbol());
+                             String name = stmt.getVerbName();
+                             int id =  stmt.getVerbId();
+                             int line = stmt.getVerb().left;
+                             int col = stmt.getVerb().right;
+                             RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                          :}
+         ;
+
+sql_dml ::= sql_declare
+        |   sql_delete
+        |   sql_exchange
+        |   sql_insert
+        |   sql_merge
+        |   sql_refresh
+        |   sql_select
+        |   sql_set                  
+        |   sql_truncate
+        |   sql_update        
+        ;
+
+/****************************************************************************/
+/***                      DECLARE                                         ***/
+/****************************************************************************/
+                      
+sql_declare ::= DECLARE:v {: stmt.setVerb(v); :}  declare_clauses
+            ;
+
+declare_clauses ::= declare_vars  declare_type             
+                |   GLOBAL TEMPORARY:t TABLE id {: stmt.appendVerb(t); :}
+                ;
+
+declare_vars ::= id_lst
+//             |   hvar_lst
+             ;
+                              
+declare_type ::= CURSOR:t declare_cursor            {: stmt.appendVerb(t); :}
+             |   STATEMENT:t                        {: stmt.appendVerb(t); :}
+             |   TABLE:t eat_full                   {: stmt.appendVerb(t); :}
+             |   VARIABLE:t eat_opt                 {: stmt.appendVerb(t); :}
+             |   cursor_opc CURSOR:t declare_cursor {: stmt.appendVerb(t); :}
+             ;
+               
+               
+/****************************************************************************/
+/***                DECLARE  CURSOR/TABLE                                 ***/
+/****************************************************************************/
+                                
+declare_cursor ::= cursor_attr_opt FOR cursor_type 
+               ;
+               
+cursor_opc ::= cursor_opc_item
+           |   cursor_opc cursor_opc_item
+           ;
+                       
+cursor_opc_item ::= NO
+                |   ASENSITIVE
+                |   SENSITIVE
+                |   INSENSITIVE
+                |   DYNAMIC
+                |   STATIC
+                |   SCROLL
+                ;
+
+cursor_attr_opt ::= cursor_attr
+                |
+                ;
+
+cursor_attr ::= cursor_attr_with
+            |   cursor_attr cursor_attr_with
+            ;
+            
+cursor_attr_with ::= with_without cursor_attr_item
+                 ;
+                 
+cursor_attr_item ::= HOLD
+                 |   RETURN opt_return_caller
+                 |   ROWSET POSITIONING
+                 ;
+
+cursor_type ::= id
+            |   qry_select
+            ;
+
+/****************************************************************************/
+/***                      DELETE                                          ***/
+/****************************************************************************/
+
+sql_delete ::= verb_delete 
+               clause_portion_opt 
+               correlation_name_opt 
+               set_opt
+               clause_where_opt
+               clause_isolation_opt
+               clause_queryno_opt
+           ;
+           
+verb_delete ::= DELETE:v {: stmt.setVerb(v); :}  del_object
+         ;
+
+del_object ::= FROM table_name
+           |   ID                
+           ;     
+
+/****************************************************************************/
+/***                      EXCHANGE                                        ***/
+/****************************************************************************/
+
+sql_exchange ::= EXCHANGE:v {: stmt.setVerb(v); :} DATA BETWEEN TABLE id AND id
+             ;
+
+/****************************************************************************/
+/***                      INSERT                                          ***/
+/****************************************************************************/
+
+sql_insert ::= verb_insert 
+               insert_columns_opt 
+               include_columns_opt
+               insert_override_opt
+               insert_mode
+           ;
+
+verb_insert ::= INSERT:v {: stmt.setVerb(v); :}  INTO table_name
+            ;                   
+
+insert_columns_opt ::= insert_columns
+                   |
+                   ;
+
+insert_columns ::= LPAR insert_columns_lst RPAR
+               ;
+
+insert_columns_lst ::= column_name               
+                    |  insert_columns_lst COMMA column_name
+                    ;
+
+insert_override_opt ::= OVERRIDING USER VALUE
+                    |
+                    ;
+                   
+insert_mode ::= insert_values
+            |   insert_fullselect
+            ;
+            
+insert_values ::= VALUES LPAR insert_value_lst RPAR
+              ;
+
+insert_fullselect ::= qry_fullselect
+                   ;
+                   
+insert_value_lst ::= insert_value
+                 |   insert_value_lst COMMA insert_value
+                 ;
+                  
+insert_value ::= DEFAULT  
+             |   NULL             
+             |  expression
+             ;
+                                 
+/****************************************************************************/
+/***                      MERGE                                           ***/
+/****************************************************************************/
+
+sql_merge ::= verb_merge eat
+           ;
+
+verb_merge ::= MERGE:v {: stmt.setVerb(v); :}  INTO table_name
+            ;                   
+
+/****************************************************************************/
+/***                      REFRESH                                         ***/
+/****************************************************************************/
+
+sql_refresh ::= verb_refresh eat
+             ;
+
+verb_refresh ::= REFRESH:v TABLE {: stmt.setVerb(v); :}  table_name clause_queryno_opt
+             ;                   
+
+/********************************************************************/
+/*                 SET                                              */
+/********************************************************************/
+                  
+sql_set ::= SET:v {: stmt.setVerb(v); :} sql_set_verbs
+        ;
+
+sql_set_verbs ::= CONNECTION:s     {: stmt.appendVerb(s); :} var_general
+             |    PATH:s           {: stmt.appendVerb(s); :} EQ set_path
+             |    SCHEMA:s         {: stmt.appendVerb(s); :} opt_eq schema_type
+             |    CURRENT_SCHEMA:s {: stmt.appendVerb(s); :} opt_eq schema_type
+             |    CURRENT:s        {: stmt.appendVerb(s); :} set_current_commands
+             |    ENCRYPTION:s     {: stmt.appendVerb(s); :} PASSWORD:t {: stmt.appendVerb(t); :} opt_eq clause_encryption
+             |    SESSION TIME:s   {: stmt.appendVerb(s); :} ZONE:t     {: stmt.appendVerb(t); :} opt_eq var_string
+             |    TIME:s           {: stmt.appendVerb(s); :} ZONE:t     {: stmt.appendVerb(t); :} opt_eq var_string
+             |    set_host_variable
+             ;
+                      
+set_path ::= var_general
+         |   SYSTEM PATH
+         |   clause_session
+         |   CURRENT opt_package PATH
+         |   PATH
+         |   literal
+         ;
+
+schema_type ::= var_general
+            |   clause_session
+            |   DEFAULT
+            |   literal
+            ;
+
+set_current_commands ::= APPLICATION ENCODING:s {: stmt.appendVerb(s); :}  SCHEME:t       {: stmt.appendVerb(t); :}  EQ var_string
+                     |   ENCODING:s             {: stmt.appendVerb(s); :}  SCHEME:t       {: stmt.appendVerb(t); :}  EQ var_string
+                     |   OPTIMIZATION:s         {: stmt.appendVerb(s); :}  HINT:t         {: stmt.appendVerb(t); :}  EQ var_string
+                     |   PACKAGE:s              {: stmt.appendVerb(s); :}  PATH:t         {: stmt.appendVerb(t); :}  opt_eq package_lst
+                     |   QUERY:s                {: stmt.appendVerb(s); :}  ACCELERATION:t {: stmt.appendVerb(t); :}  opt_eq acceleration_opc
+                     |   ROUTINE:s              {: stmt.appendVerb(s); :}  VERSION:t      {: stmt.appendVerb(t); :}  opt_eq var_string
+                     |   REFRESH:s              {: stmt.appendVerb(s); :}  AGE:t          {: stmt.appendVerb(t); :}  opt_eq refresh_opc                                          
+                     |   DEBUG:s                {: stmt.appendVerb(s); :}  MODE opt_eq clause_allow
+                     |   DECFLOAT:s             {: stmt.appendVerb(s); :}  ROUNDING MODE opt_eq clause_round
+                     |   DEGREE:s               {: stmt.appendVerb(s); :}  opt_eq var_string
+                     |   EXPLAIN:s              {: stmt.appendVerb(s); :}  MODE opt_eq clause_explain
+                     |   GET_ACCEL_ARCHIVE:s    {: stmt.appendVerb(s); :}  opt_eq clause_yes_no
+                     |   LOCALE LC_TYPE:s       {: stmt.appendVerb(s); :}  opt_eq var_string
+                     |   LC_TYPE:s              {: stmt.appendVerb(s); :}  opt_eq var_string
+                     |   MAINTAINED:s           {: stmt.appendVerb(s); :}  opt_table TYPES opt_optimization opt_eq clause_maintained
+                     |   PACKAGESET:s           {: stmt.appendVerb(s); :}  EQ clause_packageset
+                     |   PRECISION:s            {: stmt.appendVerb(s); :}  EQ var_string
+                     |   RULES:s                {: stmt.appendVerb(s); :}  EQ var_string
+                     |   SQLID:s                {: stmt.appendVerb(s); :}  EQ clause_sqlid
+                     |   SCHEMA:s               {: stmt.appendVerb(s); :}  opt_eq clause_schema
+                     |   TIMESTAMP:s            {: stmt.appendVerb(s); :}  opt_eq clause_schema                     
+                     ;
+
+package_lst ::= package_item
+            |   package_lst COMMA package_item
+            ;
+            
+package_item ::= var_string
+             |   SESSION_USER
+             |   SESSION
+             |   wrd_current opt_package PATH
+             ;               
+             
+set_host_variable ::= set_host_var
+                |     set_host_variable COMMA set_host_var
+                ;
+
+set_host_var ::= set_host_var_simple
+             |   set_host_var_multiple
+             ;
+            
+set_host_var_simple ::= set_host_var_id EQ expression
+                   ;
+
+set_host_var_id ::= host_var
+                |   id          //JGG Deberia ser :variable
+                ;
+
+set_host_var_multiple ::= LPAR set_host_var_lst RPAR EQ LPAR set_host_var_value_lst RPAR
+                     ;
+
+set_host_var_value_lst ::= set_host_var_value
+                       |   set_host_var_value_lst COMMA set_host_var_value
+                       ;
+                                      
+set_host_var_value ::= expression
+                   |   NULL
+                   |   DEFAULT
+                   ;
+
+acceleration_opc ::= NONE
+                 |   ENABLE opt_acceleration_enable
+                 |   ELIGIBLE
+                 |   ALL
+                 |   host_var
+                 ;
+refresh_opc ::= var_int
+            |   ANY
+            ;
+
+/****************************************************************************/
+/***                      SELECT                                          ***/
+/****************************************************************************/
+
+sql_select ::= clause_with_opt select_queries
+           ;
+
+select_queries ::= select_query
+               |   select_queries clause_union select_query
+               ;
+                   
+select_query ::= clause_select select_into clause_from select_clauses_opt 
+             ;
+                
+select_into ::= INTO select_into_lst
+            ;
+                
+select_into_lst ::= field_name
+                |   select_into_lst COMMA field_name
+                ;
+
+select_column ::= field_name
+              ;
+                  
+                                  
+select_clauses_opt ::= select_clauses
+                   |
+                   ;
+                        
+select_clauses ::= select_clause
+               |   select_clauses select_clause
+               ;
+
+select_clause ::= clause_where
+              |   clause_group
+              |   clause_having
+              |   clause_optimize                  
+              |   clause_order
+              |   clause_isolation
+              |   clause_queryno
+              |   clause_skip
+              |   clause_fetch_first
+              |   clause_for
+              ;
+
+/****************************************************************************/
+/***                      UPDATE                                          ***/
+/****************************************************************************/
+
+sql_update ::= UPDATE:v {: stmt.setVerb(v); :}  table_name
+               sql_update_period_opt 
+               sql_update_correlation_opt
+               sql_update_include_opt
+               sql_update_set
+               sql_update_clauses_opt
+               ;
+
+sql_update_period_opt ::= FOR PORTION OF BUSINESS_TIME FROM var_time TO var_time
+                      |
+                      ;
+                      
+sql_update_correlation_opt ::= id
+                           |
+                           ;
+
+sql_update_include_opt ::= INCLUDE
+                       |
+                       ;
+                                                                         
+sql_update_set ::= SET sql_update_columns
+               ;
+
+sql_update_columns ::= sql_update_assign
+                   |   sql_update_columns COMMA sql_update_assign
+                   ;
+
+sql_update_assign ::= sql_update_left EQ sql_update_right
+                  ;
+                  
+sql_update_left ::= id
+                |   LPAR sql_update_left_lst RPAR
+                ;
+                
+sql_update_left_lst ::= id
+                    |   sql_update_left_lst COMMA id
+                    ;
+                                  
+sql_update_right ::= sql_update_value
+                 |   LPAR sql_update_right_value RPAR
+                 ;
+                
+sql_update_right_value ::= sql_update_right_lst
+                       |   qry_fullselect
+                       ;
+                                       
+sql_update_right_lst ::= sql_update_value
+                    |    sql_update_right_lst COMMA sql_update_value
+                    ;
+
+sql_update_value ::= expression
+                 |   DEFAULT
+                 |   NULL
+                 ;
+
+sql_update_clauses_opt ::= sql_update_clauses
+                       |
+                       ;
+                       
+sql_update_clauses ::= sql_update_clause
+                   |   sql_update_clauses sql_update_clause
+                   ;
+                       
+sql_update_clause ::= clause_where
+                   |  clause_isolation
+                   |  clause_queryno
+                   ;
+               
+                 
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                QUERIES                                             */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+// SUBSELECT
+
+qry_subselect ::= clause_select clause_from qry_subselect_clauses_opt
+              ;
+
+qry_subselect_clauses_opt ::= qry_subselect_clauses
+                          |
+                          ;
+                          
+qry_subselect_clauses ::= qry_subselect_clause
+                      |   qry_subselect_clauses qry_subselect_clause
+                      ;
+                      
+qry_subselect_clause ::= clause_where 
+                     |   clause_group
+                     |   clause_having
+                     |   clause_order
+                     |   clause_fetch_first
+                     |   qry_select_clause
+                     ;                      
+qry_select_clause ::= clause_update
+                  |   clause_read_only
+                  |   clause_optimize
+                  |   clause_isolation 
+                  |   clause_queryno
+                  |   clause_skip
+//                  |   clause_fetch_first
+                  ;
+               
+ // FULLSELECT
+ 
+qry_fullselect ::= qry_fullselect_left qry_fullselect_right_opt // qry_fullselect_clauses_opt
+               ;
+
+qry_fullselect_left ::= qry_fullselect_qry 
+//                    |   clause_values
+                    ;
+
+qry_fullselect_right_opt ::= qry_fullselect_right_lst
+                         |
+                         ;
+
+qry_fullselect_qry ::=  qry_subselect
+                    |   LPAR qry_fullselect RPAR qry_fullselect_clauses_opt
+                    ;
+                                             
+qry_fullselect_right_lst ::= qry_fullselect_right
+                         |   qry_fullselect_right_lst qry_fullselect_right
+                         ;
+
+qry_fullselect_right ::= clause_union  qry_fullselect_qry
+                     ;
+
+qry_fullselect_clauses_opt ::= qry_fullselect_clauses
+                           |
+                           ;
+
+qry_fullselect_clauses ::= qry_fullselect_clauses_item
+                       |   qry_fullselect_clauses qry_fullselect_clauses_item
+                       ;
+                            
+qry_fullselect_clauses_item ::= clause_fetch_first
+                            |   clause_order
+                            ;
+
+// SELECT STATEMENT
+             
+qry_select ::= clause_with_opt qry_fullselect // qry_select_clauses_opt 
+           ;              
+
+/**********************************************************************/
+/*                  TABLES                                            */
+/**********************************************************************/
+
+table_reference_lst ::= table_reference
+                    |   table_reference_lst COMMA table_reference
+                    ;
+
+table_reference ::= table_item
+                |   table_reference table_item // el segundo es join o correlation
+                ;
+ 
+table_item ::= table_single    
+           |   table_table_prfx        
+           |   table_nested
+           |   table_join 
+           |   table_xml
+           |   FUNCTION_TABLE
+           |   AS id_base
+           ;
+
+table_single ::= table_name // clause_period      
+             ;
+
+table_table_prfx ::= TABLE LPAR table_table RPAR
+                 ;
+
+table_nested ::= LPAR table_nested_item RPAR
+             ;
+
+table_nested_item ::= qry_fullselect
+                  |   table_reference
+                  ;
+                  
+table_join ::= table_join_mode
+           |   LPAR table_join RPAR
+           ;
+
+table_xml ::= XMLTABLE LPAR eat RPAR 
+          ;
+
+table_table ::= qry_fullselect
+            |   table_function
+//            |   table_locator
+            |   table_change
+            ;
+                                                         
+table_function ::= id table_function_data clause_cardinality
+               ;
+
+table_function_data ::= table_function_item
+                    |   table_function_data COMMA table_function_item
+                    ;
+
+table_function_item ::= TABLE id
+                    |   expression
+                    ;
+                                        
+table_change ::= final_old TABLE LPAR table_change_sql RPAR
+             ;
+             
+table_change_sql ::= sql_insert
+                 |   sql_update
+                 |   sql_delete
+                 |   sql_merge
+                 ;
+                                              
+table_join_mode ::= table_join_cross
+                |   table_join_full
+                |   table_join_not_full
+                ;
+
+table_join_cross ::= CROSS JOIN table_item
+                 ;
+
+table_join_full ::= FULL opt_outer JOIN table_reference ON table_join_condition
+                ;
+
+table_join_not_full ::= table_join_type JOIN table_reference ON search_condition
+                    ;
+
+table_join_type ::= table_join_verb opt_outer
+                ;
+                                                                                                                                           
+table_join_verb ::= INNER
+                |   LEFT
+                |   RIGHT
+                |
+                ;     
+                  
+table_join_condition ::= table_join_condition_expr
+                     |   table_join_condition AND table_join_condition_expr
+                     ;
+
+table_join_condition_expr ::= table_join_condition_unary
+                          |   LPAR table_join_condition RPAR
+                          ;
+// COALESCE es una funcion scalar
+// Entonces puede ser con EQ o sin el
+table_join_condition_unary ::= table_join_condition_item table_join_condition_right
+                           ;
+
+table_join_condition_right ::= EQ table_join_condition_item
+                           |
+                           ;
+                                               
+table_join_condition_item ::= column_name
+                          |   FUNCTION_SCALAR
+                          ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                CLAUSES                                             */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+clause_allow ::= ALLOW
+             |   DISALLOW
+             |   DISABLE
+             |   host_var
+             ;
+
+clause_cardinality ::= CARDINALITY opt_multiplier var_int
+                   |
+                   ;
+                   
+clause_encryption_opc ::= clause_hint
+                      |
+                      ;
+                      
+clause_encryption ::= var_string clause_encryption_opc
+                  ;
+                  
+clause_escape ::= ESCAPE var_string
+                  |
+                  ;
+                                    
+clause_explain ::= clause_yes_no
+               |   EXPLAIN
+               |   host_var
+               ;
+
+clause_for ::= FOR clause_for_type
+           ;
+
+
+// FROM
+
+clause_from ::= FROM table_reference_lst 
+            ;
+
+
+clause_period ::= FOR clause_period_time clause_period_mode
+              |
+              ;
+                  
+clause_period_time ::= SYSTEM_TIME
+                   |   BUSINESS_TIME
+                   ;
+
+clause_period_mode ::= AS OF expression
+                   |   FROM expression TO expression
+                   |   BETWEEN expression AND expression
+                   ;               
+                   
+clause_portion_opt ::= clause_portion
+                   |
+                   ;
+                  
+clause_portion ::= FOR PORTION OF BUSINESS_TIME FROM expression TO expression
+               ;                  
+                         
+clause_for_type ::= id
+                |   clause_for_update
+                |   clause_for_read_only
+                ;
+                          
+clause_for_update ::= UPDATE clause_for_update_columns 
+               ;
+
+clause_for_update_columns ::= opt_of column_lst
+                          |
+                          ;
+                          
+clause_for_read_only ::= READ ONLY
+                     |   FETCH ONLY
+                     ;
+                                    
+clause_hint ::= WITH HINT var_string
+            ;
+
+clause_maintained ::= ALL
+                  |   NONE
+                  |   SYSTEM
+                  |   host_var
+                  ;
+
+clause_packageset ::= var_string
+                  |   clause_session
+                  ;
+
+clause_round ::= ROUND_MODE
+             |   var_string
+             ;
+
+clause_schema ::= clause_sqlid
+              |   DEFAULT
+              |   id
+              ;
+
+// SELECT
+// SELECT STATEMENT
+
+clause_select ::= clause_select_verb  opt_all_distinct clause_select_data
+              ;
+
+clause_select_verb ::= SELECT:v {: stmt.setVerb(v, false); :}
+                   ;
+
+clause_select_data ::= MULTIPLY
+                   |   clause_select_lst
+                   ;
+
+clause_select_lst ::= clause_select_item
+                  |   clause_select_lst  COMMA clause_select_item
+                  ;
+                  
+clause_select_item ::=  clause_select_column
+//                   |   clause_unpacked_row
+                   |   FULLTABLE
+                   ;
+
+clause_select_column ::= expression correlation_name_opt  
+                     ;
+                     
+//JGG clause_unpacked_row ::= UNPACK
+
+
+clause_session ::= SESSION_USER
+               |   USER
+               ;
+
+clause_sqlid ::= clause_packageset
+             ;
+
+clause_yes_no ::= YES
+              |   NO
+              ;
+
+// SEQUENCE
+                                       
+sequence_lst ::= sequence
+             |   sequence_lst COMMA  sequence
+             ;
+                       
+sequence ::= sequence_type FOR sequence_name
+         ;
+
+sequence_type ::= PREVIOUS  sequence_value
+              |   NEXT      sequence_value
+              |   PREVVAL
+              |   NEXTVAL
+              ;
+
+sequence_value ::= VALUE
+               |   VALUES
+               ;
+                                                          
+sequence_name ::= id_general // sequence_from_opt
+              ;
+              
+sequence_from_opt ::= sequence_from
+                  |
+                  ;
+                  
+sequence_from ::= FROM id
+              ;
+
+// UNION
+
+clause_union ::= clause_union_type opt_quantifier
+             ;
+                                                                                                                  
+clause_union_type ::= UNION
+                  |   EXCEPT
+                  |   INTERSECT
+                     ;
+                                                                      
+// VALUES
+
+clause_values ::= VALUES clause_values_data
+              ;
+              
+clause_values_data ::= sequence
+                   |   LPAR sequence_lst RPAR
+                   ;
+                   
+// WITH
+
+clause_with_opt ::= clause_with
+                |
+                ;
+                 
+clause_with ::= WITH:w expr_common_table_lst
+            ;
+
+/*****************************************************************/
+/*                       ORDER                                   */
+/*****************************************************************/
+                                        
+clause_order ::= ORDER BY order_clause
+             |   ASCENDING
+             |   DESCENDING
+             ;
+
+order_clause ::= INPUT SEQUENCE
+             |   ORDER OF table_designator
+             |   order_lst
+             ;
+           
+order_lst ::= order_key
+          |   order_lst COMMA order_key
+          ;     
+           
+order_key ::= order_field order_mode_opt
+              ;
+
+order_field ::= expression
+            ;                    
+              
+order_mode_opt ::= order_mode
+               |
+               ;
+
+order_mode ::= ASC
+           |   DESC
+           ;                            
+
+/*****************************************************************/
+/*                 FETCH FIRST                                   */
+/*****************************************************************/
+
+clause_fetch_first ::= FETCH FIRST fetch_first_opt opt_rows ONLY
+                   ;
+
+fetch_first_opt ::= var_int
+                |
+                ;
+
+clause_read_only ::= FOR clause_read ONLY
+                 ;
+
+clause_read ::= READ
+            |   FETCH
+            ;
+                             
+/*****************************************************************/
+/*                       WHERE                                   */
+/*****************************************************************/
+clause_where_opt ::= clause_where  
+                 |
+                 ;
+                 
+clause_where ::= WHERE clause_where_condition 
+             ;
+
+clause_where_condition ::= search_condition
+                       |   wrd_current wrd_of id // clause_for_row_opt
+                       ;
+                       
+/*****************************************************************/
+/*                       GROUP                                   */
+/*****************************************************************/
+             
+clause_group ::= GROUP BY expr_grouping_lst
+             ;
+
+expr_grouping_lst ::= expr_grouping
+                  |   expr_grouping_lst  expr_grouping
+                  ;
+
+expr_grouping ::= id
+              |   expr_grouping COMMA id
+              ;
+                    
+/*****************************************************************/
+/*                      HAVING                                   */
+/*****************************************************************/
+                        
+clause_having ::= HAVING search_condition
+              ;
+
+/*****************************************************************/
+/*                        FOR UPDATE                             */
+/*****************************************************************/
+
+clause_update ::= FOR UPDATE clause_update_opt
+              ;
+
+clause_update_opt ::= OF clause_update_lst
+                  |
+                  ;
+
+clause_update_lst ::= column_name
+                  |   clause_update_lst COMMA column_name
+                  ;
+
+/*****************************************************************/
+/*                        WITH                                   */
+/*****************************************************************/
+
+clause_isolation_opt ::= clause_isolation
+                |
+                ;
+                
+clause_isolation ::= WITH clause_isolation_type
+                 |   SKIP LOCKED DATA
+                 ;
+                 
+clause_isolation_type ::= RR
+                      |   RS
+                      |   CS
+                      |   UR
+                      ;
+
+//  OPTIMIZATION 
+
+clause_optimize ::= OPTIMIZE FOR NUM_ENTERO opt_rows
+                ;
+                                 
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                    DATA MANIPULATION LANGUAGE                      */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+        
+
+/**********************************************************************/
+/*                    DELETE                                          */
+/**********************************************************************/                                                               
+
+//labeled_duration ::= expression expr_datetime
+//  labeled_duration ::= expr_datetime
+//                 ;
+
+                                  
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                    FUNCIONES                                       */
+/* Todas son FUNCTION_NAME y el nombre va en el Symbol                */
+/* esto permite que el codigo de inicializacion sea inferior a 64K    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+function ::= function_type function_parms
+         |   function_value
+         |   function_cast         
+         |   function_time
+         ;
+
+function_type ::= FUNCTION_SCALAR
+              |   FUNCTION_AGGREGATE
+              |   FUNCTION_ROW
+              |   FUNCTION_BOTH             
+              ;
+              
+function_value ::= VALUE function_value_parms
+               ;
+
+function_cast ::= function_cast_verb LPAR function_cast_parm AS eat RPAR
+               ;
+
+function_cast_verb ::= CAST
+                   |   XMLCAST
+                   ;
+
+function_cast_parm ::= expression
+                   |   NULL
+                   ;
+                                  
+function_value_parms ::= function_parms
+//JGG Perfilar, no vale todo                     |   expression   
+                     ;
+                     
+function_parms ::= LPAR func_parms_lst_opt RPAR
+           ;
+
+func_parms_lst_opt ::= func_parms_lst
+                   |
+                   ;
+                   
+func_parms_lst ::= func_parm_item
+               |   func_parms_lst COMMA func_parm_item
+               ;
+
+func_parm_item ::= func_parm_quantifier expression
+               |   MULTIPLY
+               ;                       
+
+func_parm_quantifier ::= ALL
+                     |   DISTINCT
+                     |
+                     ;
+
+function_time ::= time_words function_parms
+              ;
+     
+time_words_opt ::= time_words
+               |
+               ;
+               
+time_words ::= YEARS
+           |   MONTHS
+           |   DAYS 
+           |   HOURS
+           |   MINUTES
+           |   SECONDS
+           |   MICROSECONDS
+           ;
+                       
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                    REGISTROS                                       */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+register ::= register_word
+         |   wrd_current register_words
+         ;
+
+register_word ::= CURRENT_DATE     
+              |   CURRENT_PATH     
+              |   CURRENT_SCHEMA   
+              |   CURRENT_TIME     
+              |   CURRENT_TIMESTAMP
+              |   CURRENT_LC_CTYPE 
+              ;
+              
+register_words ::= APPLICATION ENCODING SCHEME           
+               |   CLIENT_ACCTNG                         
+               |   CLIENT_APPLNAME                       
+               |   CLIENT_USERID                         
+               |   CLIENT_WRKSTNNAME                     
+               |   DATE                                  
+               |   DEBUG MODE                            
+               |   DECFLOAT ROUNDING MODE                
+               |   DEGREE                                
+               |   EXPLAIN MODE                          
+               |   GET_ACCEL_ARCHIVE                     
+               |   LC_CTYPE                              
+               |   MAINTAINED TYPES                      
+               |   MEMBER                                
+               |   OPTIMIZATION HINT                     
+               |   PACKAGE PATH                          
+               |   PACKAGESET                            
+               |   PATH                                  
+               |   PRECISION                             
+               |   QUERY ACCELERATION                    
+               |   REFRESH AGE                           
+               |   ROUTINE VERSION                       
+               |   RULES                                 
+               |   SCHEMA                                
+               |   SERVER                                
+               |   SQLID            
+               |   TIMESTAMP
+               |   TIME reg_zone_opt                                                     
+               |   ENCRYPTION PASSWORD                   
+               |   SESSION_USER                          
+               |   USER                                  
+               ;
+
+reg_zone_opt ::= ZONE
+             |
+             ;
+                            
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                      EXPRESIONES                                   */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+expression ::= expression_arit
+           ;
+           
+expression_arit ::= expression_primary
+                |   expression_arit expression_signed
+                ;
+
+expression_signed ::= operator expression_primary
+                  |   NUM_SIGNED time_words_opt
+                  ;
+
+expression_primary ::= expression_id
+                   |   function
+                   |   register
+                   |   expr_case
+                   |   sequence
+                   |   LPAR expression RPAR expression_attribute
+                   ;
+
+expression_id ::= expression_var expression_attribute
+              ;
+              
+expression_var ::= host_field
+               |   id
+               |   constant
+               ;
+               
+expression_attribute ::= time_words
+                     |
+                     ;
+                      
+/*                   
+                           
+expression_item ::= function 
+                  | constant 
+                  | register
+                  | expr_case
+                  | id_or_host
+//                  |   expr_case
+//                |   scalar_fullselect
+//                |   time_zone_specific_expression
+//                |   labeled_duration
+//                |   XMLCAST_specification
+//                |   OLAP_specification
+//                |   row_change_expression
+
+                ;
+                
+*/
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*              CASE EXPRESSION                                       */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+expr_case ::= CASE expr_case_type expr_case_else_opt END
+               ;
+
+expr_case_type ::= expr_case_searched
+               |   expr_case_simple
+               ;
+
+expr_case_searched ::= expr_case_searched_lst
+                   ;
+
+expr_case_searched_lst ::= expr_case_searched_item 
+                       |   expr_case_searched_lst expr_case_searched_item 
+                       ;
+                       
+expr_case_searched_item ::= WHEN search_condition THEN expr_case_result
+                       ;
+                       
+expr_case_simple ::= expression expr_case_simple_lst
+                 ;
+                 
+expr_case_simple_lst ::= expr_case_simple_item
+                     |   expr_case_simple_lst expr_case_simple_item
+                     ;
+                     
+expr_case_simple_item ::= WHEN expression THEN expr_case_result
+                     ;
+
+expr_case_else_opt ::= ELSE expr_case_result
+                   |     
+                   ;
+
+expr_case_result ::= expression
+                 ;
+                                
+/**********************************************************************/
+/*          PREDICAOOS   Y SEARCH                                     */
+/**********************************************************************/
+
+predicate ::= predicate_common
+          |   predicate_exists
+          |   predicate_xmlexists
+          ;
+
+predicate_common ::= predicate_left predicate_right 
+                 ;
+                 
+predicate_left ::= expression 
+               |   predicate_values 
+               ;                
+
+predicate_values ::= LPAR predicate_lst RPAR
+                 ;
+                 
+predicate_lst ::= expression
+              |   predicate_lst COMMA expression
+              ;
+
+predicate_right ::= predicate_basic
+                |   predicate_negated
+                ;
+
+predicate_basic ::= comparator predicate_basic_right
+                ;
+                           
+predicate_basic_right ::= predicate_left
+                      |   quantifier predicate_left
+                      |   LPAR qry_fullselect RPAR
+                      ;
+                                         
+predicate_negated ::= NOT predicate_types
+                  |   predicate_types
+                  ;
+                                   
+predicate_types ::= predicate_between
+                |   predicate_distinct_null
+                |   predicate_in
+                |   predicate_like
+                |   predicate_is                
+                ;
+                
+predicate_between ::= BETWEEN expression AND expression
+                  ;
+
+predicate_distinct_null ::= IS opt_not predicate_d_n
+                  ;
+
+predicate_d_n ::= DISTINCT FROM predicate_left
+              |   NULL
+              ;
+              
+predicate_in ::= IN LPAR predicate_in_value RPAR
+             ;
+             
+predicate_in_value ::= predicate_lst
+                   |   qry_fullselect
+                   ;
+
+predicate_like ::= LIKE var_string clause_escape
+               ;
+                                                                              
+predicate_exists ::= EXISTS LPAR qry_fullselect RPAR
+                 ;
+                 
+predicate_xmlexists ::= XMLEXISTS LPAR eat RPAR
+                    ;
+                                                                        
+search_condition ::= search_condition_not                
+                 |   search_condition and_or search_condition_not
+                 ;
+                 
+search_condition_not ::= NOT search_condition_unary
+                     |   search_condition_unary
+                     ;                 
+
+search_condition_unary ::= predicate_search 
+                       |   LPAR search_condition RPAR
+                       ;
+                    
+predicate_search ::= predicate predicate_selectivity
+                 ;
+                 
+predicate_selectivity ::= SELECTIVITY var_int
+                      |
+                      ;
+                     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        DATA_TYPE                                   */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+data_type ::=  data_type_base 
+          |    timestamp
+          |    data_type_def
+          ;
+
+data_type_base ::= SMALLINT
+               |     INTEGER
+               |     INT
+               |     REAL
+               |     DATE
+               |     TIME
+               |     NUMERIC
+               ;
+                          
+data_type_def ::= data_type_name data_type_prec_opt
+              ;
+              
+data_type_name ::= DECIMAL
+               |   DEC
+               |   NUMERIC
+               |   FLOAT
+               |   DOUBLE
+               |   DECFLOAT
+               |   CHARACTER
+               |   CHAR
+               |   VARCHAR
+               |   GRAPHIC
+               |   VARGRAPHIC
+               |   BINARY
+               |   VARBINARY
+               ;
+               
+comparator ::= comparator_verb
+           ;
+           
+comparator_verb ::= EQ
+           |   NE
+           |   NE2
+           |   NGT
+           |   NLT
+           |   GT
+           |   GE
+           |   LT
+           |   LE
+//           |   IS opt_not
+           ;
+        
+operator ::= PLUS
+         |   SUBTRACT
+         |   DIVIDE
+         |   MULTIPLY
+         |   CONCAT
+         |   CONCAT_SYM
+         ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             CLAUSULAS                                              */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+clause_assignment ::= clause_assignment_lst
+                  ;
+
+clause_assignment_lst ::= clause_assignment_id
+                      |   clause_assignment_lst COMMA clause_assignment_id
+                      ;                  
+
+clause_assignment_id ::= clause_assignment_id_simple
+                     |   clause_assignment_id_multiple
+                     ;
+                     
+clause_assignment_id_simple ::= column_name EQ clause_assignment_id_simple_value
+                            ;
+
+clause_assignment_host ::= clause_assignment_lst_host
+                  ;
+                  
+clause_assignment_lst_host ::= clause_assignment_id_host
+                           |   clause_assignment_lst_host COMMA clause_assignment_id_host
+                           ;                  
+
+clause_assignment_id_host ::= host_var EQ expression
+                          ;
+                          
+clause_assignment_id_simple_value ::= expression
+                                  ;
+
+clause_assignment_id_multiple ::= clause_assignment_id_left EQ clause_assignment_id_right
+                              ;
+                              
+
+clause_assignment_id_left ::= LPAR column_list RPAR 
+                          ;
+
+clause_assignment_id_right ::= LPAR clause_assignment_id_list RPAR
+                           ;
+                           
+clause_assignment_id_list ::= clause_assignment_id_item
+                          |   clause_assignment_id_list COMMA clause_assignment_id_item
+                          ;                            
+
+clause_assignment_id_item ::= clause_assignment_id_simple_value
+                          |   row_fullselect
+                          ;
+
+
+clause_for_row_opt ::= FOR ROWS var_int OF ROWSET
+                   |
+                   ;
+                    
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             COMUNES                                                */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+column_lst ::= column
+           |   column_lst COMMA column
+           ;
+           
+column ::= id
+       ;
+                  
+parameter_marker ::= QUESTION_MARK NUM_ENTERO
+                 ;
+                 
+and_or ::= AND
+       |   OR
+       ;
+        
+
+var_string ::= literal
+           |   host_var
+           ;
+
+literal ::= LITERAL
+        |   literal LITERAL
+        ;
+                
+constant ::= constant_string
+         |   constant_numeric
+         |   constant_binary
+         |   constant_graphic
+         ;
+         
+constant_string ::= literal
+                ;
+
+constant_numeric ::= opt_minus constant_number
+                 ;
+                                 
+constant_number ::= NUM_ENTERO
+                 |  NUM_DECIMAL
+                 |  NUM_FLOAT
+                 |  NUM_SIGNED 
+                 ;
+                 
+constant_binary ::=  NUM_BINARY
+                ;
+                
+constant_graphic ::= NUM_GRAPHIC
+                 ;
+                 
+correlation_name_opt ::= correlation_name
+                     |
+                     ;
+                     
+correlation_name ::= opt_as id
+                 ;
+                  
+include_columns_opt ::= include_columns
+                   |
+                   ;                   
+
+include_columns ::= INCLUDE include_columns_lst
+               ;
+               
+include_columns_lst ::= include_column_id 
+                    |   include_columns_lst include_column_id 
+                    ;
+                      
+include_column_id ::= ID data_type
+                  ;
+
+set_opt ::= set
+        |
+        ;
+        
+set ::= SET:s {: stmt.setVerb(s); :}  clause_assignment
+    ;
+    
+clause_queryno_opt ::= queryno
+                   |
+                   ;
+            
+clause_queryno ::= QUERYNO NUM_ENTERO
+               ;
+
+var_general ::= id
+            |   host_var
+            ;
+            
+var_int ::= constant_numeric
+        |   host_var
+        ;
+        
+var_time ::= literal
+         |   host_var
+         ;
+
+wrd_current ::= CURRENT
+            ;
+
+wrd_of ::= OF
+       ;
+                            
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             PALABRAS OPCIONALES                                    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+opt_acceleration_enable ::= WITH FAILBACK
+                        |
+                        ;
+
+opt_all_distinct ::= ALL
+                 |   DISTINCT
+                 |
+                 ;
+
+opt_as ::= AS
+       | 
+       ;
+
+opt_eq ::= EQ
+          |
+          ;
+
+final_old ::= FINAL
+          |   OLD
+          ;
+                     
+opt_indicator::= INDICATOR 
+              |
+              ;            
+           
+opt_minus ::= SUBTRACT
+          |
+          ;
+          
+opt_multiplier ::= MULTIPLIER
+               |
+               ;
+               
+opt_not ::= NOT
+        |
+        ;
+
+opt_of ::= OF
+       |
+       ;                                                     
+
+opt_optimization ::= FOR OPTIMIZATION
+                 ;
+
+opt_outer ::= OUTER
+          |
+          ;
+
+opt_package ::= PACKAGE
+            |
+            ;
+                                
+opt_quantifier ::= quantifier
+               |
+               ;
+
+quantifier ::= SOME
+           |   ANY
+           |   ALL
+           ;
+
+opt_return_caller ::= TO CALLER
+                  |   TO CLIENT
+                  |
+                  ;
+                                            
+opt_rows ::= ROWS
+         |
+         ;  
+               
+opt_table ::= TABLE
+          |
+          ;
+                                                                                                                             
+with_without ::= WITH
+             |   WITHOUT
+             ;
+             
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*            RESTO - SE COME TODO LO QUE HALLA                       */
+/*         FUNCIONES Y VERBOS NO ADMITIDOS EN PROGRAMAS               */     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+       
+host_var_indicator ::= host_var_base id_qualified
+                   |
+                   ;
+
+host_var ::= host_var_negated id_qualified
+         ;
+
+host_var_negated ::= SUBTRACT host_var_base
+                 |   host_var_base
+                 ;
+                                  
+host_var_base ::= HOSTVAR1
+              |   HOSTVAR2
+              |   PREHOST ID
+              ;
+
+host_field ::= host_var opt_indicator host_var_indicator
+           ;
+                 
+                                                 
+id_general ::= id
+           |   NUM_ENTERO
+           |   literal
+           ;
+
+id_lst ::= id
+       |   id_lst COMMA id
+       ;
+           
+id ::= id_base id_qualified
+   ;
+
+id_base ::= ID 
+        |   non_reserved_words
+        ;
+
+id_qualified ::= IDQUALIFIED
+             |
+             ;
+
+table_name ::= id 
+           ;
+           
+column_name ::= id
+            ;
+                                             
+column_list ::= id
+            |   column_list COMMA id
+            ;
+
+field_name ::= id
+           |   host_field
+           ;
+                                             
+eat_opt ::= eat
+        |
+        ;
+
+eat_full ::= eat_token_full
+         |   eat_full eat_token_full
+         ;
+                 
+eat ::= eat_token
+    |   eat eat_token
+    ;
+    
+    
+eat_token ::= id
+          |   eat_functions
+          |   reserved_words
+          |   other_words
+          |   COMMA
+          ;
+
+eat_token_full ::= eat_token
+               |   LPAR
+               |   RPAR
+               ;
+
+eat_functions ::= function
+              |   not_functions
+              ;
+
+not_functions ::= BINARY
+              |   CHAR
+              |   DATE
+              |   DECFLOAT
+              |   DECIMAL
+              |   DOUBLE
+              |   FLOAT
+              |   GRAPHIC
+              |   INT
+              |   LEFT
+              |   REAL
+              |   RIGHT
+              |   SMALLINT
+              |   TIME
+              |   VARBINARY
+              |   VARCHAR
+              |   VARGRAPHIC
+              ;
+                            
+non_reserved_words ::= CURSOR
+                   |   MAX
+                   |   MIN
+                   |   VERSION
+                   |   TIMESTAMP
+                   ;
+                   
+reserved_words ::= ACCELERATION        
+               |   AGE                 
+               |   ALLOW               
+               |   ALL                 
+               |   AND                 
+               |   ANY                 
+               |   APPLICATION         
+               |   AS                  
+               |   ASENSITIVE          
+               |   BETWEEN             
+               |   BY                  
+               |   CARDINALITY         
+               |   CASE                
+               |   CHARACTER                          
+               |   CLIENT_APPLNAME     
+               |   CLIENT_ACCTNG       
+               |   CLIENT_USERID       
+               |   CLIENT_WRKSTNNAME   
+               |   CONNECTION          
+               |   CURRENT             
+               |   CURRENT_DATE        
+               |   CURRENT_LC_CTYPE    
+               |   CURRENT_PATH        
+               |   CURRENT_SCHEMA      
+               |   CURRENT_TIME        
+               |   CURRENT_TIMESTAMP                 
+               |   DATA                               
+               |   DEBUG               
+               |   DECLARE             
+               |   DEFAULT             
+               |   DEGREE              
+               |   DELETE              
+               |   DISABLE             
+               |   DISALLOW            
+               |   DISTINCT                         
+               |   DYNAMIC             
+               |   ELIGIBLE            
+               |   ELSE                
+               |   ENABLE              
+               |   ENCODING            
+               |   ENCRYPTION          
+               |   END                 
+               |   ESCAPE              
+               |   EXCEPT              
+               |   EXISTS              
+               |   EXPLAIN             
+               |   FAILBACK            
+               |   FETCH               
+               |   FINAL               
+               |   FIRST               
+               |   FOR                 
+               |   FROM                
+               |   FULL                
+               |   GET_ACCEL_ARCHIVE   
+               |   GLOBAL              
+               |   GROUP               
+               |   HAVING              
+               |   HINT                
+               |   HOLD                              
+               |   IN                  
+               |   INNER               
+               |   INSENSITIVE         
+               |   INSERT              
+               |   INTERSECT           
+               |   INTO                
+               |   IS                  
+               |   JOIN                
+               |   LC_CTYPE            
+               |   LC_TYPE                            
+               |   LIKE                
+               |   LOCALE              
+               |   MAINTAINED          
+               |   MEMBER                                
+               |   MODE                             
+               |   NEXT                
+               |   NEXTVAL             
+               |   NO                  
+               |   NONE                
+               |   NOT                 
+               |   NULL                
+               |   OF                  
+               |   OLD                 
+               |   ON                  
+               |   OPTIMIZATION        
+               |   OPTIMIZE            
+               |   ORDER               
+               |   OR                  
+               |   OUTER               
+               |   PACKAGESET          
+               |   PACKAGE             
+               |   PASSWORD            
+               |   PATH                
+               |   PRECISION           
+               |   QUERYNO             
+               |   QUERY               
+               |   REFRESH             
+               |   RETURN                            
+               |   ROUND_MODE          
+               |   ROUNDING            
+               |   ROUTINE             
+               |   ROWID
+               |   ROWSET              
+               |   RULES               
+               |   SCHEMA              
+               |   SCHEME                          
+               |   SEQUENCE            
+               |   SELECT              
+               |   SENSITIVE           
+               |   SERVER              
+               |   SESSION_USER        
+               |   SET                 
+               |   SOME                
+               |   SQLID               
+               |   STATIC              
+               |   STATEMENT           
+               |   SYSTEM              
+               |   TABLE               
+               |   THEN                
+               |   TO                  
+               |   TYPES               
+               |   UNION               
+               |   UPDATE              
+               |   USER                
+               |   VALUES              
+               |   VALUE               
+               |   VARIABLE            
+               |   WHEN                
+               |   WHERE               
+               |   WITH                
+               |   XMLEXISTS           
+               |   XMLTABLE                          
+               |   ZONE                
+               ;
+                   
+// Palabras que hay que comer y provocan conflictos
+// por el contexto
+ 
+other_words ::= NUMERIC
+            |   INTEGER
+            ;
+                                                                                                

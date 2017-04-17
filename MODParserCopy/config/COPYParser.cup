@@ -1,0 +1,135 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.base.stmt.*;
+import com.jgg.sdp.parser.base.symbol.*;
+
+import com.jgg.sdp.parser.base.*;
+
+
+parser code {:
+   ParserInfo    info     = ParserInfo.getInstance();
+             
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
+
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
+:}
+
+action code {:
+   ParserInfo    info    = ParserInfo.getInstance();      
+   
+   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+         
+   StmtCopy stmt = null;  // Instruccion en proceso
+   
+   public void initActionClass() {
+      
+   }
+
+   public void debug(String txt) { System.err.println(txt); }
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+
+/****************************************************************************/
+/****************************************************************************/
+/*               TERMINALES                                                 */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol SUPPRESS  ;
+terminal Symbol REPLACING ;
+terminal Symbol ID        ;
+terminal Symbol IN        ;
+terminal Symbol OF        ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               NO TERMINALES                                              */
+/****************************************************************************/
+/****************************************************************************/
+
+non terminal Symbol     copy        ; 
+
+non terminal StmtCopy   cpy_stmt    ;
+non terminal Symbol     cpy_member  ;
+non terminal            cpy_options ;
+         
+non terminal            cpy_supress_opt     ;
+non terminal            cpy_replacing_opt   ;
+non terminal            cpy_replacing       ;
+non terminal Symbol     cpy_member_id       ;
+non terminal Option     cpy_lib_opt         ;
+non terminal SymbolList cpy_replacing_lst   ;
+non terminal Symbol     cpy_replacing_token ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+copy ::=  cpy_stmt:c  {: RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  :}
+     ; 
+
+/*********************************************************************/
+/* COPYS                                                             */
+/*********************************************************************/
+
+cpy_stmt ::= cpy_member:m cpy_options 
+         ;
+         
+cpy_member ::= cpy_member_id:c cpy_lib_opt:p   {: stmt = new StmtCopy(c); 
+                                                  stmt.addOption(p); 
+                                                :}
+           ;
+
+cpy_lib_opt ::= IN:c cpy_member_id:p {: RESULT = new Option(c, p);  :}
+            |   OF:c cpy_member_id:p {: RESULT = new Option(c, p);  :}
+            |                        {: RESULT = null; :}
+            ;
+         
+cpy_options ::= cpy_supress_opt cpy_replacing_opt
+            ;
+                          
+
+cpy_member_id ::= ID:s {: RESULT = s; :}
+              ;
+
+                 
+cpy_supress_opt ::= SUPPRESS:s  {: stmt.addOption(new Option(s)); :}
+                |
+                ;
+             
+cpy_replacing_opt ::= cpy_replacing
+                  |
+                  ;
+
+cpy_replacing ::= REPLACING:s  cpy_replacing_lst:l {: Option opt = new Option(s);
+                                                      opt.add(l);
+                                                      stmt.addOption(opt); 
+                                                    :}
+              ;
+              
+cpy_replacing_lst ::= cpy_replacing_token:c                     {: RESULT = new SymbolList(c); :}
+                  |   cpy_replacing_lst:l cpy_replacing_token:c {: RESULT = l.add(c);          :}
+                  ;
+                       
+cpy_replacing_token ::= ID:s         {: RESULT = s; :}
+                    ;
+                                                                                                    

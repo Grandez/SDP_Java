@@ -7,6 +7,7 @@
   <artifactId>sdp</artifactId>
   <version>5.0</version>
   <packaging>pom</packaging>
+
   <name>Serendipity</name>
   
   <properties>
@@ -45,38 +46,43 @@
   </dependencies>
   
     <modules>
-      <module>../parsers</module>
-      <module>../SDPCollector</module>
-      <module>../SDPCore</module>
-      <module>../SDPDbMySQL</module>
-      <module>../SDPDbServices</module>
-      <module>../SDPModule</module>
 
-      <module>../SDPBatch</module>
+    <!--  Parents  -->
+    <module>../SDPBase</module>
+    <module>../SDPParser</module>
+    <module>../SDPDBOffline</module>    
+    <module>../SDPDBOnline</module>
+    <module>../SDPAnalyzer</module>
+                  
+<!--         <module>../SDPParsers</module> -->
+        
+    
+<!--       <module>../parsers</module> -->
+<!--       <module>../SDPCollector</module> -->
+<!--       <module>../SDPCore</module> -->
+<!--       <module>../SDPDbMySQL</module> -->
+<!--       <module>../SDPDbServices</module> -->
+<!--       <module>../SDPModule</module> -->
+
+<!--       <module>../SDPBatch</module> -->
 <!--       <module>../SDPTS</module>     	 -->
 <!--       <module>../SDPCall</module> -->
-      <module>../SDPRules</module>
+<!--       <module>../SDPRules</module> -->
 <!--       <module>../SDPSQL</module> -->
         
-      <module>../SDPParserBase</module>
-      <module>../SDPParserCics</module>
-      <module>../SDPParserCobol</module>
-      <module>../SDPParserCopy</module>
-      <module>../SDPParserDB2</module>
-      <module>../SDPParser</module>
 
-      <module>../SDPAnalyzer</module>
-      <module>../SDPCalc</module>
-      <module>../SDPTools</module>
+<!--       <module>../SDPCalc</module> -->
+<!--       <module>../SDPTools</module> -->
 
-      <module>../SDPLite</module>
+<!--       <module>../SDPLite</module> -->
 <!--         <module>../SDPCics</module>      -->
-      <module>../SDPExcel</module>        
+<!--       <module>../SDPExcel</module>         -->
         
 <!--     <module>SDPWebAdm</module> -->
 <!--     <module>SDPWebBase</module> -->
 <!--     <module>SDPWebClient</module> -->
 <!--     <module>SDPWebManager</module> -->
+
 
     </modules>
     

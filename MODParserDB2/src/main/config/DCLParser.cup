@@ -1,0 +1,339 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.stmt.*;
+
+parser code {:
+   ParserInfo    info     = ParserInfo.getInstance();
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
+
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
+
+:}
+
+action code {:
+   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   ParserInfo      info     = ParserInfo.getInstance();
+   StmtSQL         stmt     = new StmtSQL();
+   
+   public void initActionClass() {
+   }
+
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               TERMINALES                                                 */
+/****************************************************************************/
+/****************************************************************************/
+
+/****************************************************************************/
+/***                    PATRONES                                          ***/
+/****************************************************************************/
+
+terminal Symbol ID         ;
+terminal Symbol LITERAL    ;
+
+/****************************************************************************/
+/***                    SIMBOLOS                                         ***/
+/****************************************************************************/
+
+terminal Symbol ALL                                   ;
+
+terminal Symbol BY                                    ;
+
+terminal Symbol COMMA                                 ;
+terminal Symbol CURRENT                               ;
+terminal Symbol CURSOR                                ;
+
+terminal Symbol DATE                                  ;
+terminal Symbol DEC                                   ;
+terminal Symbol DEPENDENT                             ;
+terminal Symbol DESCRIBE                              ;
+terminal Symbol DIAGNOSTICS                           ;
+
+terminal Symbol EXPLAIN                               ;
+
+terminal Symbol FROM                                  ;
+
+terminal Symbol GET                                   ;
+terminal Symbol GRANT                                 ;
+
+terminal Symbol INCLUDING                             ;
+terminal Symbol INPUT                                 ;
+
+terminal Symbol LPAR                                  ;
+
+terminal Symbol MAX                                   ;
+terminal Symbol MESSAGE_TEXT                          ;
+terminal Symbol MIN                                   ;
+
+terminal Symbol OPTION                                ;
+terminal Symbol OUTPUT                                ;
+
+terminal Symbol PACKAGE                               ;
+terminal Symbol PLAN                                  ;
+terminal Symbol PRIVILEGES                            ;
+terminal Symbol PROCEDURE                             ;
+terminal Symbol PUBLIC                                ;
+
+terminal Symbol REVOKE                                ;
+terminal Symbol ROLE                                  ;
+terminal Symbol RPAR                                  ;
+
+terminal Symbol SMALLINT                              ;
+terminal Symbol STACKED                               ;
+terminal Symbol STMTCACHE                             ;
+
+terminal Symbol TABLE                                 ;
+terminal Symbol TIMESTAMP                             ;
+terminal Symbol TIME                                  ;
+terminal Symbol TO                                    ;
+
+terminal Symbol VERSION                               ;
+
+terminal Symbol WITH                                  ;
+
+non terminal Symbol  sql                   ;
+non terminal         sql_dcl               ;
+
+non terminal         sql_describe          ;
+non terminal         describe_verbs        ;
+
+non terminal         sql_explain           ;
+non terminal         explain_type          ;
+
+non terminal         sql_get               ;
+non terminal         get_type              ;
+
+non terminal         sql_grant             ;
+non terminal         grant_class           ;
+non terminal         grant_target_lst      ;
+non terminal         grant_access_lst      ;
+non terminal         grant_use             ;
+
+
+non terminal         grant_target          ;
+
+non terminal         sql_revoke            ;
+non terminal         clause_revoke_opt     ;
+non terminal         clause_revoke_lst     ;
+non terminal         clause_revoke_role_lst;
+non terminal         clause_revoke_role    ;
+
+non terminal Symbol non_reserved_words ;
+
+non terminal         opt_grant               ;
+
+non terminal id              ;
+
+non terminal         eat                   ;
+non terminal         eat_token             ;
+
+non terminal         opt_not               ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/* Devuelve el nombre de la copy si es include                        */
+/* Si no devuelve la cadena vacia                                     */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+sql ::= sql_dcl  {: stmt.adjust(info.getLastSymbol()); 
+                    String name = stmt.getVerbName();
+                    int id =  stmt.getVerbId();
+                    int line = stmt.getVerb().left;
+                    int col = stmt.getVerb().right;
+                    RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                 :}
+    ;
+
+sql_dcl ::= sql_describe
+        |   sql_explain
+        |   sql_get
+        |   sql_grant
+        |   sql_revoke 
+        ;
+
+/**********************************************************************/
+/*                         DESCRIBE                                   */
+/**********************************************************************/
+
+sql_describe ::= DESCRIBE:v {: stmt.setVerb(v); :}  describe_verbs eat
+             ;
+             
+describe_verbs ::= CURSOR
+               |   INPUT
+               |   OUTPUT
+               |   PROCEDURE
+               |   TABLE
+               ;
+
+/**********************************************************************/
+/*                         EXPLAIN                                    */
+/**********************************************************************/
+
+sql_explain ::= EXPLAIN explain_type eat
+          ;
+
+explain_type ::= PLAN
+             |   ALL
+             |   STMTCACHE
+             |   PACKAGE
+             ;
+
+/**********************************************************************/
+/*                         GET                                        */
+/**********************************************************************/
+
+sql_get ::= GET get_type DIAGNOSTICS eat
+        ;
+
+get_type ::= CURRENT
+         |   STACKED
+         |
+         ;
+         
+/**********************************************************************/
+/*                         GRANT                                      */
+/**********************************************************************/
+
+sql_grant ::= GRANT grant_class TO grant_target_lst opt_grant
+          ;
+
+grant_class ::= grant_access_lst  
+            |   grant_use 
+            ;
+grant_target_lst ::= grant_target
+                 |   grant_target_lst COMMA grant_target
+                 ;
+                 
+grant_target ::= ROLE ID
+             |   PUBLIC
+             |   ID
+             ;
+                                        
+/**********************************************************************/
+/*                         REVOKE                                     */
+/**********************************************************************/
+
+sql_revoke ::= REVOKE grant_class FROM grant_target_lst clause_revoke_opt
+           ; 
+
+
+clause_revoke_opt ::= clause_revoke_lst
+                  |
+                  ;
+                  
+clause_revoke_lst ::= BY clause_revoke_role_lst
+                  |   opt_not INCLUDING DEPENDENT PRIVILEGES
+                  ;
+
+clause_revoke_role_lst ::= clause_revoke_role
+                       |   clause_revoke_role_lst COMMA clause_revoke_role
+                       ;
+
+clause_revoke_role ::= id
+                   |   ROLE id
+                   |   ALL
+                   ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*          CLAUSULAS                                                 */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+                                                              
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             COMUNES                                                */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+              
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             PALABRAS OPCIONALES                                    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+                         
+opt_grant ::= WITH GRANT OPTION
+          |
+          ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*            RESTO - SE COME TODO LO QUE HALLA                       */
+/*         FUNCIONES Y VERBOS NO ADMITIDOS EN PROGRAMAS               */     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+non_reserved_words ::= DEC
+                   |   MAX
+                   |   MIN
+                   |   VERSION
+                   |   TIMESTAMP
+                   |   MESSAGE_TEXT
+                   |   DATE
+                   |   TIME
+                   |   SMALLINT
+                   ;               
+                   
+                                  
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             COMUNES                                                */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+id ::= ID
+   |   LITERAL
+   |   non_reserved_words
+   ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             PALABRAS OPCIONALES                                    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+eat ::= eat_token
+    |   eat eat_token
+    ;
+    
+eat_token ::= ID
+          |   LPAR
+          |   RPAR
+          |   COMMA
+          ;                                               

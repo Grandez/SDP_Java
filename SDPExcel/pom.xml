@@ -92,7 +92,7 @@
                               <artifactId>${project.artifactId}</artifactId>
                               <version>${project.version}</version>
                               <type>${project.packaging}</type>
-                              <destFileName>SDPTree.jar</destFileName>
+                              <destFileName>SDPExcel.jar</destFileName>
                            </artifactItem>
                        </artifactItems>
                

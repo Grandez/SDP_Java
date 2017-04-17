@@ -1,0 +1,34 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+                             
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>com.jgg</groupId>
+    <artifactId>sdp</artifactId>
+    <version>5.0</version>
+    <relativePath>../SDP</relativePath>
+  </parent>
+
+  <groupId>com.jgg.sdp</groupId>
+  <artifactId>SDPDBOffline</artifactId>
+  <packaging>pom</packaging>
+  
+    <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <jdk.version>1.8</jdk.version>
+    <sdp.version>5.0</sdp.version>
+    <sdp.lib>P:\SDP\Lib</sdp.lib>
+  </properties>
+
+  <name>Serendipity Data Services</name>
+  
+  <modules>
+    <module>../MODDBMySql</module>
+    <module>../MODDBServices</module>
+    <module>../MODDBOfflineDist</module>
+  </modules>
+
+</project>

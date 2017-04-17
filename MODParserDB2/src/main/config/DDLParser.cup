@@ -1,0 +1,282 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.stmt.*;
+
+parser code {:
+   ParserInfo    info     = ParserInfo.getInstance();
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
+
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
+:}
+
+action code {:
+   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   ParserInfo      info     = ParserInfo.getInstance();
+   StmtSQL         stmt     = new StmtSQL();
+   
+   public void initActionClass() {
+   }
+
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               TERMINALES                                                 */
+/****************************************************************************/
+/****************************************************************************/
+
+/****************************************************************************/
+/***                    PATRONES                                          ***/
+/****************************************************************************/
+
+terminal Symbol ID        ;
+terminal Symbol LITERAL   ;
+terminal Symbol COMMA     ;
+terminal Symbol HOSTVAR1  ;
+terminal Symbol HOSTVAR2  ;
+terminal Symbol PREHOST   ;
+
+/****************************************************************************/
+/***                    SIMBOLOS                                         ***/
+/****************************************************************************/
+
+
+terminal Symbol ALIAS           ;
+terminal Symbol ALTER           ;
+terminal Symbol AUXILIARY       ;
+
+terminal Symbol COMMENT         ;
+terminal Symbol CONTEXT         ;
+terminal Symbol CREATE          ;
+
+terminal Symbol DATABASE        ;
+terminal Symbol DROP            ;
+
+terminal Symbol FUNCTION        ;
+
+terminal Symbol GLOBAL          ;
+
+terminal Symbol INDEX           ;
+
+terminal Symbol MASK            ;
+
+terminal Symbol PERMISSION      ;
+terminal Symbol PROCEDURE       ; 
+
+terminal Symbol RENAME          ;
+terminal Symbol ROLE            ;
+
+terminal Symbol SEQUENCE        ;
+terminal Symbol STOGROUP        ;
+terminal Symbol SYNONIM         ;
+
+terminal Symbol TABLE           ;
+terminal Symbol TABLESPACE      ;
+terminal Symbol TEMPORARY       ;
+terminal Symbol TO              ;
+terminal Symbol TRIGGER         ;
+terminal Symbol TRUSTED         ;
+terminal Symbol TYPE            ;
+
+terminal Symbol VIEW            ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               NO   TERMINALES                                            */
+/****************************************************************************/
+/****************************************************************************/
+
+non terminal Symbol  sql                ;
+non terminal         sql_ddl            ;
+
+non terminal         sql_alter          ;
+non terminal         alter_type         ;
+
+non terminal         sql_comment        ;
+
+
+non terminal         sql_create         ;
+non terminal         object_type        ;
+
+non terminal         sql_drop           ;
+
+non terminal         sql_label          ;
+
+non terminal         sql_rename         ;
+non terminal         object_opt         ;
+
+non terminal host_variable       ;
+non terminal var_id              ;
+non terminal literal             ;
+
+non terminal eat                 ;
+non terminal eat_opt             ;
+non terminal eat_token           ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+sql ::= sql_ddl {: stmt.adjust(info.getLastSymbol()); 
+                    String name = stmt.getVerbName();
+                    int id =  stmt.getVerbId();
+                    int line = stmt.getVerb().left;
+                    int col = stmt.getVerb().right;
+                    RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                :}
+    ;
+
+sql_ddl ::= sql_alter 
+        |   sql_comment
+        |   sql_create
+        |   sql_drop        
+        |   sql_label            
+        |   sql_rename        
+        ;
+
+/**********************************************************************/
+/*                         ALTER                                      */
+/**********************************************************************/
+
+sql_alter ::= ALTER alter_type eat_opt
+          ;
+
+alter_type ::= DATABASE
+           |   FUNCTION
+           |   INDEX
+           |   MASK
+           |   PERMISSION
+           |   PROCEDURE
+           |   SEQUENCE
+           |   STOGROUP
+           |   TABLE
+           |   TABLESPACE
+           |   TRIGGER
+           |   TRUSTED CONTEXT
+           |   VIEW            
+           ;
+           
+/**********************************************************************/
+/*                         COMMENT                                    */
+/**********************************************************************/
+
+sql_comment ::= COMMENT eat
+            ;
+
+/**********************************************************************/
+/*                         CREATE                                     */
+/**********************************************************************/
+
+sql_create ::= CREATE object_type eat_opt
+           ;
+
+object_type ::= ALIAS
+            |   AUXILIARY TABLE
+            |   DATABASE
+            |   FUNCTION
+            |   GLOBAL TEMPORARY TABLE
+            |   INDEX
+            |   MASK
+            |   PERMISSION
+            |   PROCEDURE
+            |   ROLE
+            |   SEQUENCE
+            |   STOGROUP
+            |   SYNONIM
+            |   TABLE
+            |   TABLESPACE
+            |   TRIGGER
+            |   TRUSTED CONTEXT
+            |   TYPE
+            |   VIEW
+            ;
+                           
+/**********************************************************************/
+/*                         DROP                                       */
+/**********************************************************************/
+
+sql_drop ::= DROP object_type eat_opt
+         ;
+
+/**********************************************************************/
+/*                         RENAME                                     */
+/**********************************************************************/
+
+sql_rename ::= RENAME object_opt var_id TO var_id
+         ;
+
+object_opt ::= TABLE
+           |   INDEX
+           |
+           ;
+                    
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             COMUNES                                                */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+var_id ::= host_variable
+       |   ID
+       ;
+
+host_variable ::= HOSTVAR1
+              |   HOSTVAR2
+              |   PREHOST ID
+              ;
+
+literal ::= LITERAL
+        |   literal LITERAL
+        ;
+        
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             PALABRAS OPCIONALES                                    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*            RESTO - SE COME TODO LO QUE HALLA                       */
+/*         FUNCIONES Y VERBOS NO ADMITIDOS EN PROGRAMAS               */     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+eat_opt ::= eat
+        |
+        ;
+        
+eat ::= eat_token
+    |   eat eat_token
+    ;
+    
+eat_token ::= ID
+          |   LITERAL 
+          |   COMMA
+          ;                              

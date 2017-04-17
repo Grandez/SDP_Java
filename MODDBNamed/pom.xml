@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.jgg.sdp</groupId>
+    <artifactId>SDPDBOnline</artifactId>
+    <version>5.0</version>
+    <relativePath>../SDPDBOnline</relativePath>
+  </parent>
+
+  <artifactId>MODDBNamed</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Serendipity Module for Persistence Layer Online</name>
+
+  <dependencies>
+
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>SDPCore</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--     </dependency> -->
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>${hibernate.version}</version>
+    </dependency>
+
+<!--     <dependency> -->
+<!--         <groupId>log4j</groupId> -->
+<!--         <artifactId>log4j</artifactId> -->
+<!--         <version>${log4j.version}</version> -->
+<!--     </dependency> -->
+    
+    <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
+        <scope>compile</scope>
+    </dependency>
+
+  </dependencies>
+  
+
+</project>

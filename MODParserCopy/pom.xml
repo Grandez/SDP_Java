@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.jgg.sdp</groupId>
+    <artifactId>SDPParser</artifactId>
+    <relativePath>../SDPParser</relativePath>
+    <version>5.0</version>
+  </parent>
+
+  <artifactId>MODParserCopy</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Serendipity Parser Module for COPYBook</name>
+
+  <dependencies>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPCore</artifactId>
+       <version>${sdp.version}</version>
+       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPModule</artifactId>
+       <version>${sdp.version}</version>
+       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPParserBase</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.parsers</groupId>
+       <artifactId>runtime</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+<!--     <dependency> -->
+<!--        <groupId>cup</groupId> -->
+<!--        <artifactId>java-cup-runtime</artifactId> -->
+<!--        <version>11b</version> -->
+<!--     </dependency> -->
+    
+  </dependencies>
+
+</project>

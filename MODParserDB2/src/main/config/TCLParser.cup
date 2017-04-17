@@ -1,0 +1,320 @@
+package com.jgg.sdp.parser.lang;
+
+import java_cup.runtime.*;
+
+import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.stmt.*;
+
+parser code {:
+   ParserInfo    info     = ParserInfo.getInstance();
+   
+   public void syntax_error(Symbol token) throws ParseException {
+          info.syntax_error(token);
+   }
+
+   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+      info.unrecovered_syntax_error(token);
+   }
+:}
+
+action code {:
+   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   ParserInfo      info     = ParserInfo.getInstance();
+   StmtSQL         stmt     = new StmtSQL();
+   
+   public void initActionClass() {
+   }
+
+   public void print(String txt) { 
+      System.out.println(txt); 
+   }
+
+:}
+
+
+init with {:
+  action_obj.initActionClass();
+:}
+
+/****************************************************************************/
+/****************************************************************************/
+/*               TERMINALES                                                 */
+/****************************************************************************/
+/****************************************************************************/
+
+terminal Symbol ALL                                   ;
+
+terminal Symbol COMMIT                                ;
+terminal Symbol CURRENT                               ;
+terminal Symbol CURSORS                               ;
+
+terminal Symbol DATE                                  ;
+terminal Symbol DEC                                   ;
+
+terminal Symbol EXCLUSIVE                             ;
+
+terminal Symbol HOSTVAR1                              ;
+terminal Symbol HOSTVAR2                              ;
+
+terminal Symbol ID        ;
+terminal Symbol IN                                    ;
+
+
+terminal Symbol LOCK                                  ;
+terminal Symbol LOCKS                                 ;
+
+terminal Symbol MAX                                   ;
+terminal Symbol MIN                                   ;
+terminal Symbol MODE                                  ;
+
+terminal Symbol NUM_ENTERO                            ;
+
+
+
+terminal Symbol ON                                    ;
+
+terminal Symbol PARTITION                             ;
+
+terminal Symbol QUERYNO                               ;
+
+terminal Symbol REFRESH                               ;
+terminal Symbol RELEASE                               ;
+terminal Symbol RETAIN                                ;
+terminal Symbol ROLLBACK                              ;
+
+terminal Symbol SAVEPOINT                             ;
+terminal Symbol SHARE                                 ;
+terminal Symbol SMALLINT                              ;
+
+
+terminal Symbol TABLE                                 ;
+terminal Symbol TIMESTAMP                             ;
+terminal Symbol TIME                                  ;
+terminal Symbol TO                                    ;
+
+terminal Symbol VERSION                               ;
+
+terminal Symbol WORK                                  ;
+
+
+
+non terminal Symbol  sql                ;
+non terminal         sql_tcl            ;
+non terminal         sql_commit         ;
+non terminal         sql_rollback       ;
+non terminal         sql_savepoint      ;
+non terminal         sql_lock_table     ;
+non terminal         sql_release        ;
+non terminal         sql_refresh        ;
+
+non terminal sql_savepoint_opt  ;
+non terminal sql_savepoint_lst  ;
+non terminal sql_savepoint_item ;
+
+non terminal lock_partition_opt ;
+non terminal lock_mode_opt      ;
+non terminal lock_mode          ;
+
+non terminal sql_release_type   ;
+non terminal release_connection ;
+non terminal release_savepoint  ;
+
+
+non terminal Symbol non_reserved_words ;
+non terminal Symbol integer     ;
+
+non terminal opt_clause_queryno ;
+non terminal opt_id             ;
+non terminal opt_savepoint      ;
+non terminal opt_sql            ;
+non terminal opt_to             ;
+non terminal opt_work           ;
+
+non terminal id                 ;
+non terminal opt_unique         ;
+
+non terminal table_name         ;
+
+non terminal host_var_simple    ;
+non terminal host_variable      ;
+
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*                        INICIO PARSER                               */
+/* Devuelve el nombre de la copy si es include                        */
+/* Si no devuelve la cadena vacia                                     */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+sql ::= sql_tcl  {: stmt.adjust(info.getLastSymbol()); 
+                    String name = stmt.getVerbName();
+                    int id =  stmt.getVerbId();
+                    int line = stmt.getVerb().left;
+                    int col = stmt.getVerb().right;
+                    RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
+                 :}
+    ;
+
+sql_tcl ::= sql_commit
+        |   sql_rollback
+        |   sql_savepoint 
+        |   sql_lock_table
+        |   sql_release
+        |   sql_refresh
+        ; 
+
+/**********************************************************************/
+/*                         COMMIT                                     */
+/**********************************************************************/
+
+sql_commit ::= COMMIT:v {: stmt.setVerb(v); :}  opt_work
+           ;
+
+/**********************************************************************/
+/*                         ROLLBACK                                   */
+/**********************************************************************/
+           
+sql_rollback ::= ROLLBACK:v {: stmt.setVerb(v); :}  opt_work opt_savepoint
+             ;          
+
+/**********************************************************************/
+/*                         SAVEPOINT                                  */
+/**********************************************************************/
+             
+sql_savepoint ::= SAVEPOINT:v {: stmt.setVerb(v); :}  id opt_unique sql_savepoint_opt
+              ;
+
+sql_savepoint_opt ::= sql_savepoint_lst
+                  |
+                  ;
+                                
+sql_savepoint_lst ::= sql_savepoint_item
+                  |   sql_savepoint_lst sql_savepoint_item
+                  ;
+
+sql_savepoint_item ::= ON ROLLBACK RETAIN CURSORS
+                   |   ON ROLLBACK RETAIN LOCKS
+                   ;
+
+/**********************************************************************/
+/*                         LOCK                                       */
+/**********************************************************************/
+
+sql_lock_table ::= LOCK:l TABLE:t {: stmt.setVerb(l, t); :} table_name lock_partition_opt IN lock_mode_opt MODE                                  
+               ;
+         
+lock_partition_opt ::= PARTITION NUM_ENTERO
+                   |
+                   ;
+
+lock_mode_opt ::= lock_mode
+              |
+              ;
+
+lock_mode ::= SHARE
+          |   EXCLUSIVE
+          ;
+
+/**********************************************************************/
+/*                         RELEASE                                    */
+/**********************************************************************/
+
+sql_release ::= RELEASE:v {: stmt.setVerb(v); :} sql_release_type
+            ;
+
+sql_release_type ::= release_connection
+                 |   release_savepoint
+                 ;
+                                              
+release_connection ::= host_var_simple
+                   |   CURRENT
+                   |   ALL opt_sql
+                   ;
+                   
+release_savepoint ::= opt_to SAVEPOINT id
+                  ;
+                  
+/**********************************************************************/
+/*                         REFRESH                                    */
+/**********************************************************************/
+                  
+sql_refresh ::= REFRESH:r TABLE:t {: stmt.setVerb(r,t); :} table_name opt_clause_queryno
+            ;
+                                                                                                   
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             COMUNES                                                */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+host_var_simple ::= host_variable
+                ;
+
+host_variable ::= HOSTVAR1
+              |   HOSTVAR2
+              ;
+              
+table_name ::= ID 
+           ;
+           
+id ::= ID
+   |   non_reserved_words
+   ;
+
+integer ::= NUM_ENTERO
+        |   host_variable
+        ;
+
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*             PALABRAS OPCIONALES                                    */
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+opt_work ::= WORK
+         |
+         ;        
+
+opt_savepoint ::= TO SAVEPOINT opt_id
+              |
+              ;
+              
+opt_id ::= id
+       | 
+       ;
+
+opt_to ::= TO
+       |
+       ;
+
+opt_clause_queryno ::= QUERYNO integer
+                   |
+                   ;
+                          
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+/*            RESTO - SE COME TODO LO QUE HALLA                       */
+/*         FUNCIONES Y VERBOS NO ADMITIDOS EN PROGRAMAS               */     
+/**********************************************************************/
+/**********************************************************************/
+/**********************************************************************/
+
+non_reserved_words ::= DEC
+                   |   MAX
+                   |   MIN
+                   |   VERSION
+                   |   TIMESTAMP
+                   |   DATE
+                   |   TIME
+                   |   SMALLINT
+                   ;               
+                   

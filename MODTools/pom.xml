@@ -2,44 +2,46 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <name>Serendipity Base Tools</name>
          
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.jgg.sdp</groupId>
-    <artifactId>SDPBase</artifactId>
+    <groupId>com.jgg</groupId>
+    <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDPBase</relativePath>
+    <relativePath>../SDP</relativePath>
   </parent>
 
+  <groupId>com.jgg.sdp</groupId>
   <artifactId>MODTools</artifactId>
   <packaging>jar</packaging>
-
-  <name>Serendipity MOdule Tools</name>
 
   <dependencies>    
   </dependencies>
 
   <build>
   
-      <plugins>
-          <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-jar-plugin</artifactId>
-             <version>2.6</version>
-             <executions>
-                <execution>
-                   <phase>package</phase>
-                   <goals>
-                      <goal>jar</goal>
-                   </goals>
-                   <configuration>
-                      <finalName>${project.artifactId}</finalName>
-                   </configuration>
-                </execution>
-             </executions>
-         </plugin>
+    <plugins>
 
+     <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!--  this is used for inheritance merges -->
+            <phase>package</phase> <!--  bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
 <!--           <plugin> -->
 <!--              <groupId>org.apache.maven.plugins</groupId> -->
@@ -60,7 +62,7 @@
 <!--                               <artifactId>${project.artifactId}</artifactId> -->
 <!--                               <version>${project.version}</version> -->
 <!--                               <type>${project.packaging}</type> -->
-<!--                               <destFileName>SDPTools.jar</destFileName> -->
+<!--                               <destFileName>MODDBServices.jar</destFileName> -->
 <!--                            </artifactItem> -->
 <!--                        </artifactItems> -->
                

@@ -14,7 +14,7 @@ import static com.jgg.sdp.parser.lang.CICSSym.*;
  * <a href="http://www.jflex.de/">JFlex</a> 1.6.1
  * from the specification file <tt>P:/SDP/Java/MODParserCics/config/CICSLexer.lex</tt>
  */
-public class CICSLexer extends GenericLexer implements GenericScanner, java_cup.runtime.Scanner {
+public class CICSLexer extends GenericLexer implements java_cup.runtime.Scanner {
 
   /** This character denotes the end of file */
   public static final int YYEOF = -1;

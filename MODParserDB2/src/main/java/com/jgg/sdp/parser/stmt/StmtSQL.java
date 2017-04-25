@@ -2,7 +2,7 @@ package com.jgg.sdp.parser.stmt;
 
 import java.util.*;
 
-import com.jgg.sdp.parser.base.stmt.Statement;
+import com.jgg.sdp.parser.stmt.Statement;
 
 import java_cup.runtime.Symbol;
 

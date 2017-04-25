@@ -11,7 +11,6 @@ import static com.jgg.sdp.parser.lang.CICSSym.*;
 %public
 %class      CICSLexer
 %extends    GenericLexer
-%implements GenericScanner
 
 %line
 %column

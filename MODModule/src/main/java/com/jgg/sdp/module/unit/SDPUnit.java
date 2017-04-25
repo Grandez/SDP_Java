@@ -18,8 +18,7 @@ import java.util.*;
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CDG;
 import com.jgg.sdp.core.ctes.MSG;
-import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.core.tools.Fechas;
+import com.jgg.sdp.tools.*;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.factorias.*;
 
@@ -86,8 +85,7 @@ public class SDPUnit {
     }
     
     public void removeSource() {
-    	sources.remove(sources.size() - 1);
-    	removeMember();
+        if (sources.size() > 0) sources.remove(sources.size() - 1);
     }
     
 	/**

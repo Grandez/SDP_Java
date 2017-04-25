@@ -91,7 +91,6 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
    }
 
    public Symbol levelOrNum() {
-       System.out.println("Anterior : " + lastSymbol);
        if (lastSymbol == NUMERO) return symbol(NUMERO);
        return symbol(LEVEL);
    }
@@ -144,8 +143,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %eofval{
 
     if (yymoreStreams()) {
-        info.unit.removeSource();
-        info.removeOffset();
+        info.unit.removeMember();
         yypopStream();
     }
     else {
@@ -153,7 +151,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
          info.addOffset(yychar - pushBack);
          return new java_cup.runtime.Symbol(ZCDSym.EOF);
     }
-        
+    info.removeOffset();    
 %eofval}
 
 SPACES=[ ]+
@@ -211,10 +209,10 @@ ID{BLANKS}DIVISION              { checkDivision();
 
 COPY         { initEmbedded(); 
                pushState(COPYS); 
-               return symbol(ZCZSym.COPY);     
+               return symbol(COPY);     
              }
-EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC);   pushState(STEXEC);    }
-EXEC         { begExec = symbolDummy(ZCZSym.EXEC);   pushState(STEXEC);    }
+EXECUTE      { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
+EXEC         { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
 
 
  ^\*{SDPEND}       { info.module.incComments(true);
@@ -279,10 +277,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   
   COPY         { initEmbedded(); 
                  pushState(COPYS); 
-                 return symbol(ZCZSym.COPY);           
+                 return symbol(COPY);           
                }
-  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC);  pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(ZCZSym.EXEC);     pushState(STEXEC);    }
+  EXECUTE      { begExec = symbolDummy(EXEC);  pushState(STEXEC);    }
+  EXEC         { begExec = symbolDummy(EXEC);     pushState(STEXEC);    }
 
   ENVIRONMENT{BLANKS}DIVISION     { inDesc = false;
                                     resetState(ENV_DIVISION); 
@@ -294,14 +292,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                                     return symbol(DIV_DATA);
                                   }
 
-  PROCEDURE{BLANKS}DIVISION       { pushBack = yytext().length(); yyclose(); /*resetState(PROC_DIVISION);
-                                    info.setInCode();
-                                    inDesc = false;                                  
-                                    return symbol(DIVPROC); */
-                                  }
+  PROCEDURE{BLANKS}DIVISION       { pushBack = yytext().length(); yyclose(); }
   
   {ID}             { return symbol(ZCDSym.ID);     }
-  {NUMERO}         { return symbol(ZCDSym.NUMERO); }
+  {NUMERO}         { return symbol(NUMERO); }
   {SPACES}         { /* nada */ }
   {TABS}           { checkCharacters();   }
 
@@ -340,18 +334,14 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); /* resetState(PROC_DIVISION);
-                                   info.setInCode();
-                                   inDesc = false;                                  
-                                   return symbol(DIVPROC); */
-                                 }
+  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); }
 
   COPY         { initEmbedded(); 
                  pushState(COPYS);   
-                 return symbol(ZCZSym.COPY);         
+                 return symbol(COPY);         
                }
-  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
+  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
+  EXEC         { begExec = symbolDummy(EXEC);    pushState(STEXEC);    }
 
   \.               { return symbol(ENDP); }                                   
  
@@ -395,10 +385,10 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
   COPY         { initEmbedded(); 
                  pushState(COPYS); 
-                 return symbol(ZCZSym.COPY);     
+                 return symbol(COPY);     
                }
-  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
+  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
+  EXEC         { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
 
   INPUT-OUTPUT{BLANKS}SECTION    { popState();
                                    pushState(IO_SECT);
@@ -410,13 +400,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); /*resetState(PROC_DIVISION);
-                                   info.setInCode();
-                                   inDesc = false;                                  
-                                   return symbol(DIVPROC); */
-                                 }
+  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); }
 
-  {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
+  {NUMERO}         { return symbol(NUMERO); }   
   {ID}             { return symbol(ZCDSym.ID);     }
   {SPACES}         { /* nada */ }
   {TABS}           { checkCharacters();   }
@@ -468,21 +454,17 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
   COPY         { initEmbedded(); 
                  pushState(COPYS);  
-                 return symbol(ZCZSym.COPY);          
+                 return symbol(COPY);          
                }
-  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(ZCZSym.EXEC);    pushState(STEXEC);    }
+  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
+  EXEC         { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
 
   DATA{BLANKS}DIVISION           { resetState(DATA_DIVISION);
                                    inDesc = false;   
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); /* resetState(PROC_DIVISION);
-                                   info.setInCode();
-                                   inDesc = false;                                  
-                                   return symbol(DIVPROC);*/
-                                 }
+  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); }
   
  ^\*{SDPMASTER}    { pushState(SDP);
                      info.module.incComments(true);
@@ -493,8 +475,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
   {SPACES}         { /* nada */ }
   {TABS}           { checkCharacters();            }
-  {NUMERO}         { return symbol(ZCDSym.NUMERO); }   
-  {ID}             { return symbol(ZCDSym.ID);     }
+  {NUMERO}         { return symbol(NUMERO); }   
+  {ID}             { return symbol(ID);     }
   \.               { return symbol(ENDP);          }
   \,               { data = true; }
 
@@ -519,15 +501,14 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   ^[ \t]+SKIP[1-9]?     { checkSymbol();     }
   ^[ \t]+EJECT[ ]*[\.]? { checkSymbol();     }
   ^\-                   { checkSymbol();     }  
-  ^[ \t][0-9]+          { return levelOrNum(); }
+  ^[ \t]+[0-9]+         { return levelOrNum(); }
+  
   FILE{BLANKS}SECTION            { return symbol(FILE_SECTION);    }
   WORKING-STORAGE{BLANKS}SECTION { return symbol(WORKING_SECTION); }
   LOCAL-STORAGE{BLANKS}SECTION   { return symbol(LOCAL_SECTION);   }
   LINKAGE{BLANKS}SECTION         { return symbol(LINKAGE_SECTION); }
-  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); /*resetState(PROC_DIVISION);
-                                   info.setInCode();
-                                   inDesc = false;                                  
-                                   return symbol(DIVPROC); */
+  PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); 
+                                   yyclose(); 
                                  }
   
   ALL                            { data = true;              }
@@ -563,7 +544,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
      
   DATA                           { return symbol(DATA);      }
   DATE                           { pushState(ENDLINE);       }
-  DEPENDING                      { return symbol(ZCDSym.DEPENDING); }
+  DEPENDING                      { return symbol(DEPENDING); }
   DESCENDING                     { return symbol(ORDER);     }
   DFHRESP                        { cicsVerb = "DFHRESP";  pushState(CICSSYM);       }  
   DFHVALUE                       { cicsVerb = "DFHvalue"; pushState(CICSSYM);       }
@@ -580,7 +561,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
     
   INDEXED                        { return symbol(INDEXED);   }
   INDEX                          { return symbol(INDEX);     }
-  IN                             { return symbol(ZCDSym.IN);        }  
+  IN                             { return symbol(IN);        }  
   IS                             { data = true;              }
   
   JUSTIFIED                      { data = true;              }
@@ -595,7 +576,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   
   MODE                           { data = true;              }
   
-  NULL[sS]?                      { return symbol(ZCDSym.NULL);      }
+  NULL[sS]?                      { return symbol(NULL);      }
 
   OMITTED                        { data = true;              }
         
@@ -612,7 +593,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   PACKED-DECIMAL                 { return symbol(PACKED);    }     
   PICTURE                        { beginPic = true; pushState(PIC) ; return symbol(PICTURE);   }
   PIC                            { beginPic = true; pushState(PIC) ; return symbol(PICTURE);   }
-  POINTER                        { return symbol(ZCDSym.POINTER); }
+  POINTER                        { return symbol(POINTER); }
 
   ROWID                          { return symbol(ROWID);   }
   RIGHT                          { data = true;            }
@@ -627,47 +608,48 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   SYNC                           { data = true;            }
 
   TIMES                          { data = true;            }  
-  TO                             { return symbol(ZCDSym.TO);      }
+  TO                             { return symbol(TO);      }
   TRAILING                       { data = true;            }
-  THROUGH                        { return symbol(ZCDSym.THRU);    }
-  THRU                           { return symbol(ZCDSym.THRU);    }
+  THROUGH                        { return symbol(THRU);    }
+  THRU                           { return symbol(THRU);    }
   TYPE                           { data = true;            }
   
   USAGE                          { return symbol(USAGE);   }
     
-  VALUE[sS]?                     { return symbol(ZCDSym.VALUE);   }
+  VALUE[sS]?                     { return symbol(VALUE);   }
   VARYING                        { data = true;            }  
 
-  ZERO[sS]?                      { return symbol(ZCDSym.ZERO);    }
-  ZEROES                         { return symbol(ZCDSym.ZERO);    }
-  SPACE[sS]?                     { return symbol(ZCDSym.SPACES);  }
-  LOW\-VALUE[sS]?                { return symbol(ZCDSym.LOWVAL);  }
-  HIGH\-VALUE[sS]?               { return symbol(ZCDSym.HIGHVAL); } 
-  QUOTE[sS]?                     { return symbol(ZCDSym.QUOTE);   }
+  ZERO[sS]?                      { return symbol(ZERO);    }
+  ZEROES                         { return symbol(ZERO);    }
+  SPACE[sS]?                     { return symbol(SPACES);  }
+  LOW\-VALUE[sS]?                { return symbol(LOWVAL);  }
+  HIGH\-VALUE[sS]?               { return symbol(HIGHVAL); } 
+  QUOTE[sS]?                     { return symbol(QUOTE);   }
 
   COPY         { initEmbedded(); 
                  pushState(COPYS);         
-                 return symbol(ZCZSym.COPY);  
+                 return symbol(COPY);  
                }
-  EXECUTE      { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
+  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
+  EXEC         { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
 
-  {DECIMAL}                      { return symbol(ZCDSym.NUMERO);  }
-  {DECIMAL2}       { return symbol(ZCDSym.NUMERO);  }  
-  {NUMERO}         { return symbol(ZCDSym.NUMERO);  }
-  {HEXVALUE}       { return symbol(ZCDSym.HEX_VAL); }
-  {ID}             { return symbol(ZCDSym.ID);      }
-  {SPACES}         { /* nada */ }
-  {TABS}           { checkCharacters();             }
-  {NUMERO}         { return symbol(ZCDSym.NUMERO);  }   
-  "("              { return symbol(ZCDSym.LPAR);    }
-  ")"              { return symbol(ZCDSym.RPAR);    }
-  \.               { return symbol(ENDP);   }
+  {DECIMAL}        { return symbol(NUMERO);  }
+  {DECIMAL2}       { return symbol(NUMERO);  }  
+  {NUMERO}         { return symbol(NUMERO);  }
+  {HEXVALUE}       { return symbol(HEX_VAL); }
+  {ID}             { return symbol(ID);      }
+  
+  {SPACES}         {  /* nada */ }
+  {TABS}           { checkCharacters();      }  
+  
+  "("              { return symbol(LPAR);    }
+  ")"              { return symbol(RPAR);    }
+  \.               { return symbol(ENDP);    }
   \,               { data = true; }
-  \'               { print("ENTRA EN QUOTE"); pushState(QUOTE_STRING);  }  
+  \'               { pushState(QUOTE_STRING);  }  
   \"               { pushState(DQUOTE_STRING); }
 
-  \n               { info.module.incLines(data); data = false; }
+  \n               { info.module.incLines(data); data = false;  }
   \r               { /* do nothing */ }
 
 }

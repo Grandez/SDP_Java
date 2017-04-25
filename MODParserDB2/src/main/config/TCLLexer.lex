@@ -11,7 +11,7 @@ import static com.jgg.sdp.parser.lang.TCLSym.*;
 %public
 %class      TCLLexer
 %extends    GenericLexer
-%implements GenericScanner
+%scanerror  ParseException
 
 %line
 %column

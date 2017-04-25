@@ -8,14 +8,12 @@
  */
 package com.jgg.sdp.core.tools;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 import java.util.ArrayList;
 
 import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.tools.Archivo;
 
 public class FileFinder {
 

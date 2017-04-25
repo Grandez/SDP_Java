@@ -11,6 +11,9 @@
   <name>Serendipity</name>
   
   <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <jdk.version>1.8</jdk.version>
@@ -34,55 +37,36 @@
     
   </properties>
   
-    <dependencies>
-    
-<!--     <dependency> -->
-<!--        <groupId>junit</groupId> -->
-<!--        <artifactId>junit</artifactId> -->
-<!--        <version>${junit.version}</version> -->
-<!--        <scope>test</scope> -->
-<!--     </dependency> -->
-    
-  </dependencies>
   
-    <modules>
+  <modules>
 
-    <!--  Parents  -->
-    <module>../SDPBase</module>
-    <module>../SDPParser</module>
-    <module>../SDPDBOffline</module>    
-    <module>../SDPDBOnline</module>
-    <module>../SDPAnalyzer</module>
-                  
-<!--         <module>../SDPParsers</module> -->
-        
+    <!--  Base -->
+
+    <module>../MODTools</module>
+    <module>../MODCore</module>
+    <module>../MODModule</module>
+    <module>../MODCalc</module>
     
-<!--       <module>../parsers</module> -->
-<!--       <module>../SDPCollector</module> -->
-<!--       <module>../SDPCore</module> -->
-<!--       <module>../SDPDbMySQL</module> -->
-<!--       <module>../SDPDbServices</module> -->
-<!--       <module>../SDPModule</module> -->
+    <!--  DataBase  -->
+    
+    <module>../MODDBMySql</module>
+    <module>../MODDBServices</module>
 
-<!--       <module>../SDPBatch</module> -->
-<!--       <module>../SDPTS</module>     	 -->
-<!--       <module>../SDPCall</module> -->
-<!--       <module>../SDPRules</module> -->
-<!--       <module>../SDPSQL</module> -->
-        
-
-<!--       <module>../SDPCalc</module> -->
-<!--       <module>../SDPTools</module> -->
-
-<!--       <module>../SDPLite</module> -->
-<!--         <module>../SDPCics</module>      -->
-<!--       <module>../SDPExcel</module>         -->
-        
-<!--     <module>SDPWebAdm</module> -->
-<!--     <module>SDPWebBase</module> -->
-<!--     <module>SDPWebClient</module> -->
-<!--     <module>SDPWebManager</module> -->
-
+    <!--  Parsers  -->
+    
+    <module>../MODParserBase</module>
+    <module>../MODParserCics</module>
+    <module>../MODParserCobol</module>
+    <module>../MODParserCopy</module>
+    <module>../MODParserDB2</module>
+    
+    <!-- Distribution JARs  -->
+    
+    <module>../SDPBase</module>
+    <module>../SDPDBOffline</module>
+    <module>../SDPRules</module>
+    <module>../SDPParser</module>    
+    <module>../SDPAnalyzer</module>    
 
     </modules>
     

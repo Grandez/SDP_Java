@@ -18,7 +18,7 @@ import com.jgg.sdp.domain.services.AbstractService;
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CFG;
 import com.jgg.sdp.core.ctes.SYS;
-import com.jgg.sdp.core.tools.Fechas;
+import com.jgg.sdp.tools.Fechas;
 
 @Repository
 public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {

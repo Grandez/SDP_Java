@@ -9,18 +9,18 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.config.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.base.stmt.*;
-import com.jgg.sdp.parser.base.symbol.*;
+import com.jgg.sdp.parser.stmt.*;
+import com.jgg.sdp.parser.symbol.*;
 
-import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.blocks.*;
 import com.jgg.sdp.parser.code.*;
 
 parser code {:
+   GenericScanner scanner = null;
    Module module     = ModulesFactory.getDefaultModule();
    Summary summary   = module.getSummary();
    Configuration cfg = Configuration.getInstance();
-   ParserInfo      info     = ParserInfo.getInstance();
+   ParserInfo    info     = ParserInfo.getInstance();
              
    public void syntax_error(Symbol token) throws ParseException {
           info.syntax_error(token);
@@ -29,6 +29,13 @@ parser code {:
    public void unrecovered_syntax_error(Symbol token) throws ParseException {
       info.unrecovered_syntax_error(token);
    }
+   
+/*   
+   public void setScanner(GenericScanner scanner) {
+       super.setScanner(scanner);
+       this.scanner = scanner;
+   }
+*/
 :}
 
 action code {:
@@ -67,17 +74,12 @@ action code {:
 
 :}
 
-init with {:
-  action_obj.initActionClass();
-:}
-
-
-/****************************************************************************/
-/****************************************************************************/
-/*               LOS SIMBOLOS SON COMUNES                                   */
-/****************************************************************************/
-/****************************************************************************/
-
+init with {: action_obj.initActionClass();    :}
+/*
+scan with {: if (scanner == null) return getScanner().next_token();
+             return scanner.tokenCobolData(); 
+          :}
+*/
 terminal Symbol DIV_ID   ;
 terminal Symbol DIV_ENV  ;
 terminal Symbol DIV_DATA ;
@@ -451,15 +453,10 @@ ident_sentence ::= programId:s     {: RESULT = s; :}
                |   date_written:s  {: RESULT = s; :}
                |   date_compiled:s {: RESULT = s; :}
                |   remarks:s       {: RESULT = s; :}
-               |   sdpDesc:s       {: RESULT = s; :}   
+               |   sdpDesc:s       {: RESULT = s; :}  
                ;
                              
 programId ::= programId_verb:p endp_opt ID:s endp_opt:e  {: RESULT = p.addRValue(s); :}
-/*
-{: module.setName(getSymbolName(s));
-                                                RESULT = s; 
-                                             :}
-*/  
           ;
 
 programId_verb ::= PGMID:p {: RESULT = new StmtCobol(p); :}
@@ -1047,9 +1044,6 @@ padre_indicator ::= OF
                 |   IN
                 ;
                  
-///////////////////////////////////////////////////////
-// WORK
-//////////////////////////////////////////////////////
 
 figurative ::= SPACES:f   {: RESULT = f; :}
            |   ZERO:f     {: RESULT = f; :}

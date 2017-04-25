@@ -17,9 +17,7 @@ import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CFG;
 import com.jgg.sdp.core.ctes.MSG;
 import com.jgg.sdp.core.exceptions.FileException;
-import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.core.tools.Fechas;
-import com.jgg.sdp.core.tools.Firma;
+import com.jgg.sdp.tools.*;
 
 public class Source extends Reader {
 

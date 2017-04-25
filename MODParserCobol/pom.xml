@@ -3,53 +3,29 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+  <name>Serendipity Parser Module for Enterprise COBOL</name>
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.jgg.sdp</groupId>
-    <artifactId>SDPParser</artifactId>
-    <relativePath>../SDPParser</relativePath>
+    <groupId>com.jgg</groupId>
+    <artifactId>sdp</artifactId>
     <version>5.0</version>
+    <relativePath>../SDP</relativePath>
   </parent>
 
+  <groupId>com.jgg.sdp</groupId>
   <artifactId>MODParserCobol</artifactId>
   <packaging>jar</packaging>
-
-  <name>Serendipity Parser Module for Enterprise COBOL</name>
 
   <dependencies>
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPParserBase</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPCore</artifactId>
+       <artifactId>SDPBase</artifactId>
        <version>${sdp.version}</version>
        <scope>provided</scope>
     </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPModule</artifactId>
-       <version>${sdp.version}</version>
-       <scope>provided</scope>
-    </dependency>
-
-<!--     <dependency> -->
-<!--        <groupId>com.jgg.sdp</groupId> -->
-<!--        <artifactId>SDPDbMySQL</artifactId> -->
-<!--        <version>${sdp.version}</version> -->
-<!--     </dependency> -->
-
-<!--      <dependency> -->
-<!--        <groupId>com.jgg.sdp</groupId> -->
-<!--        <artifactId>SDPDbServices</artifactId> -->
-<!--        <version>${sdp.version}</version> -->
-<!--      </dependency> -->
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
@@ -59,25 +35,43 @@
     </dependency>
 
     <dependency>
-       <groupId>com.jgg.parsers</groupId>
-       <artifactId>runtime</artifactId>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODParserBase</artifactId>
        <version>${sdp.version}</version>
+       <scope>provided</scope>
     </dependency>
 
-<!--     <dependency> -->
-<!--        <groupId>cup</groupId> -->
-<!--        <artifactId>java-cup-runtime</artifactId> -->
-<!--        <version>11b</version> -->
-<!--     </dependency> -->
-    
+    <dependency>
+       <groupId>com.jgg.parsers</groupId>
+       <artifactId>runtime</artifactId>
+       <version>[2.0,)</version>
+       <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
     
     <plugins>
 
+     <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!--  this is used for inheritance merges -->
+            <phase>package</phase> <!--  bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 
-<!--           La copia al directorio destino -->
 <!--           <plugin> -->
 <!--              <groupId>org.apache.maven.plugins</groupId> -->
 <!--              <artifactId>maven-dependency-plugin</artifactId> -->
@@ -97,7 +91,7 @@
 <!--                               <artifactId>${project.artifactId}</artifactId> -->
 <!--                               <version>${project.version}</version> -->
 <!--                               <type>${project.packaging}</type> -->
-<!--                               <destFileName>SDPParserCobol.jar</destFileName> -->
+<!--                               <destFileName>MODDBServices.jar</destFileName> -->
 <!--                            </artifactItem> -->
 <!--                        </artifactItems> -->
                
@@ -106,7 +100,7 @@
 <!--                  </execution> -->
 <!--              </executions> -->
 <!--           </plugin> -->
-            
+
     </plugins>
 
   </build>

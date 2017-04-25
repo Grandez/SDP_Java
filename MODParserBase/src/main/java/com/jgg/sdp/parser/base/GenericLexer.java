@@ -9,6 +9,7 @@
  */
 package com.jgg.sdp.parser.base;
 
+import java.io.IOException;
 import java.util.*;
 
 import com.jgg.sdp.core.config.Configuration;
@@ -27,7 +28,7 @@ public abstract class GenericLexer {
    protected abstract String yytext();
    protected abstract int    yylength();
    
-   public abstract Symbol next_token() throws java.io.IOException;
+   public abstract Symbol next_token() throws IOException, ParseException ;
    public abstract void   yypushStream(java.io.Reader reader);
 
    protected Stack<Integer>       stack = new Stack<Integer>();

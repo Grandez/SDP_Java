@@ -14,7 +14,7 @@ import static com.jgg.sdp.parser.lang.TCLSym.*;
  * <a href="http://www.jflex.de/">JFlex</a> 1.6.1
  * from the specification file <tt>P:/SDP/Java/MODParserDB2/src/main/config/TCLLexer.lex</tt>
  */
-public class TCLLexer extends GenericLexer implements GenericScanner, java_cup.runtime.Scanner {
+public class TCLLexer extends GenericLexer implements java_cup.runtime.Scanner {
 
   /** This character denotes the end of file */
   public static final int YYEOF = -1;
@@ -801,7 +801,7 @@ public class TCLLexer extends GenericLexer implements GenericScanner, java_cup.r
    *
    * @param   errorCode  the code of the errormessage to display
    */
-  private void zzScanError(int errorCode) {
+  private void zzScanError(int errorCode) throws ParseException {
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];
@@ -810,7 +810,7 @@ public class TCLLexer extends GenericLexer implements GenericScanner, java_cup.r
       message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
     }
 
-    throw new Error(message);
+    throw new ParseException(message);
   } 
 
 
@@ -822,7 +822,7 @@ public class TCLLexer extends GenericLexer implements GenericScanner, java_cup.r
    * @param number  the number of characters to be read again.
    *                This number must not be greater than yylength()!
    */
-  public void yypushback(int number)  {
+  public void yypushback(int number)  throws ParseException {
     if ( number > yylength() )
       zzScanError(ZZ_PUSHBACK_2BIG);
 
@@ -849,7 +849,7 @@ public class TCLLexer extends GenericLexer implements GenericScanner, java_cup.r
    * @return      the next token
    * @exception   java.io.IOException  if any I/O-Error occurs
    */
-  public java_cup.runtime.Symbol next_token() throws java.io.IOException {
+  public java_cup.runtime.Symbol next_token() throws java.io.IOException, ParseException {
     int zzInput;
     int zzAction;
 

@@ -137,11 +137,11 @@ public class ParserInfo {
 	public boolean isIncludeParsed()             { return includeParsed; }
 
 	/***********************************************************/
-	/***  Gestion del stkOffset de las lineas                   ***/
+	/***  Gestion del stkOffset de las lineas                ***/
 	/***********************************************************/
 
 	public void addOffset(int line) {
-		stkOffset.push(line);
+	    stkOffset.push(line);
 	}
 
 	public int getOffset() {
@@ -149,7 +149,8 @@ public class ParserInfo {
 	}
 
     public int removeOffset() {
-        return stkOffset.empty() ? 0 :  stkOffset.pop();
+        if (stkOffset.size() > 1) return stkOffset.pop();
+        return 0;
     }
     
 	
@@ -162,6 +163,10 @@ public class ParserInfo {
 		unit.removeMember();
 	}
 
+    /***********************************************************/
+    /***  Gestion de miembros                                ***/
+    /***********************************************************/
+	
 	public String getMemberName() {
 		if (unit == null) { // fuera del proceso
 			return "NONAME";

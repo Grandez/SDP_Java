@@ -11,13 +11,12 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.config.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.base.stmt.*;
-import com.jgg.sdp.parser.base.symbol.*;
-
-import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.stmt.*;
+import com.jgg.sdp.parser.symbol.*;
 import com.jgg.sdp.parser.code.*;
 
 parser code {:
+   GenericScanner scanner = null;
    Module        module   = ModulesFactory.getDefaultModule();
    Summary       summary  = module.getSummary();
    Configuration cfg      = Configuration.getInstance();
@@ -30,6 +29,11 @@ parser code {:
    public void unrecovered_syntax_error(Symbol token) throws ParseException {
       info.unrecovered_syntax_error(token);
    }
+   
+   public void setScanner(GenericScanner scanner) {
+       this.scanner = scanner;
+   }
+   
 :}
 
 action code {:
@@ -40,10 +44,10 @@ action code {:
    Sections        sections = null;
    ParserInfo      info     = ParserInfo.getInstance();
       
-   Variable  currVar  = null;
-   StmtCobol lastStmt = null;  // Ultima instruccion
-   StmtCobol currStmt = null;  // Instruccion en proceso
-   
+   Variable  currVar       = null;
+   StmtCobol lastStmt      = null;  // Ultima instruccion
+   StmtCobol currStmt      = null;  // Instruccion en proceso
+   Option    currOption    = null;  // Option en proceso
    boolean   hasEndProgram = false; // Hay STOPRUN o GOBACK?
     
    boolean master     = false;  // El fichero es el maestro?   
@@ -68,9 +72,10 @@ action code {:
 
 :}
 
-init with {:
-  action_obj.initActionClass();
-:}
+init with {: action_obj.initActionClass();    :}
+scan with {: if (scanner == null) return getScanner().next_token();
+             return scanner.tokenCobolCode(); 
+          :}
 
 /****************************************************************************/
 /****************************************************************************/
@@ -106,6 +111,7 @@ terminal Symbol REL_GT  ;
 terminal Symbol REL_LT  ;
 terminal Symbol REL_EQ  ;
 
+terminal Symbol DATA         ;
 terminal Symbol SPACES       ;
 terminal Symbol ZERO         ; 
 terminal Symbol HIGHVAL      ;
@@ -118,7 +124,9 @@ terminal Symbol KANJI        ;
 terminal Symbol POSITIVE     ;
 terminal Symbol NEGATIVE     ;
 terminal Symbol NULL         ;
-terminal Symbol DCBS         ;
+terminal Symbol DBCS         ;
+terminal Symbol EGCS         ;
+terminal Symbol NATIONAL     ;
 
 terminal Symbol DUPLICATES ;
 
@@ -300,10 +308,13 @@ non terminal Option    divide_options_opt;
 non terminal Option    divide_options    ;
 non terminal Option    divide_option     ;
 
-non terminal Tokens stmtInitialize_detail        ;
-non terminal Tokens stmtInitialize_replacing_opt ;
-non terminal Tokens stmtInitialize_resto         ;
-non terminal Tokens stmtInitialize_tokens        ;
+non terminal StmtCobol stmtInitialize     ;
+non terminal StmtCobol initialize_verb    ;
+non terminal           initialize_detail  ;
+non terminal           initialize_rep_opt ;
+non terminal           initialize_rep_lst ;
+non terminal           initialize_rep     ;
+non terminal           initialize_rep_val ;
 
 non terminal Tokens stmtMultiply_detail  ;
 non terminal Tokens stmtMultiply_by      ;
@@ -342,16 +353,15 @@ non terminal stmtSort_procedure ;
 non terminal StmtCobol stmtStart               ;
 non terminal Tokens    stmtStart_key           ;
 
-
-non terminal Tokens stmtString_detail         ;
-non terminal Tokens stmtString_from           ;
-non terminal Tokens stmtString_into           ;
-non terminal Tokens stmtString_from_string    ; 
-non terminal Tokens stmtString_from_tokens    ;
-non terminal Tokens stmtString_from_delimiter ;
-non terminal Tokens stmtString_from_delim     ;
-non terminal Tokens stmtString_pointer_opt    ;
-non terminal Tokens stmtString_pointer        ;
+non terminal StmtCobol stmtString       ;
+non terminal StmtCobol string_verb      ;
+non terminal           string_from      ;
+non terminal           string_from_item ; 
+non terminal           string_rvalues   ;
+non terminal           string_delimited       ;
+non terminal           string_delimited_token ;
+non terminal           string_into            ;
+non terminal           string_pointer_opt     ;
 
 non terminal StmtCobol stmtSubtract           ; 
 non terminal Tokens    stmtSubtract_detail    ;
@@ -419,7 +429,6 @@ non terminal Tokens    proc_parms      ;
 non terminal Tokens    proc_parm       ;
 
 
-non terminal StmtCobol stmtInitialize ;
 non terminal StmtCobol stmtCommit     ;
 non terminal StmtCobol stmtMerge      ;
 non terminal StmtCobol stmtUnstring   ;
@@ -472,8 +481,10 @@ non terminal           stmtGoto_depending_opt ;
 non terminal           stmtGoto_depending     ;
  
 non terminal StmtCobol stmtRewrite      ;
-non terminal StmtCobol stmtString       ;
+
 non terminal StmtCobol stmtMove         ;
+non terminal StmtCobol move_verb        ;
+
 non terminal StmtCobol stmtMultiply   ;
 non terminal StmtCobol stmtAccept     ;
 non terminal StmtCobol stmtUnlock     ;
@@ -516,7 +527,6 @@ non terminal StmtCobol stmtAdd    ;
              
 non terminal StmtCobol stmtSet    ;             
 
-non terminal StmtCobol optionOverflow_opt ;
 non terminal StmtCobol optionOverflow     ;
 
 non terminal StmtCobol stmtAtEnd;
@@ -627,11 +637,14 @@ non terminal Tokens token ;
 non terminal Tokens tokens;
 non terminal Tokens optTokens ;
 
-non terminal        opt_all  ;
-non terminal        opt_by   ;
-non terminal        opt_in   ;
-non terminal        opt_key  ;
-non terminal        opt_to   ;
+non terminal Symbol opt_all   ;
+non terminal Symbol opt_by    ;
+non terminal Symbol opt_comma ;
+non terminal Symbol opt_data  ;
+non terminal Symbol opt_in    ;
+non terminal Symbol opt_key   ;
+non terminal Symbol opt_to    ;
+non terminal Symbol opt_with  ;
 
 precedence nonassoc LPAR, RPAR ;
 
@@ -729,8 +742,8 @@ parr_section     ::= SECTION:s {: RESULT = true;  :}
                  |             {: RESULT = false; :}
                  ;                               
                  
-lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(s, lastStmt); :} 
-           |   lista_stmt stmt:s  {: lastStmt = code.processStatement(s, lastStmt); :}
+lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(currStmt, lastStmt); :} 
+           |   lista_stmt stmt:s  {: lastStmt = code.processStatement(currStmt, lastStmt); :}
            ;
 
 stmt     ::= verbos:s         {: RESULT = s; code.incStmt(); :}
@@ -864,10 +877,6 @@ stmtLang    ::= stmtAllocate:s    {: RESULT = s; :}
 stmtTransform   ::=  TRANSFORM:s  {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 stmtAllocate    ::=  ALLOCATE:s   {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 stmtContinue    ::=  CONTINUE:s   {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
-
-
-
-stmtString ::=  STRING:s stmtString_detail  {: RESULT = new StmtCobol(s, code.getStmts()); :} ; 
 
 
 
@@ -1042,7 +1051,7 @@ stmtDisplay ::= DISPLAY:s rvalue_list {: RESULT = new StmtCobol(s, code.getStmts
                                                                                               
 // DIVIDE
 
-stmtDivide ::= divide_verb rvalue divide_mode divide_options_opt      
+stmtDivide ::= divide_verb:s rvalue divide_mode divide_options_opt      {: RESULT = s; :}
            ;
 
 divide_verb ::= DIVIDE:s {: RESULT = new StmtCobol(s, currStmt); :}
@@ -1069,7 +1078,7 @@ divide_option ::= option_giving:o  {: currStmt.addOption(o); :}
 stmtEvaluate ::=  evaluate_verb:s evaluate_object {: RESULT = code.processEvaluate(s); :}  
              ;
 
-evaluate_verb ::= EVALUATE:s {: RESULT = currStmt = new StmtCobol(s);  :}
+evaluate_verb ::= EVALUATE:s {: RESULT = new StmtCobol(s, currStmt);  :}
               ;
               
 evaluate_object ::= logical_condition
@@ -1078,7 +1087,7 @@ evaluate_object ::= logical_condition
 stmtWhen ::=  when_verb:s when_condition {: RESULT = s; :}
          ;
 
-when_verb ::= WHEN:s {: RESULT = currStmt = new StmtCobol(s); :}
+when_verb ::= WHEN:s {: RESULT = new StmtCobol(s, currStmt); :}
           ; 
           
 when_condition ::= when_item
@@ -1088,8 +1097,8 @@ when_condition ::= when_item
 when_item ::= logical_condition:t when_thru
 //        |   when_item ALSO logical_condition:t when_thru
                   /*
-                    {: StmtCobol stmt  = new StmtCobol(s);
-                       RESULT = stmt; // stmt.addTokens(t);   
+                    {: RESULT = new StmtCobol(s, currStmt);
+                        // stmt.addTokens(t);   
                     :} 
                   */  
           ;
@@ -1125,30 +1134,34 @@ stmtGoto_depending ::= DEPENDING rvalue
 stmtIf ::= if_verb:s logical_condition {:  RESULT = code.processIf(s); :}
        ;
 
-if_verb ::= IF:s {: RESULT = currStmt = new StmtCobol(s); :}
+if_verb ::= IF:s {: RESULT = new StmtCobol(s, currStmt); :}
         ;
                        
 // INITIALIZE
 
-stmtInitialize  ::=  INITIALIZE:s stmtInitialize_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtInitialize  ::=  initialize_verb:s initialize_detail {: RESULT = s;  :}     
                 ;
-                
-stmtInitialize_detail ::= lvalue_list stmtInitialize_replacing_opt
-                      ;
-                      
-stmtInitialize_replacing_opt ::= REPLACING stmtInitialize_resto
-                             |
-                             ;
-                                                    
-stmtInitialize_resto ::= stmtInitialize_tokens
-                     |   stmtInitialize_resto stmtInitialize_tokens
-                     ;                                       
 
-stmtInitialize_tokens ::= variable
-                      |   constantes
-                      |   BY
-                      |   ALL
-                      ;
+initialize_verb ::=  INITIALIZE:s {: RESULT = new StmtCobol(s, currStmt); :}
+                ;
+                               
+initialize_detail ::= lvalue_list initialize_rep_opt
+                  ;
+                      
+initialize_rep_opt ::= REPLACING:r {: currOption = new Option(r); :} initialize_rep_lst {: currStmt.addOption(currOption); :} 
+                   |
+                   ;
+
+initialize_rep_lst ::= initialize_rep
+                   |   initialize_rep_lst initialize_rep
+                   ;
+
+initialize_rep ::= figurative opt_data BY initialize_rep_val
+               ;
+               
+initialize_rep_val ::= rvalue:v   {: currOption.addSymbol(v); :}
+                   ;
+                                                                                                          
 // INSPECT
 
 stmtInspect ::=  INSPECT:s rvalue:l stmtInspect_detail
@@ -1176,15 +1189,17 @@ stmtInspect_token ::= ALL
 
 // MOVE
 
-stmtMove ::= MOVE:s rvalue_options_opt expression:r TO lvalue_list:l      
+stmtMove ::= move_verb:s rvalue_options_opt expression:r TO lvalue_list:l      
                    {: code.checkCall(l, r);
-                      StmtCobol stmt = new StmtCobol(s, code.getStmts());
-                      stmt.addRValue(r);
-                      stmt.addLValue(l);
-                      RESULT = stmt; 
+                      s.addRValue(r);
+                      s.addLValue(l);
+                      RESULT = s; 
                    :}     
               ;
 
+move_verb ::= MOVE:s {: RESULT = new StmtCobol(s, currStmt); :}
+          ;
+           
 // MULTIPLY
 
 stmtMultiply ::=  MULTIPLY:s stmtMultiply_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}
@@ -1425,36 +1440,37 @@ stmtStart_key ::= KEY logical_oper rvalue
 
 // STRING
 
-stmtString_detail ::= stmtString_from stmtString_into optionOverflow_opt
-                  ;
-                  
-stmtString_from   ::= stmtString_from_string 
-                  |   stmtString_from stmtString_from_string 
-                  ; 
+stmtString ::=  string_verb:s string_from string_into   {: RESULT = s; :} 
+           ; 
 
-stmtString_from_string ::= stmtString_from_tokens stmtString_from_delimiter  
+string_verb ::= STRING:s {: RESULT = new StmtCobol(s, currStmt); :}
+            ;
+
+string_from ::= string_from_item 
+            |   string_from string_from_item 
+            ; 
+
+string_from_item ::= string_rvalues string_delimited
+                 ;
+                 
+string_rvalues ::= rvalue
+               |   string_rvalues rvalue
+               ;
+               
+string_delimited ::= DELIMITED  opt_by string_delimited_token
+                 ;
+                                
+string_delimited_token ::= rvalue
+                       |   SIZE
                        ;
-                       
-stmtString_from_tokens ::= rvalue
-                       |   stmtString_from_tokens rvalue
-                       ; 
-                                             
-stmtString_from_delimiter ::= DELIMITED opt_by stmtString_from_delim
-                          ;
-                          
-stmtString_from_delim ::= rvalue
-                      |   SIZE
-                      ;
 
-stmtString_into ::= INTO lvalue stmtString_pointer_opt
-                ;
+string_into ::= INTO lvalue string_pointer_opt
+            ;
                 
-stmtString_pointer_opt ::= stmtString_pointer
-                       |
-                       ;
+string_pointer_opt ::= opt_with POINTER lvalue
+                   |
+                   ;
                                         
-stmtString_pointer ::= POINTER lvalue
-                ;
                                                                 
 // SUBTRACT
 
@@ -1638,10 +1654,6 @@ option_giving ::= GIVING:o lvalue_list {: RESULT = new Option(o); :}
 option_rounded ::= ROUNDED:r  {: currStmt.addOption(new Option(r)); :}
                ;
                
-optionOverflow_opt ::= optionOverflow
-                   |
-                   ;
-                                   
 optionOverflow  ::= OVERFLOW:i  {: code.setImperative(); 
                                    RESULT = new StmtCobol(i); 
                                 :}
@@ -1830,7 +1842,9 @@ figurative ::= QUOTE:f        {: RESULT = new SymbolExt(f); :}
            |   ALPHANUMERIC:f {: RESULT = new SymbolExt(f); :}           
            |   NUMERIC:f      {: RESULT = new SymbolExt(f); :}           
            |   KANJI:f        {: RESULT = new SymbolExt(f); :}
-           |   DCBS:f         {: RESULT = new SymbolExt(f); :}           
+           |   DBCS:f         {: RESULT = new SymbolExt(f); :}           
+           |   EGCS:f         {: RESULT = new SymbolExt(f); :}
+           |   NATIONAL:f     {: RESULT = new SymbolExt(f); :}              
            |   NULL:f         {: RESULT = new SymbolExt(f); :}
            ;
 
@@ -1870,7 +1884,7 @@ lvalue ::= variable:i  {: RESULT = i; code.setVarWrite(i); :}
        ;
        
 lvalue_list ::= lvalue:i                {: RESULT = new SymbolExtList(i); :}
-            |   lvalue_list:l lvalue:i  {: RESULT = l.add(i);       :}
+            |   lvalue_list:l opt_comma lvalue:i  {: RESULT = l.add(i);       :}
             ;
                    
 rvalue_list ::= rvalue 
@@ -1951,6 +1965,14 @@ opt_by ::= BY:s {: RESULT = s; :}
        |
        ;
 
+opt_comma ::= COMMA:s  {: RESULT = s; :} //JGG Avisar del uso de coma
+          |
+          ;
+
+opt_data ::= DATA:s  {: RESULT = s; :} 
+         |
+         ;
+
 opt_in ::= IN:s {: RESULT = s; :}
        |
        ;
@@ -1963,3 +1985,7 @@ opt_key ::= KEY:s {: RESULT = s; :}
         |
         ;
 
+opt_with ::= WITH:s {: RESULT = s; :}
+         |
+         ;
+          

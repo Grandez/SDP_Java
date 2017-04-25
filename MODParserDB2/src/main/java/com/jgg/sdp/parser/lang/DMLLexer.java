@@ -14,7 +14,7 @@ import static com.jgg.sdp.parser.lang.DMLSym.*;
  * <a href="http://www.jflex.de/">JFlex</a> 1.6.1
  * from the specification file <tt>P:/SDP/Java/MODParserDB2/src/main/config/DMLLexer.lex</tt>
  */
-public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.runtime.Scanner {
+public class DMLLexer extends GenericLexer implements java_cup.runtime.Scanner {
 
   /** This character denotes the end of file */
   public static final int YYEOF = -1;
@@ -3578,7 +3578,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
    *
    * @param   errorCode  the code of the errormessage to display
    */
-  private void zzScanError(int errorCode) {
+  private void zzScanError(int errorCode) throws ParseException {
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];
@@ -3587,7 +3587,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
       message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
     }
 
-    throw new Error(message);
+    throw new ParseException(message);
   } 
 
 
@@ -3599,7 +3599,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
    * @param number  the number of characters to be read again.
    *                This number must not be greater than yylength()!
    */
-  public void yypushback(int number)  {
+  public void yypushback(int number)  throws ParseException {
     if ( number > yylength() )
       zzScanError(ZZ_PUSHBACK_2BIG);
 
@@ -3626,7 +3626,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
    * @return      the next token
    * @exception   java.io.IOException  if any I/O-Error occurs
    */
-  public java_cup.runtime.Symbol next_token() throws java.io.IOException {
+  public java_cup.runtime.Symbol next_token() throws java.io.IOException, ParseException {
     int zzInput;
     int zzAction;
 
@@ -4007,7 +4007,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 305: break;
           case 60: 
-            { cacheSymbol(INT                                 , FUNCTION_SCALAR);
+            { cacheSymbol(INT, FUNCTION_SCALAR);
             }
           case 306: break;
           case 61: 
@@ -4019,7 +4019,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 308: break;
           case 63: 
-            { cacheSymbol(DECIMAL                             , FUNCTION_SCALAR);
+            { cacheSymbol(DECIMAL, FUNCTION_SCALAR);
             }
           case 309: break;
           case 64: 
@@ -4035,11 +4035,11 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 312: break;
           case 67: 
-            { cacheSymbol(MAX                                , FUNCTION_SCALAR);
+            { cacheSymbol(MAX, FUNCTION_SCALAR);
             }
           case 313: break;
           case 68: 
-            { cacheSymbol(MIN                                , FUNCTION_SCALAR);
+            { cacheSymbol(MIN, FUNCTION_SCALAR);
             }
           case 314: break;
           case 69: 
@@ -4091,11 +4091,11 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 326: break;
           case 81: 
-            { cacheSymbol(CHAR                                , FUNCTION_SCALAR);
+            { cacheSymbol(CHAR, FUNCTION_SCALAR);
             }
           case 327: break;
           case 82: 
-            { cacheSymbol(LEFT                                , FUNCTION_SCALAR);
+            { cacheSymbol(LEFT, FUNCTION_SCALAR);
             }
           case 328: break;
           case 83: 
@@ -4103,7 +4103,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 329: break;
           case 84: 
-            { cacheSymbol(REAL                                , FUNCTION_SCALAR);
+            { cacheSymbol(REAL, FUNCTION_SCALAR);
             }
           case 330: break;
           case 85: 
@@ -4111,7 +4111,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 331: break;
           case 86: 
-            { cacheSymbol(TIME                                , FUNCTION_SCALAR);
+            { cacheSymbol(TIME, FUNCTION_SCALAR);
             }
           case 332: break;
           case 87: 
@@ -4155,7 +4155,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 342: break;
           case 97: 
-            { cacheSymbol(DATE                                , FUNCTION_SCALAR);
+            { cacheSymbol(DATE, FUNCTION_SCALAR);
             }
           case 343: break;
           case 98: 
@@ -4231,11 +4231,11 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 361: break;
           case 116: 
-            { cacheSymbol(RIGHT                               , FUNCTION_SCALAR);
+            { cacheSymbol(RIGHT, FUNCTION_SCALAR);
             }
           case 362: break;
           case 117: 
-            { cacheSymbol(ROWID                               , FUNCTION_SCALAR);
+            { cacheSymbol(ROWID, FUNCTION_SCALAR);
             }
           case 363: break;
           case 118: 
@@ -4291,7 +4291,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 376: break;
           case 131: 
-            { cacheSymbol(FLOAT                               , FUNCTION_SCALAR);
+            { cacheSymbol(FLOAT, FUNCTION_SCALAR);
             }
           case 377: break;
           case 132: 
@@ -4319,7 +4319,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 383: break;
           case 138: 
-            { cacheSymbol(BINARY                              , FUNCTION_SCALAR);
+            { cacheSymbol(BINARY, FUNCTION_SCALAR);
             }
           case 384: break;
           case 139: 
@@ -4343,7 +4343,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 389: break;
           case 144: 
-            { cacheSymbol(CONCAT                              , FUNCTION_SCALAR);
+            { cacheSymbol(CONCAT, FUNCTION_SCALAR);
             }
           case 390: break;
           case 145: 
@@ -4363,7 +4363,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 394: break;
           case 149: 
-            { cacheSymbol(INSERT                              , FUNCTION_SCALAR);
+            { cacheSymbol(INSERT, FUNCTION_SCALAR);
             }
           case 395: break;
           case 150: 
@@ -4379,7 +4379,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 398: break;
           case 153: 
-            { cacheSymbol(DOUBLE                              , FUNCTION_SCALAR);
+            { cacheSymbol(DOUBLE, FUNCTION_SCALAR);
             }
           case 399: break;
           case 154: 
@@ -4471,7 +4471,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 421: break;
           case 176: 
-            { cacheSymbol(INTEGER                             , FUNCTION_SCALAR);
+            { cacheSymbol(INTEGER, FUNCTION_SCALAR);
             }
           case 422: break;
           case 177: 
@@ -4483,7 +4483,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 424: break;
           case 179: 
-            { cacheSymbol(GRAPHIC                             , FUNCTION_SCALAR);
+            { cacheSymbol(GRAPHIC, FUNCTION_SCALAR);
             }
           case 425: break;
           case 180: 
@@ -4527,7 +4527,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 435: break;
           case 190: 
-            { cacheSymbol(VARCHAR                             , FUNCTION_SCALAR);
+            { cacheSymbol(VARCHAR, FUNCTION_SCALAR);
             }
           case 436: break;
           case 191: 
@@ -4563,7 +4563,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 444: break;
           case 199: 
-            { cacheSymbol(DECFLOAT                            , FUNCTION_SCALAR);
+            { cacheSymbol(DECFLOAT, FUNCTION_SCALAR);
             }
           case 445: break;
           case 200: 
@@ -4587,7 +4587,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 450: break;
           case 205: 
-            { cacheSymbol(SMALLINT                            , FUNCTION_SCALAR);
+            { cacheSymbol(SMALLINT, FUNCTION_SCALAR);
             }
           case 451: break;
           case 206: 
@@ -4611,7 +4611,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 456: break;
           case 211: 
-            { cacheSymbol(TIMESTAMP                           , FUNCTION_SCALAR);
+            { cacheSymbol(TIMESTAMP, FUNCTION_SCALAR);
             }
           case 457: break;
           case 212: 
@@ -4635,7 +4635,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 462: break;
           case 217: 
-            { cacheSymbol(VARBINARY                           , FUNCTION_SCALAR);
+            { cacheSymbol(VARBINARY, FUNCTION_SCALAR);
             }
           case 463: break;
           case 218: 
@@ -4663,7 +4663,7 @@ public class DMLLexer extends GenericLexer implements GenericScanner, java_cup.r
             }
           case 469: break;
           case 224: 
-            { cacheSymbol(VARGRAPHIC                          , FUNCTION_SCALAR);
+            { cacheSymbol(VARGRAPHIC, FUNCTION_SCALAR);
             }
           case 470: break;
           case 225: 

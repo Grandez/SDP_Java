@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 
 import javax.persistence.*;
 
-import com.jgg.sdp.core.tools.Fechas;
+import com.jgg.sdp.tools.Fechas;
 
 @Entity
 @Table(name="MOD_VERSIONES")

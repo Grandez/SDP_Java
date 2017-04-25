@@ -13,7 +13,6 @@ import static com.jgg.sdp.parser.lang.COPYSym.*;
 %public
 %class      COPYLexer
 %extends    GenericLexer
-%implements GenericScanner
 %scanerror  ParseException
 
 %line

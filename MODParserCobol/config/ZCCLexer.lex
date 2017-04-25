@@ -2,7 +2,6 @@ package com.jgg.sdp.parser.lang;
 
 import java_cup.runtime.Symbol;
 
-import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.parser.base.*;
 
@@ -14,7 +13,6 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %public
 %class      ZCCLexer
 %extends    GenericLexer
-%implements GenericScanner
 %scanerror  ParseException
 
 %line
@@ -126,14 +124,13 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %eofval{
 
     if (yymoreStreams()) {
-        info.unit.removeSource();
-        info.removeOffset();
+        info.unit.removeMember();
         yypopStream();
     }
     else {    
         return symbolFactory.newSymbol("EOF", ZCCSym.EOF);
     }
-        
+    info.removeOffset();    
 %eofval}
 
 SPACES=[ ]+
@@ -240,8 +237,9 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   MULTIPLY          { return symbol(MULTIPLY);   }
                                            
   NEXT[ ]+SENTENCE  { return symbol(NEXT);       }
-  NULL[sS]?         { return symbol(ZCCSym.NULL);}
-  NUMERIC           { return symbol(ZCCSym.NUMERIC);}
+  NULL[sS]?         { return symbol(NULL);       }
+  NUMERIC-EDITED    { return symbol(NUMERIC);    }  
+  NUMERIC           { return symbol(NUMERIC);    }
   
   OPEN              { return symbol(OPEN);       }   
 
@@ -275,6 +273,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   ADDRESS[ ]+OF     { data = true; } 
   ADVANCING         { data = true; }
   AFTER             { return symbol(AFTER);        }
+  ALPHANUMERIC-EDITED      { return symbol(ALPHANUMERIC); }
   ALPHANUMERIC      { return symbol(ALPHANUMERIC); }
   ALL               { return symbol(ALL);          }
   ALSO              { return symbol(ALSO);       }
@@ -291,8 +290,8 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   COUNT             { return symbol(COUNT);      }
   CYCLE             { data = true; }
 
-  DATA              { data = true; }
-  DCBS              { return symbol(DCBS);       }
+  DATA              { return symbol(DATA);       }
+  DBCS              { return symbol(DBCS);       }
   DELIMITED[ ]+BY   { return symbol(DELIMITED);  }
   DELIMITED         { return symbol(DELIMITED);  }
   DELIMITER         { return symbol(DELIMITER);  }
@@ -301,10 +300,11 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   DFHRESP           { cicsVerb = "DFHRESP";  pushState(CICSSYM);   }  
   DFHVALUE          { cicsVerb = "DFHVALUE"; pushState(CICSSYM);   }
 
+  EGCS             { return symbol(EGCS);       } 
   END-EVALUATE     { return symbol(ENDEVAL);    }
   END-IF           { return symbol(ENDIF);      }  
   END-PERFORM      { return symbol(ENDPERFORM); }  
-  {ENDVERB}        { return symbol(ENDVERB);        }
+  {ENDVERB}        { return symbol(ENDVERB);    }
   
   END              { return symbol(ATEND);     } 
   EOP              { return symbol(EOP);       }
@@ -336,6 +336,8 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   LINE[sS]?        { data = true; }
   LOCK             { data = true; }
 
+  NATIONAL         { return symbol(NATIONAL); }
+  NATIONAL-EDITED  { return symbol(NATIONAL); }
   NEGATIVE         { return symbol(NEGATIVE); }
   NEXT             { data = true; }
   NOT              { data = true; }

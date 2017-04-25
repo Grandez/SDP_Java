@@ -22,13 +22,12 @@ import java_cup.runtime.Symbol;
 
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
-import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.base.stmt.*;
-import com.jgg.sdp.parser.base.symbol.*;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.parser.lang.ZCZSym;
+import com.jgg.sdp.parser.stmt.*;
+import com.jgg.sdp.parser.symbol.*;
 import com.jgg.sdp.parser.tools.*;
 
 public class ZCCCode extends ZCZCode {

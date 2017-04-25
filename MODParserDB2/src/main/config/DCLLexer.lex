@@ -9,7 +9,7 @@ import static com.jgg.sdp.parser.lang.DCLSym.*;
 %public
 %class      DCLLexer
 %extends    GenericLexer
-%implements GenericScanner
+%scanerror  ParseException
 
 %line
 %column

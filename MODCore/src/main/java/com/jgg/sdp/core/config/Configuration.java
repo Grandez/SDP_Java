@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.ParameterException;
 import com.jgg.sdp.core.msg.Messages;
-import com.jgg.sdp.core.tools.Propiedades;
+import com.jgg.sdp.tools.Propiedades;
 
 public class Configuration {
 

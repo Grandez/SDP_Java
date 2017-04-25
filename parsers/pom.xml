@@ -4,20 +4,27 @@
          
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.jgg.parsers</groupId>
-  <artifactId>runtime</artifactId>
-  <version>5.0</version>
-  <packaging>jar</packaging>
-
-  <name>Parsers</name>
-
 <!--   <parent> -->
 <!--     <groupId>com.jgg</groupId> -->
 <!--     <artifactId>sdp</artifactId> -->
-<!--     <version>4.0</version> -->
 <!--     <relativePath>../SDP</relativePath> -->
+<!--     <version>5.0</version>     -->
 <!--   </parent> -->
 
+  <groupId>com.jgg.parsers</groupId>
+  <artifactId>runtime</artifactId>
+  <version>2.0</version>
+  <packaging>jar</packaging>
+  
+
+  <name>Parsers</name>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <sdp.lib>P:/SDP/Lib</sdp.lib>
+  </properties>
+  
   <dependencies>
 
   </dependencies>

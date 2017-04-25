@@ -1,9 +1,9 @@
 package com.jgg.sdp.parser.blocks;
 
-import com.jgg.sdp.core.tools.Firma;
+import com.jgg.sdp.tools.Firma;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Issue;
-import com.jgg.sdp.parser.base.stmt.Statement;
+import com.jgg.sdp.parser.stmt.Statement;
 import com.jgg.sdp.rules.*;
 
 import java_cup.runtime.Symbol;

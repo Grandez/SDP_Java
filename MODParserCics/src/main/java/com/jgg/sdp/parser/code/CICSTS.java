@@ -14,7 +14,7 @@ import java.net.URL;
 import java.util.*;
 
 import com.jgg.sdp.core.ctes.CFG;
-import com.jgg.sdp.parser.base.StmtCICS;
+import com.jgg.sdp.parser.stmt.StmtCICS;
 
 public class CICSTS {
 	

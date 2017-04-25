@@ -5,16 +5,24 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.jgg.sdp</groupId>
-    <artifactId>SDPBase</artifactId>
+    <groupId>com.jgg</groupId>
+    <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDPBase</relativePath>
+    <relativePath>../SDP</relativePath>
   </parent>
 
+<!--   <parent> -->
+<!--     <groupId>com.jgg.sdp</groupId> -->
+<!--     <artifactId>SDPBase</artifactId> -->
+<!--     <version>5.0</version> -->
+<!--     <relativePath>../SDPBase</relativePath> -->
+<!--   </parent> -->
+
+  <groupId>com.jgg.sdp</groupId>
   <artifactId>MODModule</artifactId>
   <packaging>jar</packaging>
 
-  <name>Serendipity Module Module</name>
+  <name>Serendipity Module Abstraction</name>
 
   <dependencies>
 
@@ -22,12 +30,14 @@
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODTools</artifactId>
        <version>${sdp.version}</version>
+       <scope>provided</scope>
      </dependency>
 
      <dependency>
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODCore</artifactId>
        <version>${sdp.version}</version>
+       <scope>provided</scope>
      </dependency>
 
 <!--      <dependency> -->
@@ -60,7 +70,7 @@
 <!--                               <artifactId>${project.artifactId}</artifactId> -->
 <!--                               <version>${project.version}</version> -->
 <!--                               <type>${project.packaging}</type> -->
-<!--                               <destFileName>SDPModule.jar</destFileName> -->
+<!--                               <destFileName>MODModule.jar</destFileName> -->
 <!--                            </artifactItem> -->
 <!--                        </artifactItems> -->
                

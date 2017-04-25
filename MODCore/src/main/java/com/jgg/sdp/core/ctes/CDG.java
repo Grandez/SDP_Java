@@ -139,13 +139,6 @@ public class CDG {
 	public static final int MASTER_PGM  = 2;
 	public static final int MASTER_ADM  = 3;
 
-	// Rangos de fechas
-	public static final int RANGE_ALL     = 0;
-	public static final int RANGE_DAY     = 1;
-	public static final int RANGE_WEEK    = 2;
-	public static final int RANGE_MONTH   = 3;
-	public static final int RANGE_QUARTER = 4;
-
 	// Estados de aprobacion
 	public static final int ST_PENDING = 0;
 	public static final int ST_AUTO    = 1;

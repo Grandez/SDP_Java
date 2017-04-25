@@ -9,7 +9,7 @@ import static com.jgg.sdp.parser.lang.PCLSym.*;
 %public
 %class      PCLLexer
 %extends    GenericLexer
-%implements GenericScanner
+%scanerror  ParseException
 
 %line
 %column

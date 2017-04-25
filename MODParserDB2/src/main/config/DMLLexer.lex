@@ -11,7 +11,7 @@ import static com.jgg.sdp.parser.lang.DMLSym.*;
 %public
 %class      DMLLexer
 %extends    GenericLexer
-%implements GenericScanner
+%scanerror  ParseException
 
 %line
 %column
@@ -289,8 +289,8 @@ FULLTABLE   = {ID}\.\*
    /*************************************************************/
    /*************************************************************/
 
-   MAX                                            { cacheSymbol(MAX                                , FUNCTION_SCALAR);    }
-   MIN                                            { cacheSymbol(MIN                                , FUNCTION_SCALAR);    }
+   MAX                                            { cacheSymbol(MAX, FUNCTION_SCALAR);    }
+   MIN                                            { cacheSymbol(MIN, FUNCTION_SCALAR);    }
    AVG                                            { return symbol(FUNCTION_AGGREGATE); }
    CORRELATION                                    { return symbol(FUNCTION_AGGREGATE); }
    COUNT                                          { return symbol(FUNCTION_AGGREGATE); }
@@ -315,7 +315,7 @@ FULLTABLE   = {ID}\.\*
    ATANH                                          { return symbol(FUNCTION_SCALAR);    }
    ATAN2                                          { return symbol(FUNCTION_SCALAR);    }
    BIGINT                                         { return symbol(FUNCTION_SCALAR);    }
-   BINARY                                         { cacheSymbol(BINARY                              , FUNCTION_SCALAR);    }
+   BINARY                                         { cacheSymbol(BINARY, FUNCTION_SCALAR);    }
    BITAND                                         { return symbol(FUNCTION_SCALAR);    }
    BITANDNOT                                      { return symbol(FUNCTION_SCALAR);    }
    BITOR                                          { return symbol(FUNCTION_SCALAR);    }
@@ -325,26 +325,26 @@ FULLTABLE   = {ID}\.\*
    CCSID_ENCODING                                 { return symbol(FUNCTION_SCALAR);    }
    CEILING                                        { return symbol(FUNCTION_SCALAR);    }
    CAST                                           { return symbol(CAST);    }   
-   CHAR                                           { cacheSymbol(CHAR                                , FUNCTION_SCALAR);    }
+   CHAR                                           { cacheSymbol(CHAR, FUNCTION_SCALAR);    }
    CHARACTER_LENGTH                               { return symbol(FUNCTION_SCALAR);    }
    CLOB                                           { return symbol(FUNCTION_SCALAR);    }
    COALESCE                                       { return symbol(FUNCTION_SCALAR);    }
    COLLATION_KEY                                  { return symbol(FUNCTION_SCALAR);    }
    COMPARE_DECFLOAT                               { return symbol(FUNCTION_SCALAR);    }
-   CONCAT                                         { cacheSymbol(CONCAT                              , FUNCTION_SCALAR);    }
+   CONCAT                                         { cacheSymbol(CONCAT, FUNCTION_SCALAR);    }
    COS                                            { return symbol(FUNCTION_SCALAR);    }
    COSH                                           { return symbol(FUNCTION_SCALAR);    }
-   DATE                                           { cacheSymbol(DATE                                , FUNCTION_SCALAR);    }
+   DATE                                           { cacheSymbol(DATE, FUNCTION_SCALAR);    }
    DAYOFMONTH                                     { return symbol(FUNCTION_SCALAR);    }
    DAYOFWEEK                                      { return symbol(FUNCTION_SCALAR);    }
    DAYOFWEEK_ISO                                  { return symbol(FUNCTION_SCALAR);    }
    DAYOFYEAR                                      { return symbol(FUNCTION_SCALAR);    }
    DBCLOB                                         { return symbol(FUNCTION_SCALAR);    }
-   DECFLOAT                                       { cacheSymbol(DECFLOAT                            , FUNCTION_SCALAR);    }
+   DECFLOAT                                       { cacheSymbol(DECFLOAT, FUNCTION_SCALAR);    }
    DECFLOAT_FORMAT                                { return symbol(FUNCTION_SCALAR);    }
    DECFLOAT_SORTKEY                               { return symbol(FUNCTION_SCALAR);    }
-   DECIMAL                                        { cacheSymbol(DECIMAL                             , FUNCTION_SCALAR);    }
-   DEC                                            { cacheSymbol(DECIMAL                             , FUNCTION_SCALAR);    }   
+   DECIMAL                                        { cacheSymbol(DECIMAL, FUNCTION_SCALAR);    }
+   DEC                                            { cacheSymbol(DECIMAL, FUNCTION_SCALAR);    }   
    DECODE                                         { return symbol(FUNCTION_SCALAR);    }
    DECRYPT_BINARY                                 { return symbol(FUNCTION_SCALAR);    }
    DECRYPT_BIT                                    { return symbol(FUNCTION_SCALAR);    }
@@ -354,29 +354,29 @@ FULLTABLE   = {ID}\.\*
    DIFFERENCE                                     { return symbol(FUNCTION_SCALAR);    }
    DIGITS                                         { return symbol(FUNCTION_SCALAR);    }
    DOUBLE_PRECISION                               { return symbol(FUNCTION_SCALAR);    }
-   DOUBLE                                         { cacheSymbol(DOUBLE                              , FUNCTION_SCALAR);    }
+   DOUBLE                                         { cacheSymbol(DOUBLE, FUNCTION_SCALAR);    }
    DSN_XMLVALIDATE                                { return symbol(FUNCTION_SCALAR);    }
    EBCDIC_CHR                                     { return symbol(FUNCTION_SCALAR);    }
    EBCDIC_STR                                     { return symbol(FUNCTION_SCALAR);    }
    ENCRYPT_TDES                                   { return symbol(FUNCTION_SCALAR);    }
    EXP                                            { return symbol(FUNCTION_SCALAR);    }
    EXTRACT                                        { return symbol(FUNCTION_SCALAR);    }
-   FLOAT                                          { cacheSymbol(FLOAT                               , FUNCTION_SCALAR);    }
+   FLOAT                                          { cacheSymbol(FLOAT, FUNCTION_SCALAR);    }
    FLOOR                                          { return symbol(FUNCTION_SCALAR);    }
    GENERATE_UNIQUE                                { return symbol(FUNCTION_SCALAR);    }
    GETHINT                                        { return symbol(FUNCTION_SCALAR);    }
    GETVARIABLE                                    { return symbol(FUNCTION_SCALAR);    }
-   GRAPHIC                                        { cacheSymbol(GRAPHIC                             , FUNCTION_SCALAR);    }
+   GRAPHIC                                        { cacheSymbol(GRAPHIC, FUNCTION_SCALAR);    }
    HEX                                            { return symbol(FUNCTION_SCALAR);    }
    IDENTITY_VAL_LOCAL                             { return symbol(FUNCTION_SCALAR);    }
    IFNULL                                         { return symbol(FUNCTION_SCALAR);    }
-   INSERT                                         { cacheSymbol(INSERT                              , FUNCTION_SCALAR);    }
-   INTEGER                                        { cacheSymbol(INTEGER                             , FUNCTION_SCALAR);    }
-   INT                                            { cacheSymbol(INT                                 , FUNCTION_SCALAR);    }
+   INSERT                                         { cacheSymbol(INSERT, FUNCTION_SCALAR);    }
+   INTEGER                                        { cacheSymbol(INTEGER, FUNCTION_SCALAR);    }
+   INT                                            { cacheSymbol(INT, FUNCTION_SCALAR);    }
    JULIAN_DAY                                     { return symbol(FUNCTION_SCALAR);    }
    LAST_DAY                                       { return symbol(FUNCTION_SCALAR);    }
    LCASE                                          { return symbol(FUNCTION_SCALAR);    }
-   LEFT                                           { cacheSymbol(LEFT                                , FUNCTION_SCALAR);    }
+   LEFT                                           { cacheSymbol(LEFT, FUNCTION_SCALAR);    }
    LENGTH                                         { return symbol(FUNCTION_SCALAR);    }
    LN                                             { return symbol(FUNCTION_SCALAR);    }
    LOCATE                                         { return symbol(FUNCTION_SCALAR);    }
@@ -409,21 +409,21 @@ FULLTABLE   = {ID}\.\*
    RADIANS                                        { return symbol(FUNCTION_SCALAR);    }
    RAISE_ERROR                                    { return symbol(FUNCTION_SCALAR);    }
    RAND                                           { return symbol(FUNCTION_SCALAR);    }
-   REAL                                           { cacheSymbol(REAL                                , FUNCTION_SCALAR);    }
+   REAL                                           { cacheSymbol(REAL, FUNCTION_SCALAR);    }
    REPEAT                                         { return symbol(FUNCTION_SCALAR);    }
    REPLACE                                        { return symbol(FUNCTION_SCALAR);    }
    RID                                            { return symbol(FUNCTION_SCALAR);    }
-   RIGHT                                          { cacheSymbol(RIGHT                               , FUNCTION_SCALAR);    }
+   RIGHT                                          { cacheSymbol(RIGHT, FUNCTION_SCALAR);    }
    ROUND_TIMESTAMP                                { return symbol(FUNCTION_SCALAR);    }
    ROUND                                          { return symbol(FUNCTION_SCALAR);    }   
-   ROWID                                          { cacheSymbol(ROWID                               , FUNCTION_SCALAR);    }
+   ROWID                                          { cacheSymbol(ROWID, FUNCTION_SCALAR);    }
    RPAD                                           { return symbol(FUNCTION_SCALAR);    }
    RTRIM                                          { return symbol(FUNCTION_SCALAR);    }
    SCORE                                          { return symbol(FUNCTION_SCALAR);    }
    SIGN                                           { return symbol(FUNCTION_SCALAR);    }
    SIN                                            { return symbol(FUNCTION_SCALAR);    }
    SINH                                           { return symbol(FUNCTION_SCALAR);    }
-   SMALLINT                                       { cacheSymbol(SMALLINT                            , FUNCTION_SCALAR);    }
+   SMALLINT                                       { cacheSymbol(SMALLINT, FUNCTION_SCALAR);    }
    SOUNDEX                                        { return symbol(FUNCTION_SCALAR);    }
    SOAPHTTPC                                      { return symbol(FUNCTION_SCALAR);    }
    SOAPHTTPV                                      { return symbol(FUNCTION_SCALAR);    }
@@ -436,8 +436,8 @@ FULLTABLE   = {ID}\.\*
    SUBSTRING                                      { return symbol(FUNCTION_SCALAR);    }
    TAN                                            { return symbol(FUNCTION_SCALAR);    }
    TANH                                           { return symbol(FUNCTION_SCALAR);    }
-   TIME                                           { cacheSymbol(TIME                                , FUNCTION_SCALAR);    }
-   TIMESTAMP                                      { cacheSymbol(TIMESTAMP                           , FUNCTION_SCALAR);    }
+   TIME                                           { cacheSymbol(TIME, FUNCTION_SCALAR);    }
+   TIMESTAMP                                      { cacheSymbol(TIMESTAMP, FUNCTION_SCALAR);    }
    TIMESTAMPADD                                   { return symbol(FUNCTION_SCALAR);    }
    TIMESTAMP_FORMAT                               { return symbol(FUNCTION_SCALAR);    }
    TIMESTAMP_ISO                                  { return symbol(FUNCTION_SCALAR);    }
@@ -457,10 +457,10 @@ FULLTABLE   = {ID}\.\*
    UNICODE_STR                                    { return symbol(FUNCTION_SCALAR);    }
    UPPER                                          { return symbol(FUNCTION_SCALAR);    }
    VALUE                                          { return symbol(VALUE);              }
-   VARBINARY                                      { cacheSymbol(VARBINARY                           , FUNCTION_SCALAR);    }
-   VARCHAR                                        { cacheSymbol(VARCHAR                             , FUNCTION_SCALAR);    }
+   VARBINARY                                      { cacheSymbol(VARBINARY, FUNCTION_SCALAR);    }
+   VARCHAR                                        { cacheSymbol(VARCHAR, FUNCTION_SCALAR);    }
    VARCHAR_FORMAT                                 { return symbol(FUNCTION_SCALAR);    }
-   VARGRAPHIC                                     { cacheSymbol(VARGRAPHIC                          , FUNCTION_SCALAR);    }
+   VARGRAPHIC                                     { cacheSymbol(VARGRAPHIC, FUNCTION_SCALAR);    }
    VERIFY_GROUP_FOR_USER                          { return symbol(FUNCTION_SCALAR);    }
    VERIFY_ROLE_FOR_USER                           { return symbol(FUNCTION_SCALAR);    }
    VERIFY_TRUSTED_CONTEXT_ROLE_FOR_USER           { return symbol(FUNCTION_SCALAR);    }

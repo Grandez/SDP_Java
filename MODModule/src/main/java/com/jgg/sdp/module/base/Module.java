@@ -10,7 +10,7 @@ package com.jgg.sdp.module.base;
 import java.util.*;
 
 import com.jgg.sdp.core.ctes.CDG;
-import com.jgg.sdp.tools.*;
+import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.graph.Graph;
 import com.jgg.sdp.module.items.*;

@@ -79,24 +79,26 @@ scan with {: if (scanner == null) return getScanner().next_token();
 
 /****************************************************************************/
 /****************************************************************************/
-/*               LOS SIMBOLOS SON COMUNES                                   */
+/*                           TERMINALES                                    */
 /****************************************************************************/
 /****************************************************************************/
-
-// terminal Symbol COPY     ;
 
 terminal Symbol PROC_DIV ;
 
-terminal Symbol ID        ;
+terminal Symbol SYM       ;
 terminal Symbol NUMERO    ;
+terminal Symbol ENDP      ;
+terminal Symbol END_VERB  ;
 
 //terminal Symbol HEX_VAL   ;
 terminal Symbol PARRAFO   ;
 terminal Symbol LITERAL   ;
 // terminal Symbol LITCONCAT ;
+terminal Symbol EXIT_PERFORM ;
+terminal Symbol EXIT_PGM     ;
 terminal Symbol END_PGM   ;
-terminal Symbol COMMA     ; 
 
+terminal Symbol STOPRUN       ;
 
 terminal Symbol OP_POW       ;
 terminal Symbol OP_MUL       ;
@@ -111,158 +113,515 @@ terminal Symbol REL_GT  ;
 terminal Symbol REL_LT  ;
 terminal Symbol REL_EQ  ;
 
-terminal Symbol DATA         ;
-terminal Symbol SPACES       ;
-terminal Symbol ZERO         ; 
-terminal Symbol HIGHVAL      ;
-terminal Symbol LOWVAL       ;
-terminal Symbol QUOTE        ;
-terminal Symbol ALPHABETIC   ;
-terminal Symbol ALPHANUMERIC ;
-terminal Symbol NUMERIC      ;
-terminal Symbol KANJI        ;
-terminal Symbol POSITIVE     ;
-terminal Symbol NEGATIVE     ;
-terminal Symbol NULL         ;
-terminal Symbol DBCS         ;
-terminal Symbol EGCS         ;
-terminal Symbol NATIONAL     ;
+terminal Symbol GOTO    ;
 
-terminal Symbol DUPLICATES ;
+// RESERVED WORDS
 
-/* Verbos */
- 
-terminal Symbol ACCEPT     ;
-terminal Symbol ADD        ;
-terminal Symbol ALLOCATE   ;
-terminal Symbol CALL       ;
-terminal Symbol CANCEL     ;
-terminal Symbol CLOSE      ;
-terminal Symbol COMMIT     ;
-terminal Symbol COMPUTE    ;
-terminal Symbol CONTINUE   ;
-terminal Symbol DELETE     ;
-terminal Symbol DISPLAY    ;
-terminal Symbol DIVIDE     ;     
-terminal Symbol EVALUATE   ;
-terminal Symbol EXITPGM    ;
-terminal Symbol EXITP      ;
-terminal Symbol EXIT       ;
-terminal Symbol FREE       ;
-terminal Symbol GOBACK     ;
-terminal Symbol GOTO       ;
-terminal Symbol IF         ;
-terminal Symbol INITIALIZE ;
-terminal Symbol INSPECT    ;
-terminal Symbol MERGE      ;
-terminal Symbol MOVE       ;
-terminal Symbol MULTIPLY   ;
-terminal Symbol NEXT       ;
-terminal Symbol OPEN       ;
-terminal Symbol PERFORM    ;
-terminal Symbol READ       ;
-terminal Symbol RELEASE    ;
-terminal Symbol RETURN     ;
-terminal Symbol REWRITE    ;
-terminal Symbol ROLLBACK   ;
-terminal Symbol SEARCH     ;
-terminal Symbol SET        ;
-terminal Symbol SORT       ;
-terminal Symbol START      ;
-terminal Symbol STOPRUN    ;
-terminal Symbol STRING     ;
-terminal Symbol SUBTRACT   ;
-terminal Symbol TRANSFORM  ; 
-terminal Symbol UNLOCK     ;
-terminal Symbol UNSTRING   ;
-terminal Symbol WRITE      ;
+terminal Symbol ACCEPT              ;
+terminal Symbol ACCESS              ;
+terminal Symbol ADD                 ;
+terminal Symbol ADDRESS             ;
+terminal Symbol ADVANCING           ;
+terminal Symbol AFTER               ;
+terminal Symbol ALL                 ;
+terminal Symbol ALPHABET            ;
+terminal Symbol ALPHABETIC          ;
+terminal Symbol ALPHABETIC_LOWER    ;
+terminal Symbol ALPHABETIC_UPPER    ;
+terminal Symbol ALPHANUMERIC        ;
+terminal Symbol ALPHANUMERIC_EDITED ;
+terminal Symbol ALSO                ;
+terminal Symbol ALTER               ;
+terminal Symbol ALTERNATE           ;
+terminal Symbol AND                 ;
+terminal Symbol ANY                 ;
+terminal Symbol APPLY               ;
+terminal Symbol ARE                 ;
+terminal Symbol AREA                ;
+terminal Symbol AREAS               ;
+terminal Symbol ASCENDING           ;
+terminal Symbol ASSIGN              ;
+terminal Symbol AT                  ;
+terminal Symbol AUTHOR              ;
+terminal Symbol BASIS               ;
+terminal Symbol BEFORE              ;
+terminal Symbol BEGINNING           ;
+terminal Symbol BINARY              ;
+terminal Symbol BLANK               ;
+terminal Symbol BLOCK               ;
+terminal Symbol BOTTOM              ;
+terminal Symbol BY                  ;
+terminal Symbol CALL                ;
+terminal Symbol CANCEL              ;
+terminal Symbol CBL                 ;
+terminal Symbol CHARACTER           ;
+terminal Symbol CHARACTERS          ;
+terminal Symbol CLASS               ;
+terminal Symbol CLASS_ID            ;
+terminal Symbol CLOSE               ;
+terminal Symbol COBOL               ;
+terminal Symbol CODE                ;
+terminal Symbol CODE_SET            ;
+terminal Symbol COLLATING           ;
+terminal Symbol COM_REG             ;
+terminal Symbol COMMA               ;
+terminal Symbol COMMON              ;
+terminal Symbol COMP                ;
+terminal Symbol COMP1               ;
+terminal Symbol COMP2               ;
+terminal Symbol COMP3               ;
+terminal Symbol COMP4               ;
+terminal Symbol COMP5               ;
+terminal Symbol COMPUTE             ;
+terminal Symbol CONFIGURATION       ;
+terminal Symbol CONTAINS            ;
+terminal Symbol CONTENT             ;
+terminal Symbol CONTINUE            ;
+terminal Symbol CONVERTING          ;
+//terminal Symbol COPY                ;
+terminal Symbol CORR                ;
+terminal Symbol CORRESPONDING       ;
+terminal Symbol COUNT               ;
+terminal Symbol CURRENCY            ;
+terminal Symbol DATA                ;
+terminal Symbol DATE                ;
+terminal Symbol DATE_COMPILED       ;
+terminal Symbol DATE_WRITTEN        ;
+terminal Symbol DAY                 ;
+terminal Symbol DAY_OF_WEEK         ;
+terminal Symbol DBCS                ;
+terminal Symbol DEBUG_CONTENTS      ;
+terminal Symbol DEBUG_ITEM          ;
+terminal Symbol DEBUG_LINE          ;
+terminal Symbol DEBUG_NAME          ;
+terminal Symbol DEBUG_SUB           ;
+terminal Symbol DEBUGGING           ;
+terminal Symbol DECIMAL_POINT       ;
+terminal Symbol DECLARATIVES        ;
+terminal Symbol DELETE              ;
+terminal Symbol DELIMITED           ;
+terminal Symbol DELIMITER           ;
+terminal Symbol DEPENDING           ;
+terminal Symbol DESCENDING          ;
+terminal Symbol DISPLAY             ;
+terminal Symbol DISPLAY_1           ;
+terminal Symbol DIVIDE              ;
+terminal Symbol DIVISION            ;
+terminal Symbol DOWN                ;
+terminal Symbol DUPLICATES          ;
+terminal Symbol DYNAMIC             ;
+terminal Symbol EGCS                ;
+terminal Symbol EJECT               ;
+terminal Symbol ELSE                ;
+terminal Symbol END                 ;
+terminal Symbol END_ADD             ;
+terminal Symbol END_CALL            ;
+terminal Symbol END_COMPUTE         ;
+terminal Symbol END_DELETE          ;
+terminal Symbol END_DIVIDE          ;
+terminal Symbol END_EVALUATE        ;
+terminal Symbol END_EXEC            ;
+terminal Symbol END_IF              ;
+terminal Symbol END_INVOKE          ;
+terminal Symbol END_MULTIPLY        ;
+terminal Symbol END_OF_PAGE         ;
+terminal Symbol END_PERFORM         ;
+terminal Symbol END_READ            ;
+terminal Symbol END_RETURN          ;
+terminal Symbol END_REWRITE         ;
+terminal Symbol END_SEARCH          ;
+terminal Symbol END_START           ;
+terminal Symbol END_STRING          ;
+terminal Symbol END_SUBTRACT        ;
+terminal Symbol END_UNSTRING        ;
+terminal Symbol END_WRITE           ;
+terminal Symbol END_XML             ;
+terminal Symbol ENDING              ;
+terminal Symbol ENTER               ;
+terminal Symbol ENTRY               ;
+terminal Symbol ENVIRONMENT         ;
+terminal Symbol EOP                 ;
+terminal Symbol EQUAL               ;
+terminal Symbol ERROR               ;
+terminal Symbol EVALUATE            ;
+terminal Symbol EVERY               ;
+terminal Symbol EXCEPTION           ;
+terminal Symbol EXEC                ;
+terminal Symbol EXECUTE             ;
+terminal Symbol EXIT                ;
+terminal Symbol EXTEND              ;
+terminal Symbol EXTERNAL            ;
+terminal Symbol FACTORY             ;
+terminal Symbol FALSE               ;
+// terminal Symbol FD                  ;
+terminal Symbol FILE                ;
+// terminal Symbol FILE_CONTROL        ;
+terminal Symbol FILLER              ;
+terminal Symbol FIRST               ;
+terminal Symbol FOOTING             ;
+terminal Symbol FOR                 ;
+terminal Symbol FROM                ;
+terminal Symbol FUNCTION            ;
+terminal Symbol FUNCTION_POINTER    ;
+terminal Symbol GENERATE            ;
+terminal Symbol GIVING              ;
+terminal Symbol GLOBAL              ;
+terminal Symbol GO                  ;
+terminal Symbol GOBACK              ;
+terminal Symbol GREATER             ;
+terminal Symbol GROUP_USAGE         ;
+terminal Symbol HIGHVAL             ;
+terminal Symbol IO                 ;
+// terminal Symbol IO_CONTROL         ;
+terminal Symbol ID                  ;
+terminal Symbol IDENTIFICATION      ;
+terminal Symbol IF                  ;
+terminal Symbol IN                  ;
+terminal Symbol INDEX               ;
+terminal Symbol INDEXED             ;
+terminal Symbol INHERITS            ;
+terminal Symbol INITIAL             ;
+terminal Symbol INITIALIZE          ;
+terminal Symbol INPUT               ;
+terminal Symbol INPUT_OUTPUT        ;
+terminal Symbol INSERT              ;
+terminal Symbol INSPECT             ;
+terminal Symbol INSTALLATION        ;
+terminal Symbol INTO                ;
+terminal Symbol INVALID             ;
+terminal Symbol INVOKE              ;
+terminal Symbol IS                  ;
+terminal Symbol JNIENVPTR           ;
+terminal Symbol JUST                ;
+terminal Symbol JUSTIFIED           ;
+terminal Symbol KANJI               ;
+terminal Symbol KEY                 ;
+terminal Symbol LABEL               ;
+terminal Symbol LEADING             ;
+terminal Symbol LEFT                ;
+terminal Symbol LENGTH              ;
+terminal Symbol LESS                ;
+terminal Symbol LINAGE              ;
+terminal Symbol LINAGE_COUNTER      ;
+terminal Symbol LINE                ;
+terminal Symbol LINES               ;
+terminal Symbol LINKAGE             ;
+terminal Symbol LOCAL_STORAGE       ;
+terminal Symbol LOCK                ;
+terminal Symbol LOWVAL              ;
+terminal Symbol MEMORY              ;
+terminal Symbol MERGE               ;
+terminal Symbol METHOD              ;
+terminal Symbol METHOD_ID           ;
+terminal Symbol MODE                ;
+terminal Symbol MODULES             ;
+terminal Symbol MORE_LABELS         ;
+terminal Symbol MOVE                ;
+terminal Symbol MULTIPLE            ;
+terminal Symbol MULTIPLY            ;
+terminal Symbol NATIONAL            ;
+// terminal Symbol NATIONAL_EDITED     ;
+terminal Symbol NATIVE              ;
+terminal Symbol NEGATIVE            ;
+terminal Symbol NEXT                ;
+terminal Symbol NO                  ;
+terminal Symbol NOT                 ;
+terminal Symbol NULL                ;
+terminal Symbol NULLS               ;
+terminal Symbol NUMERIC             ;
+terminal Symbol NUMERIC_EDITED      ;
+terminal Symbol OBJECT              ;
+terminal Symbol OBJECT_COMPUTER     ;
+terminal Symbol OCCURS              ;
+terminal Symbol OF                  ;
+terminal Symbol OFF                 ;
+terminal Symbol OMITTED             ;
+terminal Symbol ON                  ;
+terminal Symbol OPEN                ;
+terminal Symbol OPTIONAL            ;
+terminal Symbol OR                  ;
+terminal Symbol ORDER               ;
+terminal Symbol ORGANIZATION        ;
+terminal Symbol OTHER               ;
+terminal Symbol OUTPUT              ;
+terminal Symbol OVERFLOW            ;
+terminal Symbol OVERRIDE            ;
+terminal Symbol PACKED_DECIMAL      ;
+terminal Symbol PADDING             ;
+terminal Symbol PAGE                ;
+terminal Symbol PASSWORD            ;
+terminal Symbol PERFORM             ;
+terminal Symbol PIC                 ;
+terminal Symbol PICTURE             ;
+terminal Symbol POINTER             ;
+terminal Symbol POSITION            ;
+terminal Symbol POSITIVE            ;
+terminal Symbol PROCEDURE           ;
+terminal Symbol PROCEDURE_POINTER   ;
+terminal Symbol PROCEDURES          ;
+terminal Symbol PROCEED             ;
+terminal Symbol PROCESSING          ;
+terminal Symbol PROGRAM             ;
+terminal Symbol PROGRAM_ID          ;
+terminal Symbol QUOTE               ;
+terminal Symbol QUOTES              ;
+terminal Symbol RANDOM              ;
+terminal Symbol READ                ;
+terminal Symbol READY               ;
+terminal Symbol RECORD              ;
+terminal Symbol RECORDING           ;
+terminal Symbol RECORDS             ;
+terminal Symbol RECURSIVE           ;
+terminal Symbol REDEFINES           ;
+terminal Symbol REEL                ;
+terminal Symbol REFERENCE           ;
+terminal Symbol REFERENCES          ;
+terminal Symbol RELATIVE            ;
+terminal Symbol RELEASE             ;
+terminal Symbol RELOAD              ;
+terminal Symbol REMAINDER           ;
+terminal Symbol REMOVAL             ;
+terminal Symbol RENAMES             ;
+terminal Symbol REPLACE             ;
+terminal Symbol REPLACING           ;
+terminal Symbol REPOSITORY          ;
+terminal Symbol RERUN               ;
+terminal Symbol RESERVE             ;
+terminal Symbol RESET               ;
+terminal Symbol RETURN              ;
+terminal Symbol RETURN_CODE         ;
+terminal Symbol RETURNING           ;
+terminal Symbol REVERSED            ;
+terminal Symbol REWIND              ;
+terminal Symbol REWRITE             ;
+terminal Symbol RIGHT               ;
+terminal Symbol ROUNDED             ;
+terminal Symbol RUN                 ;
+terminal Symbol SAME                ;
+terminal Symbol SD                  ;
+terminal Symbol SEARCH              ;
+terminal Symbol SECTION             ;
+terminal Symbol SECURITY            ;
+terminal Symbol SEGMENT_LIMIT       ;
+terminal Symbol SELECT              ;
+terminal Symbol SELF                ;
+terminal Symbol SENTENCE            ;
+terminal Symbol SEPARATE            ;
+terminal Symbol SEQUENCE            ;
+terminal Symbol SEQUENTIAL          ;
+terminal Symbol SERVICE             ;
+terminal Symbol SET                 ;
+terminal Symbol SHIFT_IN            ;
+terminal Symbol SHIFT_OUT           ;
+terminal Symbol SIGN                ;
+terminal Symbol SIZE                ;
+terminal Symbol SKIP1               ;
+terminal Symbol SKIP2               ;
+terminal Symbol SKIP3               ;
+terminal Symbol SORT                ;
+terminal Symbol SORT_CONTROL        ;
+terminal Symbol SORT_CORE_SIZE      ;
+terminal Symbol SORT_FILE_SIZE      ;
+terminal Symbol SORT_MERGE          ;
+terminal Symbol SORT_MESSAGE        ;
+terminal Symbol SORT_MODE_SIZE      ;
+terminal Symbol SORT_RETURN         ;
+terminal Symbol SOURCE_COMPUTER     ;
+// terminal Symbol SPACE               ;
+terminal Symbol SPACES              ;
+// terminal Symbol SPECIAL_NAMES       ;
+terminal Symbol SQL                 ;
+terminal Symbol STANDARD            ;
+//terminal Symbol STANDARD_1          ;
+//terminal Symbol STANDARD_2          ;
+terminal Symbol START               ;
+terminal Symbol STATUS              ;
+terminal Symbol STOP                ;
+terminal Symbol STRING              ;
+terminal Symbol SUBTRACT            ;
+terminal Symbol SUPER               ;
+terminal Symbol SUPPRESS            ;
+terminal Symbol SYMBOLIC            ;
+terminal Symbol SYNC                ;
+terminal Symbol SYNCHRONIZED        ;
+terminal Symbol TALLY               ;
+terminal Symbol TALLYING            ;
+terminal Symbol TAPE                ;
+terminal Symbol TEST                ;
+terminal Symbol THAN                ;
+terminal Symbol THEN                ;
+terminal Symbol THROUGH             ;
+terminal Symbol THRU                ;
+terminal Symbol TIME                ;
+terminal Symbol TIMES               ;
+terminal Symbol TITLE               ;
+terminal Symbol TO                  ;
+terminal Symbol TOP                 ;
+terminal Symbol TRACE               ;
+terminal Symbol TRAILING            ;
+terminal Symbol TRUE                ;
+terminal Symbol TYPE                ;
+terminal Symbol UNIT                ;
+terminal Symbol UNSTRING            ;
+terminal Symbol UNTIL               ;
+terminal Symbol UP                  ;
+terminal Symbol UPON                ;
+terminal Symbol USAGE               ;
+terminal Symbol USE                 ;
+terminal Symbol USING               ;
+terminal Symbol VALUE               ;
+terminal Symbol VALUES              ;
+terminal Symbol VARYING             ;
+terminal Symbol WHEN                ;
+terminal Symbol WHEN_COMPILED       ;
+terminal Symbol WITH                ;
+terminal Symbol WORDS               ;
+terminal Symbol WORKING_STORAGE     ;
+terminal Symbol WRITE               ;
+terminal Symbol WRITE_ONLY          ;
+terminal Symbol XML                 ;
+terminal Symbol XML_CODE            ;
+terminal Symbol XML_EVENT           ;
+terminal Symbol XML_NAMESPACE       ;
+terminal Symbol XML_NAMESPACE_PREFIX;
+terminal Symbol XML_NNAMESPACE      ;
+terminal Symbol XML_NNAMESPACE_PREFIX;
+terminal Symbol XML_NTEXT           ;
+terminal Symbol XML_SCHEMA          ;
+terminal Symbol XML_TEXT            ;
+terminal Symbol ZERO                ;
+// terminal Symbol ZEROES              ;
+// terminal Symbol ZEROS               ;
 
-/* Palabras reservadas */
+// RESERVED WORDS IN ISO COBOL BUT NO IN ZCOBOL
 
-terminal Symbol AFTER      ;
-terminal Symbol ALL        ;
-terminal Symbol ALSO       ;
-terminal Symbol AND        ;
-terminal Symbol ASCENDING  ;
-terminal Symbol ATEND      ;
-terminal Symbol BEFORE     ;
-terminal Symbol BY         ;
-terminal Symbol CHARACTER  ;
-// terminal Symbol CLASS      ;
-terminal Symbol CONVERTING ;
-terminal Symbol CORR       ;
-terminal Symbol COUNT      ;
-//terminal Symbol DEC_POINT  ;
-terminal Symbol DEPENDING    ;
-terminal Symbol DELIMITED  ;
-terminal Symbol DELIMITER  ;
-terminal Symbol DESCENDING ;
-terminal Symbol ELSE       ;
-terminal Symbol ENDEVAL    ;
-terminal Symbol ENDIF      ;
-terminal Symbol ENDPERFORM ;
-terminal Symbol ENDP       ;
-terminal Symbol ENDSEARCH  ;
-terminal Symbol ENDVERB    ;
-terminal Symbol EOP        ;
-terminal Symbol EQUAL      ;
-terminal Symbol EXCEPTION  ;
-terminal Symbol EXTEND     ;
-terminal Symbol FIRST      ;
-terminal Symbol FOREVER    ;
-terminal Symbol FOR        ;
-terminal Symbol FROM       ;
-terminal Symbol GIVING     ;
-terminal Symbol GREATER    ;
-terminal Symbol INPUT      ;
-terminal Symbol INTO       ;
-terminal Symbol INVALID    ;
-terminal Symbol IN         ;
-terminal Symbol IO         ;
-terminal Symbol KEY        ;
-terminal Symbol LEADING    ;
-terminal Symbol LENGTH     ;
-terminal Symbol LINE       ;
-terminal Symbol LOCK       ;
-terminal Symbol NOT        ;
-terminal Symbol NO         ;
-terminal Symbol OF         ;
-terminal Symbol OR         ;
-terminal Symbol OTHER      ;
-terminal Symbol OUTPUT     ;
-terminal Symbol OVERFLOW   ;
-terminal Symbol PAGE       ;
-terminal Symbol PARAGRAPH  ;
-terminal Symbol POINTER    ;
-terminal Symbol PROGRAM    ;
-terminal Symbol REFERENCE  ;
-terminal Symbol REPLACING  ;
-terminal Symbol RETURNING  ;
-terminal Symbol ROUNDED    ;
-terminal Symbol SECTION    ;
-terminal Symbol SIZE       ;
-terminal Symbol TALLYING   ;
-terminal Symbol TEST       ;
-terminal Symbol THRU       ;
-terminal Symbol TIMES      ;
-terminal Symbol UNTIL      ;
-terminal Symbol USING      ;
-terminal Symbol VALUE      ;
-terminal Symbol VARYING    ;
-terminal Symbol WHEN       ;
+// terminal Symbol CD                  ;
+// terminal Symbol CF                  ;
+// terminal Symbol CH                  ;
+// terminal Symbol CLOCK_UNITS         ;
+// terminal Symbol COLUMN              ;
+// terminal Symbol COMMUNICATION       ;
+// terminal Symbol CONTROL             ;
+// terminal Symbol CONTROLS            ;
+// terminal Symbol DE                  ;
+// terminal Symbol DESTINATION         ;
+// terminal Symbol DETAIL              ;
+// terminal Symbol DISABLE             ;
+// terminal Symbol EGI                 ;
+// terminal Symbol EMI                 ;
+// terminal Symbol ENABLE              ;
+// terminal Symbol END_RECEIVE         ;
+// terminal Symbol ESI                 ;
+// terminal Symbol FINAL               ;
+// terminal Symbol GROUP               ;
+// terminal Symbol HEADING             ;
+// terminal Symbol INDICATE            ;
+// terminal Symbol INITIATE            ;
+// terminal Symbol LAST                ;
+// terminal Symbol LIMIT               ;
+// terminal Symbol LIMITS              ;
+// terminal Symbol LINE_COUNTER        ;
+// terminal Symbol MESSAGE             ;
+// terminal Symbol NUMBER              ;
+// terminal Symbol PAGE_COUNTER        ;
+// terminal Symbol PF                  ;
+// terminal Symbol PH                  ;
+// terminal Symbol PLUS                ;
+// terminal Symbol PRINTING            ;
+// terminal Symbol PURGE               ;
+// terminal Symbol QUEUE               ;
+// terminal Symbol RD                  ;
+// terminal Symbol RECEIVE             ;
+// terminal Symbol REPORT              ;
+// terminal Symbol REPORTING           ;
+// terminal Symbol REPORTS             ;
+// terminal Symbol RF                  ;
+// terminal Symbol RH                  ;
+// terminal Symbol SEGMENT             ;
+// terminal Symbol SEND                ;
+// terminal Symbol SOURCE              ;
+// terminal Symbol SUB_QUEUE_1         ;
+// terminal Symbol SUB_QUEUE_2         ;
+// terminal Symbol SUB_QUEUE_3         ;
+// terminal Symbol SUM                 ;
+// terminal Symbol TABLE               ;
+// terminal Symbol TERMINAL            ;
+// terminal Symbol TERMINATE           ;
+// terminal Symbol TEXT                ;
+
+// FUTURE RESERVED WORDS IN ZCOBOL
+
+// terminal Symbol ACTIVE_CLASS        ;
+// terminal Symbol ALIGNED             ;
+// terminal Symbol ALLOCATE            ;
+// terminal Symbol ANYCASE             ;
+// terminal Symbol B_AND               ;
+// terminal Symbol B_NOT               ;
+// terminal Symbol B_OR                ;
+// terminal Symbol B_XOR               ;
+// terminal Symbol BASED               ;
+// terminal Symbol BINARY_CHAR         ;
+// terminal Symbol BINARY_DOUBLE       ;
+// terminal Symbol BINARY_LONG         ;
+// terminal Symbol BINARY_SHORT        ;
+// terminal Symbol BIT                 ;
+// terminal Symbol BOOLEAN             ;
+// terminal Symbol COL                 ;
+// terminal Symbol COLS                ;
+// terminal Symbol COLUMNS             ;
+// terminal Symbol CONDITION           ;
+// terminal Symbol CONSTANT            ;
+// terminal Symbol CRT                 ;
+// terminal Symbol CURSOR              ;
+// terminal Symbol DATA_POINTER        ;
+// terminal Symbol DEFAULT             ;
+// terminal Symbol EC                  ;
+// terminal Symbol END_ACCEPT          ;
+// terminal Symbol END_DISPLAY         ;
+// terminal Symbol EO                  ;
+// terminal Symbol EXCEPTION_OBJECT    ;
+// terminal Symbol FLOAT_EXTENDED      ;
+// terminal Symbol FLOAT_LONG          ;
+// terminal Symbol FLOAT_SHORT         ;
+// terminal Symbol FORMAT              ;
+// terminal Symbol FREE                ;
+// terminal Symbol FUNCTION_ID         ;
+// terminal Symbol GET                 ;
+// terminal Symbol INTERFACE           ;
+// terminal Symbol INTERFACE_ID        ;
+// terminal Symbol LOCALE              ;
+// terminal Symbol MINUS               ;
+// terminal Symbol NESTED              ;
+// terminal Symbol OBJECT_REFERENCE    ;
+// terminal Symbol OPTIONS             ;
+// terminal Symbol PRESENT             ;
+// terminal Symbol PROGRAM_POINTER     ;
+// terminal Symbol PROPERTY            ;
+// terminal Symbol PROTOTYPE           ;
+// terminal Symbol RAISE               ;
+// terminal Symbol RAISING             ;
+// terminal Symbol RESUME              ;
+// terminal Symbol RETRY               ;
+// terminal Symbol SCREEN              ;
+// terminal Symbol SHARING             ;
+// terminal Symbol SOURCES             ;
+// terminal Symbol SYSTEM_DEFAULT      ;
+// terminal Symbol TYPEDEF             ;
+// terminal Symbol UNIVERSAL           ;
+// terminal Symbol UNLOCK              ;
+// terminal Symbol USER_DEFAULT        ;
+// terminal Symbol VAL_STATUS          ;
+// terminal Symbol VALID               ;
+// terminal Symbol VALIDATE            ;
+// terminal Symbol VALIDATE_STATUS     ;
 
 /* Simbolos gramaticales y palabras comunes */
 
 terminal Symbol LPAR   ;
 terminal Symbol RPAR   ;
-terminal Symbol TO     ;
-terminal Symbol WITH   ;
-terminal Symbol LESS   ;    
-
 
 terminal Symbol SIZE_ERROR  ;
 
-terminal Symbol FUNCTION ;
 terminal Symbol INTRINSIC ;
 
 terminal Symbol CICSCODE ;
@@ -287,12 +646,15 @@ non terminal        bloque_procedure;
 // No terminales para comerse el resto de sentencias
 /////////////////////////////////////////////////////
 
-non terminal Tokens stmtAccept_detail ;
+non terminal StmtCobol stmtAccept  ;
+non terminal StmtCobol accept_verb ;
+non terminal           accept_from ;
+non terminal           accept_data ;
 
-non terminal Statement add_verb  ;
-non terminal Tokens add_options_opt  ;
-non terminal Tokens add_options   ;
-non terminal Tokens add_option   ;
+non terminal Statement add_verb     ;
+non terminal Tokens add_options_opt ;
+non terminal Tokens add_options     ;
+non terminal Tokens add_option      ;
 
 non terminal Symbol compute_lvalue  ;
 non terminal Symbol compute_rvalues ;
@@ -336,9 +698,6 @@ non terminal Tokens    search_options ;
 non terminal Tokens    search_option  ;
 non terminal Tokens    search_opt     ;
 non terminal Tokens    search_varying ;
-
-non terminal Tokens stmtSet_detail ;
-non terminal Tokens stmtSet_resto  ;
 
 non terminal StmtCobol stmtSort ;
 non terminal stmtSort_detail ;
@@ -391,7 +750,6 @@ non terminal        stmtWrite_position ;
 non terminal        stmtWrite_after    ;
 non terminal        stmtWrite_eop      ;
 
-non terminal Symbol option_and_or       ;
 non terminal        option_position     ;
 non terminal        option_order        ;
 
@@ -428,15 +786,11 @@ non terminal Tokens    proc_parms_list ;
 non terminal Tokens    proc_parms      ;
 non terminal Tokens    proc_parm       ;
 
-
-non terminal StmtCobol stmtCommit     ;
 non terminal StmtCobol stmtMerge      ;
 non terminal StmtCobol stmtUnstring   ;
 non terminal StmtCobol stmtClose      ;
-non terminal StmtCobol stmtTransform  ;
 non terminal StmtCobol stmtCompute    ;
 non terminal StmtCobol stmtDelete     ;
-non terminal StmtCobol stmtAllocate   ;
 non terminal StmtCobol stmtDisplay    ;
 
 non terminal StmtCobol stmtContinue    ;
@@ -471,8 +825,6 @@ non terminal Option    perform_thru          ;
 non terminal Option    perform_varying       ;
 non terminal Option    perform_after         ;
 
-                               
-non terminal StmtCobol stmtFree     ;                               
 non terminal StmtCobol stmtRelease  ;
 
 non terminal StmtCobol stmtGoTo               ;
@@ -486,14 +838,11 @@ non terminal StmtCobol stmtMove         ;
 non terminal StmtCobol move_verb        ;
 
 non terminal StmtCobol stmtMultiply   ;
-non terminal StmtCobol stmtAccept     ;
-non terminal StmtCobol stmtUnlock     ;
+
 non terminal StmtCobol stmtNext       ;
 non terminal StmtCobol stmtCancel     ;
 non terminal StmtCobol stmtWrite      ;
 non terminal StmtCobol stmtOpen       ;
-
-non terminal           stmtAcceptOpt  ;
 
 non terminal StmtCobol stmtInspect                ; 
 non terminal           stmtInspect_detail         ;
@@ -519,13 +868,21 @@ non terminal StmtCobol stmtEndP      ;
 non terminal StmtCobol stmtEndSearch ;
 
 non terminal StmtCobol stmtExec      ;
-non terminal StmtCobol stmtRollback  ;
 
 non terminal StmtCobol stmtReturn ;             
 non terminal StmtCobol stmtStop   ;             
 non terminal StmtCobol stmtAdd    ;             
              
-non terminal StmtCobol stmtSet    ;             
+non terminal StmtCobol stmtSet       ;       
+non terminal StmtCobol set_verb      ;
+non terminal           set_list      ;
+non terminal           set_item      ;
+non terminal           set_lvalue    ;
+non terminal           set_rvalue    ;
+non terminal           set_variable  ;
+non terminal           set_value     ;
+non terminal           set_index     ;
+non terminal           set_index_inc ;
 
 non terminal StmtCobol optionOverflow     ;
 
@@ -543,7 +900,7 @@ non terminal Tokens    when_thru ;
 
 non terminal StmtCobol stmtEndVerb ;         
 
-non terminal StmtCobol stmtDatos   , stmtDatos1   , stmtDatos2   ;
+non terminal StmtCobol stmtDatos   ;
 non terminal StmtCobol stmtIO      ;
 non terminal StmtCobol stmtIO1     ;
 non terminal StmtCobol stmtIO2     ;
@@ -570,19 +927,27 @@ non terminal           expr_colon_value   ;
 non terminal           expr_operand       ;
 non terminal           expr_primary       ;
 
+non terminal           logical_condition  ;
+non terminal           logical_begin      ;
+non terminal           logical_next       ;
+non terminal Symbol    logical_and_or     ;
+non terminal           logical_op_opt     ;
 non terminal           logical_op         ;
 non terminal           logical_oper       ;
 non terminal           logical_not        ;
-non terminal           logical_condition  ;
-non terminal           logical_expression ;
+non terminal           logical_yes        ;
+
 non terminal           logical_class      ;
-non terminal           logical_class_opt  ;
+non terminal           logical_unary_not  ;
 non terminal           logical_unary      ;
 non terminal           logical_figurative ;
 non terminal           logical_rel        ;
 non terminal           logical_expr       ;
 non terminal           logical_operand    ;
 
+non terminal           conditional_expression ;
+non terminal           logical_expresion ;
+non terminal           logical_relation ;
 non terminal           operator_arit      ;
 
 /***********************************************************/
@@ -627,6 +992,7 @@ non terminal Option rvalue_option       ;
 non terminal Option option_all          ;
 non terminal Option option_corr         ; 
 non terminal Option option_giving       ;
+non terminal Option option_remainder    ;
 non terminal Option option_rounded      ;
 
 non terminal Option option_size_error   ;
@@ -637,16 +1003,17 @@ non terminal Tokens token ;
 non terminal Tokens tokens;
 non terminal Tokens optTokens ;
 
-non terminal Symbol opt_all   ;
-non terminal Symbol opt_by    ;
-non terminal Symbol opt_comma ;
-non terminal Symbol opt_data  ;
-non terminal Symbol opt_in    ;
-non terminal Symbol opt_key   ;
-non terminal Symbol opt_to    ;
-non terminal Symbol opt_with  ;
+non terminal Symbol opt_all       ;
+non terminal Symbol opt_by        ;
+non terminal Symbol opt_comma     ;
+non terminal Symbol opt_data      ;
+non terminal Symbol opt_date_fmt  ;
+non terminal Symbol opt_in        ;
+non terminal Symbol opt_key       ;
+non terminal Symbol opt_to        ;
+non terminal Symbol opt_with      ;
 
-precedence nonassoc LPAR, RPAR ;
+precedence nonassoc LPAR, RPAR    ;
 
 /**********************************************************************/
 /**********************************************************************/
@@ -665,7 +1032,7 @@ module ::= procedure_division
            end_program                        
        ;
 
-end_program  ::= END_PGM:s ID ENDP {: hasEndProgram = true; 
+end_program  ::= END_PGM:s SYM ENDP {: hasEndProgram = true; 
                                       StmtCobol stmt = new StmtCobol(s); 
                                       code.endProgram(stmt);
                                       lastStmt = stmt;
@@ -704,8 +1071,8 @@ list_parms_opt ::= list_parms
                |
                ;
                                                 
-list_parms ::= ID:s               {: RESULT = new Tokens(s); :}
-           |   list_parms:l ID:s  {: RESULT = l.add(s);      :} 
+list_parms ::= SYM:s               {: RESULT = new Tokens(s); :}
+           |   list_parms:l SYM:s  {: RESULT = l.add(s);      :} 
            ;
                                          
 bloque_procedure   ::= bloque_inicial  lista_parrafos
@@ -742,8 +1109,8 @@ parr_section     ::= SECTION:s {: RESULT = true;  :}
                  |             {: RESULT = false; :}
                  ;                               
                  
-lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(currStmt, lastStmt); :} 
-           |   lista_stmt stmt:s  {: lastStmt = code.processStatement(currStmt, lastStmt); :}
+lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(s, lastStmt); :} 
+           |   lista_stmt stmt:s  {: lastStmt = code.processStatement(s, lastStmt); :}
            ;
 
 stmt     ::= verbos:s         {: RESULT = s; code.incStmt(); :}
@@ -815,20 +1182,13 @@ stmtFlujo ::= stmtPerform:s     {: RESULT = s; :}
              
 /* Sentencias de manipulacion de datos */
 
-stmtDatos ::= stmtDatos1:s  optTokens:t {: RESULT = s; :}
-          |   stmtDatos2:s              {: RESULT = s; :}
+stmtDatos ::= stmtMove:s           {: RESULT = s; :}
+          |   stmtString:s         {: RESULT = s; :}
+          |   stmtInspect:s        {: RESULT = s; :}
+          |   stmtUnstring:s       {: RESULT = s; :}
+          |   stmtInitialize:s     {: RESULT = s; :}
+          |   stmtSet:s            {: RESULT = s; :}
           ;
-
-stmtDatos1 ::= stmtTransform:s      {: RESULT = s; :}
-           ;
-             
-stmtDatos2 ::= stmtMove:s           {: RESULT = s; :}
-           |   stmtString:s         {: RESULT = s; :}
-           |   stmtInspect:s        {: RESULT = s; :}
-           |   stmtUnstring:s       {: RESULT = s; :}
-           |   stmtInitialize:s     {: RESULT = s; :}
-           |   stmtSet:s            {: RESULT = s; :}
-           ;
             
 /* Sentencias de entrada/salida */
 
@@ -836,11 +1196,8 @@ stmtIO    ::= stmtIO1:s optTokens:t {: RESULT = s; :}
           |   stmtIO2:s             {: RESULT = s; :}
           ;
           
-stmtIO1   ::= stmtCommit:s         {: RESULT = s; :}
-          |   stmtUnlock:s         {: RESULT = s; :}
-          |   stmtMerge:s          {: RESULT = s; :}
+stmtIO1   ::= stmtMerge:s          {: RESULT = s; :}
           |   stmtStart:s          {: RESULT = s; :}
-          |   stmtRollback:s       {: RESULT = s; :}
           ;
 
 stmtIO2 ::= stmtAccept:s         {: RESULT = s; :}
@@ -866,38 +1223,30 @@ stmtArit ::= stmtMultiply:s    {: RESULT = s; :}
             
 /* Sentencias del lenguaje */
 
-stmtLang    ::= stmtAllocate:s    {: RESULT = s; :}
-            |   stmtCancel:s      {: RESULT = s; :}
-            |   stmtFree:s        {: RESULT = s; :}
+stmtLang    ::= stmtCancel:s      {: RESULT = s; :}
             ;
 
 /* Verbos */
                                                    
 
-stmtTransform   ::=  TRANSFORM:s  {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
-stmtAllocate    ::=  ALLOCATE:s   {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 stmtContinue    ::=  CONTINUE:s   {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 
 
 
-stmtCommit ::=  COMMIT:s     {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
-
 stmtGoback      ::=  GOBACK:s     {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
-stmtUnlock      ::=  UNLOCK:s     {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 stmtMerge       ::=  MERGE:s      {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 
-
-stmtAccept ::=  ACCEPT:s lvalue stmtAccept_detail    {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
-stmtAcceptOpt ::= ID
-              |
-              ;
 
 moduloCall ::= variable:i  {: RESULT = i; :}
            |   LITERAL:l {: RESULT = l; :}
            ;
                 
-// EXIT PERFORM crea un conflicto. por eso se controla EXIT PERFORM
-// en el analizador lexico
+// EXIT PERFORM crea un conflicto:
+//   .....
+//   EXIT
+//   PERFORM .....
+//
+// por eso se controla EXIT PERFORM en el analizador lexico
 
 stmtExit        ::= exitTypes:s   {: RESULT = s; :}
                 ;
@@ -912,28 +1261,24 @@ stmtExitG ::=  EXIT:s  exitType:t   {: StmtCobol stmt = new StmtCobol(s, code.ge
                                     :}    
           ;
 
-stmtExitP ::=  EXITP:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
+stmtExitP ::=  EXIT_PERFORM:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
                            RESULT = stmt.addRValue(code.makeSymbol(ZCCSym.PERFORM, -1, -1, "PERFORM")); 
                         :}    
           ;
 
-stmtExitPgm ::=  EXITPGM:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
+stmtExitPgm ::=  EXIT_PGM:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
                                RESULT = stmt.addRValue(s); 
                             :}
             ;                    
 
 exitType  ::= PROGRAM:s   {: RESULT = s; :}
-          |   PARAGRAPH:s {: RESULT = s; :}
           |   SECTION:s   {: RESULT = s; :}
-          |               {: RESULT = code.makeSymbol(ZCCSym.PARAGRAPH, -1, -1, ""); :}
+          |               {: RESULT = code.makeSymbol(ZCCSym.PARRAFO, -1, -1, ""); :}
           ;
           
-stmtFree     ::=  FREE:s       {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
-
-stmtRollback ::=  ROLLBACK:s   {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 stmtNext     ::=  NEXT:s       {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 
-stmtReturn   ::=  RETURN:r  ID:i stmtRead_detail:j     
+stmtReturn   ::=  RETURN:r  SYM:i stmtRead_detail:j     
                   {: StmtCobol stmt = code.fileAccess(TRAP.ACC_READ, r, i);
                      RESULT = stmt; // .addTokens(j); 
                   :}
@@ -953,9 +1298,22 @@ stmtEndExec ::= ENDEXEC:s {: RESULT = new StmtCobol(s, code.getStmts()); :}
 
 // ACCEPT
 
-stmtAccept_detail ::= FROM rvalue stmtAcceptOpt
-                  |
-                  ;
+stmtAccept ::=  accept_verb:s lvalue accept_from   {: RESULT = new StmtCobol(s); :}     
+           ;
+
+accept_verb ::= ACCEPT:s {: RESULT = new StmtCobol(s, currStmt); :}
+            ;
+            
+accept_from ::= FROM accept_data
+            ;
+
+accept_data ::= SYM
+            |   DATE opt_date_fmt
+            |   DAY  opt_date_fmt
+            |   DAY_OF_WEEK
+            |   TIME             
+            ;
+                         
 
 // ADD
 
@@ -1069,8 +1427,9 @@ divide_options ::= divide_option:o
                |   divide_options divide_option:o 
                ;
 
-divide_option ::= option_giving:o  {: currStmt.addOption(o); :}
-              |   option_rounded:o {: currStmt.addOption(o); :}
+divide_option ::= option_giving:o    {: currStmt.addOption(o); :}
+              |   option_rounded:o   {: currStmt.addOption(o); :}
+              |   option_remainder:o {: currStmt.addOption(o); :}
               ;
                                                                       
 // EVALUATE
@@ -1118,8 +1477,8 @@ stmtGoTo ::=  GOTO:s opt_to
                      {: RESULT = new StmtCobol(s, code.getStmts()); :} 
          ;
 
-stmtGoto_procs ::= ID
-               |   stmtGoto_procs ID
+stmtGoto_procs ::= SYM
+               |   stmtGoto_procs SYM
                ;
 
 stmtGoto_depending_opt ::= stmtGoto_depending
@@ -1253,7 +1612,7 @@ stmtOpen_mode ::= INPUT:s   {: StmtCobol stmt = new StmtCobol(s);
                                stmt.setId(Persistence.OUTPUT);
                                RESULT = stmt;
                             :}
-              |   IO:s      {: StmtCobol stmt = new StmtCobol(s);
+              |   IO:s     {: StmtCobol stmt = new StmtCobol(s);
                                stmt.setId(Persistence.IO);
                                RESULT = stmt;
                             :}
@@ -1263,8 +1622,8 @@ stmtOpen_mode ::= INPUT:s   {: StmtCobol stmt = new StmtCobol(s);
                             :}
               ;      
 
-stmtOpen_files ::= ID:s                    {: RESULT = new Tokens(s); :}
-               |   stmtOpen_files:l ID:s   {: RESULT = l.add(s);      :}
+stmtOpen_files ::= SYM:s                    {: RESULT = new Tokens(s); :}
+               |   stmtOpen_files:l SYM:s   {: RESULT = l.add(s);      :}
                ;
 
                 
@@ -1309,8 +1668,7 @@ perform_options ::= perform_option_first:o                    {: currStmt.addOpt
                 |   perform_options perform_option_second:o   {: currStmt.addOption(o); :}
                 ;
 
-perform_option_first ::= FOREVER:o           {: RESULT = new Option(o); :}
-                     |   TIMES:o             {: currStmt.replaceOption(new Option(o)); :}
+perform_option_first ::= TIMES:o             {: currStmt.replaceOption(new Option(o)); :}
                      |   perform_until:o     {: RESULT = o; :} 
                      |   perform_thru:o      {: RESULT = o; :}
                      |   perform_varying:o   {: RESULT = o; :}
@@ -1340,7 +1698,7 @@ perform_test ::= TEST:o    BEFORE {: RESULT = new Option(o);    :}
 
 // READ
 
-stmtRead     ::=  READ:r  ID:i stmtRead_detail:s     
+stmtRead     ::=  READ:r  SYM:i stmtRead_detail:s     
                   {: StmtCobol stmt = code.fileAccess(TRAP.ACC_READ, r, i);
                      RESULT = stmt; 
                   :}
@@ -1391,16 +1749,47 @@ search_varying ::= VARYING rvalue
                    
 // SET
 
-stmtSet_detail ::= lvalue_list stmtSet_resto
-               ;
-               
-stmtSet_resto ::= TO rvalue 
-              |   BY rvalue
+stmtSet ::=  set_verb:s set_list       {: RESULT = s; :}     
+        ;
+
+set_verb ::= SET:s {: RESULT = new StmtCobol(s, currStmt); :}
+         ;
+         
+set_list ::= set_item
+         |   set_list set_item
+         ;
+
+set_item ::= set_lvalue set_rvalue
+         ;
+                  
+set_lvalue ::= lvalue_list 
+           ;
+
+set_rvalue ::= set_variable
+           |   set_index
+           ;
+
+set_variable ::= TO set_value
+             |   BY set_value
+             ;
+          
+set_index ::= set_index_inc rvalue
+          ;
+          
+set_index_inc ::= UP BY
+              |   DOWN BY
               ;
               
+set_value ::= rvalue
+          |   FALSE
+          |   TRUE
+          |   ON
+          |   OFF
+          ;
+                                                                      
 // SORT
 
-stmtSort ::= SORT:s {: RESULT = new StmtCobol(s); :} ID stmtSort_detail
+stmtSort ::= SORT:s {: RESULT = new StmtCobol(s); :} SYM stmtSort_detail
          ;
          
 stmtSort_detail ::= stmtSort_option
@@ -1426,13 +1815,13 @@ stmtSort_using ::= USING rvalue_list
 stmtSort_giving ::= GIVING rvalue_list 
                ;
 
-stmtSort_procedure ::= INPUT ID
-                   |   OUTPUT ID
+stmtSort_procedure ::= INPUT SYM
+                   |   OUTPUT SYM
                    ;
                                                                                       
 // START
 
-stmtStart ::= START:s ID stmtStart_key    {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
+stmtStart ::= START:s SYM stmtStart_key    {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
 
 stmtStart_key ::= KEY logical_oper rvalue
               |
@@ -1450,7 +1839,7 @@ string_from ::= string_from_item
             |   string_from string_from_item 
             ; 
 
-string_from_item ::= string_rvalues string_delimited
+string_from_item ::= rvalue_list string_delimited
                  ;
                  
 string_rvalues ::= rvalue
@@ -1547,10 +1936,10 @@ stmtUnstring_option ::= POINTER   lvalue
                     ; 
 // WRITE
 
-stmtWrite    ::=  WRITE:w ID:i stmtWrite_detail 
+stmtWrite    ::=  WRITE:w SYM:i stmtWrite_detail 
                   {: RESULT = code.fileAccess(TRAP.ACC_INSERT, w, i); :}       
              ;
-stmtRewrite  ::=  REWRITE:r ID:i  stmtWrite_detail 
+stmtRewrite  ::=  REWRITE:r SYM:i  stmtWrite_detail 
                   {: RESULT = code.fileAccess(TRAP.ACC_UPDATE, r, i); :}
              ;
 
@@ -1582,20 +1971,18 @@ stmtWrite_eop ::= EOP:s {: code.setImperative();
                                 :}                         
               ;
                      
-stmtRelease  ::=  RELEASE:s  ID:i eatWrite:e  
+stmtRelease  ::=  RELEASE:s  SYM:i eatWrite:e  
                   {: StmtCobol stmt = new StmtCobol(s);
                      RESULT = stmt.addLValue(i);
                   :}     
              ;
 
-stmtDelete   ::=  DELETE:d ID:i      
+stmtDelete   ::=  DELETE:d SYM:i      
                  {: RESULT = code.fileAccess(TRAP.ACC_DELETE, d, i); :}
              ;
 
-stmtStop     ::=  STOPRUN:s  optTokens  {: RESULT = new StmtCobol(s, code.getStmts()); :}     
-             ;
-
-stmtSet      ::=  SET:s stmtSet_detail       {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtStop     ::=  STOP:s     optTokens  {: RESULT = new StmtCobol(s, code.getStmts()); :}    
+             |    STOPRUN:s  optTokens  {: RESULT = new StmtCobol(s, code.getStmts()); :}
              ;
 
 stmtClose       ::=  CLOSE:c  closeLstFiles:l  
@@ -1606,13 +1993,13 @@ closeLstFiles   ::= closeFile:c                  {: RESULT = c;         :}
                 |   closeLstFiles:l closeFile:c  {: RESULT = l.add(c);  :}
                 ;
 
-closeFile       ::= ID:s eatClose:e   {: Tokens t = new Tokens(s);
+closeFile       ::= SYM:s eatClose:e   {: Tokens t = new Tokens(s);
                                          RESULT = t.add(e); 
                                       :}
                 ;
 
 
-stmtAtEnd ::= ATEND:s     {: StmtCobol stmt = new StmtCobol(s);
+stmtAtEnd ::= AT:s END:v     {: StmtCobol stmt = new StmtCobol(s);
                              RESULT = code.setAtEnd(stmt); 
                           :}
           ;
@@ -1658,7 +2045,10 @@ optionOverflow  ::= OVERFLOW:i  {: code.setImperative();
                                    RESULT = new StmtCobol(i); 
                                 :}
                 ;
-                
+
+option_remainder ::= REMAINDER:o lvalue  {: RESULT = new Option(o); :}
+                 ;
+                               
 option_size_error ::= SIZE_ERROR:i {: code.setImperative(); 
                                    RESULT = new Option(i); 
                                 :}
@@ -1668,11 +2058,6 @@ option_size_error ::= SIZE_ERROR:i {: code.setImperative();
 option_position ::= BEFORE
                 |   AFTER
                 ;
-
-option_and_or ::= AND:a    {: RESULT = a; code.incComplexity(); :}
-              |   OR:o     {: RESULT = o; code.incComplexity(); :}
-              |   ALSO:a   {: RESULT = a; code.incComplexity(); :}
-              ;
 
 option_order ::= ASCENDING
              |   DESCENDING
@@ -1684,11 +2069,11 @@ option_order ::= ASCENDING
 
 stmtEndP        ::= ENDP:s        {: RESULT = new StmtCobol(s); :} ;
 stmtElse        ::= ELSE:s        {: RESULT = new StmtCobol(s); :} ;   
-stmtEndIf       ::= ENDIF:s       {: RESULT = new StmtCobol(s); :} ;
-stmtEndPerform  ::= ENDPERFORM:s  {: RESULT = new StmtCobol(s); :} ;
-stmtEndEvaluate ::= ENDEVAL:s     {: RESULT = new StmtCobol(s); :} ;
-stmtEndVerb     ::= ENDVERB:s     {: RESULT = new StmtCobol(s); :} ;
-stmtEndSearch   ::= ENDSEARCH:s   {: RESULT = new StmtCobol(s); :} ;
+stmtEndIf       ::= END_IF:s       {: RESULT = new StmtCobol(s); :} ;
+stmtEndPerform  ::= END_PERFORM:s  {: RESULT = new StmtCobol(s); :} ;
+stmtEndEvaluate ::= END_EVALUATE:s     {: RESULT = new StmtCobol(s); :} ;
+stmtEndVerb     ::= END_VERB:s     {: RESULT = new StmtCobol(s); :} ;
+stmtEndSearch   ::= END_SEARCH:s   {: RESULT = new StmtCobol(s); :} ;
                                        
 ///////////////////////////////////////////////////////
 // No terminales para eliminar el resto de las sentencias
@@ -1762,25 +2147,43 @@ expr_primary ::= rvalue
 /***              EXPRESION LOGICA                             ***/
 /*****************************************************************/
 /*****************************************************************/
+// Casos
+// IF TRUE
+// IF VAR88
+// IF PPEPE NUMERIC
 
-logical_condition ::= logical_expression                
-                 |    logical_condition option_and_or logical_expression
+logical_condition ::= logical_begin                
+                 |    logical_condition logical_and_or logical_next
                  ;
 
-logical_expression ::= logical_class
-                   |   logical_expression logical_oper logical_class
-                   |   logical_oper logical_class
-                   ;
-
-logical_class ::= logical_unary logical_class_opt
+logical_begin ::= logical_not
               ;
 
-logical_class_opt ::= figurative
-                  |
+logical_next ::= NOT logical_op_opt logical_unary 
+             |   logical_op logical_unary
+             |   logical_yes
+             ;
+                           
+logical_not ::= logical_unary_not
+            |   logical_not NOT logical_relation
+            |   logical_not     logical_relation
+            ;
+
+logical_yes ::= logical_unary
+            |   logical_yes NOT logical_relation
+            |   logical_yes     logical_relation
+            ;
+            
+logical_relation ::= logical_class
+                 |   logical_op logical_unary
+                 ;
+                 
+logical_unary_not ::= NOT logical_unary
+                  |   logical_unary
                   ;
-                                 
+                                                   
 logical_unary ::= logical_expr
-              |   figurative
+              |   logical_class
               |   LPAR logical_condition RPAR
               ;                   
 
@@ -1790,14 +2193,11 @@ logical_expr ::= logical_operand
 
 logical_operand ::= expr_primary
             ;
-                        
-logical_oper ::= logical_not
-             ;
-             
-logical_not ::= NOT logical_op
-            |   logical_op
-            ;
-             
+
+logical_op_opt ::= logical_op
+               |
+               ;
+               
 logical_op ::= REL_EQ
            |   REL_GT
            |   REL_GE
@@ -1815,6 +2215,21 @@ logical_figurative ::= EQUAL opt_to
                    |   LESS 
                    ;                                          
 
+logical_class ::= TRUE
+              |   FALSE
+              |   POSITIVE
+              |   NEGATIVE
+              |   NULL
+              |   NUMERIC
+              |   ALPHABETIC
+              ;
+              
+  
+logical_and_or ::= AND:a    {: RESULT = a; code.incComplexity(); :}
+               |   OR:o     {: RESULT = o; code.incComplexity(); :}
+               |   ALSO:a   {: RESULT = a; code.incComplexity(); :}
+               ;
+  
 ///////////////////////////////////////////////////////
 // WORK
 //////////////////////////////////////////////////////
@@ -1827,7 +2242,7 @@ tokens ::= token:t          {: RESULT = t;        :}
        |   tokens:l token:t {: RESULT = l.add(t); :}
        ;
  
-token ::= ID:s                {: RESULT = new Tokens(s); :}
+token ::= SYM:s                {: RESULT = new Tokens(s); :}
       |   LITERAL:s           {: RESULT = new Tokens(s); :}
       |   NUMERO:s            {: RESULT = new Tokens(s); :} 
       |   LPAR tokens:t RPAR  {: RESULT = new Tokens(t); :}
@@ -1835,8 +2250,9 @@ token ::= ID:s                {: RESULT = new Tokens(s); :}
 //      |   FILLER:f            {: RESULT = new Tokens(f); :}
       ;
 
-figurative ::= QUOTE:f        {: RESULT = new SymbolExt(f); :}
-           |   POSITIVE:f     {: RESULT = new SymbolExt(f); :}
+// figurative ::= QUOTE:f        {: RESULT = new SymbolExt(f); :}
+
+figurative ::= POSITIVE:f     {: RESULT = new SymbolExt(f); :}
            |   NEGATIVE:f     {: RESULT = new SymbolExt(f); :}
            |   ALPHABETIC:f   {: RESULT = new SymbolExt(f); :}
            |   ALPHANUMERIC:f {: RESULT = new SymbolExt(f); :}           
@@ -1888,10 +2304,10 @@ lvalue_list ::= lvalue:i                {: RESULT = new SymbolExtList(i); :}
             ;
                    
 rvalue_list ::= rvalue 
-            |   rvalue_list rvalue
+            |   rvalue_list opt_comma rvalue
             ;
 
-rvalue ::= variable:i         {: RESULT = i;  code.setVarRead(i); :}
+rvalue ::= variable:i    {: RESULT = i;  code.setVarRead(i); :}
        |   constantes:c  {: RESULT = c; :}
        |   function:f    {: RESULT = new SymbolExt(f);    :}
        ;
@@ -1905,7 +2321,7 @@ var_base ::= id:i indices_opt {: RESULT = i; :}
 var_int ::= rvalue
         ;
              
-id ::= ID:i  {: RESULT = new SymbolExt(i); :} 
+id ::= SYM:i  {: RESULT = new SymbolExt(i); :} 
    ;
 
 
@@ -1973,6 +2389,13 @@ opt_data ::= DATA:s  {: RESULT = s; :}
          |
          ;
 
+// Puede ser YYYYMMDD o YYYYDDD
+// Pero se devuelve como symbol
+
+opt_date_fmt ::= SYM
+             |
+             ;
+             
 opt_in ::= IN:s {: RESULT = s; :}
        |
        ;

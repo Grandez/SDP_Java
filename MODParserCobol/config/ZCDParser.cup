@@ -853,9 +853,9 @@ variables ::= variable
           |   variables variable 
           ;
            
-variable ::= var_def:v var_data_def ENDP   {: RESULT = module.addVariable(v); :} 
+variable ::= var_def:v var_data_def endp_opt   {: RESULT = module.addVariable(v); :} 
          |   SQLDATA 
-         |   ENDSQL endp_opt
+         |   ENDSQL // endp_opt
          ;
            
 var_def    ::= nivel:n var_name:s  {: currVar = code.createVar(n,s);

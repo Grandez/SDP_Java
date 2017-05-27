@@ -9,16 +9,6 @@ import com.jgg.sdp.tools.Fechas;
 
 @Entity
 @Table(name="MOD_VERSIONES")
-@NamedQueries({
-    @NamedQuery( name="MODVersion.findByVersion" 
-                ,query="Select v FROM MODVersion v " +
-                       "         WHERE v.idVersion = ?1 ")
-
-   ,@NamedQuery( name="MODVersion.VersionesPorModulo" 
-                ,query="Select v FROM MODVersion v " +
-                               " WHERE v.idModulo = ?1 " +
-         		               " ORDER BY idVersion DESC")
-})
 public class MODVersion  implements Serializable {
 
 	private static final long serialVersionUID = -79589454234901239L;

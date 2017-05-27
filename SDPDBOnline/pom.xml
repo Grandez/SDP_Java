@@ -1,34 +1,100 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
-                             
+
+  <name>Serendipity Database Online Services Distribution JAR</name>
+          
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
-    <version>5.0</version>
     <relativePath>../SDP</relativePath>
+    <version>5.0</version>
   </parent>
-
-  <groupId>com.jgg.sdp</groupId>
+  
+  <groupId>com.jgg.sdp</groupId>  
   <artifactId>SDPDBOnline</artifactId>
-  <packaging>pom</packaging>
-  
-    <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jdk.version>1.8</jdk.version>
-    <sdp.version>5.0</sdp.version>
-    <sdp.lib>P:\SDP\Lib</sdp.lib>
-  </properties>
+  <packaging>jar</packaging>
+ 
+   <dependencies>
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODDBMySql</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
 
-  <name>Serendipity Online Data Services</name>
-  
-  <modules>
-    <module>../MODDBNamed</module>
-    <module>../MODDBNamedServices</module>
-    <module>../MODDBOnlineDist</module>
-  </modules>
+     <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODDBServices</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
 
-</project>
+     <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODDBNamed</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
+  
+  </dependencies>
+  
+  <build>
+  
+    <plugins>
+    
+     <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> <!-- this is used for inheritance merges -->
+            <phase>package</phase> <!-- bind to the packaging phase -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.10</version>
+          
+          <executions>
+              <execution>
+                 <id>copy-installed</id>
+                 <phase>install</phase>
+                 <goals>
+                     <goal>copy</goal>
+                 </goals>
+                 <configuration>
+                    <artifactItems>
+                         <artifactItem>
+                            <groupId>${project.groupId}</groupId>
+                            <artifactId>${project.artifactId}</artifactId>
+                            <version>${project.version}</version>
+                            <classifier>jar-with-dependencies</classifier>                              
+                            <type>jar</type>
+                            <destFileName>SDPDBOnline.jar</destFileName>
+                            <overWrite>true</overWrite>                            
+                         </artifactItem>
+                   </artifactItems>
+               
+                   <outputDirectory>${sdp.lib}</outputDirectory>
+                </configuration>
+              </execution>
+          </executions>
+      </plugin>
+  
+
+      </plugins>  
+  </build>
+
+ </project>

@@ -13,7 +13,6 @@ import java.nio.file.*;
 import java.util.ArrayList;
 
 import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.tools.Archivo;
 
 public class FileFinder {
 

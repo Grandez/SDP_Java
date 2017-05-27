@@ -51,6 +51,7 @@
     
     <module>../MODDBMySql</module>
     <module>../MODDBServices</module>
+    <module>../MODDBNamed</module>
 
     <!--  Parsers  -->
     
@@ -59,15 +60,22 @@
     <module>../MODParserCobol</module>
     <module>../MODParserCopy</module>
     <module>../MODParserDB2</module>
+
+    <!--  Web  -->
+    
+    <module>../MODWebCore</module>
     
     <!-- Distribution JARs  -->
     
     <module>../SDPBase</module>
     <module>../SDPDBOffline</module>
+    <module>../SDPDBOnline</module>    
     <module>../SDPRules</module>
     <module>../SDPParser</module>    
     <module>../SDPAnalyzer</module>    
-
-    </modules>
+    <module>../SDPWebClient</module>
+    <module>../SDPWebAdmin</module>
+  
+  </modules>
     
 </project>

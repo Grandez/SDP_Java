@@ -7,6 +7,10 @@
   <name>Serendipity Parser Distribution JAR</name>
           
   <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.jgg.sdp</groupId>
+  <artifactId>SDPParser</artifactId>
+  <packaging>jar</packaging>
   
   <parent>
     <groupId>com.jgg</groupId>
@@ -15,9 +19,6 @@
     <version>5.0</version>
   </parent>
     
-  <groupId>com.jgg.sdp</groupId>
-  <artifactId>SDPParser</artifactId>
-  <packaging>jar</packaging>
  
    <dependencies>
       <dependency>

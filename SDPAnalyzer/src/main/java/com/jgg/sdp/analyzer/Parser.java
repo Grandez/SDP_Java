@@ -18,7 +18,7 @@ import com.jgg.sdp.analyzer.post.PostVariables;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
-
+import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.tools.*;
 
 import java_cup.runtime.Scanner;

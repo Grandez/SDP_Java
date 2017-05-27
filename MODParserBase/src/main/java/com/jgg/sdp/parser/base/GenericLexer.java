@@ -47,6 +47,9 @@ public abstract class GenericLexer {
    protected int           litColumn;
    protected boolean       litQuote;
    protected boolean       litTrim = false;
+
+   protected int    lastSymbol = -1;
+   protected int    prevSymbol = -1;
    
    protected boolean inDesc      = false;  // Procesando Descripcion?      
    
@@ -137,7 +140,16 @@ public abstract class GenericLexer {
    /*******************************************************/
    /*** GESTION DE SIMBOLOS                             ***/
    /*******************************************************/
-      
+   
+   protected Symbol symbol(int code, String txt, int yyline, int yycolumn) {
+      setLastSymbol(code);
+      data = true;
+      int col = yycolumn + COLOFFSET;
+      int line = yyline + offset;
+      print("Devuelve SYMBOL " + code + " (" + line + "," + col + ") " + txt);   
+      return symbolFactory.newSymbol(txt, code, new Symbol(code, line, col, txt));
+   }
+   
    protected Symbol makeSymbol(int code, int yyline, int yycolumn, String token) {
 	      data = true;
 	      lastID = code;
@@ -174,6 +186,11 @@ public abstract class GenericLexer {
 //	   rules.checkSymbol(" ",  s.left, s.right);
    }
 
+   private void setLastSymbol(int id) {
+	      prevSymbol = lastSymbol;
+	      lastSymbol = id;
+   }
+   
    /********************************************************/
    /* Comentarios                                          */
    /********************************************************/
@@ -202,7 +219,7 @@ public abstract class GenericLexer {
    public boolean isIgnoreReserved() { return ignoreReserved;  }
    
    public void print(String txt) {
-        System.out.println(txt);
+//        System.out.println(txt);
    }   
    public void debug(String txt) {
      System.out.println(txt);
@@ -250,7 +267,7 @@ public abstract class GenericLexer {
    }
    
 
-  */              	   
+                	   
 	public Symbol tokenCobolData() throws java.lang.Exception {
 		return null;
 	}
@@ -269,6 +286,8 @@ public abstract class GenericLexer {
 	   Symbol s = next_token(); 
 	   return s;
    }
+   */
+   
 }
 
 

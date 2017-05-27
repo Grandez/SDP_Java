@@ -18,8 +18,7 @@ import com.jgg.sdp.analyzer.post.PostSQL;
 import com.jgg.sdp.analyzer.work.CopyLoader;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.tools.Archivo;
-
+import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.unit.*;
 

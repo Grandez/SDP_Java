@@ -2,21 +2,10 @@ package com.jgg.sdp.domain.module;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name="MOD_SECCIONES")
-/*
-@NamedQueries({
-    @NamedQuery(name="MODSecciones.find",
-                query="SELECT s FROM MODSecciones s WHERE s.idVersion = ?1")
-}) 
-*/
 public class MODSecciones implements Serializable {
 
 	private static final long serialVersionUID = 3734850800677065354L;

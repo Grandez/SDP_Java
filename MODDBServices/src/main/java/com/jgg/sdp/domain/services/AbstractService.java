@@ -118,6 +118,9 @@ public abstract class AbstractService <T>  {
         return (o == null) ? 0L : ((Number) o).longValue();
     }
     
+	protected T find (Object... keys) {
+        return find("find", keys);
+    }
 	protected T find (String qryName, Object... keys) {
         Query query = em.createNamedQuery(tableName + "." + qryName);
         return findQuery(query, keys);

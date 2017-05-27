@@ -3,6 +3,7 @@ package com.jgg.sdp.ivp;
 import java.util.ArrayList;
 
 import com.jgg.sdp.module.base.Module;
+import com.jgg.sdp.AnalyzerParms;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.msg.*;
@@ -56,7 +57,7 @@ public class IVP {
 	private int start(String[] args) {
 	    int maxRC = RC.OK;
 		banner();
-		data.load("P:\\SDP\\IVP\\sdpivp.dat");
+		args = cfg.processCommandLine(IVPParms.parms, args);
 		process();
         return maxRC;
 	}

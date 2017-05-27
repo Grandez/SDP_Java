@@ -5,7 +5,7 @@ import java.util.*;
 
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CFG;
-import com.jgg.sdp.tools.Archivo;
+import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.module.factorias.SourcesFactory;
 import com.jgg.sdp.module.unit.Source;
 

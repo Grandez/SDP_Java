@@ -7,7 +7,7 @@
  * @date    SEP - 2015
  * 
  */
-package com.jgg.sdp.tools;
+package com.jgg.sdp.core.tools;
 
 import java.net.URI;
 

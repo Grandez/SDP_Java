@@ -19,29 +19,14 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class MODVersionService extends AbstractService<MODVersion> {
 
-    public MODVersion getByFirma(String firma) {
-    	return getRecord(MODVersion.findByFirma, firma);
+    public MODVersion findById(Long idVersion) {
+    	return findQuery(MODVersion.findById, idVersion);
     }
-	
-    public MODVersion findByFirma(Long idModulo, String firma) {
-    	return find("findByFirma", idModulo, firma);
-    }
-
-    public MODVersion getByVersion(Long idVersion) {
-    	return find("findByVersion", idVersion);
-    }
-    
-    public List<MODVersion> getVersionesPorModulo(Long id) {
-	      return list ("VersionesPorModulo", id); 	
+	    
+    public List<MODVersion> getVersionesPorTimestamp(Long id, Timestamp tms) {
+	      return listQuery (MODVersion.versionesByTimestamp,  id, tms); 	
 	}
     
-    public MODVersion getCurrentVersion(Long idModulo) {
-        List<MODVersion> l = getVersionesPorModulo(idModulo);
-        if (l == null) return null;
-        if (l.size() == 0) return null;
-        return l.get(0);
-    }
-
     public List<Long> getListOfModulesWithVersionsExceeded(int max) {
         ArrayList<Long> lista = new ArrayList<Long>();
         for (Object[] o : getListAbstract(MODVersion.cuentaDeVersiones)) {
@@ -50,15 +35,6 @@ public class MODVersionService extends AbstractService<MODVersion> {
         	}
         }
         return lista;
-    }
-    
-    public List<Timestamp> getTimestamps(Long idModulo) {
-        ArrayList<Timestamp> lista = new ArrayList<Timestamp>();
-        for (Object[] o : getListAbstract(MODVersion.versionesByTimestamp, idModulo)) {
-       		lista.add((Timestamp) o[1]);
-        }
-        return lista;
-        	
     }
     
     public void deleteByTimestamp(Timestamp tms) {

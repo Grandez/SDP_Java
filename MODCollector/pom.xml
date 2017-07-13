@@ -23,19 +23,19 @@
 
      <dependency>
         <groupId>com.jgg.sdp</groupId>
-        <artifactId>SDPCore</artifactId>
+        <artifactId>MODCore</artifactId>
         <version>${sdp.version}</version>
      </dependency>
 
      <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPDbMySQL</artifactId>
+       <artifactId>MODDbMySQL</artifactId>
        <version>${sdp.version}</version>
      </dependency>
 
      <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPDbServices</artifactId>
+       <artifactId>MODDbServices</artifactId>
        <version>${sdp.version}</version>
      </dependency>
     

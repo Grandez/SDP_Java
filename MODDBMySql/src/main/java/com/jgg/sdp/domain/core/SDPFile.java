@@ -9,6 +9,8 @@ import javax.persistence.*;
 @Table(name="SDP_FILES")
 public class SDPFile implements Serializable {
 
+	public static final String findById =  "SELECT f FROM SDPFile f WHERE f.idFile = ?1";
+
 	public static final String findByNameAndType = 
 		   "SELECT f  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";
 

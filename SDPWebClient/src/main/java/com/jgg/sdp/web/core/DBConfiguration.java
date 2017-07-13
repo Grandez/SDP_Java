@@ -3,8 +3,8 @@
  */
 package com.jgg.sdp.web.core;
 
-import com.jgg.sdp.domain.base.CFGConfiguracion;
-import com.jgg.sdp.domain.services.base.CFGConfiguracionService;
+import com.jgg.sdp.domain.cfg.*;
+import com.jgg.sdp.domain.services.cfg.CFGConfiguracionService;
 import com.jgg.sdp.core.config.Configuration;
 
 public class DBConfiguration extends Configuration {

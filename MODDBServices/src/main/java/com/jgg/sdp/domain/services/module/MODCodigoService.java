@@ -15,7 +15,7 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class MODCodigoService  extends AbstractService<MODCodigo> {
 
-	public MODCodigo getResumen(Long idVersion) {
+	public MODCodigo find(Long idVersion) {
 		return findQuery(MODCodigo.find, idVersion);
 	}
 }

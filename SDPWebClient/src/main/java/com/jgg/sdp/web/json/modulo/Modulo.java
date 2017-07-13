@@ -3,9 +3,8 @@
  */
 package com.jgg.sdp.web.json.modulo;
 
-import java.util.*;
+import java.util.List;
 
-import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.core.ctes.SYS;
 
 public class Modulo {
@@ -19,17 +18,116 @@ public class Modulo {
 
     private int status = SYS.STATUS_OK;
     
-    private Resumen resumen;
+    private Summary summary;
+    private Comment comment;
+    private Verbs  verbos;
     private Attrs   attrs;
+    
+    private List<Version> versiones;
+    
+	public boolean isExist() {
+		return exist;
+	}
+
+	public void setExist(boolean exist) {
+		this.exist = exist;
+	}
+
+	public Long getIdModulo() {
+		return idModulo;
+	}
+
+	public void setIdModulo(Long idModulo) {
+		this.idModulo = idModulo;
+	}
+
+	public Long getIdVersion() {
+		return idVersion;
+	}
+
+	public void setIdVersion(Long idVersion) {
+		this.idVersion = idVersion;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
+	public Summary getSummary() {
+		return summary;
+	}
+
+	public void setSummary(Summary summary) {
+		this.summary = summary;
+	}
+
+	public Comment getComment() {
+		return comment;
+	}
+
+	public void setComment(Comment comment) {
+		this.comment = comment;
+	}
+
+	public Verbs getVerbs() {
+		return verbos;
+	}
+
+	public void setVerbs(Verbs verbos) {
+		this.verbos = verbos;
+	}
+	
+	public Attrs getAttrs() {
+		return attrs;
+	}
+
+	public void setAttrs(Attrs attrs) {
+		this.attrs = attrs;
+	}
+
+	public List<Version> getVersiones() {
+		return versiones;
+	}
+
+	public void setVersiones(List<Version> versiones) {
+		this.versiones = versiones;
+	}
+    
+	
+/*    
+    private Resumen resumen;
+
     
     private Integer maxCCParr;
     private Integer maxCC;
     private Integer maxStmt;
     
 
+    private Comment comment;
+
+    
     
     private List<MODParrafo> parrafos;
-    private List<MODGrafo>   grafo;
     
     private Long   maxCobertura;
     private Long   cobertura;
@@ -105,13 +203,13 @@ public class Modulo {
     public void setParrafos(List<MODParrafo> parrafos) {
         this.parrafos = parrafos;
     }
+    public List<Version> getVersiones() {
+        return versiones;
+    }
+    public void setVersiones(List<Version> versiones) {
+        this.versiones = versiones;
+    }
 
-    public List<MODGrafo> getGrafo() {
-        return grafo;
-    }
-    public void setGrafo(List<MODGrafo> grafo) {
-        this.grafo = grafo;
-    }
     public void setResumen(Resumen resumen) {
         this.resumen = resumen;
     }
@@ -131,4 +229,17 @@ public class Modulo {
     public int getStatus() {
     	return this.status;
     }
+    public void setComment(Comment comment) {
+    	this.comment = comment;
+    }
+    public Comment getComment() {
+    	return this.comment;
+    }
+    public void setVerbos(Verbos verbos) {
+    	this.verbos = verbos;
+    }
+    public Verbos getVerbos() {
+    	return this.verbos;
+    }
+*/
 }

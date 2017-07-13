@@ -51,7 +51,7 @@
     
     <module>../MODDBMySql</module>
     <module>../MODDBServices</module>
-    <module>../MODDBNamed</module>
+<!--     <module>../MODDBNamed</module> -->
 
     <!--  Parsers  -->
     
@@ -68,8 +68,8 @@
     <!-- Distribution JARs  -->
     
     <module>../SDPBase</module>
-    <module>../SDPDBOffline</module>
-    <module>../SDPDBOnline</module>    
+<!--     <module>../SDPDBOffline</module> -->
+<!--     <module>../SDPDBOnline</module>     -->
     <module>../SDPRules</module>
     <module>../SDPParser</module>    
     <module>../SDPAnalyzer</module>    

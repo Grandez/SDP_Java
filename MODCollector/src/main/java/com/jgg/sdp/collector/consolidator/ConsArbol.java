@@ -12,11 +12,11 @@ import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.summary.*;
 import com.jgg.sdp.domain.services.traps.*;
 import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.tools.Fechas;
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.session.*;
 import com.jgg.sdp.domain.summary.*;
+import com.jgg.sdp.tools.Fechas;
 
 
 public class ConsArbol {
@@ -51,10 +51,10 @@ public class ConsArbol {
         this.claves = claves;
         
         List<Object[]> listaCalls = trpCallService.getSumCalls(claves.getIdSesion());
-
+/*JGG
         for (Object[] tupla : listaCalls) {
-            verCalling = versionService.getByFirma((String) tupla[0]);
-            verCalled  = versionService.getByFirma((String) tupla[1]);
+            verCalling = versionService.findByFirma((String) tupla[0]);
+            verCalled  = versionService.findByFirma((String) tupla[1]);
             
             // Es un modulo no monitorizado. Darlo de alta
             if (verCalled == null) {
@@ -71,7 +71,7 @@ public class ConsArbol {
             actualizaArbolSesion(tupla);
             actualizaArbolModulo(tupla);
         }
-        
+*/
      }
     
     

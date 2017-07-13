@@ -89,7 +89,6 @@ terminal Symbol NUMERO    ;
 terminal Symbol LEVEL     ;
 terminal Symbol HEX_VAL   ;
 terminal Symbol LITERAL   ;
-terminal Symbol LITCONCAT ;
 
 terminal Symbol FILE_SECTION    ;
 terminal Symbol WORKING_SECTION ;
@@ -197,7 +196,7 @@ terminal Symbol ENDSQL  ;
 
 /* SDP */
 
-terminal Symbol SDPDESC , SDPMASTER ;  
+terminal Symbol SDPMASTER ;  
 
 /****************************************************************************/
 /****************************************************************************/
@@ -237,11 +236,6 @@ non terminal StmtCobol date_compiled      ;
 non terminal StmtCobol installation       ;
 non terminal StmtCobol remarks            ;
 
-non terminal StmtCobol sdpDesc       ;
-non terminal Symbol sdpDescData   ;
-non terminal Symbol sdpDescLineas ;
-non terminal Symbol sdpDescLinea  ;          
-
 non terminal env_div_header ;
 non terminal data_div_header;
 non terminal bloque_env     ;
@@ -265,7 +259,6 @@ non terminal linkage_data ;
 /////////////////////////////////////////////////////
 
 non terminal StmtCobol   cobolData   ; 
-non terminal descripcion ;
 non terminal module      ;
 
 non terminal Symbol endp_opt ;
@@ -408,14 +401,8 @@ non terminal Symbol        figurative  ;
 /**********************************************************************/
 /**********************************************************************/
 
-cobolData ::=  descripcion module {: issues.checkDivision(currBlock); 
-                                     RESULT = null; 
-                                  :}
+cobolData ::=  module {: issues.checkDivision(currBlock);  RESULT = null; :}
           ; 
-
-descripcion ::= sdpDesc
-            |
-            ;
 
 /*JGG Conceptualmente trataremos cada uno como si fuera un parrafo con instrucciones 
       para procesar sus issues
@@ -452,8 +439,7 @@ ident_sentence ::= programId:s     {: RESULT = s; :}
                |   installation:s  {: RESULT = s; :}
                |   date_written:s  {: RESULT = s; :}
                |   date_compiled:s {: RESULT = s; :}
-               |   remarks:s       {: RESULT = s; :}
-               |   sdpDesc:s       {: RESULT = s; :}  
+               |   remarks:s       {: RESULT = s; :} 
                ;
                              
 programId ::= programId_verb:p endp_opt ID:s endp_opt:e  {: RESULT = p.addRValue(s); :}
@@ -496,21 +482,6 @@ nombre ::= ID:i      {: RESULT = i; :}
        ;
        
                                                                                
-sdpDesc  ::= SDPDESC sdpDescData 
-         ;
-
-sdpDescData ::= sdpDescLineas
-            |
-            ;
-            
-sdpDescLineas ::= sdpDescLinea
-              |   sdpDescLineas sdpDescLinea
-            ;
-            
-sdpDescLinea ::= LITERAL:s   {: module.setDescription(s.value, false); :}
-             |   LITCONCAT:s {: module.setDescription(s.value, true);  :}
-             ;
- 
 /*********************************************************************/
 /* Environment division                                              */
 /*********************************************************************/

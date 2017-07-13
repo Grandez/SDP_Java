@@ -62,11 +62,13 @@ public class StatsService2 {
     
     private int calcularVariacion(Set<Long> grupo, Timestamp from) {
         int cuenta = 0;
+/* TODO        
         for (SDPModulo mod : moduloService.getModulosModificados(from)) {
             if (grupo.contains(mod.getIdAppl())) {
                 cuenta += (mod.getEstado() == 1) ? 1 : -1;
             }
         }
+*/        
         return cuenta;
     }
 
@@ -82,7 +84,7 @@ public class StatsService2 {
     private long calcularSesiones(Set<Long> grupo, Timestamp from) {
         long cuenta = 0;
         for (Object[] tupla : sesionService.getCuentaSesiones(from)) {
-            MODVersion version = versionService.getByVersion((Long) tupla[0]);
+            MODVersion version = versionService.findById((Long) tupla[0]);
             if (grupo.contains(version.getIdModulo())) cuenta += (Long) tupla[1];
         }
         return cuenta;

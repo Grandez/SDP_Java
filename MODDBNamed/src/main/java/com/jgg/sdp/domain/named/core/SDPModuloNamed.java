@@ -1,6 +1,13 @@
 package com.jgg.sdp.domain.named.core;
 
+import java.util.*;
+
 import javax.persistence.*;
+
+import org.springframework.stereotype.Repository;
+
+import com.jgg.sdp.domain.core.SDPModulo;
+import com.jgg.sdp.domain.services.AbstractService;
 
 @NamedQueries({
 	@NamedQuery( name="SDPModulo.ModulosPorAplicacion" 
@@ -22,5 +29,20 @@ import javax.persistence.*;
 	
 })
 
-public class SDPModuloNamed {
+@Repository
+public class SDPModuloNamed extends AbstractService<SDPModulo> {
+	public List<SDPModulo> getModulesByAppl(Long idAppl) {
+        return listRecords("Select m FROM SDPModulo m WHERE m.idAppl = ?1 AND m.activo = 1 ORDER BY m.nombre", idAppl);
+	      //return list("ModulosPorAplicacion", idAppl); 	
+	}
+
+
+    public Set<Long> getConjuntoActivo(Long id) {
+        Set<Long> datos = new HashSet<Long>();
+        for (SDPModulo m : getModulesByAppl(id)) {
+            datos.add(m.getIdModulo());    
+        }
+        return datos;
+    }
+
 }

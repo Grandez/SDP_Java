@@ -10,6 +10,10 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class SDPFilesService extends AbstractService<SDPFile> {
 
+	public SDPFile findById(long idFile) {
+		return findQuery(SDPFile.findById, idFile);
+	}
+	
 	public List<SDPFile> listByName(String name) {
 		return null; 
 	}

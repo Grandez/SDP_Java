@@ -20,9 +20,13 @@ public class SDPModuloService extends AbstractService<SDPModulo> {
 
     public SDPModulo findById(Long idModulo) {
         SDPModulo value = dbCache.get(idModulo);
-        return (value == null) ? dbCache.put(idModulo, find("find", idModulo)) : value;
+        return (value == null) ? dbCache.put(idModulo, findQuery(SDPModulo.findById, idModulo)) : value;
 	}
 
+    public List<SDPModulo> listModulesByAppl(Long idAppl) {
+    	return listQuery(SDPModulo.listByAppl, idAppl);
+    }
+    
 	public SDPModulo findByName(String name) {
 		return find("findByName", name);
 	}
@@ -39,10 +43,6 @@ public class SDPModuloService extends AbstractService<SDPModulo> {
 		return find("findByModuleName", name);
 	}
 	
-	public List<SDPModulo> getModulesByAppl(Long idAppl) {
-	      return list("ModulosPorAplicacion", idAppl); 	
-	}
-
 	public List<SDPModulo> getModulesByPseudoMask(String mask) {
 	    return list("ModulosPorPseudoMascara", mask + "%"); 	
 	}
@@ -59,14 +59,6 @@ public class SDPModuloService extends AbstractService<SDPModulo> {
 	    updateQuery("updateVersion", idModulo, idVersion);
 	}
 	
-    public Set<Long> getConjuntoActivo(Long id) {
-        Set<Long> datos = new HashSet<Long>();
-        for (SDPModulo m : getModulesByAppl(id)) {
-            datos.add(m.getIdModulo());    
-        }
-        return datos;
-    }
-    
     public List<SDPModulo> getModulosModificados(Timestamp tms) {
         return list("ModulosModificados", tms);
     }

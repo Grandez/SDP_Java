@@ -7,7 +7,8 @@ public class Attrs {
     private boolean sgdb = false;
     private boolean file = false;
     private boolean call = false;
-	public boolean isFull() {
+
+    public boolean isFull() {
 		return full;
 	}
 	public void setFull(boolean full) {

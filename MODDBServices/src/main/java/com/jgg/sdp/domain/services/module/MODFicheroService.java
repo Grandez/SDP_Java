@@ -23,7 +23,7 @@ public class MODFicheroService extends AbstractService<MODFichero> {
 	}
 	
 	public List<MODFichero> getMaestros(Long idVersion) {
-		return getList(MODFichero.getMaestros, idVersion);
+		return listQuery(MODFichero.getMaestros, idVersion);
 	}
 	
 	public MODFichero getByIndex(Long idVersion, Integer idFile) {

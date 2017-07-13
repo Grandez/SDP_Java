@@ -1,52 +1,42 @@
 package com.jgg.sdp.ivp;
 
-import java.util.ArrayList;
+import java.util.*;
 
-import com.jgg.sdp.module.base.Module;
-import com.jgg.sdp.AnalyzerParms;
+import com.jgg.sdp.Analyzer;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.core.exceptions.FileException;
+import com.jgg.sdp.core.exceptions.NotSupportedException;
+import com.jgg.sdp.core.exceptions.SDPException;
 import com.jgg.sdp.core.msg.*;
-import com.jgg.sdp.ivp.data.Case;
-import com.jgg.sdp.ivp.data.Data;
-import com.jgg.sdp.parser.Parser;
+import com.jgg.sdp.core.tools.Archivo;
+import com.jgg.sdp.core.tools.FileFinder;
+import com.jgg.sdp.ivp.cases.Case;
+import com.jgg.sdp.ivp.cases.Groups;
+import com.jgg.sdp.module.base.Module;
+import com.jgg.sdp.module.ivp.IVPCase;
+import com.jgg.sdp.module.unit.SDPUnit;
+import com.jgg.sdp.parser.base.ParseException;
 import com.jgg.sdp.print.Printer;
 
 
 public class IVP {
 
-	private Printer printer = new Printer();
-	private Data    data    = new Data();
-	
-    private Messages      msg = Messages.getInstance("PARSER");    
+    private Messages      msg = Messages.getInstance("IVP");    
     private Configuration cfg = Configuration.getInstance();
 
+    private XMLIVP xml = new XMLIVP();
+    
+	private Printer printer = new Printer();
+	
+
+	private int count = 0;
+	
     private int countErrors = 0;
     private int countModulos = 0;
 
     private Module module = null;
-    
-  	/* Tabla de parametros aceptados
-	 * 0 - valor simbolico
-	 * 1 - parametro corto
-	 * 2 - parametro largo
-	 * 3 - variable de entorno
-	 * 4 - clave de configuracion
-	 * 5 - Requiere valor (0 - no)
-	 * 6 - tipo de dato
-	 */
-
-	String prm[][] = { 
-		    {" ", "i" , "input"  , "SDP_INPUT"        , CFG.DIR_INPUT    , "1" , "204" , Args.DIR}			          
-		   ,{" ", "o" , "output" , "SDP_OUTPUT"       , CFG.DIR_OUTPUT   , "1" , "205" , Args.DIR}
-	       ,{" ", "n" , "name"   , ""                 , CFG.TEMP_NAME    , "1" , "211" , Args.STRING}
-		   ,{" ", "l" , "left"   , "SDP_MARGIN_LEFT"  , CFG.MARGIN_LEFT  , "1" , "206" , Args.NUMBER}	   
-		   ,{" ", "r" , "right"  , "SDP_MARGIN_RIGHT" , CFG.MARGIN_RIGHT , "1" , "207" , Args.NUMBER}
-		   ,{" ", "q" , "qname"  , "SDP_QUEUE"        , CFG.JMS_QUEUE    , "1" , "208" , Args.STRING}
-		   ,{"1", " " , "local"  , ""                 , CFG.PARSER_LOCAL , "0" , "213" , Args.STRING}		   
-	       ,{"1", "e" , "error"  , ""                 , CFG.PARSER_ERR   , "0" , "212" , Args.BOOLEAN}
-	};
-    
+        
 	public static void main(String[] args) throws Exception {
 	   int rc = RC.OK;
 	   IVP launcher = new IVP();
@@ -55,19 +45,86 @@ public class IVP {
 	}
 
 	private int start(String[] args) {
-	    int maxRC = RC.OK;
-		banner();
+		SDPUnit unit = null;
+		int     maxRC   = RC.OK;
+		int     procesar = MSG.OK;
+			
+		String[] def = {"*"};
+			
+		cfg.setTitles(MSG.TITLE_SDP_IVP);
+			
 		args = cfg.processCommandLine(IVPParms.parms, args);
+		
+		banner();
+		
+		xml.loadFile("P:/SDP/Config/ivp.xml");
 		process();
-        return maxRC;
+		return maxRC;
 	}
+	
 	
 	private void process() {
-		processNoGroup();
-//		processVariables();
+		for (Case c : xml.getCases()) {
+			System.out.println(c.getName());
+			processModules(c.getModules());
+		}
 	}
 	
-	private void processNoGroup() {
+	private void processModules(List<String> patterns) {
+		Module module = null;
+		
+		int rc = 0;
+		for (String pattern : patterns) {
+	        for (Archivo archivo : FileFinder.find("P:/SDP/Cobol", pattern)) { // (cfg.getInputDir(), pattern)) {
+	        	printer.lineBeg(String.format("%5d - %8s - ", ++count, archivo.getBaseName()));
+	        	module = analyze(archivo);
+	        	evaluate(module);
+	        	printer.lineEnd("OK");
+	        } 	
+		}
+	}
+	
+	private Module analyze(Archivo archivo) {
+		Module module = null;
+		Exception ex = null;
+		
+		Analyzer analyzer = new Analyzer();
+		
+		try {
+			analyzer.analyze(archivo);
+        } catch (FileException f) {
+        	ex = f;
+        } catch (NotSupportedException s) {
+        	ex = s;
+        } catch (ParseException s) {
+        	ex = s;
+        } catch (SDPException s) {
+        	ex = s;
+        } catch (Exception e) {
+        	ex = e;
+        } finally {
+          module = analyzer.getModule();
+          module.setException(ex);
+        }
+        return module;
+	}
+	
+	private int evaluate(Module module) {
+		Groups cases = new Groups();
+		cases.loadCases(module.getIVPCases());
+		for (IVPCase c : cases.getCases("default")) {
+			evaluateCase(module, c);
+		}
+		return 0;
+	}
+	
+	private void evaluateCase(Module module, IVPCase c) {
+		System.out.println(c.getObject());
+		System.out.println(c.getMethod());
+		System.out.println(c.getValue());
+	}
+/*
+  	private void processNoGroup() {
 		printer.box("Verificando casos no identificados");
 		for (Case c : data.getGrupo(0)) process(c);
 	}
@@ -111,7 +168,7 @@ public class IVP {
 		}
 		printer.lineEnd("OK");
 	}
-	
+	*/
 	private void banner() {
 		
 		printer.boxBeg();

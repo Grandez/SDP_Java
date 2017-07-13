@@ -9,7 +9,7 @@ public class MODCodigo implements Serializable {
 
 	private static final long serialVersionUID = -8218083665196693143L;
 
-	public final static String find = "SELECT r FROM MODResumen r WHERE r.id = ?1";
+	public final static String find = "SELECT r FROM MODCodigo r WHERE r.id = ?1";
 	
 	@Id
 	@Column(name="idVersion")

@@ -24,6 +24,7 @@ import com.jgg.sdp.tools.Fechas;
 public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 
 	private Configuration cfg = Configuration.getInstance();
+	private SDPAplicacionService appService = new SDPAplicacionService();
 	
     public SDPRelModuloApp findByName(String mask) {
     	return getRecord(SDPRelModuloApp.findByMask, mask);
@@ -36,23 +37,28 @@ public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 		if (id != null) return id;
 		int len = cfg.getInteger(CFG.AUTO_APP, 0);
 		if (len > 0) return createApplication(moduleName.substring(0, len));
-		return (id == null) ? 0L : id;
+		return SYS.APPL_GENERAL;
 	}
 	
 	private long createApplication(String partial) {
-		SDPAplicacion app = new SDPAplicacion();
-		SDPAplicacionService appService = new SDPAplicacionService();
+        String name = "Generic " + partial;
+		
+		SDPAplicacion app = appService.findByName(name);
+		if (app != null) return app.getId();
+		
+		app = new SDPAplicacion();
+
 		long idAppl = appService.getNextApplicationId();
 		long parent = cfg.getInteger(CFG.APP_BASE);
 		app.setId(idAppl);
 		app.setPadre(parent);
-		app.setAplicacion("Generic " + partial);
-		app.setDescripcion("Generic " + partial);
+		app.setAplicacion(name);
+		app.setDescripcion(name);
 		app.setTms(Fechas.getTimestamp());
 		app.setUid(SYS.DEF_USER);
 		app.setVolumen(1);
 		appService.update(app);
-		
+/*		
 		SDPRelModuloApp rel = new SDPRelModuloApp();
 		rel.setIdAppl(idAppl);
 		rel.setMask(partial + "*");
@@ -60,7 +66,7 @@ public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 		rel.setPeso(1000);
 		rel.setUid(SYS.DEF_USER);
 		update(rel);
-		
+*/		
 		return idAppl;
 	}
 	
@@ -71,12 +77,12 @@ public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 	
 	private Long getPartialMatch(String moduleName) {
 		
-		List<SDPRelModuloApp> lista = getList(SDPRelModuloApp.getMasks);
+		List<SDPRelModuloApp> lista = listQuery(SDPRelModuloApp.getMasks);
 		for (SDPRelModuloApp rel : lista) {
 			String p = rel.getMask().replaceAll("\\*",".*");
 			p = p.replaceAll("\\?", ".{1}");
 			if (Pattern.matches(p, moduleName)) return rel.getIdAppl();
 		}
-		return SYS.APPL_GENERAL;
+		return null;
 	}
 }

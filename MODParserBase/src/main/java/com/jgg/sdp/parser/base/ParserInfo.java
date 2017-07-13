@@ -12,6 +12,7 @@ import com.jgg.sdp.core.ctes.MSG;
 import com.jgg.sdp.module.base.Module;
 //import com.jgg.sdp.parser.info.StmtCopy;
 import com.jgg.sdp.module.items.Copy;
+import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.SDPUnit;
 
 import java_cup.runtime.Symbol;
@@ -25,6 +26,8 @@ public class ParserInfo {
     public SDPUnit   unit   = null;
     public Module    module = null;
 
+    private IVPCase  c = null;
+    
 	
 	private Stack<Integer> sections     = new Stack<Integer>();
 	private Stack<Integer> lineSections = new Stack<Integer>();
@@ -64,6 +67,11 @@ public class ParserInfo {
 	public void setUnit(SDPUnit unit) {
 		this.unit = unit;
 	}
+
+	public Module getModule() {
+		return this.module;
+	}
+	
 	public void setModule(Module module) {
 		this.module = module;
 	}
@@ -232,5 +240,28 @@ public class ParserInfo {
                                s.right + 1, 
                                (String) s.value); 
    }
-	
+
+	/***********************************************************/
+	/***  Gestion de IVP                                     ***/
+	/***********************************************************/
+   
+   public void createCase() {
+	   c = new IVPCase();
+   }
+   
+   public void caseAddWord(String word) {
+	   if (c != null) c.addWord(word);
+   }
+
+   public void caseAddDescription(String word) {
+	   if (c != null) c.addDescription(word);
+   }
+
+   public void caseEnd() {
+	   if (c != null) {
+		   c.endCase();
+	   	   module.addIVPCase(c);
+	   }
+   }
+   
 }

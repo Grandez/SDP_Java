@@ -86,10 +86,12 @@ public class Consolidator implements IProcess {
 
 	private SESSesion copySesion() {
 		TRPSesion  trp = trpSesionService.findBySession(claves.getIdSesion());
+		SESSesion ses = new SESSesion();
+/*JGG		
         MODVersion ver = versionService.getByFirma(trp.getIdModulo());
         SDPModulo  mod = moduloService.findById(ver.getIdModulo());
         
-		SESSesion ses = new SESSesion();
+		
         ses.setIdSesion(trp.getIdSesion());
         ses.setIdVersion(ver.getIdVersion());
         
@@ -109,7 +111,9 @@ public class Consolidator implements IProcess {
         claves.setMainVersion(ver.getIdVersion());
         claves.setMainNombre(ver.getNombre());
         claves.setMainAppl(mod.getIdAppl());
+*/        
         return ses;
+        
 	}
 	
 	/**
@@ -146,6 +150,7 @@ public class Consolidator implements IProcess {
 	 *         false si no lo esta
 	 */
     private boolean setClaves(TRPModulo modulo) {
+/*JGG    	
         MODVersion v = versionService.getByFirma(modulo.getIdModulo());
 
         // El modulo no esta monitorizado
@@ -160,6 +165,7 @@ public class Consolidator implements IProcess {
         claves.setModNombre(mod.getNombre());
         claves.setMinOrden(claves.getMaxOrden());
         claves.setMaxOrden(modulo.getOrden());
+*/        
         return true;
     }
     

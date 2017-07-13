@@ -9,19 +9,46 @@ package com.jgg.sdp.module.items;
 
 public class Comment {
 
-	/**
-     * Indica si es un decorador; es decir, una liena de asteriscos
-     * o bordes
-     * O por el contrario, es un comentario efectivo
-     *
-     * @param line La linea de comentario
-     * @return true, cierto si es un decorador
-     */
-	public static boolean isDecorator(String line) {
-		String aux = line.substring(0, 72);
-		aux = aux.replace('*',' ');
-		aux = aux.trim();
-		if (aux.length() < 3) return true;
-		return false;
+	private int lines = 0;         // Lineas de comentarios
+	private int decorators = 0;    // Lineas de decoracion (asteriscos, cosas)
+	private int docs = 0;          // Lineas de documentacion
+	private int bloques = 0;       // Numero de bloques de comentarios
+	
+	
+	public void incLines()      { lines++;       }
+	public void incDocs()       { docs++;        }
+	public void incDecorators() { decorators++;  }
+	public void incBlocks()     { bloques++;     }
+	
+	public int getLines() {
+		return lines;
 	}
+
+	public void setLines(int lines) {
+		this.lines = lines;
+	}
+
+	public int getDecorators() {
+		return decorators;
+	}
+
+	public void setDecorators(int decorators) {
+		this.decorators = decorators;
+	}
+
+	public int getBloques() {
+		return bloques;
+	}
+
+	public void setBloques(int bloques) {
+		this.bloques = bloques;
+	}
+	public int getDocs() {
+		return docs;
+	}
+	public void setDocs(int docs) {
+		this.docs = docs;
+	}
+	
+
 }

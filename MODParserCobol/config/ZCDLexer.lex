@@ -33,17 +33,19 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %xstate CICSSYM
 %xstate ST_FUNCTION
 
-%xstate COMMENT, COMMENT2        
+%xstate COMMENT        
 %xstate QUOTE_STRING   
 %xstate DQUOTE_STRING 
   
-%xstate SDP
+%xstate SDP, SDPIVP, SDPIVPDESC, SDPDESC
 
 // Estados para COPY REPLACING
 %xstate COPYS  
 
 %{
 
+   StringBuilder tmp;
+   
    String cpyName = null;
    String cicsVerb = null;
    int    lastSymbol = -1;
@@ -159,7 +161,7 @@ TABS=[\t]+
 BLANKS=[ \t]+
 
 // Generico para cargar buffer
-WORD=[a-zA-Z0-9\_\-]+
+WORD=[a-zA-Z0-9\_\-\.]+
 ENDVERB=END-[a-zA-Z]+
 
 ALPHA=[a-zA-Z]+
@@ -177,9 +179,6 @@ PARAGRAPH  = {SP}{ID}
 SIZE=\({BLANKS}*{NUMERO}[kKmM]?{BLANKS}*\)
 PICLEN=[sS\+\-]?[aAxXzZ9]?{SIZE}
 
-SDPD=DESC  | DESCRIPTION
-SDPDESC=[>]?[\ \t]+SDP[\ \t]+{SDPD}
-SDPEND=[>]?[\ \t]+SDP[\ \t]+END
 SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 
 %% 
@@ -190,6 +189,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /******************************************************************************/
 /******************************************************************************/
 
+ ^[\*][ \t]+SDP      { pushState(SDP);  print("Entra en SDP");               }
  ^[\*]               { commentInit(yytext(), yyline);  }
  ^[\/]               { commentInit(yytext(), yyline);  }  
  ^[dD]               { commentInit(yytext(), yyline);  }
@@ -214,24 +214,7 @@ COPY         { initEmbedded();
 EXECUTE      { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
 EXEC         { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
 
-
- ^\*{SDPEND}       { info.module.incComments(true);
-                     inDesc = false;
-                     data = true;
-                   }
-                    
-
- ^\*{SDPDESC}      { resetLiteral("");
-                     pushState(SDP);
-                     info.module.incComments(true);
-                     inDesc = true;
-                     data = true;
-                     return symbol(SDPDESC);   
-                   }
-
   
- ^\*>               { pushState(COMMENT2);   }
-
 CBL                { checkSymbol(); pushState(EATLINE);  }
 REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 {SPACES}           { /* nada */ }
@@ -254,6 +237,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <ID_DIVISION> {
+  ^[\*][ \t]+SDP      { pushState(SDP);      print("entra en SDP");          }
   ^[\*]               { commentInit(yytext(), yyline); }
   ^[\/]               { commentInit(yytext(), yyline); }  
   ^[dD]               { commentInit(yytext(), yyline); }
@@ -467,7 +451,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   PROCEDURE{BLANKS}DIVISION      { pushBack = yytext().length(); yyclose(); }
   
  ^\*{SDPMASTER}    { pushState(SDP);
-                     info.module.incComments(true);
+                     // info.module.incComments(true);
                      inDesc = false;
                      data = true;
                      return symbol(SDPMASTER);   
@@ -746,31 +730,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <COMMENT> {
   {BLANKS}      { commentAppend(yytext()); }
-  \n            { commentEnd();            }                 
+  \n            { commentEnd(yyline);      }                 
   [a-zA-Z0-9]+  { commentAppend(yytext()); }
   [^]           { commentAppend(yytext()); }    
-}
-
-/*
- * Caso especial para concatenar lineas de descripcion
- */
- 
-<COMMENT2> {
-  {SPACES}      { if (inDesc) cadena.append(yytext());  }
-  {TABS}        { checkCharacters();   
-                  if (inDesc) cadena.append(yytext());  
-                }  
-  \n            { info.module.incComments(data);
-                  popState();
-                  if (inDesc) return literal("");
-                }  
-\r              { /* do nothing */ }
-  [a-zA-Z0-9]+  { if (inDesc) cadena.append(yytext());
-                  data = true;  
-                }
-   .            { if (inDesc) cadena.append(yytext()); 
-                  data = true; 
-                }    
 }
   
  
@@ -841,16 +803,48 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <SDP> {
-    .                  { /* Nada */ }
-    \r                 { /* Nada */ }
-    \n                 { info.module.incLines(data);
-                         popState();
-                       }
+   IVP           { info.createCase();         pushState(SDPIVP);  }
+   DESCRIPTION   { tmp = new StringBuilder(); pushState(SDPDESC); }
+   DESC          { tmp = new StringBuilder(); pushState(SDPDESC); }
+   
+  {SPACES}       { /* Nada */          }
+     
+    .            { /* Nada */ }
+    \r           { /* Nada */ }
+    \n           { info.module.incLines(data);  popState(); }
 }
 
-/*
-[^]                      { throw new ParseException(MSG.EXCEPTION_TOKEN, 
-                                   info.module.getName(), yyline + 1, yycolumn + 1, yytext()); 
-                       }
+<SDPIVP> {
+   {WORD}        { info.caseAddWord(yytext());  }
+   " -"          { pushState(SDPIVPDESC);   }
+  {SPACES}       { /* Nada */          }
+     
+    .            { /* Nada */ }
+    \r           { /* Nada */ }
+    \n           { info.module.incLines(data);  
+                   info.caseEnd();
+                   popState(2); 
+                 }
+}
 
-*/
+<SDPIVPDESC> {
+   {WORD}        { info.caseAddDescription(yytext());  }
+   {SPACES}      { info.caseAddDescription(yytext());  }
+    .            { info.caseAddDescription(yytext());  }
+    \r           { /* Nada */ }
+    \n           { info.module.incLines(data);  
+                   info.caseEnd();
+                   popState(3); 
+                 }
+}
+
+<SDPDESC> {
+   {WORD}        { tmp.append(yytext());  }
+   {SPACES}      { tmp.append(yytext());  }
+    .            { tmp.append(yytext());  }
+    \r           { /* Nada */ }
+    \n           { info.module.incLines(data);  
+                   info.module.setDescription(tmp.toString());
+                   popState(2); 
+                 }
+}

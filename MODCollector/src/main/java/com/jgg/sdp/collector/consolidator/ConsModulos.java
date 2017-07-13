@@ -39,6 +39,7 @@ public class ConsModulos {
 	
 	private SESModulo generaSesionModulo(Object[] tupla, String idSesion) {
 	    SESModulo mod = new SESModulo();
+/*JGG	    
         MODVersion ver = versionService.getByFirma((String) tupla[0]);
         
         if (ver == null) {
@@ -85,6 +86,7 @@ public class ConsModulos {
         mod.setTms(claves.getTms());
         
         sesionService.update(mod);
+*/        
         return mod;
     }
 

@@ -13,12 +13,8 @@ import com.jgg.sdp.core.ctes.*;
 
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
-
 import com.jgg.sdp.domain.services.core.*;
-
-import com.jgg.sdp.domain.named.core.*;
-import com.jgg.sdp.domain.named.module.*;
-
+import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.web.core.*;
 import com.jgg.sdp.web.json.*;
 
@@ -28,14 +24,13 @@ import com.jgg.sdp.web.WebCtes;
 public class AppTreeController {
 
     private Configuration cfg = DBConfiguration.getInstance();
-    
-    @Autowired
-    private SDPAplicacionService appService;
 
     @Autowired
-    private SDPModuloService modService;
+    private SDPAplicacionService appNamed;    
     @Autowired
-    private MODSummaryNamed sumNamed;
+    private SDPModuloService modNamed;
+    @Autowired
+    private MODSummaryService sumNamed;
 
     @RequestMapping("/apptree")
     public List<ApplTree> mountTree() {
@@ -54,7 +49,7 @@ public class AppTreeController {
     }
     
     private void addAplicaciones(ArrayList<ApplTree> appTree, ApplTree padre) {
-    	List<SDPAplicacion> appList = appService.listByPadreId(padre.getId());
+    	List<SDPAplicacion> appList = appNamed.listByParent(padre.getId());
     	for (SDPAplicacion app : appList) {
     		padre.setTipo(WebCtes.AREA);
             ApplTree node = new ApplTree();
@@ -74,7 +69,7 @@ public class AppTreeController {
     }
 
     private void addModulos(ArrayList<ApplTree> appTree, ApplTree padre) {
-    	List<SDPModulo> modList = modService.getModulesByAppl(padre.getId());
+    	List<SDPModulo> modList = modNamed.listModulesByAppl(padre.getId());
     
     	for (SDPModulo m : modList) {
     		ApplTree node = new ApplTree();
@@ -108,7 +103,7 @@ public class AppTreeController {
             node.setAplicaciones(0);
         }
         else {
-           SDPAplicacion app = appService.findById(id);
+           SDPAplicacion app = appNamed.findById(id);
            node.setText(app.getAplicacion());
            node.setModulos(app.getVolumen());
            node.setAplicaciones(0);

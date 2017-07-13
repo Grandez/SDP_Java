@@ -14,6 +14,8 @@ import com.jgg.sdp.core.tools.*;
 import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.graph.Graph;
 import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.ivp.IVPCase;
+import com.jgg.sdp.module.ivp.TBIVPCases;
 import com.jgg.sdp.module.tables.*;
 import com.jgg.sdp.tools.Cadena;
 
@@ -30,6 +32,7 @@ public class Module {
 	private Codigo          codigo       = new Codigo();	
 	private TBCics          tbCics       = new TBCics();
 	private Sections        sections     = new Sections();	
+	private Comment         comment      = new Comment();
 	
 	private TBFiles       tbFiles      = new TBFiles();
     private Graph         grafo        = new Graph(this);
@@ -42,6 +45,7 @@ public class Module {
 	private TBCopys       tbCopys      = new TBCopys();
 	private TBRoutines    tbRuts       = new TBRoutines();
 	private TBSql         tbSql        = new TBSql();	
+	private TBIVPCases    tbCases      = new TBIVPCases();
 	
 	private boolean fullParsed  = true;
 	private String  fullName    = null;
@@ -60,7 +64,10 @@ public class Module {
     private String xmlHash     = null;
     private String sdpGroup    = null;
     
-	private StringBuilder desc = new StringBuilder();
+	private String desc = "";
+	
+	// Para IVP
+	private Exception ex = null;
 	
 	private int     statements    = 0;
 	private int     outputs       = 0;
@@ -94,6 +101,7 @@ public class Module {
 	public Sections        getSections()        { return sections;       }
     public Summary         getSummary()         { return summary;        }
     public Codigo          getCodigo()          { return codigo;         }    
+    public Comment         getComment()         { return comment;        }
     
 	public ArrayList<Persistence> getFicheros()   { return tbFiles.getFiles();           }
 	public ArrayList<Block>       getBloques()    {	return tbBloques.getBloques();       }
@@ -151,20 +159,13 @@ public class Module {
 	}
 	*/
     public String  getDescription() { 
-    	return (desc.length() == 0) ? "N/A" : desc.toString();      
+    	return desc;      
     }
     
-    public void    setDescription(Object desc, boolean concat) { 
-    	String d = Cadena.rtrim((String) desc);
-    	if (this.desc.length() != 0) {
-    		if (concat) {
-    			this.desc.append(" ");
-    		}
-    		else {
-    		   this.desc.append("<br>");
-    		}
-    	}
-    	this.desc.append(d);
+    public void    setDescription(String txt) {
+    	String aux = txt.trim();
+    	String c = aux.length() == 0 ? "\n" : " ";
+   		desc = desc + c + aux;
     }
     
     public int getNumFiles() {
@@ -176,13 +177,13 @@ public class Module {
     public void incOutputs()            { incOutputs(1);          }
     public void incOutputs(int n)       { outputs += n;           }
     
+    public void      setException(Exception ex) { this.ex = ex; }
+    public Exception getException()             { return ex;    }
     
 	/************************************************************************/
 	/*** INTERFAZ AL OBJETO CODIGO                                        ***/
 	/************************************************************************/
 
-    public void incCommentBlocks()           { codigo.incCommentBlocks();   }
-    public void incComments(boolean comment) { codigo.incComments(comment); }
     public void incLines   (boolean data)    { codigo.incLines(data);       }    
     
     public void incStmtArit()                { codigo.incStmtArit();        }
@@ -201,6 +202,13 @@ public class Module {
     public void setCICS()  { summary.setCICS(); }
     public void setSQL()   { summary.setSQL();  }
     public void setFile()  { summary.setFile(); }
+
+	/************************************************************************/
+	/*** INTERFAZ AL OBJETO IVP                                           ***/
+	/************************************************************************/
+
+    public void          addIVPCase(IVPCase c) { tbCases.addCase(c);        }
+    public List<IVPCase> getIVPCases()         { return tbCases.getCases(); }
     
     //// ********************************************************************
     //// Dependencias                                          

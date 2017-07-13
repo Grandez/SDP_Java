@@ -8,7 +8,6 @@ import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.core.msg.*;
 import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.core.tools.FileFinder;
-import com.jgg.sdp.tools.*;
 
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.factorias.ModulesFactory;
@@ -18,12 +17,15 @@ import com.jgg.sdp.parser.base.*;
 
 public class Analyzer {
 
-    private Module module = null;
-
+    private Module  module = null;
+	private SDPUnit unit   = null;
+	
     private Messages      msg = Messages.getInstance("PARSER");    
     private Configuration cfg = Configuration.getInstance();
     
 
+    public Module getModule() { return module; }
+    
 	public static void main(String[] args) throws Exception {
 	   int rc = RC.OK;
 	   Analyzer launcher = new Analyzer();
@@ -32,7 +34,7 @@ public class Analyzer {
 	}
 
 	private int start(String[] args) {
-		SDPUnit unit = null;
+
 		int     maxRC   = RC.OK;
 		int     procesar = MSG.OK;
 		
@@ -48,15 +50,12 @@ public class Analyzer {
         	if (cfg.getVerbose() > 0) msg.progressCont(MSG.PARSING, archivo.getBaseName());
             
 			try {
-	            unit = new SDPUnit(archivo);
-	            module = unit.getCurrentModule();
-	            module.setType(CDG.SOURCE_CODE);
 				
 //            	procesar = db.hasToProcess(unit.getCurrentSource());
             	
 //Nada            	if (procesar == MSG.OK)      procesar = unit.isIgnored();
 //Nada              if (procesar == MSG.IGNORED) createIgnoredModule(unit);
- 				if (procesar == MSG.OK)      analyze(unit);
+ 				if (procesar == MSG.OK)      analyze(archivo);
  				if (procesar == MSG.OK)      procesar = storeModuleInfo(unit, true);
 				if (cfg.getVerbose() > 1)    msg.progress(procesar);
 			// Caso, alguien ha borrado el fichero entre el find y el proceso
@@ -95,6 +94,7 @@ public class Analyzer {
 					storeModuleInfo(unit, false);
 				}
 				ModulesFactory.cleanModules();
+				
 			}
         }
         
@@ -106,8 +106,17 @@ public class Analyzer {
 		unit.setStatus(CDG.STATUS_IGNORED);
 	}
 	
-	private void analyze(SDPUnit unit) throws SDPException, Exception {
+	public int analyze(Archivo archivo) throws FileException, 
+	                                             NotSupportedException,
+	                                             ParseException,
+	                                             SDPException, 
+	                                             Exception {
 		ParserInfo info = ParserInfo.getInstance(true);
+		
+        unit = new SDPUnit(archivo);
+        module = unit.getCurrentModule();
+        module.setType(CDG.SOURCE_CODE);
+
 		info.setUnit(unit);
 		info.setModule(module);
 		
@@ -117,21 +126,22 @@ public class Analyzer {
 	   if (module.getStatus() == CDG.STATUS_UNDEF) {
 		   module.setStatus(CDG.STATUS_FULL);
 	   }
+	   return RC.OK;
 	}
 
     
 	private int storeModuleInfo (SDPUnit unit, boolean full) {
 		Persister pers = new Persister();
+		pers.beginTrans();
 	    for (Module module : unit.getModules()) {
-	         pers.persistModule(module, unit.getId());
+	         pers.persistModule(module);
 	    }
+	    
+	    if (full) pers.persistUnit(unit);
+	    
+	    pers.commit();
+	    
 	    return MSG.OK;
 	}
-
-	private void storeCompileUnit (SDPUnit unit) {
-		Persister pers = new Persister();
-		pers.persistUnit(unit);
-	}
-
 
 }

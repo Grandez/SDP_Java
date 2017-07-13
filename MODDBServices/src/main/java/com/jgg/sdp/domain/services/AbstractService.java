@@ -131,9 +131,9 @@ public abstract class AbstractService <T>  {
         return findQuery(query, keys);
     }
 
-	protected List<T> lista(String qryName, Object... keys) {
+	protected List<T> listQuery(String qryName, Object... keys) {
 		Query query = em.createQuery(qryName);
-		return listQuery(query, keys);
+		return queryList(query, keys);
 
 	}
 	
@@ -148,7 +148,7 @@ public abstract class AbstractService <T>  {
 	protected List<T> list(Integer max, String qryName, Object... keys) {
 		Query query = em.createNamedQuery(tableName + "." + qryName);
 		if (max != null) query.setMaxResults(max);
-		return listQuery(query, keys);
+		return queryList(query, keys);
 	}
 
     @SuppressWarnings("unchecked")
@@ -169,7 +169,7 @@ public abstract class AbstractService <T>  {
 	}
 
     private T findQuery(Query query, Object... keys) {
-        List<T> results = listQuery(query, keys);
+        List<T> results = queryList(query, keys);
         T o = null;
         if(!results.isEmpty()) {
             o = results.get(0);
@@ -182,11 +182,6 @@ public abstract class AbstractService <T>  {
     	return findQuery(qry, keys);
     }
     
-    protected List<T> getList(String qryStmt, Object... keys) {
-    	Query qry = em.createQuery(qryStmt);
-    	return listQuery(qry, keys);
-    }
-
     @SuppressWarnings("unchecked")
 	protected List<Object[]> getListAbstract(String stmt, Object ...keys) {
     	Query qry = em.createQuery(stmt);
@@ -202,6 +197,14 @@ public abstract class AbstractService <T>  {
             qry.setParameter(idx+1, keys[idx]);    
         }
         return (Object[]) qry.getSingleResult();
+    }
+
+    protected Object getItemAbstract(String stmt, Object ...keys) {
+        Query qry = em.createQuery(stmt);
+        for (int idx = 0; idx < keys.length; idx++) {
+            qry.setParameter(idx+1, keys[idx]);    
+        }
+        return qry.getSingleResult();
     }
 
     @SuppressWarnings("unchecked")
@@ -230,7 +233,7 @@ public abstract class AbstractService <T>  {
     }
 	
     @SuppressWarnings("unchecked")
-	protected List<T> listQuery(Query query, Object... keys) {
+	protected List<T> queryList(Query query, Object... keys) {
         for (int idx = 0; idx < keys.length; idx++) {
             if (keys[idx] != null) query.setParameter(idx+1, keys[idx]);    
         }

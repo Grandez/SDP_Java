@@ -16,14 +16,12 @@ public class Codigo {
 
 	private final static int LINES     =  0;
 	private final static int BLANKS    =  1;
-	private final static int COMMENTS  =  2;
-	private final static int DECORATOR =  3;
-	private final static int LOOPS     =  4;
-	private final static int BLOCKS    =  5;
-	private final static int VERBS     =  6;	
+	private final static int LOOPS     =  2;
+	private final static int BLOCKS    =  3;
+	private final static int VERBS     =  4;	
     
 	private int[] stmts    = new int[20];
-	private int[] counters = new int[20];		
+	private int[] counters = new int[5];		
     private int   memory   = 0;
 	
 	public void incLines(boolean data)      { 
@@ -33,33 +31,19 @@ public class Codigo {
 	
 	public void incVerbs()         { counters[VERBS]++;     }
 	public void incBlanks()        { counters[BLANKS]++;    }
-	public void incDecorators()    { counters[DECORATOR]++; }
 	public void incLoops()         { counters[LOOPS]++;     }	
-	public void incCommentBlocks() { counters[BLOCKS]++;    }	
 
-	public void incComments(boolean data)   {
-		incLines(true);
-		counters[COMMENTS]++;
-		if (data == false) incDecorators();
-	}
+
 	
 	public int getLines()         { return counters[LINES];     }
 	public int getBlanks()        { return counters[BLANKS];    }
-	public int getComments()      { return counters[COMMENTS];  }
-	public int getDecorators()    { return counters[DECORATOR]; }
 	public int getVerbs()         { return counters[VERBS];     }
 	public int getLoops()         { return counters[LOOPS];     }	
-	public int getCommentBlocks() { return counters[BLOCKS];    }	
 
 	public int getAllVerbs()    { 
 	   int all = 0;
 	   for (int i = 0; i < stmts.length; i++ ) { all += stmts[i]; }
 	   return all;
-	}
-
-	public void incDecoratorsOrComments(boolean isDecorator) {
-		int idx = (isDecorator) ? DECORATOR : COMMENTS;
-		counters[idx]++;
 	}
 
 	public void incStmtDatos()   { incStatement(DATOS);   }

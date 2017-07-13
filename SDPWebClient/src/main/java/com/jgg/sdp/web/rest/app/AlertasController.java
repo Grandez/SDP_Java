@@ -17,8 +17,8 @@ import com.jgg.sdp.domain.services.log.*;
 import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.session.*;
+import com.jgg.sdp.tools.Fechas;
 import com.jgg.sdp.web.json.*;
-import com.jgg.sdp.core.tools.Fechas;
 
 @RestController
 public class AlertasController {
@@ -100,7 +100,7 @@ public class AlertasController {
     }
     
     private SDPModulo getModulo(SESSesion ses) {
-        MODVersion ver = versionService.getByVersion(ses.getIdVersion());
+        MODVersion ver = versionService.findById(ses.getIdVersion());
         if (ver == null) return null;
         return moduloService.findById(ver.getIdModulo());
     }

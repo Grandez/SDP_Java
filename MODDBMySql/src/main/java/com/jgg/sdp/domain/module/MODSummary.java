@@ -9,6 +9,8 @@ public class MODSummary implements Serializable {
 
 	private static final long serialVersionUID = -3227812485978179383L;
 
+	public final static String find = "Select s FROM MODSummary s WHERE idVersion = ?1";
+	
 	@Id
 	@Column(name="idVersion")
 	Long idVersion;

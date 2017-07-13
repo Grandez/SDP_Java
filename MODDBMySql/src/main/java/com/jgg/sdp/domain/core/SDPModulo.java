@@ -13,8 +13,10 @@ public class SDPModulo implements Serializable {
 
 	private static final long serialVersionUID = 1240723639177247054L;
 
-	public final static String findByNameAndType = "SELECT m FROM SDPModulo m WHERE m.nombre = ?1 AND m.tipo = ?2";   
+	public final static String findByNameAndType = "SELECT m FROM SDPModulo m WHERE m.nombre = ?1 AND m.tipo = ?2";
+	public final static String findById          = "SELECT m FROM SDPModulo m WHERE m.idModulo = ?1";
 	public final static String findByVersion     = "SELECT m FROM SDPModulo m WHERE m.idVersion = ?1";
+	public final static String listByAppl        = "SELECT m FROM SDPModulo m WHERE m.idAppl = ?1";
 	
 	@Id
 	@Column(name="idAppl")
@@ -28,7 +30,6 @@ public class SDPModulo implements Serializable {
     @Column(name="tipo")
     Integer tipo;
 
-	
     @Column(name="idVersion")
     Long idVersion;
         

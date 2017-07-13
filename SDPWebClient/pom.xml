@@ -42,11 +42,11 @@
        <version>${sdp.version}</version>
     </dependency>
 
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBNamed</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>MODDBNamed</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--     </dependency> -->
 
     <dependency>
         <groupId>org.springframework</groupId>
@@ -189,7 +189,7 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-war-plugin</artifactId>
             <configuration>
-                <destFileName>SDPWeb.jar</destFileName>
+                <destFileName>SDPWebClient.jar</destFileName>
                 <outputDirectory>${sdp.lib}</outputDirectory>
             </configuration>
         </plugin>
@@ -208,4 +208,5 @@
 </pluginManagement>    
     
   </build>
+
 </project>

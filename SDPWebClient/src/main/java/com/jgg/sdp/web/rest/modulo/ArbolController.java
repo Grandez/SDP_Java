@@ -56,7 +56,7 @@ public class ArbolController {
         List<Arbol> arbol = new ArrayList<Arbol>();
         Set<Long>   nodos = new HashSet<Long>();
         
-        MODVersion ver = versionService.getByVersion(idVersion);
+        MODVersion ver = versionService.findById(idVersion);
         SUMModulo mod = sumModuloService.find(idVersion);
         
         if (ver != null) {

@@ -55,7 +55,7 @@ public class LOGOutputService extends AbstractService<LOGLogging> {
             query = query + " AND ?" + ++count;
         }
 
-        return getList(query, prms);
+        return listQuery(query, prms);
     }
     
     public List<LOGLogging> getAlertas(Timestamp tms) {

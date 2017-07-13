@@ -13,15 +13,15 @@ public class MODVersion  implements Serializable {
 
 	private static final long serialVersionUID = -79589454234901239L;
 
-	public final static String findByFirma = 
-            "SELECT v FROM MODVersion v WHERE v.firma = ?1";
+	public final static String findById = 
+            "SELECT v FROM MODVersion v WHERE v.idVersion = ?1";
 
 	public final static String cuentaDeVersiones = 
             "SELECT v.idModulo, COUNT(v.idModulo) FROM MODVersion v GROUP BY v.idModulo";
 
 	public final static String versionesByTimestamp = 
-            "SELECT v.idModulo, v.tms FROM MODVersion v WHERE v.idModulo = ?1 ORDER BY v.tms DESC";
-
+            "SELECT v FROM MODVersion v WHERE v.idModulo = ?1 AND v.tms > ?2 ORDER BY v.tms DESC";
+	
 	public final static String deleteByTimestamp = 
             "DELETE FROM MODVersion v WHERE v.tms < ?1";
 	
@@ -36,9 +36,12 @@ public class MODVersion  implements Serializable {
 	@Column(name="idFile")
 	Long idFile;
 	
-	@Column(name="linea")
-	Integer linea;
+	@Column(name="offsetBeg")
+	Integer offsetBeg;
 
+	@Column(name="offsetEnd")
+	Integer offsetEnd;
+	
 	@Column(name="nombre")
 	String nombre;
 
@@ -59,29 +62,27 @@ public class MODVersion  implements Serializable {
 	
 	@Column(name="uid")
 	String uid;
+
+	@Column(name="autor")
+	String author;
 	
 	@Column(name="tms")
 	Timestamp tms;
 
 	public MODVersion() {
-		this.idModulo = Fechas.serial();
-		this.idVersion = Fechas.serial();
-		this.tms = new Timestamp(idVersion);
-		this.linea = 0;
+		this(Fechas.serial());
 	}
 	
 	public MODVersion(Long idModulo) {
-		this.idModulo = idModulo;
-		this.idVersion = Fechas.serial();
-		this.tms = new Timestamp(idVersion);
-		this.linea = 0;
+		this(idModulo, Fechas.serial());
 	}
 
 	public MODVersion(Long idModulo, long idVersion) {
 		this.idModulo = idModulo;
 		this.idVersion = idVersion;
 		this.tms = new Timestamp(idVersion);
-		this.linea = 0;
+		this.offsetBeg = 0;
+		this.offsetEnd = -1;
 	}
 
 	public Long getIdModulo() {
@@ -108,14 +109,22 @@ public class MODVersion  implements Serializable {
 		this.idFile = idFile;
 	}
 
-	public Integer getLinea() {
-		return linea;
+	public Integer getOffsetBeg() {
+		return offsetBeg;
 	}
 
-	public void setLinea(Integer linea) {
-		this.linea = linea;
+	public void setOffsetBeg(Integer offsetBeg) {
+		this.offsetBeg = offsetBeg;
 	}
 
+	public Integer getOffsetEnd() {
+		return offsetEnd;
+	}
+
+	public void setOffsetEnd(Integer offsetEnd) {
+		this.offsetEnd = offsetEnd;
+	}
+	
 	public String getNombre() {
 		return nombre;
 	}
@@ -164,6 +173,14 @@ public class MODVersion  implements Serializable {
 		this.desc = desc;
 	}
 
+	public String getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(String author) {
+		this.author = author;
+	}
+
 	public String getUid() {
 		return uid;
 	}
@@ -194,12 +211,14 @@ public class MODVersion  implements Serializable {
 		result = prime * result + ((idFile == null) ? 0 : idFile.hashCode());
 		result = prime * result + ((idModulo == null) ? 0 : idModulo.hashCode());
 		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
-		result = prime * result + ((linea == null) ? 0 : linea.hashCode());
+		result = prime * result + ((offsetBeg == null) ? 0 : offsetBeg.hashCode());
+		result = prime * result + ((offsetEnd == null) ? 0 : offsetEnd.hashCode());		
 		result = prime * result + ((missing == null) ? 0 : missing.hashCode());
 		result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
+		result = prime * result + ((author == null) ? 0 : author.hashCode());
 		return result;
 	}
 
@@ -242,10 +261,15 @@ public class MODVersion  implements Serializable {
 				return false;
 		} else if (!idVersion.equals(other.idVersion))
 			return false;
-		if (linea == null) {
-			if (other.linea != null)
+		if (offsetBeg == null) {
+			if (other.offsetBeg != null)
 				return false;
-		} else if (!linea.equals(other.linea))
+		} else if (!offsetBeg.equals(other.offsetBeg))
+			return false;
+		if (offsetEnd == null) {
+			if (other.offsetEnd != null)
+				return false;
+		} else if (!offsetEnd.equals(other.offsetEnd))
 			return false;
 		if (missing == null) {
 			if (other.missing != null)
@@ -271,6 +295,11 @@ public class MODVersion  implements Serializable {
 			if (other.uid != null)
 				return false;
 		} else if (!uid.equals(other.uid))
+			return false;
+		if (author == null) {
+			if (other.author != null)
+				return false;
+		} else if (!author.equals(other.author))
 			return false;
 		return true;
 	}

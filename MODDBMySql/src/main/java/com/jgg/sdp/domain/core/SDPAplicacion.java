@@ -7,30 +7,25 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="SDP_APLICACIONES")
-@NamedQueries({
-	@NamedQuery( name="SDPAplicacion.find"
-                ,query="SELECT a FROM SDPAplicacion a WHERE a.id = ?1")
-   ,@NamedQuery( name="SDPAplicacion.findByName" 
-                ,query="SELECT a FROM SDPAplicacion a WHERE a.aplicacion = ?1")
-   ,@NamedQuery( name="SDPAplicacion.listByPadreId" 
-                ,query="SELECT a FROM SDPAplicacion a WHERE a.padre = ?1")
-})
 public class SDPAplicacion implements Serializable {
 
 	private static final long serialVersionUID = 926785694196293106L;
 
-	public static final String listaHijos = "Select id FROM SDP_APLICACIONES WHERE padre = ?1";
+	public static final String listChildrens = "Select a FROM SDPAplicacion a WHERE padre = ?1";
+	
 	public static final String updVolumen = 
 	       "UPDATE SDP_APLICACIONES SET volumen = volumen + 1 WHERE aplicacion = ?1";
 	public static final String maxAppId = 
-		       "SELECT MAX(a.idAppl)  FROM SDP_APLICACIONES a";
+		       "SELECT MAX(a.idAppl)  FROM SDPAplicacion a";
+	public static final String findByName = 
+		       "SELECT a  FROM SDPAplicacion a WHERE aplicacion = ?1";
 	
 	@Id
 	@Column(name="aplicacion")
 	String aplicacion;
 
 	@Column(name="idAppl")
-	Long id;
+	Long idAppl;
 	
 	@Column(name="descripcion")
 	String Descripcion;
@@ -64,11 +59,11 @@ public class SDPAplicacion implements Serializable {
 	}
 
 	public Long getId() {
-		return id;
+		return idAppl;
 	}
 
 	public void setId(Long id) {
-		this.id = id;
+		this.idAppl = id;
 	}
 
 	public Long getPadre() {

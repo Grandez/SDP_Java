@@ -4,8 +4,8 @@
 package com.jgg.sdp.collector;
 
 import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.domain.base.CFGConfiguracion;
-import com.jgg.sdp.domain.services.base.CFGConfiguracionService;
+import com.jgg.sdp.domain.cfg.CFGConfiguracion;
+import com.jgg.sdp.domain.services.cfg.CFGConfiguracionService;
 
 public class DBConfiguration extends Configuration {
 

@@ -25,6 +25,23 @@
        <version>${sdp.version}</version>
     </dependency>
 
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPAnalyzer</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODParserBase</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>SDPParser</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--     </dependency> -->
     
   </dependencies>
 

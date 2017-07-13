@@ -33,13 +33,27 @@
         <version>${sdp.version}</version>
         <scope>provided</scope>
      </dependency>
-    
+
       <dependency>
         <groupId>com.jgg.sdp</groupId>
-        <artifactId>SDPDBOffline</artifactId>
+        <artifactId>MODDBMySql</artifactId>
         <version>${sdp.version}</version>
-        <scope>provided</scope>        
+<!--         <scope>provided</scope> -->
      </dependency>
+
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODDBServices</artifactId>
+        <version>${sdp.version}</version>
+<!--         <scope>provided</scope> -->
+     </dependency>
+    
+<!--       <dependency> -->
+<!--         <groupId>com.jgg.sdp</groupId> -->
+<!--         <artifactId>SDPDBOffline</artifactId> -->
+<!--         <version>${sdp.version}</version> -->
+<!--         <scope>provided</scope>         -->
+<!--      </dependency> -->
 
       <dependency>
         <groupId>com.jgg.sdp</groupId>

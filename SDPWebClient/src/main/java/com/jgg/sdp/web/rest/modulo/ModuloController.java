@@ -14,11 +14,15 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
-import com.jgg.sdp.domain.named.module.*;
+
+import com.jgg.sdp.domain.services.core.*;
+import com.jgg.sdp.domain.services.module.*;
 
 import com.jgg.sdp.domain.rules.RULIssue;
-import com.jgg.sdp.domain.services.module.*;
+
+
 import com.jgg.sdp.domain.services.rules.RULIssuesService;
 import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.traps.TRPSesionService;
@@ -33,15 +37,23 @@ import com.jgg.sdp.core.ctes.*;
 public class ModuloController {
 
 	private Modulo    modulo;
-	
+
     @Autowired
-    MODVersionService     versionService;
+    SDPFilesService      fileService;	
+    @Autowired
+    SDPModuloService     modService;
+    @Autowired
+    MODVersionService    verService;
+    @Autowired
+    MODCodigoService     cdgService;
+    @Autowired
+    MODSummaryService    sumService;
+
     @Autowired
 	MODBloqueService      bloqueService;
-    @Autowired
-	MODSummaryNamed       sumNamed;
-    @Autowired
-    MODDependenciaService dependenciaService;
+    
+//    @Autowired
+//    MODDependenciaService dependenciaService;
     @Autowired
     MODParrafoService     parrafoService;
     @Autowired
@@ -64,23 +76,47 @@ public class ModuloController {
 
     @RequestMapping("/module/{idModulo}/{rango}")
     public Modulo getModuleInfo(@PathVariable Long idModulo, @PathVariable Integer rango) {
-    	modulo = new Modulo();
-    	Resumen resumen = new Resumen();
-    	
-    	MODVersion version = getVersion(idModulo);
-    	if (version == null) return modulo;
 
+    	modulo = new Modulo();
+
+    	SDPModulo mod = modService.findById(idModulo);
+    	if (mod == null) return modulo;
+
+    	modulo.setIdModulo(mod.getIdModulo());
+    	modulo.setNombre(mod.getNombre());
+    	
+    	MODVersion version = verService.findById(mod.getIdVersion());
+    	if (version == null) return modulo;
+        modulo.setIdVersion(version.getIdVersion());
+        modulo.setDesc(version.getDesc());
+        
         Timestamp inicio = Fechas.calculaInicio(rango);
 
+        modulo.setSummary(calculaSummary(mod, version));
+        modulo.setVersiones(calculaVersiones(mod, inicio));
+        modulo.getSummary().setVersions(modulo.getVersiones().size());
+        
+    	MODCodigo cdg = cdgService.find(version.getIdVersion());
+    	modulo.setComment(calculaComentarios(cdg));
+    	modulo.setVerbs(calculaVerbos(cdg));
+        modulo.setAttrs(calculaAtributos(version.getIdVersion()));
+        
+/*        
+    	Resumen resumen = new Resumen();
+    	
+
+    	
         modulo.setExist(true);        
         modulo.setIdModulo(idModulo);
         modulo.setIdVersion(version.getIdVersion());
         
+        modulo.setVersiones(calculaVersiones(mod, inicio));
+
+        
+        obtieneCodigo(modulo, version.getIdVersion());
+        
         modulo.setNombre(version.getNombre());
         modulo.setDesc(version.getDesc());
-        
-        modulo.setAttrs(getAttributes(version.getIdVersion()));
-        
         
         modulo.setMaxCCParr(cfg.getInteger(CFG.CODE_CC_PARR, SYS.DEF_CC));
         modulo.setMaxCC    (cfg.getInteger(CFG.CODE_CC, SYS.DEF_CC));
@@ -89,22 +125,69 @@ public class ModuloController {
         calculaResumen(resumen, version);
         modulo.setResumen(resumen);
         
-    	calculaCobertura(version);
-    	calculaEjecuciones(version, inicio);
-    	cargaParrafos(version);
+//    	calculaCobertura(version);
+//    	calculaEjecuciones(version, inicio);
+//    	cargaParrafos(version);
 //    	cargaGrafo(version);
+ 
+ */
     	return modulo;
 
     }
 
-    private MODVersion getVersion(Long idModule) {
-    	List<MODVersion> versiones = versionService.getVersionesPorModulo(idModule);
-    	if (versiones.size() == 0) return null;
-    	return versiones.get(0);
+    
+    private Summary calculaSummary(SDPModulo mod, MODVersion ver) {
+    	Summary summ = new Summary();
+    	SDPFile file = fileService.findById(ver.getIdFile());
+    	summ.setFileName(file == null ? "" : file.getArchivo());
+    	summ.setMemberName(mod.getNombre());
+    	summ.setAuthor(ver.getAuthor());
+    	summ.setUid(ver.getUid());
+    	summ.setTms(ver.getTms().getTime());
+    	return summ;
+    }
+    
+    private List<Version> calculaVersiones(SDPModulo mod, Timestamp inicio) {
+    	List<MODVersion> versiones = verService.getVersionesPorTimestamp(mod.getIdModulo(), inicio);
+    	ArrayList<Version> lst = new ArrayList<Version>();
+    	int current = mod.getVersiones();
+    	for (MODVersion version : versiones) {
+    		Version v = new Version();
+    		v.setId(version.getIdVersion());
+    		v.setOrden(current--);
+    		v.setFecha(version.getTms());
+    		v.setUid(version.getUid());
+    		lst.add(v);
+    	}
+    	return lst;
     }
 
-    private Attrs getAttributes(long idVersion) {
-    	MODSummary summ = sumNamed.find(idVersion);
+    private Comment calculaComentarios(MODCodigo cdg) {   	
+    	Comment cmt = new Comment();
+    	cmt.setBlancos(cdg.getBlancos());
+    	cmt.setBloques(cdg.getBloques());
+    	cmt.setComentarios(cdg.getComentarios());
+    	cmt.setDecoradores(cdg.getDecoradores());
+    	return cmt;
+    }
+    
+    private Verbs calculaVerbos(MODCodigo cdg) {
+    	Verbs verbo = new Verbs();
+    	verbo.setArit(cdg.getVerbosArit());
+    	verbo.setCics(cdg.getVerbosCics());
+    	verbo.setCtrl(cdg.getVerbosControl());
+    	verbo.setData(cdg.getVerbosData());
+    	verbo.setFlow(cdg.getVerbosFlujo());
+    	verbo.setIo(cdg.getVerbosIO());
+    	verbo.setLang(cdg.getVerbosLang());
+    	verbo.setSql(cdg.getVerbosSql());
+    	verbo.calculateTotal();
+    	return verbo;
+    }
+    
+
+    private Attrs calculaAtributos(long idVersion) {
+    	MODSummary summ = sumService.find(idVersion);
 
     	Attrs attrs = new Attrs();
         attrs.setCics(summ.hasCics());
@@ -114,19 +197,20 @@ public class ModuloController {
         return attrs;
     }
     
-    
+/*    
     private void calculaResumen(Resumen resumen, MODVersion version) {
-        MODResumen mod = resumenService.getResumen(version.getIdVersion());
-        resumen.setInfo(mod);
-        
-        resumen.setUid(version.getUid());
-        resumen.setLastCompile(version.getTms());
-        resumen.setNombre(version.getNombre());
-        resumen.setLineas(mod.getLineas());
-        resumen.setSentencias(mod.getSentencias());
-        resumen.setParrafos(mod.getParrafos());
-        
-        cargaDependencias(resumen, version.getIdVersion());
+    	
+//        MODResumen mod = resumenService.getResumen(version.getIdVersion());
+//        resumen.setInfo(mod);
+//        
+//        resumen.setUid(version.getUid());
+//        resumen.setLastCompile(version.getTms());
+//        resumen.setNombre(version.getNombre());
+//        resumen.setLineas(mod.getLineas());
+//        resumen.setSentencias(mod.getSentencias());
+//        resumen.setParrafos(mod.getParrafos());
+//        
+//        cargaDependencias(resumen, version.getIdVersion());
     }
 
     private void calculaCobertura(MODVersion version) { 
@@ -145,8 +229,8 @@ public class ModuloController {
         Object[] datos = sesionService.getTotalEjecucionesByVersion(version.getIdVersion(), from);
         Resumen res = modulo.getResumen();
         res.setLastSesion((Timestamp) datos[1]);
-        long fallos = getFallidas(version.getFirma(), from);
-        res.setEjecuciones(((Long) datos[0]) + fallos);
+//        long fallos = getFallidas(version.getFirma(), from);
+//        res.setEjecuciones(((Long) datos[0]) + fallos);
     }
     
     private long getFallidas(String firma, Timestamp from) {
@@ -155,18 +239,18 @@ public class ModuloController {
     }
     
     private void cargaDependencias(Resumen res, Long idVersion) {
-        List<MODDependencia> lista = dependenciaService.getDependencias(idVersion);
-        for (MODDependencia item : lista) {
-            switch (item.getTipo()) {
-                case CDG.DEP_COPY:   res.incDepCopy(); break;
-                case CDG.DEP_MODULE: res.incDepModulo(); break;
-            }
-            
-        }
+//        List<MODDependencia> lista = dependenciaService.getDependencias(idVersion);
+//        for (MODDependencia item : lista) {
+//            switch (item.getTipo()) {
+//                case CDG.DEP_COPY:   res.incDepCopy(); break;
+//                case CDG.DEP_MODULE: res.incDepModulo(); break;
+//            }
+//            
+//        }
     }
         
     private void cargaParrafos(MODVersion version) {
          modulo.setParrafos(parrafoService.getParrafosByIndex(version.getIdVersion()));        
     }
-    
+  */  
 }

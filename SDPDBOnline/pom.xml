@@ -32,11 +32,11 @@
         <version>${sdp.version}</version>
      </dependency>
 
-     <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODDBNamed</artifactId>
-        <version>${sdp.version}</version>
-     </dependency>
+<!--      <dependency> -->
+<!--         <groupId>com.jgg.sdp</groupId> -->
+<!--         <artifactId>MODDBNamed</artifactId> -->
+<!--         <version>${sdp.version}</version> -->
+<!--      </dependency> -->
   
   </dependencies>
   

@@ -8,4 +8,7 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class SDPFuenteService extends AbstractService<SDPFuente> {
 
+	public SDPFuente findById(Long idFile) {
+		return findQuery(SDPFuente.findById, idFile);
+	}
 }

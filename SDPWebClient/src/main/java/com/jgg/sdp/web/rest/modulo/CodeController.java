@@ -9,11 +9,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.jgg.sdp.domain.core.SDPFuente;
+import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
-import com.jgg.sdp.domain.named.core.SDPFuenteNamed;
-import com.jgg.sdp.domain.named.module.MODSeccionesNamed;
-import com.jgg.sdp.domain.named.module.MODVersionNamed;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.tools.Zipper;
@@ -28,13 +25,14 @@ public class CodeController {
 	private final static int LINE_CODE    = 3;
 	
 	@Autowired
-	SDPModuloService    moduloService;
+	SDPModuloService    modService;
+	@Autowired
+	MODVersionService   verService;
+	@Autowired
+	SDPFuenteService    fteService;
+
     @Autowired
-    MODVersionNamed     versionNamed;
-    @Autowired
-    SDPFuenteNamed      fuenteNamed;
-    @Autowired
-    MODSeccionesNamed   seccionesNamed;
+    MODSeccionesService   seccionesNamed;
     @Autowired
     MODBloqueService    bloqueService;
     @Autowired
@@ -44,37 +42,47 @@ public class CodeController {
     
     @RequestMapping("/code/{idModulo}")
     public List<Fuente> getSourceLastVersion(@PathVariable Long idModulo) {
-        Long version = moduloService.getCurrentVersion(idModulo);
-        if (version == 0L) return new ArrayList<Fuente>();
-    	return getSourceByVersion(idModulo, version);
+    	SDPModulo mod = modService.findById(idModulo);
+    	MODVersion ver = verService.findById(mod.getIdVersion());
+        if (ver == null) return new ArrayList<Fuente>();
+    	return prepareSource(ver);
     }
     
     @RequestMapping("/code/{idModulo}/{idVersion}")
     public List<Fuente> getSourceByVersion(@PathVariable Long idModulo, @PathVariable Long idVersion) {
 
-       MODVersion ver = versionNamed.find(idVersion);
+       MODVersion ver = verService.findById(idVersion);
+       if (ver == null) return new ArrayList<Fuente>();
+       return prepareSource(ver);
+    }
+    
+    private List<Fuente> prepareSource(MODVersion ver) {
+       SDPFuente source = fteService.findById(ver.getIdFile());
+       if (source == null) return new ArrayList<Fuente>();
        
-       SDPFuente source = fuenteNamed.find(ver.getIdFile());
-       ArrayList<Fuente> fuente = mountSourceCode(source);
+       ArrayList<Fuente> fuente = mountSourceCode(source, ver);
        setLineType(fuente);
-       applySecciones(fuente, idVersion);
-       applyBloques(fuente, idVersion);
-       applyErrores(fuente, idVersion);
-       applyIssues(fuente, idVersion);
+       applySecciones(fuente, ver.getIdVersion());
+//       applyBloques(fuente, idVersion);
+//       applyErrores(fuente, idVersion);
+//       applyIssues(fuente, idVersion);
        return fuente;
     }
     
-    private ArrayList<Fuente> mountSourceCode(SDPFuente source) {
+    private ArrayList<Fuente> mountSourceCode(SDPFuente source, MODVersion ver) {
     	ArrayList<Fuente> fuente = new ArrayList<Fuente>();
     	Zipper zipper = new Zipper();
         
     	char[] raw = zipper.unzip("",source.getSource());
         String[] lineas = (new String(raw)).split("\\r\\n|\\n", -1);
         
-        for (int idx = 0; idx < lineas.length; idx++) {
+        int max = ver.getOffsetEnd();
+        if (max == -1) max = lineas.length;
+         
+        for (int iLine = ver.getOffsetBeg(); iLine < max; iLine++) {
         	Fuente fte = new Fuente();
-        	fte.setLinea(idx);
-        	fte.setCode(lineas[idx]);
+        	fte.setLinea(iLine);
+        	fte.setCode(lineas[iLine]);
         	fuente.add(fte);
         }
         return fuente;
@@ -129,7 +137,7 @@ public class CodeController {
      */
     private void applySecciones(ArrayList<Fuente> fuente, Long idVersion) {
     	int[] pos = new int[5];
-    	MODSecciones secciones = seccionesNamed.find(idVersion);
+    	MODSecciones secciones = seccionesNamed.getSecciones(idVersion);
     	pos[1] = secciones.getDivIdentification();
     	pos[2] = secciones.getDivEnvironment();
     	pos[3] = secciones.getDivData();
@@ -144,7 +152,7 @@ public class CodeController {
     		    while(pos[--bloque] == -1);
     		}
     	}
-//    	ajustaSecciones(pos);
+    	ajustaSecciones(fuente, pos);
     }
     
     /**
@@ -152,8 +160,8 @@ public class CodeController {
      * a su division correspondiente
      * @param pos Posiciones de las divisiones
      */
-/*
-    private void ajustaSecciones(int[] pos) {
+
+    private void ajustaSecciones(ArrayList<Fuente> fuente, int[] pos) {
     	int aux;
     	Fuente fte;
     	for (int idx = 1; idx < pos.length; idx++) {
@@ -168,7 +176,7 @@ public class CodeController {
     		}
     	}
     }
-  */  
+  
     private void applyBloques(ArrayList<Fuente> fuente, Long idVersion) {
          MODBloque[] bloques = bloqueService.getBloques(idVersion);
          for (int idx = 0; idx < bloques.length; idx++) {

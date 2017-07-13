@@ -10,9 +10,9 @@
         
 <!--         <class>com.jgg.sdp.domain.admin.ADMUsuario</class> -->
                 
-        <class>com.jgg.sdp.domain.base.CFGConfiguracion</class>
-        <class>com.jgg.sdp.domain.base.CFGCodigo</class>
-        <class>com.jgg.sdp.domain.base.CFGTranslate</class>
+        <class>com.jgg.sdp.domain.cfg.CFGConfiguracion</class>
+        <class>com.jgg.sdp.domain.cfg.CFGCodigo</class>
+        <class>com.jgg.sdp.domain.cfg.CFGTranslate</class>
         
 <!--         <class>com.jgg.sdp.domain.collector.summary.SumModulo</class> -->
 <!--         <class>com.jgg.sdp.domain.collector.summary.SumParrafo</class> -->
@@ -37,12 +37,9 @@
         <class>com.jgg.sdp.domain.module.MODCopy</class>                        
         <class>com.jgg.sdp.domain.module.MODCics</class>
         <class>com.jgg.sdp.domain.module.MODFichero</class>
-<!--         <class>com.jgg.sdp.domain.module.MODFuente</class> -->
-<!--         <class>com.jgg.sdp.domain.module.MODFuenteError</class> -->
         <class>com.jgg.sdp.domain.module.MODIssue</class>
         <class>com.jgg.sdp.domain.module.MODMissing</class>
         <class>com.jgg.sdp.domain.module.MODParrafo</class>
-<!--         <class>com.jgg.sdp.domain.module.MODResumen</class> -->
         <class>com.jgg.sdp.domain.module.MODSecciones</class>
         <class>com.jgg.sdp.domain.module.MODSummary</class>        
         <class>com.jgg.sdp.domain.module.MODVersion</class>
@@ -78,6 +75,16 @@
         <class>com.jgg.sdp.domain.traps.TRPPerform</class>    
         <class>com.jgg.sdp.domain.traps.TRPPersistencia</class>
         <class>com.jgg.sdp.domain.traps.TRPSesion</class>
+
+        <!-- NAMED QUERIES -->
+        
+<!--         <class>com.jgg.sdp.domain.named.core.SDPAplicacionNamed</class> -->
+<!--         <class>com.jgg.sdp.domain.named.core.SDPFuenteNamed</class> -->
+<!--         <class>com.jgg.sdp.domain.named.core.SDPModuloNamed</class> -->
+
+<!--         <class>com.jgg.sdp.domain.named.module.MODSeccionesNamed</class> -->
+<!--         <class>com.jgg.sdp.domain.named.module.MODSummaryNamed</class> -->
+<!--         <class>com.jgg.sdp.domain.named.module.MODVersionNamed</class> -->
 
         
         <exclude-unlisted-classes>false</exclude-unlisted-classes>

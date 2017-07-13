@@ -18,20 +18,21 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class SDPAplicacionService extends AbstractService<SDPAplicacion> {
 
+	
 	public SDPAplicacion findById(Long id) {
 	    SDPAplicacion value = dbCache.get(id);
 	    return (value == null) ? dbCache.put(id, find("find", id)) : value;
 	}
 	
 	 public SDPAplicacion findByName(String name) {
-		return find("findByName", name);
+		return findQuery(SDPAplicacion.findByName, name);
 	}
 	
-	public List<SDPAplicacion> listByPadreId(Long id) {
-		return list("listByPadreId", id);
-	}
-
-	public List<Long> getTree(Long id) {
+    public List<SDPAplicacion> listByParent(Long id) {
+    	return listQuery(SDPAplicacion.listChildrens, id);
+    }
+    
+	 public List<Long> getTree(Long id) {
 		ArrayList<Long> arbol = new ArrayList<Long>();
 		
 		SDPAplicacion app = findById(id);
@@ -54,13 +55,14 @@ public class SDPAplicacionService extends AbstractService<SDPAplicacion> {
 	    sqlExecute(SDPAplicacion.updVolumen, appName);	    
 	}
 
-	public int getNextApplicationId() {
-		Object[] data = getRecordAbstract(SDPAplicacion.maxAppId);
-        return ((Integer) data[0]) + 1;
+	public long getNextApplicationId() {
+		Long data = (Long) getItemAbstract(SDPAplicacion.maxAppId);
+        return data + 1;
 		
 	}
+	
 	private void cargaHijos(Set<Long> datos, Long id) {
-	    for (Object item : nativeQueryItem(SDPAplicacion.listaHijos, id)) {
+	    for (Object item : nativeQueryItem(SDPAplicacion.listChildrens, id)) {
 	        datos.add(((BigInteger) item).longValue());
 	        cargaHijos(datos, ((BigInteger) item).longValue());
 	    }

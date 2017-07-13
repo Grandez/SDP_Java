@@ -26,7 +26,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %xstate CICSSYM
 %xstate ST_FUNCTION
 
-%xstate COMMENT, COMMENT2        
+%xstate COMMENT        
 %xstate QUOTE_STRING   
 %xstate DQUOTE_STRING 
 
@@ -781,7 +781,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 <ST_FUNCTION> {
   {SPACES}           { /* EAT */ }
   {TABS}             { checkCharacters();   }
-  ^[\*\/]            { commentInit(yytext(), yyline, true);   }
+  ^[\*\/]            { commentInit(yytext(), yyline);   }
   {ID}               { popState(); return symbol(INTRINSIC);  }
   \r                 { /* EAT */ }
   \n                 { /* EAT */ }
@@ -847,34 +847,11 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 
 <COMMENT> {
   {BLANKS}      { commentAppend(yytext()); }
-  \n            { commentEnd();            }                 
+  \n            { commentEnd(yyline);      }                 
   [a-zA-Z0-9]+  { commentAppend(yytext()); }
   [^]           { commentAppend(yytext()); }    
 }
-
-/*
- * Caso especial para concatenar lineas de descripcion
- */
- 
-<COMMENT2> {
-  {SPACES}      { if (inDesc) cadena.append(yytext());  }
-  {TABS}        { checkCharacters();   
-                  if (inDesc) cadena.append(yytext());  
-                }  
-  \n            { info.module.incComments(data);
-                  popState();
-                  if (inDesc) return literal("");
-                }  
-\r              { /* do nothing */ }
-  [a-zA-Z0-9]+  { if (inDesc) cadena.append(yytext());
-                  data = true;  
-                }
-   .            { if (inDesc) cadena.append(yytext()); 
-                  data = true; 
-                }    
-}
-  
- 
+   
 <COPYS> {
   ^[\*\/]            { pushState(COMMENT);           }
   \.                 { popState(); return symbol(ENDCOPY);  }

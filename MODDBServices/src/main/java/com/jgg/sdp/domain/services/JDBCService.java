@@ -7,7 +7,7 @@ import java.util.HashMap;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 
-import com.jgg.sdp.domain.base.CFGCodigo;
+import com.jgg.sdp.domain.cfg.CFGCodigo;
 
 public class JDBCService extends AbstractService<CFGCodigo> {
 

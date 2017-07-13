@@ -97,7 +97,7 @@ public class CollectorParser implements IProcess {
 	}
 
 	private void processMessage() {
-		
+/*		
 		moduloService.beginTrans();
 		// Coger el nodo raiz, solo hay uno
 		NodeList rootNodes = doc.getChildNodes();
@@ -113,6 +113,8 @@ public class CollectorParser implements IProcess {
 		}
 		moduloService.commitTrans();
 //		moduloService.beginTrans();
+ 
+ */
 	}
 
 	private boolean processTable(String tblName, String ser) {
@@ -246,7 +248,7 @@ public class CollectorParser implements IProcess {
        HashSet<String> vars = new HashSet<String>();
        
        // No puede ser null
-       MODVersion ver = versionService.getByVersion(call.getIdVersion());
+       MODVersion ver = versionService.findById(call.getIdVersion());
        
        for (SDPDependencia dep : depService.getDependencias(ver.getNombre(), call.getModulo())) {
     	   exist = true;

@@ -9,6 +9,9 @@ import javax.persistence.*;
 public class MODSecciones implements Serializable {
 
 	private static final long serialVersionUID = 3734850800677065354L;
+	
+    public static final String find = "SELECT s FROM MODSecciones s WHERE s.idVersion = ?1";
+
 
 	@Id
 	@Column(name="idVersion")

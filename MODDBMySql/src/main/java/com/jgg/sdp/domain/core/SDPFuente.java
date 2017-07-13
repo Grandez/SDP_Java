@@ -10,8 +10,8 @@ public class SDPFuente implements Serializable {
 
 	private static final long serialVersionUID = 3857865477258463190L;
 
-    public final static String find = 
-           "SELECT m FROM MODFuente m WHERE m.idFile = ?1";
+    public final static String findById = 
+           "SELECT m FROM SDPFuente m WHERE m.idFile = ?1";
 	
 	@Id
 	@Column(name="idFile")

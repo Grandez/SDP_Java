@@ -12,11 +12,6 @@ package com.jgg.sdp.analyzer;
 
 import java.util.ArrayList;
 
-import javax.xml.parsers.*;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -37,8 +32,6 @@ import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.jgg.sdp.tools.*;
-
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class Persister {
 
@@ -68,24 +61,33 @@ public class Persister {
        idFile    = Fechas.serial();
     }
     
+    public void beginTrans() {
+    	commonService.beginTrans();
+    }
+    
+    public void commit() {
+    	commonService.commitTrans();
+    }
+    
     public String getXMLMessage() {
     	return xmlText;
     }
     
-    public void  persistModule(Module module, long idFile)  {
+    public void  persistModule(Module module)  {
 	   this.module = module;	   
-       persistModule();   
+       persistModuleData();   
     }
 
     public void persistUnit(SDPUnit unit) {
-        
+    	persistCompileUnit(unit);
+    	persistSource(unit);
     }
     
     private void persistCompileUnit(SDPUnit unit) {
     	
     	SDPFile file = new SDPFile();
 
-    	file.setIdFile(unit.getId());
+    	file.setIdFile(idFile);
         file.setArchivo(unit.getNombre());
         file.setTipo(unit.getTipo());
         file.setEstado(unit.getStatus());
@@ -100,14 +102,13 @@ public class Persister {
     private void persistSource(SDPUnit unit) {        
     	SDPFuente fuente = new SDPFuente();
     	
-    	Zipper zipper = new Zipper();
-    	fuente.setIdFile(unit.getId());
-        fuente.setSource(zipper.zip(unit.getNombre(), unit.getMainSource().getRawData()));
+    	fuente.setIdFile(idFile);
+        fuente.setSource(Zipper.zip(unit.getNombre(), unit.getMainSource().getRawData()));
         generate(fuente);
         
     }
     
-    private void persistModule() {
+    private void persistModuleData() {
        updateModule();
        updateVersion();
        
@@ -162,6 +163,7 @@ public class Persister {
     	version.setEstado  (module.getStatus());
     	version.setMissing(module.getCopyStatus());
     	version.setArbol(module.getTreeStatus());
+    	version.setAuthor(module.getAuthor());
     	    	
     	generate(version);
     }
@@ -195,8 +197,6 @@ public class Persister {
     	resumen.setIdVersion(idVersion);
     	resumen.setBlancos(codigo.getBlanks());
 
-    	resumen.setComentarios  (codigo.getComments());
-    	resumen.setDecoradores  (codigo.getDecorators());
     	resumen.setLineas       (codigo.getLines());
     	resumen.setVerbosArit   (codigo.getStmtArit());
     	resumen.setVerbosControl(codigo.getStmtControl());
@@ -204,10 +204,15 @@ public class Persister {
     	resumen.setVerbosFlujo  (codigo.getStmtFlujo());
         resumen.setVerbosIO     (codigo.getStmtIO());
     	resumen.setVerbosLang   (codigo.getStmtOtras());
-    	resumen.setBloques      (codigo.getCommentBlocks());
     	resumen.setLoops        (codigo.getLoops());
     	resumen.setVerbosCics   (codigo.getStmtCics());
     	resumen.setVerbosSql    (codigo.getStmtSql());
+
+    	Comment cmt = module.getComment();
+    	
+    	resumen.setBloques      (cmt.getBloques());    	
+    	resumen.setComentarios  (cmt.getLines());
+    	resumen.setDecoradores  (cmt.getDecorators());
     	
     	resumen.setParrafos  (module.getNumParagraphs());
     	resumen.setSentencias(module.getStatements());

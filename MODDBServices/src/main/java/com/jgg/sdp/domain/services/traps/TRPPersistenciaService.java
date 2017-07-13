@@ -18,7 +18,7 @@ import com.jgg.sdp.domain.traps.TRPPersistencia;
 public class TRPPersistenciaService extends AbstractService<TRPPersistencia> {
 
 	public List<TRPPersistencia> getPersistencia(String idSesion, String idModulo) {
-		return getList(TRPPersistencia.listBySesion, idSesion, idModulo);
+		return listQuery(TRPPersistencia.listBySesion, idSesion, idModulo);
 	}
 
 }

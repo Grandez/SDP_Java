@@ -2,6 +2,8 @@ package com.jgg.sdp.domain.named.module;
 
 import javax.persistence.*;
 
+import org.springframework.stereotype.Repository;
+
 import com.jgg.sdp.domain.module.MODVersion;
 import com.jgg.sdp.domain.services.AbstractService;
 
@@ -15,6 +17,8 @@ import com.jgg.sdp.domain.services.AbstractService;
                                " WHERE v.idModulo = ?1 " +
          		               " ORDER BY idVersion DESC")
 })
+
+@Repository
 public class MODVersionNamed extends AbstractService<MODVersion>{
 
 	public MODVersion find(long idVersion) {

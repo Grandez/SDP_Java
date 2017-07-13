@@ -26,13 +26,18 @@
        <scope>provided</scope>
     </dependency>
 
-
     <dependency>
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODDBMySql</artifactId>
        <version>${sdp.version}</version>
        <scope>provided</scope>
     </dependency>
+
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>MODDBNamed</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--     </dependency> -->
 
     <dependency>
        <groupId>mysql</groupId>
@@ -84,6 +89,19 @@
 
     <plugins>
 
+<!--     <plugin> -->
+<!--       <groupId>org.apache.maven.plugins</groupId> -->
+<!--       <artifactId>maven-source-plugin</artifactId> -->
+<!--       <executions> -->
+<!--         <execution> -->
+<!--           <id>attach-sources</id> -->
+<!--           <goals> -->
+<!--             <goal>jar</goal> -->
+<!--           </goals> -->
+<!--         </execution> -->
+<!--       </executions> -->
+<!--     </plugin> -->
+    
      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <configuration>

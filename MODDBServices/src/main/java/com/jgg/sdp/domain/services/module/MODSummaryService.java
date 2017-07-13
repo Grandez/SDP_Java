@@ -7,5 +7,9 @@ import com.jgg.sdp.domain.services.AbstractService;
 
 @Repository
 public class MODSummaryService extends AbstractService<MODSummary> {
+	
+	public MODSummary find(long idVersion) {
+		return findQuery(MODSummary.find, idVersion);
+	}
 
 }

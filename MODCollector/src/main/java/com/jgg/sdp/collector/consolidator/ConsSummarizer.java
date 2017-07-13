@@ -57,7 +57,7 @@ public class ConsSummarizer {
     private SUMModulo createSumModulo(SESModulo mod, SESIO sesio) {
         SUMModulo sum = new SUMModulo();
         
-        MODVersion ver = versionService.getByVersion(mod.getIdVersion());
+        MODVersion ver = versionService.findById(mod.getIdVersion());
 
         if (ver == null) {
             sum.setIdModulo(0L);

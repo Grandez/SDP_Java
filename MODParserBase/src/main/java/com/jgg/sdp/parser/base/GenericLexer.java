@@ -71,7 +71,8 @@ public abstract class GenericLexer {
    protected       int offset;   
    protected final int COLOFFSET = cfg.getMarginLeft();
 
-   private int     commentState;    // ID del estado COMMENT
+   // ID del estado COMMENT para cambiar de estado en el codigo
+   private int     commentState;    
    private boolean ignoreReserved = false;
 
    private Comments cmt = new Comments();
@@ -89,6 +90,7 @@ public abstract class GenericLexer {
    
    protected void initLexer() {
        initLexer(-1);
+       cmt.setModule(info.getModule());
    }
    
    protected void initLexer(int commentState) {
@@ -96,6 +98,7 @@ public abstract class GenericLexer {
        stack.push(0);
        offset = info.getOffset();
        this.commentState = commentState; 
+       cmt.setModule(info.getModule());
    }
 
    
@@ -196,21 +199,16 @@ public abstract class GenericLexer {
    /********************************************************/
    
    protected void commentInit(String txt , int yyline) {
-       cmt.init(txt,  yyline, false);
+       cmt.init(txt,  yyline);
        pushState(commentState);
    }
    
-   protected void commentInit(String txt , int yyline, boolean inCode) {
-       cmt.init(txt,  yyline, inCode);
-       pushState(commentState);
-   }
-
    protected void commentAppend(String txt) {
        cmt.append(txt);
    }
    
-   protected void commentEnd() {
-       cmt.process();
+   protected void commentEnd(int line) {
+       cmt.process(line);
        popState();
    }
    
@@ -219,7 +217,7 @@ public abstract class GenericLexer {
    public boolean isIgnoreReserved() { return ignoreReserved;  }
    
    public void print(String txt) {
-//        System.out.println(txt);
+        System.out.println(txt);
    }   
    public void debug(String txt) {
      System.out.println(txt);

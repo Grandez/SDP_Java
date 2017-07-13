@@ -23,7 +23,7 @@ public class ArbolVersionService extends AbstractService<MODVersion> {
 	public ArrayList<Long> getTreeVersion(Long idVersion) {
 		ArrayList<Long> arbol = new ArrayList<Long>();
 		arbol.add(idVersion);
-		MODVersion version = versionService.getByVersion(idVersion);
+		MODVersion version = versionService.findById(idVersion);
 		arbol.add(version.getIdModulo());
 		SDPModulo mod = moduloService.findById(version.getIdModulo());
 		arbol.addAll(aplicacionService.getTree(mod.getIdAppl()));

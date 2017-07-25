@@ -189,7 +189,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /******************************************************************************/
 /******************************************************************************/
 
- ^[\*][ \t]+SDP      { pushState(SDP);  print("Entra en SDP");               }
+ ^[\*]>[ \t]+SDP      { pushState(SDP);  print("Entra en SDP");               }
  ^[\*]               { commentInit(yytext(), yyline);  }
  ^[\/]               { commentInit(yytext(), yyline);  }  
  ^[dD]               { commentInit(yytext(), yyline);  }
@@ -237,7 +237,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <ID_DIVISION> {
-  ^[\*][ \t]+SDP      { pushState(SDP);      print("entra en SDP");          }
+  ^[\*]>[ \t]+SDP      { pushState(SDP);      print("entra en SDP");          }
   ^[\*]               { commentInit(yytext(), yyline); }
   ^[\/]               { commentInit(yytext(), yyline); }  
   ^[dD]               { commentInit(yytext(), yyline); }
@@ -803,7 +803,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <SDP> {
-   IVP           { info.createCase();         pushState(SDPIVP);  }
+   IVP           { info.createCase();         print("Entra en IVP"); pushState(SDPIVP);  }
    DESCRIPTION   { tmp = new StringBuilder(); pushState(SDPDESC); }
    DESC          { tmp = new StringBuilder(); pushState(SDPDESC); }
    

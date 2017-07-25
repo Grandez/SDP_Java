@@ -20,8 +20,7 @@
         <class>com.jgg.sdp.domain.core.SDPAplicacion</class>
         <class>com.jgg.sdp.domain.core.SDPDependencia</class>        
         <class>com.jgg.sdp.domain.core.SDPFile</class>        
-        <class>com.jgg.sdp.domain.core.SDPFuente</class>        
-        <class>com.jgg.sdp.domain.core.SDPFuenteError</class>        
+        <class>com.jgg.sdp.domain.core.SDPSource</class>              
         <class>com.jgg.sdp.domain.core.SDPIssueException</class>        
         <class>com.jgg.sdp.domain.core.SDPModulo</class>
         <class>com.jgg.sdp.domain.core.SDPRelModuloApp</class>

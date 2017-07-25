@@ -17,7 +17,6 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.ivp.TBIVPCases;
 import com.jgg.sdp.module.tables.*;
-import com.jgg.sdp.tools.Cadena;
 
 public class Module {
 
@@ -68,6 +67,7 @@ public class Module {
 	
 	// Para IVP
 	private Exception ex = null;
+	private int       rc = 0; 
 	
 	private int     statements    = 0;
 	private int     outputs       = 0;
@@ -177,8 +177,12 @@ public class Module {
     public void incOutputs()            { incOutputs(1);          }
     public void incOutputs(int n)       { outputs += n;           }
     
+    // IVP
+    
     public void      setException(Exception ex) { this.ex = ex; }
     public Exception getException()             { return ex;    }
+    public void      setRC(int rc)              { this.rc = rc; }
+    public int       getRC()                    { return rc;    }
     
 	/************************************************************************/
 	/*** INTERFAZ AL OBJETO CODIGO                                        ***/

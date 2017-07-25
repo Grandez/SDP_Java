@@ -43,12 +43,13 @@ public class SDPUnit {
     // Modulo activo
     private Module module = null;
     
-    private long   id;
-    private String nombre;
-    private int    tipo;
-    private String firma;
-    private int    numModulos;
-    private int    estado;
+    private long    id;
+    private String  nombre;
+    private int     tipo;
+    private String  firma;
+    private int     numModulos;
+    private int     estado;
+    private boolean exist = false;
     
 	public SDPUnit (Archivo archivo) {
         SourcesFactory.cleanSources();
@@ -74,7 +75,9 @@ public class SDPUnit {
 	public Source getMainSource()    { return sources.get(0); }
 	public Module getCurrentModule() { return module; 	}
     public Source getCurrentSource() { return source; 	}	
-
+    public boolean existUnit()       { return exist;    }
+    public void    setExist()        { exist = true;    }
+    
     public ArrayList<Module> getModules() {
     	return modules;
     }

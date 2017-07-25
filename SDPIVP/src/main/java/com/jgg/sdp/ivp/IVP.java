@@ -1,5 +1,7 @@
 package com.jgg.sdp.ivp;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 import com.jgg.sdp.Analyzer;
@@ -36,7 +38,9 @@ public class IVP {
     private int countModulos = 0;
 
     private Module module = null;
-        
+
+    private String msgErr;
+    
 	public static void main(String[] args) throws Exception {
 	   int rc = RC.OK;
 	   IVP launcher = new IVP();
@@ -78,20 +82,22 @@ public class IVP {
 	        for (Archivo archivo : FileFinder.find("P:/SDP/Cobol", pattern)) { // (cfg.getInputDir(), pattern)) {
 	        	printer.lineBeg(String.format("%5d - %8s - ", ++count, archivo.getBaseName()));
 	        	module = analyze(archivo);
-	        	evaluate(module);
-	        	printer.lineEnd("OK");
+	            if (!evaluate(module)) printer.lineEnd("OK");
 	        } 	
 		}
 	}
 	
 	private Module analyze(Archivo archivo) {
+		int   rc = 0;
 		Module module = null;
 		Exception ex = null;
+  
+		SDPUnit unit = new SDPUnit(archivo);
 		
 		Analyzer analyzer = new Analyzer();
 		
 		try {
-			analyzer.analyze(archivo);
+			rc = analyzer.analyze(unit);
         } catch (FileException f) {
         	ex = f;
         } catch (NotSupportedException s) {
@@ -105,24 +111,80 @@ public class IVP {
         } finally {
           module = analyzer.getModule();
           module.setException(ex);
+          module.setRC(rc);
         }
         return module;
 	}
 	
-	private int evaluate(Module module) {
+	private boolean evaluate(Module module) {
+		int ko = 0;
+		int rc = 0;
+		
 		Groups cases = new Groups();
 		cases.loadCases(module.getIVPCases());
 		for (IVPCase c : cases.getCases("default")) {
-			evaluateCase(module, c);
+			rc = evaluateCase(module, c); 
+			if (rc == 1) {
+				if (ko == 0) printer.lineEnd("KO");
+				printer.lineEnd(msgErr);
+			}
+			ko += rc;
+		}
+		return false;
+	}
+	
+	private int evaluateCase(Module module, IVPCase c) {
+		
+		switch(selectObject(c.getObject())) {
+		   case 1: return evaluateAnalyzer(module, c); 
 		}
 		return 0;
 	}
 	
-	private void evaluateCase(Module module, IVPCase c) {
-		System.out.println(c.getObject());
-		System.out.println(c.getMethod());
-		System.out.println(c.getValue());
+	private int selectObject(String txt) {
+		if (txt.compareToIgnoreCase("SDPAnalyzer") == 0) return 1;
+		
+		return 0;
 	}
+	
+	private int evaluateAnalyzer(Module module, IVPCase c) {
+		Object res = getResult(module, c.getMethod());
+		System.out.println(res.toString());
+		if (res instanceof Integer) return matchInteger((Integer) res, c.getValueInteger());
+		return 0;
+		
+	}
+	
+	private Object getResult(Object o, String method) {
+		String mName = "get" + method;
+		try {
+			Method m = o.getClass().getMethod(mName);
+			m.setAccessible(true);
+			return m.invoke(o);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	private int matchInteger(Integer res, int tgt) {
+		if (tgt != res) msgErr = String.format("Expected: %d. Found: %d",  tgt, res);
+		return (tgt == res) ? 0 : 1;
+	}
+	
 /*
   	private void processNoGroup() {
 		printer.box("Verificando casos no identificados");

@@ -57,7 +57,7 @@ public class CodeController {
     }
     
     private List<Fuente> prepareSource(MODVersion ver) {
-       SDPFuente source = fteService.findById(ver.getIdFile());
+       SDPSource source = fteService.findById(ver.getIdFile());
        if (source == null) return new ArrayList<Fuente>();
        
        ArrayList<Fuente> fuente = mountSourceCode(source, ver);
@@ -69,7 +69,7 @@ public class CodeController {
        return fuente;
     }
     
-    private ArrayList<Fuente> mountSourceCode(SDPFuente source, MODVersion ver) {
+    private ArrayList<Fuente> mountSourceCode(SDPSource source, MODVersion ver) {
     	ArrayList<Fuente> fuente = new ArrayList<Fuente>();
     	Zipper zipper = new Zipper();
         

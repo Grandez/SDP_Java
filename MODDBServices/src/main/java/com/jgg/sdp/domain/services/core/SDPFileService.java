@@ -8,7 +8,7 @@ import com.jgg.sdp.domain.core.SDPFile;
 import com.jgg.sdp.domain.services.AbstractService;
 
 @Repository
-public class SDPFilesService extends AbstractService<SDPFile> {
+public class SDPFileService extends AbstractService<SDPFile> {
 
 	public SDPFile findById(long idFile) {
 		return findQuery(SDPFile.findById, idFile);

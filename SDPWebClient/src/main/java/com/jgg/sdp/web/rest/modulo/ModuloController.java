@@ -39,7 +39,7 @@ public class ModuloController {
 	private Modulo    modulo;
 
     @Autowired
-    SDPFilesService      fileService;	
+    SDPFileService      fileService;	
     @Autowired
     SDPModuloService     modService;
     @Autowired

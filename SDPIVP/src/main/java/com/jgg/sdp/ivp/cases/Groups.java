@@ -13,7 +13,8 @@ public class Groups {
 		for (IVPCase c : cases) {
 			ArrayList<IVPCase> l = groups.get(c.getGroup());
 			if (l == null) {
-				l = groups.put(c.getGroup(), new ArrayList<IVPCase>());
+				l = new ArrayList<IVPCase>();
+				groups.put(c.getGroup(), l);
 			}
 			l.add(c);
 		}

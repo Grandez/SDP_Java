@@ -41,6 +41,7 @@ public class CFG {
 	public static final String VERBOSE      = "verbose";
 	
 	public static final String CURR_MODULE  = "current.module";
+
 	
 	// Especiales para IVP
 	

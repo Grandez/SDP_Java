@@ -5,17 +5,17 @@
  * @version 3.0
  *   
  */
-package com.jgg.sdp.domain.services.module;
+package com.jgg.sdp.domain.services.core;
 
 import org.springframework.stereotype.Repository;
 
-import com.jgg.sdp.domain.core.SDPFuente;
+import com.jgg.sdp.domain.core.SDPSource;
 import com.jgg.sdp.domain.services.AbstractService;
 
 @Repository
-public class MODFuenteService extends AbstractService<SDPFuente> {
+public class SDPSourceService extends AbstractService<SDPSource> {
 
-	public SDPFuente getSource (Long idVersion) {
+	public SDPSource getSource (Long idVersion) {
 		return find("find", idVersion);
 	}
 }

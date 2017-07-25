@@ -27,11 +27,35 @@
        <scope>provided</scope>       
     </dependency>
 
+<!--       <dependency> -->
+<!--         <groupId>com.jgg.sdp</groupId> -->
+<!--         <artifactId>SDPParser</artifactId> -->
+<!--         <version>${sdp.version}</version> -->
+<!--         <scope>provided</scope> -->
+<!--      </dependency> -->
+
       <dependency>
         <groupId>com.jgg.sdp</groupId>
-        <artifactId>SDPParser</artifactId>
+        <artifactId>MODParserBase</artifactId>
         <version>${sdp.version}</version>
-        <scope>provided</scope>
+     </dependency>
+
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODParserCics</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
+
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODParserCopy</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
+
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODParserDB2</artifactId>
+        <version>${sdp.version}</version>
      </dependency>
 
       <dependency>

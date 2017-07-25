@@ -93,11 +93,11 @@ public class Args {
 	 */
 	private void loadDefaults() {
 		String def[][] = { 
-	             {"" , ""  , "config" , "SDP_CONFIG" , CFG.DIR_CONFIG , "1" , "216" , DIR      }
-		        ,{"1", ""  , "def"    , "" , CFG.DEF        , "0" , "223" , BOOLEAN  }
-	            ,{"1", "h" , "help"   , "" , CFG.HELP       , "0" , "222" , BOOLEAN  }
-		        ,{"1", "v" , "verbose", "" , CFG.VERBOSE    , "0" , "209" , STRING   }	   
-		        ,{"2", "V" , "VERBOSE", "" , CFG.VERBOSE    , "0" , "210" , STRING   }	 
+	             {"" , ""  , "config" , "SDP_CONFIG" , CFG.DIR_CONFIG , DIR      , "216" }
+		        ,{"1", ""  , "def"    , ""           , CFG.DEF        , BOOLEAN  , "223" }
+	            ,{"1", "h" , "help"   , ""           , CFG.HELP       , BOOLEAN  , "222" }
+		        ,{"1", "v" , "verbose", ""           , CFG.VERBOSE    , BOOLEAN  , "209" }	   
+		        ,{"2", "V" , "VERBOSE", ""           , CFG.VERBOSE    , BOOLEAN  , "210" }	 
 		      };
 		   
 	       for (int idx = 0; idx < def.length; idx++) {
@@ -112,7 +112,8 @@ public class Args {
 		
 		String[] prm = prms.get(pos);
 
-		if (prm[5] != "0") return processParm(args, idx, pos);
+		if (prm[5] != Args.BOOLEAN) return processParm(args, idx, pos);
+		
 		params.put(prm[4], prm[0]);
 		return idx;
 	}
@@ -138,7 +139,7 @@ public class Args {
 			throw new ParameterException(MSG.PARM_VALUE_MISSING, args[idx]);
 		}
 		
-		if (prm[7] != STRING) {
+		if (prm[5] != STRING) {
 			validateParm(args[next], prm[7]);
 		}
 		

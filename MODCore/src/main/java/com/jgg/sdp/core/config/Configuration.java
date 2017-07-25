@@ -81,10 +81,6 @@ public class Configuration {
         return resto;
 	}
 
-	public boolean isIgnored(String name) {
-		return ignore.contains(name);
-	}
-	
 	public void setTitles(Integer... datos) {
 		for (int idx = 0; idx < datos.length; idx++) {
 			titles.add(datos[idx]);
@@ -130,7 +126,12 @@ public class Configuration {
 	public String  getJMSHostName()     { return getValue(CFG.JMS_HOST);      }
 	public int     getJMSPort()         { return getInteger(CFG.JMS_PORT);    }
     public String  getMemberName()      { return getValue(CFG.CURR_MODULE);   }
+
+    public boolean isForcedMode()         { return getBoolean(CFG.PARSER_FORCE); }
+    public boolean isLocalMode()          { return getBoolean(CFG.PARSER_LOCAL); }
+	public boolean isIgnored(String name) { return ignore.contains(name);        }
 	
+    
 	private static String setFullDirectory(String tmp) {
 		if (tmp == null) return null;
 		if (tmp.endsWith(File.separator)) return tmp;

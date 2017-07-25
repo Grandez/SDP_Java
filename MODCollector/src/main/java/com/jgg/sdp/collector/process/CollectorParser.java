@@ -41,7 +41,7 @@ public class CollectorParser implements IProcess {
 	
 	private SDPAplicacionService  appService         = new SDPAplicacionService();
 	private SDPModuloService      moduloService      = new SDPModuloService();
-	private SDPFilesService       fileService        = new SDPFilesService();
+	private SDPFileService       fileService        = new SDPFileService();
 	
 	private MODVersionService     versionService     = new MODVersionService();
 	private MODParrafoService     parrafoService     = new MODParrafoService();	

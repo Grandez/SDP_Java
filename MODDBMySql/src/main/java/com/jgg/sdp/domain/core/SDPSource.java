@@ -5,13 +5,13 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name="SDP_FUENTES")
-public class SDPFuente implements Serializable {
+@Table(name="SDP_SOURCES")
+public class SDPSource implements Serializable {
 
 	private static final long serialVersionUID = 3857865477258463190L;
 
     public final static String findById = 
-           "SELECT m FROM SDPFuente m WHERE m.idFile = ?1";
+           "SELECT m FROM SDPSource m WHERE m.idFile = ?1";
 	
 	@Id
 	@Column(name="idFile")

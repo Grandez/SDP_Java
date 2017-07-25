@@ -73,7 +73,9 @@ public class Persister {
     	return xmlText;
     }
     
-    public void  persistModule(Module module)  {
+    public void  persistModule(Module module, long idUnit)  {
+    	if (idUnit != 0) idFile = idUnit;
+    	
 	   this.module = module;	   
        persistModuleData();   
     }
@@ -100,7 +102,7 @@ public class Persister {
     }    
 
     private void persistSource(SDPUnit unit) {        
-    	SDPFuente fuente = new SDPFuente();
+    	SDPSource fuente = new SDPSource();
     	
     	fuente.setIdFile(idFile);
         fuente.setSource(Zipper.zip(unit.getNombre(), unit.getMainSource().getRawData()));
@@ -143,6 +145,7 @@ public class Persister {
             log.registra(LOG.MOD_NEW, mod);
         }
         
+        idModule = mod.getIdModulo();
        	mod.setUid(System.getProperty("user.name"));
        	mod.setTms(Fechas.getTimestamp());
        	mod.setTipo(module.getType());

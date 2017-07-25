@@ -35,6 +35,10 @@ public class IVPCase {
 	public String getValue() {
 		return value;
 	}
+	public int getValueInteger() {
+		return Integer.parseInt(value);
+	}
+	
 	public void setValue(String value) {
 		this.value = value;
 	}

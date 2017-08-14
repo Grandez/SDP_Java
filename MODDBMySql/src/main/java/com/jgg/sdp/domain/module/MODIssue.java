@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Table(name="MOD_ISSUES")
 public class MODIssue implements Serializable {
 
-	private static final long serialVersionUID = 1420688292068281836L;
+	private static final long serialVersionUID = -2053116334409955488L;
 
 	public static final String issuesByVersion = "SELECT i FROM MODIssue i WHERE idVersion = ?1 ORDER BY i.idSeq";
 	
@@ -30,10 +30,15 @@ public class MODIssue implements Serializable {
     @Column(name="idSeq")
     Integer idSeq;
 
-    @Id
-    @Column(name="idIssue")
-    Integer idIssue;
+    @Column(name="idGroup")
+    Integer idGroup;
 
+    @Column(name="idItem")
+    Integer idItem;
+    
+    @Column(name="idRule")
+    Integer idRule;
+    
     @Column(name="severity")
     Integer severity;
     
@@ -54,10 +59,13 @@ public class MODIssue implements Serializable {
     
     @Column(name="firma")
     String firma;
+
+    @Column(name="idException")
+    Long idException;
     
     @Transient
     private String desc = null;
-    
+
 	public Long getIdVersion() {
 		return idVersion;
 	}
@@ -74,12 +82,36 @@ public class MODIssue implements Serializable {
 		this.idSeq = idSeq;
 	}
 
-	public Integer getIdIssue() {
-		return idIssue;
+	public Integer getIdGroup() {
+		return idGroup;
 	}
 
-	public void setIdIssue(Integer idIssue) {
-		this.idIssue = idIssue;
+	public void setIdGroup(Integer idGroup) {
+		this.idGroup = idGroup;
+	}
+
+	public Integer getIdItem() {
+		return idItem;
+	}
+
+	public void setIdItem(Integer idItem) {
+		this.idItem = idItem;
+	}
+
+	public Integer getIdRule() {
+		return idRule;
+	}
+
+	public void setIdRule(Integer idRule) {
+		this.idRule = idRule;
+	}
+
+	public Integer getSeverity() {
+		return severity;
+	}
+
+	public void setSeverity(Integer severity) {
+		this.severity = severity;
 	}
 
 	public Integer getBegLine() {
@@ -114,23 +146,6 @@ public class MODIssue implements Serializable {
 		this.endColumn = endColumn;
 	}
 
-	public Integer getSeverity() {
-		return severity;
-	}
-
-	public void setSeverity(Integer severity) {
-		this.severity = severity;
-	}
-	
-	public String getDesc() {
-		return desc;
-	}
-
-	public void setDesc(String desc) {
-		this.desc = desc;
-	}
-
-	
 	public String getBloque() {
 		return bloque;
 	}
@@ -147,6 +162,22 @@ public class MODIssue implements Serializable {
 		this.firma = firma;
 	}
 
+	public Long getIdException() {
+		return idException;
+	}
+
+	public void setIdException(Long idException) {
+		this.idException = idException;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -154,10 +185,14 @@ public class MODIssue implements Serializable {
 		result = prime * result + ((begColumn == null) ? 0 : begColumn.hashCode());
 		result = prime * result + ((begLine == null) ? 0 : begLine.hashCode());
 		result = prime * result + ((bloque == null) ? 0 : bloque.hashCode());
+		result = prime * result + ((desc == null) ? 0 : desc.hashCode());
 		result = prime * result + ((endColumn == null) ? 0 : endColumn.hashCode());
 		result = prime * result + ((endLine == null) ? 0 : endLine.hashCode());
 		result = prime * result + ((firma == null) ? 0 : firma.hashCode());
-		result = prime * result + ((idIssue == null) ? 0 : idIssue.hashCode());
+		result = prime * result + ((idException == null) ? 0 : idException.hashCode());
+		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
+		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
+		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
 		result = prime * result + ((idSeq == null) ? 0 : idSeq.hashCode());
 		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
 		result = prime * result + ((severity == null) ? 0 : severity.hashCode());
@@ -188,6 +223,11 @@ public class MODIssue implements Serializable {
 				return false;
 		} else if (!bloque.equals(other.bloque))
 			return false;
+		if (desc == null) {
+			if (other.desc != null)
+				return false;
+		} else if (!desc.equals(other.desc))
+			return false;
 		if (endColumn == null) {
 			if (other.endColumn != null)
 				return false;
@@ -203,10 +243,25 @@ public class MODIssue implements Serializable {
 				return false;
 		} else if (!firma.equals(other.firma))
 			return false;
-		if (idIssue == null) {
-			if (other.idIssue != null)
+		if (idException == null) {
+			if (other.idException != null)
 				return false;
-		} else if (!idIssue.equals(other.idIssue))
+		} else if (!idException.equals(other.idException))
+			return false;
+		if (idGroup == null) {
+			if (other.idGroup != null)
+				return false;
+		} else if (!idGroup.equals(other.idGroup))
+			return false;
+		if (idItem == null) {
+			if (other.idItem != null)
+				return false;
+		} else if (!idItem.equals(other.idItem))
+			return false;
+		if (idRule == null) {
+			if (other.idRule != null)
+				return false;
+		} else if (!idRule.equals(other.idRule))
 			return false;
 		if (idSeq == null) {
 			if (other.idSeq != null)
@@ -225,7 +280,8 @@ public class MODIssue implements Serializable {
 			return false;
 		return true;
 	}
+    
+    
 
-	
-	
+
 }    

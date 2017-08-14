@@ -2,11 +2,14 @@ package com.jgg.sdp.rules;
 
 import java.util.*;
 
+import com.jgg.sdp.tools.Numero;
+
 public class RuleGroup {
 	private int    id;
 	private int    idParent;
+	private int    activo;
 	private String name;
-	
+	private String prefix; 
 	
 	private ArrayList<RuleItem> items = new ArrayList<RuleItem>();
 	private HashMap<Integer, Integer> keyNum = new HashMap<Integer, Integer>();
@@ -29,6 +32,12 @@ public class RuleGroup {
 	public int getIdParent() {
 		return idParent;
 	}
+	public void setActivo(int activo) {
+		this.activo = activo;
+	}
+	public int getActivo() {
+		return activo;
+	}
 	public void setIdParent(int idParent) {
 		this.idParent = idParent;
 	}
@@ -38,19 +47,24 @@ public class RuleGroup {
 	public void setName(String name) {
 		this.name = name;
 	}
+	public String getPrefix() {
+		return prefix;
+	}
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 	
 	public void addItem(RuleItem item) {
 		items.add(item);
 		int pos = items.size() - 1;
-		if (item.getKeyNum() != 0) {
-			keyNum.put(item.getKeyNum(), pos);
-		}
-		if (item.getKeyTxt() != null) {
-			keyTxt.put(item.getKeyTxt(), pos);
+		if (Numero.isInteger(item.getClave())) {
+			keyNum.put(Integer.parseInt(item.getClave()), pos);
+		} else {
+			keyTxt.put(item.getClave(), pos);
 		}
 	}
 	
-	public RuleItem getItem(String name) {
+	public RuleItem getItemByName(String name) {
 		Integer pos =  keyTxt.get(name);
 		return (pos == null) ? null : items.get(pos);
 	}

@@ -49,7 +49,7 @@
         
         <class>com.jgg.sdp.domain.rules.RULGroup</class>
         <class>com.jgg.sdp.domain.rules.RULItem</class>        
-        <class>com.jgg.sdp.domain.rules.RULIssue</class>
+        <class>com.jgg.sdp.domain.rules.RULRule</class>
         <class>com.jgg.sdp.domain.rules.RULDesc</class>
                 
         <class>com.jgg.sdp.domain.session.SESArbol</class>

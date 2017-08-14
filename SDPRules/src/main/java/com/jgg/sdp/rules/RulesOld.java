@@ -5,28 +5,28 @@ import java.util.*;
 import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.rules.*;
 
-public class Rules {
+public class RulesOld {
 	
 	
 	private RULGroupsService  groupsService = new RULGroupsService();
 	private RULItemsService   itemsService  = new RULItemsService();
-	private RULIssuesService  issuesService = new RULIssuesService();
+	private RULRulesService  issuesService = new RULRulesService();
 	
 	private ArrayList<RuleGroup> groups = new ArrayList<RuleGroup>();
 	
 	private HashMap<Integer, Integer> mapKey  = new HashMap<Integer,Integer>();
 	private HashMap<String,  Integer> mapName = new HashMap<String, Integer>();
 	
-	private static Rules rules = null;
+	private static RulesOld rules = null;
 	
 	private RuleGroup currGroup;
 	
-	private Rules() {
+	private RulesOld() {
 //		loadGroups();
 	}
 
-	public static Rules getInstance() {
-		if (rules == null) rules = new Rules();
+	public static RulesOld getInstance() {
+		if (rules == null) rules = new RulesOld();
 		return rules;
 	}
 
@@ -47,7 +47,7 @@ public class Rules {
 	private void loadGroups() {
         int pos = 0;
         RuleGroup g;
-        
+/*        
     	// Asigna los padres
     	for (RULGroup r : groupsService.listActives()) {
     		g = createRuleGroup(r);
@@ -63,7 +63,7 @@ public class Rules {
     		pos = mapKey.get(group.getIdParent());
     		group.setIdParent(pos);
     	}
-    	
+    	*/
     }
 
     private RuleGroup createRuleGroup(RULGroup g) {
@@ -73,13 +73,8 @@ public class Rules {
         group.setIdParent(g.getIdParent());
         return group;
     }
-    	
-    private void loadItems(RuleGroup group) {
-      	for (RULItem item : itemsService.listActiveByGroup(group.getId())) {
-   			group.addItem(createRuleItem(item, group.getId()));
-      	}
-    }
-	
+
+/*    
     private RuleItem createRuleItem(RULItem item, Integer idGroup) {
     	RuleItem r = new RuleItem();
     	r.setIdGroup(item.getIdGroup());
@@ -92,15 +87,9 @@ public class Rules {
     	return r;
     }
     
-    private void loadIssues(RuleItem item) {
-    	for (RULIssue issue : issuesService.listActiveByItem(item.getIdItem())) {
-    		item.addIssue(createIssue(issue,item));
-    	}
-    	
-    }
     
-    private RuleIssue createIssue(RULIssue issue, RuleItem item) {
-    	RuleIssue i = new RuleIssue();
+    private RuleRule createIssue(RULRule issue, RuleItem item) {
+    	RuleRule i = new RuleRule();
     	i.setItemName(item.getKeyTxt());
     	i.setIdGroup(item.getIdGroup());
     	i.setIdItem(issue.getIdItem());
@@ -114,7 +103,7 @@ public class Rules {
     	
     	return i;
     }
-	
+*/	
 /*	
 	public ArrayList<Integer> check(Integer id, String value) {
 		ArrayList<Integer> issues = new ArrayList<Integer>(); 

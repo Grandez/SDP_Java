@@ -242,26 +242,26 @@ public class ParserInfo {
    }
 
 	/***********************************************************/
+	/***  Gestion de Reglas                                  ***/
+	/***********************************************************/
+   
+   public void ruleTabs(int line, int column) {
+	   
+   }
+	/***********************************************************/
 	/***  Gestion de IVP                                     ***/
 	/***********************************************************/
    
-   public void createCase() {
+   public void prepareCase(String data) {
+	   String[] toks = data.split(" - ");
 	   c = new IVPCase();
-   }
-   
-   public void caseAddWord(String word) {
-	   if (c != null) c.addWord(word);
-   }
-
-   public void caseAddDescription(String word) {
-	   if (c != null) c.addDescription(word);
-   }
-
-   public void caseEnd() {
-	   if (c != null) {
-		   c.endCase();
-	   	   module.addIVPCase(c);
-	   }
+	   if (toks.length > 1) c.setDescription(toks[1].trim());
+	   toks = toks[0].split("[ ]+");
+	   c.setGroup(toks[0]);;
+	   c.setComponent(toks[1]);
+	   c.setOperator(toks[2]);
+	   c.setValue(toks[3]);
+	   module.addIVPCase(c);
    }
    
 }

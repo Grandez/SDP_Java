@@ -7,16 +7,17 @@
           
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.jgg.sdp</groupId>
-  <artifactId>SDPWebAdmin</artifactId>
-  <packaging>war</packaging>
-         
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
     <relativePath>../SDP</relativePath>
   </parent>
+
+  <groupId>com.jgg.sdp</groupId>
+  <artifactId>SDPWebAdmin</artifactId>
+  <packaging>war</packaging>
+         
   
   <dependencies>
 
@@ -46,7 +47,7 @@
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBNamed</artifactId>
+       <artifactId>MODWebCore</artifactId>
        <version>${sdp.version}</version>
     </dependency>
 

@@ -265,7 +265,7 @@ public abstract class Statement<T> {
 	}
 	
 	public void addIssue(int id) {
-		issues.add(new Issue(id));
+//		issues.add(new Issue(id));
 	}
 	
 	/***************************************************************/

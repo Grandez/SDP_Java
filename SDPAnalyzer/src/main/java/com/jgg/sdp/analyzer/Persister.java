@@ -354,7 +354,7 @@ public class Persister {
             MODIssue i = new MODIssue();
             i.setIdVersion(idVersion);
             i.setIdSeq(++idx);
-            i.setIdIssue(issue.getIdIssue());
+            i.setIdGroup(issue.getIdGroup());
             i.setSeverity(issue.getSeverity());
             i.setBegLine(issue.getBegLine());
             i.setEndLine(issue.getEndLine());

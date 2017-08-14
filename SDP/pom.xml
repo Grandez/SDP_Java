@@ -75,7 +75,7 @@
     <module>../SDPAnalyzer</module>    
     <module>../SDPWebClient</module>
     <module>../SDPWebAdmin</module>
-  
+    <module>../SDPTools</module>
   </modules>
     
 </project>

@@ -61,7 +61,7 @@ public abstract class GenericLexer {
    protected int                      begCopy   = -1;   // Linea de la sentencia de COPY/INCLUDE
    protected ArrayList<StringBuilder> chgTokens = null;
    protected StringBuilder            chgToken  = null;
-   protected RulesChecker             rules     = null;   
+   protected RulesChecker             rules     = RulesChecker.getInstance();   
    
    protected Symbol      exec      = null;
    protected Symbol      endExec   = null;
@@ -79,7 +79,7 @@ public abstract class GenericLexer {
    
    
    public void setModule(Module module) {
-	   rules = new RulesChecker(info.module);
+//	   rules = new RulesChecker(info.module);
 	   cmt.setModule(module);
    }
    
@@ -285,7 +285,14 @@ public abstract class GenericLexer {
 	   return s;
    }
    */
+
+   /*****************************************************************/
+   /** Reglas                                                       */
+   /*****************************************************************/
    
+   protected void ruleTabs(int line, int column) {
+	   rules.checkTab(line + 1, column + COLOFFSET);
+   }
 }
 
 

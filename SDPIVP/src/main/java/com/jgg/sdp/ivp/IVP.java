@@ -1,5 +1,14 @@
 package com.jgg.sdp.ivp;
 
+/**
+ * TODO Tiene que arrancar con cero
+ * Carga el entorno para el caso cero
+ * Luego cada modulo que tenga mas de un bloque meterlo en un conjunto de listas bloque - lista
+ * Cuando acabe el cero, 
+ *   Cargar el entorno para el caso x
+ *   Procesar por el conjunto de listas, buscando solo esos programas
+ * 
+ */
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -24,6 +33,9 @@ import com.jgg.sdp.print.Printer;
 
 public class IVP {
 
+	private final int SDPANALYZER   =  1;
+	private final int ISSUES        = 50;
+	
     private Messages      msg = Messages.getInstance("IVP");    
     private Configuration cfg = Configuration.getInstance();
 
@@ -135,20 +147,39 @@ public class IVP {
 	
 	private int evaluateCase(Module module, IVPCase c) {
 		
-		switch(selectObject(c.getObject())) {
-		   case 1: return evaluateAnalyzer(module, c); 
+		int obj = selectObject(c.getObject()); 
+		switch(obj) {
+		   case SDPANALYZER: return evaluateAnalyzer(module, c);
+		   default: evaluateComponent(obj, module, c);
 		}
 		return 0;
 	}
 	
 	private int selectObject(String txt) {
-		if (txt.compareToIgnoreCase("SDPAnalyzer") == 0) return 1;
+		if (txt.compareToIgnoreCase("SDPAnalyzer") == 0) return SDPANALYZER;
+		if (txt.compareToIgnoreCase("Issues")      == 0) return ISSUES;
 		
 		return 0;
 	}
 	
 	private int evaluateAnalyzer(Module module, IVPCase c) {
+		String objeto = "get" + c.getObject().toUpperCase();
+		
 		Object res = getResult(module, c.getMethod());
+		System.out.println(res.toString());
+		if (res instanceof Integer) return matchInteger((Integer) res, c.getValueInteger());
+		return 0;
+		
+	}
+
+	private int evaluateComponent(int id, Module module, IVPCase c) {
+		
+		Object o = null;
+		switch (id) {
+		   case ISSUES: o = module.getTbIssues(); break; 
+		}
+		
+		Object res = getResult(o, c.getMethod());
 		System.out.println(res.toString());
 		if (res instanceof Integer) return matchInteger((Integer) res, c.getValueInteger());
 		return 0;

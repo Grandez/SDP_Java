@@ -42,6 +42,12 @@
        <version>${sdp.version}</version>
     </dependency>
 
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODWebCore</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
 <!--     <dependency> -->
 <!--        <groupId>com.jgg.sdp</groupId> -->
 <!--        <artifactId>MODDBNamed</artifactId> -->

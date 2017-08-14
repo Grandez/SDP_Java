@@ -7,12 +7,11 @@ public class RuleItem {
 
 	private int       idGroup;
 	private int       idItem;
-	private int       keyNum;
-	private String    keyTxt;
+	private String    clave;
 	private String    uid;
 	private Timestamp tms;
 	
-	private ArrayList<RuleIssue> issues = new ArrayList<RuleIssue>();
+	private ArrayList<RuleRule> rules = new ArrayList<RuleRule>();
 	
 	public int getIdGroup() {
 		return idGroup;
@@ -26,18 +25,13 @@ public class RuleItem {
 	public void setIdItem(int idItem) {
 		this.idItem = idItem;
 	}
-	public int getKeyNum() {
-		return keyNum;
+	public String getClave() {
+		return clave;
 	}
-	public void setKeyNum(int keyNum) {
-		this.keyNum = keyNum;
+	public void setClave(String clave) {
+		this.clave = clave;
 	}
-	public String getKeyTxt() {
-		return keyTxt;
-	}
-	public void setKeyTxt(String keyTxt) {
-		this.keyTxt = keyTxt;
-	}
+
 	public String getUid() {
 		return uid;
 	}
@@ -52,11 +46,11 @@ public class RuleItem {
 	}
 	
 	
-	public void addIssue(RuleIssue issue) {
-	    issues.add(issue);	
+	public void addRule(RuleRule rule) {
+	    rules.add(rule);	
 	}
 	
-	public ArrayList<RuleIssue> getRuleIssues() {
-		return issues;
+	public ArrayList<RuleRule> getRules() {
+		return rules;
 	}
 }

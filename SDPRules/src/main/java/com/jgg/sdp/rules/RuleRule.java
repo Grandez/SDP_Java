@@ -2,19 +2,25 @@ package com.jgg.sdp.rules;
 
 import java.sql.Timestamp;
 
-public class RuleIssue {
+public class RuleRule {
 
 	private String    itemName;
 	private int       idGroup;
 	private int       idItem;
-	private int       idIssue;
+	private int       idRule;
 	private int       type;
 	private int       severity;
+	private int       priority;	
 	private int       comparator;
 	private String    valor;
 	private String    uid;
 	private Timestamp tms;
-	
+	public String getItemName() {
+		return itemName;
+	}
+	public void setItemName(String itemName) {
+		this.itemName = itemName;
+	}
 	public int getIdGroup() {
 		return idGroup;
 	}
@@ -27,13 +33,12 @@ public class RuleIssue {
 	public void setIdItem(int idItem) {
 		this.idItem = idItem;
 	}
-	public int getIdIssue() {
-		return idIssue;
+	public int getIdRule() {
+		return idRule;
 	}
-	public void setIdIssue(int idIssue) {
-		this.idIssue = idIssue;
+	public void setIdRule(int idRule) {
+		this.idRule = idRule;
 	}
-	
 	public int getType() {
 		return type;
 	}
@@ -45,6 +50,12 @@ public class RuleIssue {
 	}
 	public void setSeverity(int severity) {
 		this.severity = severity;
+	}
+	public int getPriority() {
+		return priority;
+	}
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 	public int getComparator() {
 		return comparator;
@@ -58,13 +69,6 @@ public class RuleIssue {
 	public void setValor(String valor) {
 		this.valor = valor;
 	}
-	public String getItemName() {
-		return itemName;
-	}
-	public void setItemName(String itemName) {
-		this.itemName = itemName;
-	}
-
 	public String getUid() {
 		return uid;
 	}
@@ -77,5 +81,6 @@ public class RuleIssue {
 	public void setTms(Timestamp tms) {
 		this.tms = tms;
 	}
+
 	
 }

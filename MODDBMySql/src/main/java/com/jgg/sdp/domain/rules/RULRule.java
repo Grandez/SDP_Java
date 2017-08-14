@@ -6,25 +6,34 @@ import java.sql.Timestamp;
 import javax.persistence.*;
 
 @Entity
-@Table(name="RUL_ISSUES")
-public class RULIssue implements Serializable {
+@Table(name="RUL_RULES")
+public class RULRule implements Serializable {
 	
 
-	private static final long serialVersionUID = 3865302271230574305L;
+	private static final long serialVersionUID = 5890804460774397842L;
 
-	public final static String listByItem       = "Select i from RULIssue i where idItem = ?1";
-	public final static String listActiveByItem = "Select i from RULIssue i where idItem = ?1 AND activo = 1";
+	public final static String listByItem       = "Select i from RULRule i where idItem = ?1";
+	public final static String listActiveByItem = "Select i from RULRule i " +
+	                                              "WHERE idGroup = ?1 AND idItem = ?2 AND activo = 1 " +
+			                                      "ORDER BY i.priority ";
+
+	@Id
+	@Column(name="idGroup")
+	private Integer idGroup;
 	
 	@Id
 	@Column(name="idItem")
 	private Integer idItem;
 
 	@Id
-	@Column(name="idIssue")
-	private Integer idIssue;
+	@Column(name="idRule")
+	private Integer idRule;
 
 	@Column(name="activo")
 	private Integer activo;
+
+	@Column(name="priority")
+	private Integer priority;
 	
 	@Column(name="severity")
 	private Integer severity;
@@ -44,6 +53,14 @@ public class RULIssue implements Serializable {
 	@Column(name="tms")
 	private Timestamp tms;
 
+	public Integer getIdGroup() {
+		return idGroup;
+	}
+
+	public void setIdGroup(Integer idGroup) {
+		this.idGroup = idGroup;
+	}
+
 	public Integer getIdItem() {
 		return idItem;
 	}
@@ -52,12 +69,12 @@ public class RULIssue implements Serializable {
 		this.idItem = idItem;
 	}
 
-	public Integer getIdIssue() {
-		return idIssue;
+	public Integer getIdRule() {
+		return idRule;
 	}
 
-	public void setIdIssue(Integer idIssue) {
-		this.idIssue = idIssue;
+	public void setIdRule(Integer idRule) {
+		this.idRule = idRule;
 	}
 
 	public Integer getActivo() {
@@ -66,6 +83,14 @@ public class RULIssue implements Serializable {
 
 	public void setActivo(Integer activo) {
 		this.activo = activo;
+	}
+
+	public Integer getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Integer priority) {
+		this.priority = priority;
 	}
 
 	public Integer getSeverity() {
@@ -91,7 +116,7 @@ public class RULIssue implements Serializable {
 	public void setTipo(Integer tipo) {
 		this.tipo = tipo;
 	}
-	
+
 	public String getValor() {
 		return valor;
 	}
@@ -122,9 +147,12 @@ public class RULIssue implements Serializable {
 		int result = 1;
 		result = prime * result + ((activo == null) ? 0 : activo.hashCode());
 		result = prime * result + ((comparador == null) ? 0 : comparador.hashCode());
-		result = prime * result + ((idIssue == null) ? 0 : idIssue.hashCode());
+		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
+		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
+		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result + ((severity == null) ? 0 : severity.hashCode());
+		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
 		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
@@ -139,7 +167,7 @@ public class RULIssue implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RULIssue other = (RULIssue) obj;
+		RULRule other = (RULRule) obj;
 		if (activo == null) {
 			if (other.activo != null)
 				return false;
@@ -150,20 +178,35 @@ public class RULIssue implements Serializable {
 				return false;
 		} else if (!comparador.equals(other.comparador))
 			return false;
-		if (idIssue == null) {
-			if (other.idIssue != null)
+		if (idGroup == null) {
+			if (other.idGroup != null)
 				return false;
-		} else if (!idIssue.equals(other.idIssue))
+		} else if (!idGroup.equals(other.idGroup))
 			return false;
 		if (idItem == null) {
 			if (other.idItem != null)
 				return false;
 		} else if (!idItem.equals(other.idItem))
 			return false;
+		if (idRule == null) {
+			if (other.idRule != null)
+				return false;
+		} else if (!idRule.equals(other.idRule))
+			return false;
+		if (priority == null) {
+			if (other.priority != null)
+				return false;
+		} else if (!priority.equals(other.priority))
+			return false;
 		if (severity == null) {
 			if (other.severity != null)
 				return false;
 		} else if (!severity.equals(other.severity))
+			return false;
+		if (tipo == null) {
+			if (other.tipo != null)
+				return false;
+		} else if (!tipo.equals(other.tipo))
 			return false;
 		if (tms == null) {
 			if (other.tms != null)
@@ -183,6 +226,5 @@ public class RULIssue implements Serializable {
 		return true;
 	}
 
-	
 	
 }

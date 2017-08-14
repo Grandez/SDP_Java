@@ -17,9 +17,11 @@ public class MODIssueService extends AbstractService<MODIssue> {
 	
 	public List<MODIssue> getIssues(Long idVersion) {
 		List<MODIssue> datos = lista(MODIssue.issuesByVersion, idVersion);
+/*		
 		for (MODIssue issue : datos) {
 			issue.setDesc(descService.getIssueDecription(issue.getIdIssue()));
 		}
+*/		
 		return datos;
 	}
 	

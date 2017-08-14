@@ -21,26 +21,38 @@
   <dependencies>
 
 
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>SDPBase</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--        <scope>provided</scope> -->
+<!--     </dependency> -->
+
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPBase</artifactId>
+       <artifactId>MODTools</artifactId>
        <version>${sdp.version}</version>
-       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODModule</artifactId>
+       <version>${sdp.version}</version>
     </dependency>
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODDBMySql</artifactId>
        <version>${sdp.version}</version>
-       <scope>provided</scope>
+<!--        <scope>provided</scope> -->
     </dependency>
 
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBServices</artifactId>
-       <version>${sdp.version}</version>
-       <scope>provided</scope>
-    </dependency>
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>MODDBServices</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--        <scope>provided</scope> -->
+<!--     </dependency> -->
     
   </dependencies>
 
@@ -67,7 +79,7 @@
                               <artifactId>${project.artifactId}</artifactId>
                               <version>${project.version}</version>
                               <type>${project.packaging}</type>
-                              <destFileName>MODRules.jar</destFileName>
+                              <destFileName>SDPRules.jar</destFileName>
                            </artifactItem>
                        </artifactItems>
                

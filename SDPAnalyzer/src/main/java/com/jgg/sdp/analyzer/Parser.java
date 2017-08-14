@@ -29,6 +29,7 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.unit.*;
 
 import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.rules.RulesChecker;
 
 public class Parser {
 
@@ -61,6 +62,9 @@ public class Parser {
 	   
 	   // Chequea si hay MQSeries
 	   checkMQAndCalls(module);
+	   
+	   RulesChecker rules = RulesChecker.getInstance();
+	   module.addIssues(rules.getIssues());
 	   
 	   //Procesa el grafo
 	   //module.makeGraph();

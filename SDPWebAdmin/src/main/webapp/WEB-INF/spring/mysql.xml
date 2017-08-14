@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd"> 
+
+    <!-- holding properties for database connectivity -->
+<!--     <context:property-placeholder location="classpath:jdbc.properties"/> -->
+
+    <!-- enabling annotation driven configuration /-->
+    <context:annotation-config/>
+ 
+    <bean id="dataSourceMySQL" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+      <property name="url"             value="jdbc:mysql://localhost:3306/sdp" />
+      <property name="username"        value="SDP" />
+      <property name="password"        value="sdp" />
+    </bean>
+
+
+<!--     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" > -->
+<!--         <property name="dataSource"          ref="dataSourceMySQL" /> -->
+<!--         <property name="jpaVendorAdapter"    ref="jpaAdapter" /> -->
+<!--         <property name="persistenceUnitName" value="SDP"/> -->
+<!--         <property name="jpaProperties"> -->
+<!--             <props> -->
+<!--                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop> -->
+<!--                 <prop key="hibernate.show_sql">false</prop> -->
+<!--                 <prop key="hibernate.format_sql">false</prop> -->
+<!--             </props> -->
+<!--         </property> -->
+<!--     </bean> -->
+
+    <bean id="jpaAdapter"
+          class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
+          p:database="MYSQL"
+          p:showSql="true" >
+    </bean>  
+    
+<!--    <jdbc:embedded-database id="embeddedDataSource"> -->
+<!--        <jdbc:script location="classpath:schema.sql"/> -->
+<!--        <jdbc:script location="classpath:data.sql"/> --> 
+<!--     </jdbc:embedded-database> -->
+    
+
+<!--     <bean id="transactionManager"  -->
+<!--           class="org.springframework.orm.jpa.JpaTransactionManager" -->
+<!--           p:entityManagerFactory-ref="entityManagerFactory"/> -->
+
+<!--     <tx:annotation-driven  transaction-manager="transactionManager"/>  -->
+
+<!-- <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
+<!--     <property name="dataSource" ref="dataSourceMySQL"/> -->
+<!-- </bean> -->
+    <context:component-scan base-package="com.jgg.sdp"   />
+   
+</beans>

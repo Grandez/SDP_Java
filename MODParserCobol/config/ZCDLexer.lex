@@ -96,11 +96,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
        if (lastSymbol == NUMERO) return symbol(NUMERO);
        return symbol(LEVEL);
    }
-                         
-   public void checkCharacters() {
-      //JGG mirar tabs  No hace nada
-   }
-     
+                              
    public void checkSymbol() {
       // Chequea el uso de SKIP, EJECT, etc
    }                  
@@ -189,7 +185,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /******************************************************************************/
 /******************************************************************************/
 
- ^[\*]>[ \t]+SDP      { pushState(SDP);  print("Entra en SDP");               }
+ ^[\*]>[ \t]+SDP     { tmp = new StringBuilder(); pushState(SDP); }
  ^[\*]               { commentInit(yytext(), yyline);  }
  ^[\/]               { commentInit(yytext(), yyline);  }  
  ^[dD]               { commentInit(yytext(), yyline);  }
@@ -218,7 +214,7 @@ EXEC         { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
 CBL                { checkSymbol(); pushState(EATLINE);  }
 REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 {SPACES}           { /* nada */ }
-{TABS}             { checkCharacters(); }
+{TABS}             { ruleTabs(yyline, yycolumn); }
 {ID}               { checkSymbol();  pushState(EATLINE);    }
 
 
@@ -237,7 +233,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <ID_DIVISION> {
-  ^[\*]>[ \t]+SDP      { pushState(SDP);      print("entra en SDP");          }
+  ^[\*]>[ \t]+SDP     { tmp = new StringBuilder(); pushState(SDP);  }
   ^[\*]               { commentInit(yytext(), yyline); }
   ^[\/]               { commentInit(yytext(), yyline); }  
   ^[dD]               { commentInit(yytext(), yyline); }
@@ -281,7 +277,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {ID}             { return symbol(ZCDSym.ID);     }
   {NUMERO}         { return symbol(NUMERO); }
   {SPACES}         { /* nada */ }
-  {TABS}           { checkCharacters();   }
+  {TABS}           { ruleTabs(yyline, yycolumn); }
 
   \.               { return symbol(ENDP);   }
   "-"              { data = true;  }
@@ -330,7 +326,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   \.               { return symbol(ENDP); }                                   
  
   {SPACES}         { /* nada */          }
-  {TABS}           { checkCharacters();   }
+  {TABS}           { ruleTabs(yyline, yycolumn); }
   \n               { info.module.incLines(data); data = false; }
   \r               { /* do nothing */ }
 
@@ -389,7 +385,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {NUMERO}         { return symbol(NUMERO); }   
   {ID}             { return symbol(ZCDSym.ID);     }
   {SPACES}         { /* nada */ }
-  {TABS}           { checkCharacters();   }
+  {TABS}           { ruleTabs(yyline, yycolumn); }
   \.               { return symbol(ENDP);   }
   \,               { data = true; }
 
@@ -458,7 +454,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                    }
 
   {SPACES}         { /* nada */ }
-  {TABS}           { checkCharacters();            }
+  {TABS}           { ruleTabs(yyline, yycolumn); }
   {NUMERO}         { return symbol(NUMERO); }   
   {ID}             { return symbol(ID);     }
   \.               { return symbol(ENDP);          }
@@ -624,7 +620,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   {ID}             { return symbol(ID);      }
   
   {SPACES}         {  /* nada */ }
-  {TABS}           { checkCharacters();      }  
+  {TABS}           { ruleTabs(yyline, yycolumn); }
   
   "("              { return symbol(LPAR);    }
   ")"              { return symbol(RPAR);    }
@@ -645,7 +641,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   ^[dD][dD][a-zA-Z0-9 ]*  { commentInit(yytext(), yyline);    }
 
   {SPACES}      { if (beginPic == false) popState();  }
-  {TABS}        { checkCharacters();  
+  {TABS}        { ruleTabs(yyline, yycolumn);   
                   if (beginPic == false) popState(); 
                 }  
   {PICLEN}      { beginPic = false; return symbol(PIC_LEN);      }
@@ -709,7 +705,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 */
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
-  {TABS}        { checkCharacters();   }
+  {TABS}        { ruleTabs(yyline, yycolumn); }
   \n            { popState(); return symbol(ENDP); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -721,7 +717,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 <EATLINE> {
 
   {SPACES}      { /* Nada */  }
-  {TABS}        { checkCharacters();   }
+  {TABS}        { ruleTabs(yyline, yycolumn); }
   \n            { popState(); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -764,7 +760,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
                     return symbol(SQLDATA);
                   } 
    {SPACES}       { /* DO NOTHING */ }
-   {TABS}         { checkCharacters(); }
+   {TABS}         { ruleTabs(yyline, yycolumn); }
    \n             { info.module.incLines(data); data = false; }
    \r             { /* do nothing */ }
     
@@ -803,9 +799,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <SDP> {
-   IVP           { info.createCase();         print("Entra en IVP"); pushState(SDPIVP);  }
-   DESCRIPTION   { tmp = new StringBuilder(); pushState(SDPDESC); }
-   DESC          { tmp = new StringBuilder(); pushState(SDPDESC); }
+   IVP           { pushState(SDPIVP);  }
+   DESCRIPTION   { pushState(SDPDESC); }
+   DESC          { pushState(SDPDESC); }
    
   {SPACES}       { /* Nada */          }
      
@@ -815,26 +811,15 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <SDPIVP> {
-   {WORD}        { info.caseAddWord(yytext());  }
-   " -"          { pushState(SDPIVPDESC);   }
-  {SPACES}       { /* Nada */          }
+   {WORD}        { tmp.append(yytext());  }
+   " - "         { tmp.append(yytext());  }
+  {SPACES}       { tmp.append(yytext());  }
      
-    .            { /* Nada */ }
+    .            { tmp.append(yytext());  }
     \r           { /* Nada */ }
     \n           { info.module.incLines(data);  
-                   info.caseEnd();
+                   info.prepareCase(tmp.toString());
                    popState(2); 
-                 }
-}
-
-<SDPIVPDESC> {
-   {WORD}        { info.caseAddDescription(yytext());  }
-   {SPACES}      { info.caseAddDescription(yytext());  }
-    .            { info.caseAddDescription(yytext());  }
-    \r           { /* Nada */ }
-    \n           { info.module.incLines(data);  
-                   info.caseEnd();
-                   popState(3); 
                  }
 }
 

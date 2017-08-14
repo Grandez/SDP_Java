@@ -130,6 +130,9 @@ public class CFG {
 	public static final String EXCEL_TEMPLATE    = "excel.template";
 	
 	public static final String IVP_INPUT         = "ivp.input";
+
+	public static final String TOOLS_CFG_LOAD    = "tools.cfg.load";
+	public static final String TOOLS_CFG_UNLOAD  = "tools.cfg.unload";
 	
     ////////////////////////////////////////////////////////////////////////
 	// Listas de valores

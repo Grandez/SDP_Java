@@ -20,10 +20,10 @@ import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
 
-import com.jgg.sdp.domain.rules.RULIssue;
+import com.jgg.sdp.domain.rules.RULRule;
 
 
-import com.jgg.sdp.domain.services.rules.RULIssuesService;
+import com.jgg.sdp.domain.services.rules.RULRulesService;
 import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.traps.TRPSesionService;
 import com.jgg.sdp.domain.traps.TRPSesion;
@@ -62,7 +62,7 @@ public class ModuloController {
     TRPSesionService      trpService;
 
     @Autowired
-    RULIssuesService      issueService;
+    RULRulesService      issueService;
     
     @Autowired
     SESSesionService sesionService;

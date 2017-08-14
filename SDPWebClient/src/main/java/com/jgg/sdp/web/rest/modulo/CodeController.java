@@ -29,7 +29,7 @@ public class CodeController {
 	@Autowired
 	MODVersionService   verService;
 	@Autowired
-	SDPFuenteService    fteService;
+	SDPFileService    fteService;
 
     @Autowired
     MODSeccionesService   seccionesNamed;
@@ -57,9 +57,10 @@ public class CodeController {
     }
     
     private List<Fuente> prepareSource(MODVersion ver) {
-       SDPSource source = fteService.findById(ver.getIdFile());
+       SDPFile source = fteService.findById(ver.getIdFile());
        if (source == null) return new ArrayList<Fuente>();
-       
+       return new ArrayList<Fuente>();
+/* JGG       
        ArrayList<Fuente> fuente = mountSourceCode(source, ver);
        setLineType(fuente);
        applySecciones(fuente, ver.getIdVersion());
@@ -67,6 +68,7 @@ public class CodeController {
 //       applyErrores(fuente, idVersion);
 //       applyIssues(fuente, idVersion);
        return fuente;
+       */
     }
     
     private ArrayList<Fuente> mountSourceCode(SDPSource source, MODVersion ver) {

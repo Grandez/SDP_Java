@@ -18,10 +18,34 @@
   <name>Serendipity Installation and verification</name>
 
   <dependencies>
-  
+
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPBase</artifactId>
+       <artifactId>MODCore</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+  
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>SDPBase</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--     </dependency> -->
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODParserBase</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODDBMySql</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODDBServices</artifactId>
        <version>${sdp.version}</version>
     </dependency>
 
@@ -31,9 +55,11 @@
        <version>${sdp.version}</version>
     </dependency>
 
+
+
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODParserBase</artifactId>
+       <artifactId>SDPRules</artifactId>
        <version>${sdp.version}</version>
     </dependency>
 

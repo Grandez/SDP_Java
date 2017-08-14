@@ -107,8 +107,9 @@ public class Module {
 	public ArrayList<Block>       getBloques()    {	return tbBloques.getBloques();       }
 	public ArrayList<Paragraph>   getParagraphs() { return tbParagraphs.getParagraphs(); }
 	public ArrayList<BadStmt>     getBadStmts()   { return tbBad.getBadStmts();          }
+	public TBIssues               getTbIssues()   { return tbIssues; }
 	public ArrayList<Issue>       getIssues()     { return tbIssues.getIssues();         }
-
+	public void                   addIssues(List<Issue> issues)     { tbIssues.setIssues(issues);         }
 	
 	public TBParagraphs getTBParagraphs()     { return tbParagraphs;   }
     public TBVars       getTBVars()           { return tbVars;         }

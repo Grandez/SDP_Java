@@ -27,11 +27,8 @@ public class RULItem implements Serializable {
 	@Column(name="activo")
 	private Integer activo;
 	
-	@Column(name="keyNum")
-	private Integer keyNum;
-
-	@Column(name="keyTxt")
-	private String keyTxt;
+	@Column(name="clave")
+	private String clave;
 
 	@Column(name="uid")
 	private String uid;
@@ -63,20 +60,12 @@ public class RULItem implements Serializable {
 		this.activo = activo;
 	}
 
-	public Integer getKeyNum() {
-		return keyNum;
+	public String getClave() {
+		return clave;
 	}
 
-	public void setKeyNum(Integer keyNum) {
-		this.keyNum = keyNum;
-	}
-
-	public String getKeyTxt() {
-		return keyTxt;
-	}
-
-	public void setKeyTxt(String keyTxt) {
-		this.keyTxt = keyTxt;
+	public void setClave(String clave) {
+		this.clave = clave;
 	}
 
 	public String getUid() {
@@ -102,8 +91,7 @@ public class RULItem implements Serializable {
 		result = prime * result + ((activo == null) ? 0 : activo.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
-		result = prime * result + ((keyNum == null) ? 0 : keyNum.hashCode());
-		result = prime * result + ((keyTxt == null) ? 0 : keyTxt.hashCode());
+		result = prime * result + ((clave == null) ? 0 : clave.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
 		return result;
@@ -133,15 +121,10 @@ public class RULItem implements Serializable {
 				return false;
 		} else if (!idItem.equals(other.idItem))
 			return false;
-		if (keyNum == null) {
-			if (other.keyNum != null)
+		if (clave == null) {
+			if (other.clave != null)
 				return false;
-		} else if (!keyNum.equals(other.keyNum))
-			return false;
-		if (keyTxt == null) {
-			if (other.keyTxt != null)
-				return false;
-		} else if (!keyTxt.equals(other.keyTxt))
+		} else if (!clave.equals(other.clave))
 			return false;
 		if (tms == null) {
 			if (other.tms != null)

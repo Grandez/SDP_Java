@@ -32,11 +32,16 @@ public class AppTreeController {
     @Autowired
     private MODSummaryService sumNamed;
 
-    @RequestMapping("/apptree")
-    public List<ApplTree> mountTree() {
+    @RequestMapping("/appTree")
+    public List<ApplTree> mountAppTree() {
         return mountTree(0L);
     }
 
+    @RequestMapping("/areaTree")
+    public List<ApplTree> mountAreaTree() {
+        return mountTree(0L);
+    }
+    
     @RequestMapping("/apptree/{id}")
     public List<ApplTree> mountTree(@PathVariable Long id) {
         ArrayList<ApplTree> appTree = new ArrayList<ApplTree>();

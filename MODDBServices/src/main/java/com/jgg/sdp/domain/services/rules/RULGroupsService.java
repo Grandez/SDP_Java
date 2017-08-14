@@ -10,8 +10,8 @@ public class RULGroupsService extends AbstractService<RULGroup> {
 	public List<RULGroup> listAll() {
 		return lista(RULGroup.listAll);
 	}
-	public List<RULGroup> listActives() {
-		return lista(RULGroup.listActive);
+	public List<RULGroup> listActiveGroups() {
+		return listQuery(RULGroup.listActive);
 	}
 	
 	public void clean() {

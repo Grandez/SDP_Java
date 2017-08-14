@@ -19,8 +19,8 @@ public class RULGroup implements Serializable {
 	@Column(name="idParent")
 	private Integer idParent;
 
-	@Column(name="active")
-	private Integer active;
+	@Column(name="activo")
+	private Integer activo;
 	
 	@Column(name="idDesc")
 	private Integer idDesc;
@@ -44,12 +44,12 @@ public class RULGroup implements Serializable {
         this.idParent = idParent;
     }
 
-    public Integer getActive() {
-        return active;
+    public Integer getActivo() {
+        return activo;
     }
 
-    public void setActive(Integer active) {
-        this.active = active;
+    public void setActivo(Integer activo) {
+        this.activo = activo;
     }
 
     public Integer getIdDesc() {
@@ -72,7 +72,7 @@ public class RULGroup implements Serializable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((active == null) ? 0 : active.hashCode());
+        result = prime * result + ((activo == null) ? 0 : activo.hashCode());
         result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
         result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
         result = prime * result + ((idParent == null) ? 0 : idParent.hashCode());
@@ -89,10 +89,10 @@ public class RULGroup implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         RULGroup other = (RULGroup) obj;
-        if (active == null) {
-            if (other.active != null)
+        if (activo == null) {
+            if (other.activo != null)
                 return false;
-        } else if (!active.equals(other.active))
+        } else if (!activo.equals(other.activo))
             return false;
         if (idDesc == null) {
             if (other.idDesc != null)

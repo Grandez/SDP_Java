@@ -10,7 +10,7 @@ public class TBIssues {
     private ArrayList<Issue> issues = new ArrayList<Issue>();
     
     public void addIssue(Issue issue) {
-    	String key = String.format("%d%d%d", issue.getIdIssue(), issue.getBegLine(), issue.getEndLine());
+    	String key = String.format("%d%d%d", issue.getIdRule(), issue.getBegLine(), issue.getEndLine());
         if (keys.contains(key)) return;
         keys.add(key);
         issues.add(issue);
@@ -19,5 +19,12 @@ public class TBIssues {
     public ArrayList<Issue> getIssues() {
         return issues;
     }
+    
+    public void setIssues(List<Issue> issues) {
+    	this.issues.addAll(issues);
+    }
 
+    public int getCount() {
+    	return issues.size();
+    }
 }

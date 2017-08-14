@@ -15,7 +15,7 @@ public class RULItemsService extends AbstractService<RULItem> {
 		return lista(RULItem.listByGroup, group);
 	}
 	
-	public List<RULItem> listActiveByGroup(Integer group) {
-		return lista(RULItem.listActiveByGroup, group);
+	public List<RULItem> listActiveItemsByGroup(Integer group) {
+		return listQuery(RULItem.listActiveByGroup, group);
 	}
 }

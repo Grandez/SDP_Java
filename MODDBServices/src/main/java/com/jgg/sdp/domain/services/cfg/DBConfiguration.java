@@ -1,12 +1,12 @@
 /*
  * 
  */
-package com.jgg.sdp.web.core;
+package com.jgg.sdp.domain.services.cfg;
 
 import java.util.*;
 
 import com.jgg.sdp.domain.cfg.*;
-import com.jgg.sdp.domain.services.cfg.CFGConfiguracionService;
+import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
 
 
 
@@ -14,8 +14,6 @@ import com.jgg.sdp.core.config.Configuration;
 
 public class DBConfiguration extends Configuration {
 
-    private static Configuration cfg = null;
-    
     private DBConfiguration() {
         super();
         loadConfFromDatabase();
@@ -27,15 +25,10 @@ public class DBConfiguration extends Configuration {
     }
     
     private void loadConfFromDatabase() {
-        CFGConfiguracionService confService = new CFGConfiguracionService();
+        CFGConfigurationService confService = new CFGConfigurationService();
         for (CFGConfiguracion cfg : confService.getAll()) {
             conf.put(cfg.getClave(),  cfg.getValor());
         }
-    }
-
-    public static List<CFGConfiguracion> getRawConfiguration() {
-        CFGConfiguracionService confService = new CFGConfiguracionService();
-        return  confService.getAll();
     }
 
 }

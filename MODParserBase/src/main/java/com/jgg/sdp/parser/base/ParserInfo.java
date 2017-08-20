@@ -256,7 +256,7 @@ public class ParserInfo {
 	   String[] toks = data.split(" - ");
 	   c = new IVPCase();
 	   if (toks.length > 1) c.setDescription(toks[1].trim());
-	   toks = toks[0].split("[ ]+");
+	   toks = toks[0].trim().split("[ ]+");
 	   c.setGroup(toks[0]);;
 	   c.setComponent(toks[1]);
 	   c.setOperator(toks[2]);

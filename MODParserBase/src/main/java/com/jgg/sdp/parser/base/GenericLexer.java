@@ -293,6 +293,18 @@ public abstract class GenericLexer {
    protected void ruleTabs(int line, int column) {
 	   rules.checkTab(line + 1, column + COLOFFSET);
    }
+
+   protected void ruleTabsInText(String txt, int line, int column) {
+	   int pos = txt.indexOf('\t');
+	   if (pos != -1) {
+	       rules.checkTab(line + 1, column + pos + COLOFFSET);
+	   }    
+   }
+
+   protected void ruleNoPrintable(int line, int column) {
+	   rules.checkNoPrintable(line, column);
+   }
+
 }
 
 

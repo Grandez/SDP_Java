@@ -41,13 +41,6 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 
    Symbol begExec = null;
    
-   public void resetLiteral(String txt) {
-      data = true;
-      litLine = yyline;
-      litColumn = yycolumn;
-      cadena = new StringBuilder(txt);
-   }
-
    public Symbol literal(boolean clean) { 
        String txt = cadena.toString();
        if (clean) cadena.setLength(0);
@@ -59,9 +52,13 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       print("Devuelve LITERAL - " + txt);
       Symbol s = new Symbol(LITERAL, litLine, litColumn, txt);
       Symbol x = symbolFactory.newSymbol(txt, LITERAL, s);
+
+      // Espacio es el primer caracter no imprimible en ASCII
+      // Character.codePointAt(new char[] {'a'},0)
+      
       for (int idx = 0; idx < txt.length(); idx++) {
           if (txt.charAt(idx) < ' ') {
-              checkLiteral(x);
+              ruleNoPrintable(litLine, litColumn);
               break;
           } 
       }
@@ -74,10 +71,6 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       return symbol(code);
    }
                   
-   public void checkCharacters() {
-      //JGG mirar tabs  No hace nada
-   }
-     
    public void checkSymbol() {
       // Chequea el uso de SKIP, EJECT, etc
    }                  
@@ -735,7 +728,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /*******************************************************/
 
   {SPACES}      { /* nada */ }
-  {TABS}        { checkCharacters();   }
+  {TABS}        { ruleTabs(yyline, yycolumn); }
 
   // Capturar  al inicio de linea
   ^[ ]+COPY{BLANKS}              { initEmbedded(); 
@@ -780,7 +773,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 
 <ST_FUNCTION> {
   {SPACES}           { /* EAT */ }
-  {TABS}             { checkCharacters();   }
+  {TABS}             { ruleTabs(yyline, yycolumn); }
   ^[\*\/]            { commentInit(yytext(), yyline);   }
   {ID}               { popState(); return symbol(INTRINSIC);  }
   \r                 { /* EAT */ }
@@ -826,7 +819,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 */
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
-  {TABS}        { checkCharacters();   }
+  {TABS}        { ruleTabs(yyline, yycolumn); }
   \n            { popState(); return symbol(ENDP); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -838,7 +831,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 <EATLINE> {
 
   {SPACES}      { /* Nada */  }
-  {TABS}        { checkCharacters();   }
+  {TABS}        { ruleTabs(yyline, yycolumn); }
   \n            { popState(); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -885,7 +878,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
                     return symbol(SQLCODE);
                   } 
    {SPACES}       { /* DO NOTHING */ }
-   {TABS}         { checkCharacters(); }
+   {TABS}         { ruleTabs(yyline, yycolumn); }
    \n             { info.module.incLines(data); data = false; }
    \r             { /* do nothing */ }
     

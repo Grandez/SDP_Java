@@ -2,18 +2,18 @@ package com.jgg.sdp.module.ivp;
 
 public class IVPCase {
 
-	private String group = "default";
+	private int    group = 0;
 	private String object;
 	private String method;
 	private String value;
 	private String operator;
 	private String description = "No description";
 	
-	public String getGroup() {
+	public int getGroup() {
 		return group;
 	}
 
-	public void setGroup(String group) {
+	public void setGroup(int group) {
 		this.group = group;
 	}
 
@@ -62,7 +62,7 @@ public class IVPCase {
 	}
 	
 	public void setComponent(String component) {
-		String[] toks = component.split(".");
+		String[] toks = component.split("\\.");
 		object = toks[0];
 		method = toks[1];
 	}

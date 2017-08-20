@@ -129,8 +129,6 @@ public class CFG {
 	public static final String EXCEL_EMPTY       = "excel.empty";
 	public static final String EXCEL_TEMPLATE    = "excel.template";
 	
-	public static final String IVP_INPUT         = "ivp.input";
-
 	public static final String TOOLS_CFG_LOAD    = "tools.cfg.load";
 	public static final String TOOLS_CFG_UNLOAD  = "tools.cfg.unload";
 	
@@ -143,6 +141,14 @@ public class CFG {
 	public static final String LANG_MF_COBOL   = "MFCobol";	
 
 	public static final int DEF_MAX_VERSIONS = 1;
+
+    ////////////////////////////////////////////////////////////////////////
+	// Listas de valores
+	////////////////////////////////////////////////////////////////////////
+	
+	public static final String IVP_CONFIG         = "ivp.config.file";
+	public static final String IVP_INPUT          = "ivp.input.dir";
+	public static final String IVP_LOADER         = "ivp.loader";
 	
 	private CFG() {
 		

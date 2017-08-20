@@ -11,7 +11,7 @@ import com.jgg.sdp.web.core.*;
 @RestController
 public class ConfigController {
 
-	
+/*	
     @RequestMapping(value="admin/configuration", method=RequestMethod.GET)
     public List<CFGConfiguracion> getConfiguration1() {
         return DBConfiguration.getRawConfiguration();
@@ -26,5 +26,5 @@ public class ConfigController {
     public List<CFGConfiguracion> getConfiguration3() {
         return DBConfiguration.getRawConfiguration();
     }
-    
+  */  
 }

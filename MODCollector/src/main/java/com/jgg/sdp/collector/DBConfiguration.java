@@ -5,7 +5,7 @@ package com.jgg.sdp.collector;
 
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.domain.cfg.CFGConfiguracion;
-import com.jgg.sdp.domain.services.cfg.CFGConfiguracionService;
+import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
 
 public class DBConfiguration extends Configuration {
 
@@ -22,7 +22,7 @@ public class DBConfiguration extends Configuration {
     }
     
     private void loadConfFromDatabase() {
-        CFGConfiguracionService confService = new CFGConfiguracionService();
+        CFGConfigurationService confService = new CFGConfigurationService();
         for (CFGConfiguracion cfg : confService.getAll()) {
             conf.put(cfg.getClave(),  cfg.getValor());
         }

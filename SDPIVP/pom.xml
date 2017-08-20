@@ -24,6 +24,20 @@
        <artifactId>MODCore</artifactId>
        <version>${sdp.version}</version>
     </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODDBServices</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+<!--     <dependency> -->
+<!--        <groupId>com.jgg.sdp</groupId> -->
+<!--        <artifactId>MODDBMySql</artifactId> -->
+<!--        <version>${sdp.version}</version> -->
+<!--     </dependency> -->
+
+
   
 <!--     <dependency> -->
 <!--        <groupId>com.jgg.sdp</groupId> -->
@@ -37,17 +51,6 @@
        <version>${sdp.version}</version>
     </dependency>
 
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBMySql</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBServices</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>

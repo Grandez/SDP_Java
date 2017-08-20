@@ -6,7 +6,7 @@ package com.jgg.sdp.web.core;
 import java.util.*;
 
 import com.jgg.sdp.domain.cfg.*;
-import com.jgg.sdp.domain.services.cfg.CFGConfiguracionService;
+import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
 
 
 
@@ -27,14 +27,14 @@ public class DBConfiguration extends Configuration {
     }
     
     private void loadConfFromDatabase() {
-        CFGConfiguracionService confService = new CFGConfiguracionService();
+        CFGConfigurationService confService = new CFGConfigurationService();
         for (CFGConfiguracion cfg : confService.getAll()) {
             conf.put(cfg.getClave(),  cfg.getValor());
         }
     }
 
     public static List<CFGConfiguracion> getRawConfiguration() {
-        CFGConfiguracionService confService = new CFGConfiguracionService();
+        CFGConfigurationService confService = new CFGConfigurationService();
         return  confService.getAll();
     }
 

@@ -70,9 +70,13 @@ public class RulesTree {
 
 	private RuleRule mountRule(RULRule rul) {
 		RuleRule rule = new RuleRule();
+        
 		rule.setComparator(rul.getComparador());
+		rule.setIdGroup(rul.getIdGroup());
+		rule.setIdItem(rul.getIdItem());
 		rule.setIdRule(rul.getIdRule());
-		
+		rule.setPriority(rul.getPriority());
+		rule.setSeverity(rul.getSeverity());
 		return rule;
 	}
 }

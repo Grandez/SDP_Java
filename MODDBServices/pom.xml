@@ -23,14 +23,14 @@
        <groupId>com.jgg.sdp</groupId>
        <artifactId>SDPBase</artifactId>
        <version>${sdp.version}</version>
-       <scope>provided</scope>
+<!--        <scope>provided</scope> -->
     </dependency>
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODDBMySql</artifactId>
        <version>${sdp.version}</version>
-       <scope>provided</scope>
+<!--        <scope>provided</scope> -->
     </dependency>
 
 <!--     <dependency> -->

@@ -36,7 +36,8 @@ public class RulesController {
     public List<ApplTree> getRulesGroup(@RequestHeader HttpHeaders headers) {
     	String lang = LANG.getLanguage(headers);
     	
-        return mountTree(0L);
+        //return mountTree(0L);
+        return null;
     }
 
     public List<String> getMessages(@RequestHeader HttpHeaders headers) {

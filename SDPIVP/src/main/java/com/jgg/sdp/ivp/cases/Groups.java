@@ -1,12 +1,13 @@
 package com.jgg.sdp.ivp.cases;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 import com.jgg.sdp.module.ivp.IVPCase;
 
 public class Groups {
 
-	private HashMap<String, ArrayList<IVPCase>> groups = new HashMap<String, ArrayList<IVPCase>>();
+	private HashMap<Integer, ArrayList<IVPCase>> groups = new HashMap<Integer, ArrayList<IVPCase>>();
 	
 	
 	public void loadCases(List<IVPCase> cases) {
@@ -20,10 +21,18 @@ public class Groups {
 		}
 	}
 	
-	public List<IVPCase> getCases(String group) {
+	public List<IVPCase> getCases(int group) {
 		ArrayList<IVPCase> l = groups.get(group);
 		if (l == null) return new ArrayList<IVPCase>();
 		return l;
+	}
+	
+	public List<Integer> getGroups() {
+		ArrayList<Integer> grupos = new ArrayList<Integer>();
+		for (Map.Entry<Integer, ArrayList<IVPCase>> entry : groups.entrySet()) {
+		    grupos.add(entry.getKey());
+		}
+		return grupos;
 	}
 	
 }

@@ -16,7 +16,7 @@ public class IVPParms {
      */
 
     public static final String parms[][] = { 
-            {" ", "i" , "input"  , "IVP_INPUT"        , CFG.IVP_INPUT    , "1" , "250" , Args.FILE}                    
+            {" ", "i" , "input"  , "IVP_CONFIG"        , CFG.IVP_CONFIG    , "1" , "250" , Args.FILE}                    
     };
 
 }

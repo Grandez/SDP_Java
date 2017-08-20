@@ -204,7 +204,7 @@ public class CodeController {
    private void applyIssues(ArrayList<Fuente> fuente, Long idVersion) {
 	   for (MODIssue i : issueService.getIssues(idVersion)) {
 		   for (int idx = i.getBegLine(); idx <= i.getEndLine(); idx++) {
-			   fuente.get(idx).addIssue(i.getIdIssue());
+			   fuente.get(idx).addIssue(i.getIdRule());
 		   }
 	   }
    }

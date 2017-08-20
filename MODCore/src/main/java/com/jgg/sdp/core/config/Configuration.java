@@ -12,27 +12,38 @@ import com.jgg.sdp.tools.Propiedades;
 
 public class Configuration {
 
+	protected static boolean localMode = false;
+	
     protected HashMap<String, String> conf   = new HashMap<String, String>();
     protected HashSet<String>         ignore = new HashSet<String>();
 
-	private static Configuration cfg = null;
+	protected static Configuration cfg = null;
 	
     private ArrayList<Integer> titles = new ArrayList<Integer>();
     private Args     parms = null;
     private Messages msg   = Messages.getInstance();
     
 	protected Configuration() {
-//		titles.add(200);
-		loadConfigResource(CFG.CFG_DEFAULT);
-		setDefaultConfigDir();
-        loadFilesToIgnore();
+		if (localMode) {
+		    loadConfigResource(CFG.CFG_DEFAULT);
+            setDefaultConfigDir();
+            loadFilesToIgnore();
+		}
+	}
+	
+	public static Configuration getInstance(boolean local) {
+		localMode = local;
+		if (cfg == null) cfg = new Configuration();
+		return cfg;		
 	}
 	
 	public static Configuration getInstance() {
-		if (cfg == null) cfg = new Configuration();
-		return cfg;
+		return getInstance(false);
 	}
 
+	public void setAlternateConfiguration(HashMap<String, String> props) {
+		conf=props;
+	}
     /**
      * Analiza la linea de comandos, configurando las diferentes opciones
      * pasadas en el Si como parametro se ha pasado un fichero alternativo de
@@ -323,5 +334,6 @@ public class Configuration {
 	    }
 		System.exit(RC.HELP);
 	}
+
 	
 }

@@ -12,46 +12,46 @@ package com.jgg.sdp.ivp;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.Map.Entry;
 
 import com.jgg.sdp.Analyzer;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.FileException;
-import com.jgg.sdp.core.exceptions.NotSupportedException;
-import com.jgg.sdp.core.exceptions.SDPException;
-import com.jgg.sdp.core.msg.*;
+import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.core.tools.FileFinder;
 import com.jgg.sdp.ivp.cases.Case;
 import com.jgg.sdp.ivp.cases.Groups;
+import com.jgg.sdp.ivp.cases.BlockCases;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.jgg.sdp.parser.base.ParseException;
 import com.jgg.sdp.print.Printer;
 
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 
 public class IVP {
 
 	private final int SDPANALYZER   =  1;
 	private final int ISSUES        = 50;
-	
-    private Messages      msg = Messages.getInstance("IVP");    
-    private Configuration cfg = Configuration.getInstance();
+	   
+    private Configuration cfg = DBConfiguration.getInstance();
 
     private XMLIVP xml = new XMLIVP();
     
+    private IVPLaunchers launcher = new IVPLaunchers();
 	private Printer printer = new Printer();
-	
+
+	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
 
 	private int count = 0;
 	
-    private int countErrors = 0;
-    private int countModulos = 0;
-
-    private Module module = null;
-
     private String msgErr;
+
+    private Case   currCase = null;
+    private int    currBloque = 0;
+    private String currArchivo = null;
     
 	public static void main(String[] args) throws Exception {
 	   int rc = RC.OK;
@@ -61,42 +61,65 @@ public class IVP {
 	}
 
 	private int start(String[] args) {
-		SDPUnit unit = null;
+		
 		int     maxRC   = RC.OK;
-		int     procesar = MSG.OK;
-			
-		String[] def = {"*"};
 			
 		cfg.setTitles(MSG.TITLE_SDP_IVP);
-			
 		args = cfg.processCommandLine(IVPParms.parms, args);
+
 		
 		banner();
 		
-		xml.loadFile("P:/SDP/Config/ivp.xml");
+		xml.loadFile(cfg.getString(CFG.IVP_CONFIG));
 		process();
 		return maxRC;
 	}
 	
 	
+	@SuppressWarnings("rawtypes")
 	private void process() {
-		for (Case c : xml.getCases()) {
-			System.out.println(c.getName());
-			processModules(c.getModules());
+		processBloque(xml.getCases());
+		
+		ArrayList<Integer> blocks = new ArrayList<Integer>();
+		
+		for (Map.Entry<Integer, BlockCases> entry : bloques.entrySet()) {
+		    blocks.add(entry.getKey());
 		}
+		
+		Collections.sort(blocks);
+		
+		for (int bloque : blocks) {
+			currBloque = bloque;
+//			processBloque(bloques.get(bloque).getCases());
+		}
+	}
+	
+	private void processBloque(List<Case> cases) {
+		if (launcher.setEnvironment(0) != 0) {
+			printer.lineBeg("ERROR Cargando entorno para el bloque " + currBloque);
+			printer.nl();
+			System.exit(RC.FATAL);
+		}
+
+		bannerBloque(currBloque);
+		
+		for (Case c : cases) {
+			System.out.println(c.getDescription());
+			processModules(c.getModules());
+		}		
 	}
 	
 	private void processModules(List<String> patterns) {
 		Module module = null;
 		
-		int rc = 0;
-		for (String pattern : patterns) {
-	        for (Archivo archivo : FileFinder.find("P:/SDP/Cobol", pattern)) { // (cfg.getInputDir(), pattern)) {
-	        	printer.lineBeg(String.format("%5d - %8s - ", ++count, archivo.getBaseName()));
-	        	module = analyze(archivo);
-	            if (!evaluate(module)) printer.lineEnd("OK");
-	        } 	
-		}
+	   for (String pattern : patterns) {
+           for (Archivo archivo : FileFinder.find(cfg.getString(CFG.IVP_INPUT), pattern)) { 
+        	   currArchivo = archivo.getBaseName();
+        	   printer.lineBeg(String.format("%5d - %8s - ", ++count, archivo.getBaseName()));
+        	   module = analyze(archivo);
+               if (!evaluate(module)) printer.lineEnd("OK");
+           } 	
+	   }
 	}
 	
 	private Module analyze(Archivo archivo) {
@@ -134,7 +157,7 @@ public class IVP {
 		
 		Groups cases = new Groups();
 		cases.loadCases(module.getIVPCases());
-		for (IVPCase c : cases.getCases("default")) {
+		for (IVPCase c : cases.getCases(currBloque)) {
 			rc = evaluateCase(module, c); 
 			if (rc == 1) {
 				if (ko == 0) printer.lineEnd("KO");
@@ -142,6 +165,8 @@ public class IVP {
 			}
 			ko += rc;
 		}
+		
+		if (currBloque == 0) loadOtherBlocks(cases);
 		return false;
 	}
 	
@@ -167,7 +192,7 @@ public class IVP {
 		
 		Object res = getResult(module, c.getMethod());
 		System.out.println(res.toString());
-		if (res instanceof Integer) return matchInteger((Integer) res, c.getValueInteger());
+		if (res instanceof Integer) return matchInteger((Integer) res, c);
 		return 0;
 		
 	}
@@ -181,15 +206,15 @@ public class IVP {
 		
 		Object res = getResult(o, c.getMethod());
 		System.out.println(res.toString());
-		if (res instanceof Integer) return matchInteger((Integer) res, c.getValueInteger());
+		if (res instanceof Integer) return matchInteger((Integer) res, c);
 		return 0;
 		
 	}
 	
 	private Object getResult(Object o, String method) {
-		String mName = "get" + method;
+		
 		try {
-			Method m = o.getClass().getMethod(mName);
+			Method m = o.getClass().getMethod(method);
 			m.setAccessible(true);
 			return m.invoke(o);
 		} catch (NoSuchMethodException e) {
@@ -211,7 +236,9 @@ public class IVP {
 		return null;
 	}
 	
-	private int matchInteger(Integer res, int tgt) {
+	private int matchInteger(Integer res, IVPCase c) {
+		int tgt = c.getValueInteger();
+		
 		if (tgt != res) msgErr = String.format("Expected: %d. Found: %d",  tgt, res);
 		return (tgt == res) ? 0 : 1;
 	}
@@ -262,11 +289,33 @@ public class IVP {
 		printer.lineEnd("OK");
 	}
 	*/
+	
+	private void loadOtherBlocks(Groups cases) {
+		List<Integer> grupos = cases.getGroups();
+		for (Integer grupo : grupos) {
+			if (bloques.containsKey(grupo) == false) {
+				bloques.put(grupo, new BlockCases());
+			}
+			BlockCases p = bloques.get(grupo);
+			p.addCases(cases.getCases(grupo));
+		}
+//		bloques.
+		
+	}
 	private void banner() {
 		
 		printer.boxBeg();
 		printer.boxLine("SERENDIPITY", true);
 		printer.boxLine("PROCESO DE VERIFICACION", true);
+		printer.boxEnd();
+		printer.nl();
+	}
+
+	private void bannerBloque(int bloque) {
+		
+		printer.boxBeg();
+		printer.boxLine("PROCESO DE VERIFICACION", true);
+		printer.boxLine("BLOQUE DE PRUEBAS " +  bloque, true);		
 		printer.boxEnd();
 		printer.nl();
 	}

@@ -25,8 +25,6 @@ public class XMLIVP {
     		//read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
     		doc.getDocumentElement().normalize();
 
-    		System.out.println("Root element: " + doc.getDocumentElement().getNodeName());
-
 	    } catch (Exception e) {
           e.printStackTrace();
         }
@@ -51,7 +49,7 @@ public class XMLIVP {
 			c.setDescription(d.getFirstChild().getNodeValue());
 			
 			pgms = node.getElementsByTagName("pattern");
-			System.out.println("Hay " + pgms.getLength());
+			
 			for (int p = 0; p < pgms.getLength(); p++) {
 				Element e = (Element) pgms.item(p);				
 				c.addModules(e.getFirstChild().getNodeValue());

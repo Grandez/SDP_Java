@@ -89,6 +89,17 @@ public class RulesChecker {
           processExist(item, "", "\t", line, column);
           
 	}
+	
+	public void checkNoPrintable(int line, int column) {
+        RuleGroup group = tree.getGroupById(RULES.GRP_LEXER);
+        if (group == null) return;
+        
+        RuleItem item = group.getItemByName("HEX");
+        if (item == null) return;
+        
+        processExist(item, "", " ", line, column);
+        
+	}
 
 	/**
 	 * Casos en los que solo puede haber la regla de no permitido

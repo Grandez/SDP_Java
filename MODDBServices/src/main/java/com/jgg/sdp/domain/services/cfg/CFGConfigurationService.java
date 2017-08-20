@@ -15,7 +15,7 @@ import com.jgg.sdp.domain.cfg.CFGConfiguracion;
 import com.jgg.sdp.domain.services.AbstractService;
 
 @Repository
-public class CFGConfiguracionService extends AbstractService<CFGConfiguracion> {
+public class CFGConfigurationService extends AbstractService<CFGConfiguracion> {
 
     public List<CFGConfiguracion> getAll() {
         return listQuery(CFGConfiguracion.listAll);
@@ -24,4 +24,5 @@ public class CFGConfiguracionService extends AbstractService<CFGConfiguracion> {
     public CFGConfiguracion get(String key) {
         return find("get", key);
     }
+    
 }

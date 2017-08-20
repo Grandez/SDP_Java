@@ -6881,13 +6881,6 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
 
    Symbol begExec = null;
    
-   public void resetLiteral(String txt) {
-      data = true;
-      litLine = yyline;
-      litColumn = yycolumn;
-      cadena = new StringBuilder(txt);
-   }
-
    public Symbol literal(boolean clean) { 
        String txt = cadena.toString();
        if (clean) cadena.setLength(0);
@@ -6899,9 +6892,13 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
       print("Devuelve LITERAL - " + txt);
       Symbol s = new Symbol(LITERAL, litLine, litColumn, txt);
       Symbol x = symbolFactory.newSymbol(txt, LITERAL, s);
+
+      // Espacio es el primer caracter no imprimible en ASCII
+      // Character.codePointAt(new char[] {'a'},0)
+      
       for (int idx = 0; idx < txt.length(); idx++) {
           if (txt.charAt(idx) < ' ') {
-              checkLiteral(x);
+              ruleNoPrintable(litLine, litColumn);
               break;
           } 
       }
@@ -6914,10 +6911,6 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
       return symbol(code);
    }
                   
-   public void checkCharacters() {
-      //JGG mirar tabs  No hace nada
-   }
-     
    public void checkSymbol() {
       // Chequea el uso de SKIP, EJECT, etc
    }                  
@@ -7460,7 +7453,7 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
             }
           case 412: break;
           case 3: 
-            { checkCharacters();
+            { ruleTabs(yyline, yycolumn);
             }
           case 413: break;
           case 4: 

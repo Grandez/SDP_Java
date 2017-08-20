@@ -355,6 +355,8 @@ public class Persister {
             i.setIdVersion(idVersion);
             i.setIdSeq(++idx);
             i.setIdGroup(issue.getIdGroup());
+            i.setIdItem(issue.getIdItem());
+            i.setIdRule(issue.getIdRule());
             i.setSeverity(issue.getSeverity());
             i.setBegLine(issue.getBegLine());
             i.setEndLine(issue.getEndLine());
@@ -362,6 +364,7 @@ public class Persister {
             i.setEndColumn(issue.getEndColumn());
             i.setBloque(issue.getBloque());
             i.setFirma(issue.getFirma());
+            i.setIdException(0L);
             generate(i);
         }
     }

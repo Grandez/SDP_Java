@@ -12,7 +12,6 @@ package com.jgg.sdp.ivp;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.Map.Entry;
 
 import com.jgg.sdp.Analyzer;
 import com.jgg.sdp.core.config.*;
@@ -80,6 +79,7 @@ public class IVP {
 	private void process() {
 		processBloque(xml.getCases());
 		
+		// Cuando acaba la primera ronda busca otros bloques
 		ArrayList<Integer> blocks = new ArrayList<Integer>();
 		
 		for (Map.Entry<Integer, BlockCases> entry : bloques.entrySet()) {
@@ -90,7 +90,7 @@ public class IVP {
 		
 		for (int bloque : blocks) {
 			currBloque = bloque;
-//			processBloque(bloques.get(bloque).getCases());
+			processBloque(bloques.get(bloque).getCases());
 		}
 	}
 	
@@ -297,8 +297,10 @@ public class IVP {
 				bloques.put(grupo, new BlockCases());
 			}
 			BlockCases p = bloques.get(grupo);
-			p.addCases(cases.getCases(grupo));
+			int pos = p.addCase(currCase);
+			p.addModule(pos, currArchivo);
 		}
+		
 //		bloques.
 		
 	}

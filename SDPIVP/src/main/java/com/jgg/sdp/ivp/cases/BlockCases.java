@@ -2,19 +2,27 @@ package com.jgg.sdp.ivp.cases;
 
 import java.util.*;
 
-import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.module.ivp.IVPCase;
-
 public class BlockCases {
 
-	private ArrayList<IVPCase> cases = new ArrayList<IVPCase>();
-	private ArrayList<Archivo> archivos = new ArrayList<Archivo>();
+	private ArrayList<Case> cases = new ArrayList<Case>();
 	
-	public List<IVPCase> getCases() {
+	public int addCase(Case c) {
+		for (int idx = 0; idx < cases.size(); idx++) {
+			if (cases.get(idx).getName().compareTo(c.getName()) == 0) return idx;
+		}
+		cases.add(c);
+		return cases.size();
+	}
+	
+	public void addModule(int c, String module) {
+		cases.get(c).addModules(module);
+	}
+	
+	public List<Case> getCases() {
 		return cases;
 	}
 	
-	public void addCases(List<IVPCase> cases) {
+	public void addCases(List<Case> cases) {
 		this.cases.addAll(cases);
 	}
 	

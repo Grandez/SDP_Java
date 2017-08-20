@@ -89,6 +89,20 @@ public class RulesChecker {
           processExist(item, "", "\t", line, column);
           
 	}
+
+	public void checkComment(int line, int column) {
+        RuleGroup group = tree.getGroupById(RULES.GRP_COMMENT);
+        if (group == null) return;
+        
+        RuleItem item = group.getItemByName("CMT");
+        if (item == null) return;
+        
+        for (RuleRule r : item.getRules()) {
+        	
+        }
+        processExist(item, "", "\t", line, column);
+        
+	}
 	
 	public void checkNoPrintable(int line, int column) {
         RuleGroup group = tree.getGroupById(RULES.GRP_LEXER);

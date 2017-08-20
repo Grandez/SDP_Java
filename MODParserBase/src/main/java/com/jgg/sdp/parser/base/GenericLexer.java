@@ -217,7 +217,7 @@ public abstract class GenericLexer {
    public boolean isIgnoreReserved() { return ignoreReserved;  }
    
    public void print(String txt) {
-        System.out.println(txt);
+//        System.out.println(txt);
    }   
    public void debug(String txt) {
      System.out.println(txt);

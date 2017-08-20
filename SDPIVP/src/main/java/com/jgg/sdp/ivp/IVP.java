@@ -43,8 +43,10 @@ public class IVP {
 	private Printer printer = new Printer();
 
 	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
-
+    private HashSet<String> modules = new HashSet<String>();
+	
 	private int count = 0;
+	private int numErrs = 0;
 	
     private String msgErr;
 
@@ -71,15 +73,21 @@ public class IVP {
 		
 		xml.loadFile(cfg.getString(CFG.IVP_CONFIG));
 		process();
+		
+		printResults();
+		
 		return maxRC;
 	}
-	
-	
-	@SuppressWarnings("rawtypes")
+		
 	private void process() {
+
+		BlockCases block = null;
+		
+		// Bloque inicial
 		processBloque(xml.getCases());
 		
 		// Cuando acaba la primera ronda busca otros bloques
+		// Los ordenamos 
 		ArrayList<Integer> blocks = new ArrayList<Integer>();
 		
 		for (Map.Entry<Integer, BlockCases> entry : bloques.entrySet()) {
@@ -90,36 +98,43 @@ public class IVP {
 		
 		for (int bloque : blocks) {
 			currBloque = bloque;
-			processBloque(bloques.get(bloque).getCases());
+            block = bloques.get(bloque);
+			processBloque(block.getCases());
 		}
 	}
 	
 	private void processBloque(List<Case> cases) {
-		if (launcher.setEnvironment(0) != 0) {
+		bannerBloque(currBloque);
+		
+		if (launcher.setEnvironment(currBloque) != 0) {
 			printer.lineBeg("ERROR Cargando entorno para el bloque " + currBloque);
 			printer.nl();
 			System.exit(RC.FATAL);
 		}
 
-		bannerBloque(currBloque);
-		
 		for (Case c : cases) {
-			System.out.println(c.getDescription());
+			currCase = c;
+			printer.line("IVP GRUPO: " + c.getName());
 			processModules(c.getModules());
 		}		
 	}
 	
 	private void processModules(List<String> patterns) {
+		
 		Module module = null;
 		
 	   for (String pattern : patterns) {
            for (Archivo archivo : FileFinder.find(cfg.getString(CFG.IVP_INPUT), pattern)) { 
-        	   currArchivo = archivo.getBaseName();
+        	   currArchivo = archivo.getFileName();
+        	   modules.add(currArchivo);
         	   printer.lineBeg(String.format("%5d - %8s - ", ++count, archivo.getBaseName()));
         	   module = analyze(archivo);
-               if (!evaluate(module)) printer.lineEnd("OK");
+        	   int rc = evaluate(module); 
+               if (rc == 0) printer.lineEnd("OK");
+               numErrs += rc;
            } 	
 	   }
+	   
 	}
 	
 	private Module analyze(Archivo archivo) {
@@ -151,7 +166,7 @@ public class IVP {
         return module;
 	}
 	
-	private boolean evaluate(Module module) {
+	private int evaluate(Module module) {
 		int ko = 0;
 		int rc = 0;
 		
@@ -161,17 +176,17 @@ public class IVP {
 			rc = evaluateCase(module, c); 
 			if (rc == 1) {
 				if (ko == 0) printer.lineEnd("KO");
-				printer.lineEnd(msgErr);
+				printer.line(msgErr);
 			}
 			ko += rc;
 		}
 		
 		if (currBloque == 0) loadOtherBlocks(cases);
-		return false;
+		return ko;
 	}
 	
 	private int evaluateCase(Module module, IVPCase c) {
-		
+		printer.lineCnt(c.getDescription());
 		int obj = selectObject(c.getObject()); 
 		switch(obj) {
 		   case SDPANALYZER: return evaluateAnalyzer(module, c);
@@ -191,7 +206,7 @@ public class IVP {
 		String objeto = "get" + c.getObject().toUpperCase();
 		
 		Object res = getResult(module, c.getMethod());
-		System.out.println(res.toString());
+//		System.out.println(res.toString());
 		if (res instanceof Integer) return matchInteger((Integer) res, c);
 		return 0;
 		
@@ -205,7 +220,7 @@ public class IVP {
 		}
 		
 		Object res = getResult(o, c.getMethod());
-		System.out.println(res.toString());
+		//System.out.println(res.toString());
 		if (res instanceof Integer) return matchInteger((Integer) res, c);
 		return 0;
 		
@@ -293,12 +308,14 @@ public class IVP {
 	private void loadOtherBlocks(Groups cases) {
 		List<Integer> grupos = cases.getGroups();
 		for (Integer grupo : grupos) {
-			if (bloques.containsKey(grupo) == false) {
-				bloques.put(grupo, new BlockCases());
-			}
-			BlockCases p = bloques.get(grupo);
-			int pos = p.addCase(currCase);
-			p.addModule(pos, currArchivo);
+			if (grupo != 0) {
+			   if (bloques.containsKey(grupo) == false) {
+				   bloques.put(grupo, new BlockCases());
+			   }
+			   BlockCases p = bloques.get(grupo);
+			   int pos = p.addCase(currCase);
+			   p.addModule(pos, currArchivo);
+			}   
 		}
 		
 //		bloques.
@@ -321,5 +338,15 @@ public class IVP {
 		printer.boxEnd();
 		printer.nl();
 	}
-	
+
+	private void printResults() {
+		printer.boxBeg();
+		printer.boxLine("SERENDIPITY - IVP", true);
+		printer.boxLine(String.format("%s %5d",  "Modulos analizados: ", modules.size()), false);
+		printer.boxLine(String.format("%s %5d",  "Casos realizados:   ", count), false);
+		printer.boxLine(String.format("%s %5d",  "Casos erroneos:     ", numErrs), false);		
+		printer.boxEnd();
+		printer.nl();
+		
+	}
 }

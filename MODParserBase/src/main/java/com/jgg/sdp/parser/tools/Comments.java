@@ -33,6 +33,7 @@ public class Comments {
     * Asumimos que es una documentacion si contiene al menos una palabra
     */
    public void process(int line) {
+	   checkRuleComment(line);
 	   comment.incLines();
 	   
        String aux = data.toString().trim();
@@ -55,4 +56,7 @@ public class Comments {
        
    }
    
+   private void checkRuleComment(int line) {
+	   String cmt = data.toString().trim();
+   }
 }

@@ -10,8 +10,8 @@ public class BlockCases {
 		for (int idx = 0; idx < cases.size(); idx++) {
 			if (cases.get(idx).getName().compareTo(c.getName()) == 0) return idx;
 		}
-		cases.add(c);
-		return cases.size();
+		cases.add(new Case(c));
+		return cases.size() - 1;
 	}
 	
 	public void addModule(int c, String module) {

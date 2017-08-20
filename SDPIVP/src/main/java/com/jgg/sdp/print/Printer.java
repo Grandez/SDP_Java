@@ -2,7 +2,7 @@ package com.jgg.sdp.print;
 
 public class Printer {
 
-	private final int LEN = 65;
+	private final int LEN = 75;
 	
 	private StringBuilder linea = new StringBuilder();;
 	
@@ -20,6 +20,12 @@ public class Printer {
 		boxLine(txt);
 		for (String s : strings) boxLine(s);
 		boxDecorator();
+	}
+	
+	public void line(String txt) {
+		linea.setLength(0);
+		linea.append(txt);
+		println();
 	}
 	
 	public void lineBeg(String txt) {

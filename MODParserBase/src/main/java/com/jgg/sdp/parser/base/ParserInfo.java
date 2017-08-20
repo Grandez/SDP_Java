@@ -257,7 +257,7 @@ public class ParserInfo {
 	   c = new IVPCase();
 	   if (toks.length > 1) c.setDescription(toks[1].trim());
 	   toks = toks[0].trim().split("[ ]+");
-	   c.setGroup(toks[0]);;
+	   c.setGroup(Integer.parseInt(toks[0]));
 	   c.setComponent(toks[1]);
 	   c.setOperator(toks[2]);
 	   c.setValue(toks[3]);

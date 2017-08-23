@@ -4,6 +4,7 @@ import java.util.regex.*;
 
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Comment;
+import com.jgg.sdp.parser.base.ParserInfo;
 
 public class Comments {
 
@@ -15,6 +16,8 @@ public class Comments {
    Module        module;
    Comment       comment = null;
    Pattern       pattern = Pattern.compile(" [a-zA-Z0-9.]+");
+
+   private ParserInfo info = ParserInfo.getInstance();
    
    public void setModule(Module module) {
        this.module = module;
@@ -57,6 +60,6 @@ public class Comments {
    }
    
    private void checkRuleComment(int line) {
-	   String cmt = data.toString().trim();
+	   info.rules.checkComment(data.toString().trim(), line + 1);	   
    }
 }

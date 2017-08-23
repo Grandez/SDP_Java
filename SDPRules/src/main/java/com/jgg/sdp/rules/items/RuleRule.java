@@ -1,4 +1,4 @@
-package com.jgg.sdp.rules;
+package com.jgg.sdp.rules.items;
 
 import java.sql.Timestamp;
 
@@ -12,9 +12,11 @@ public class RuleRule {
 	private int       severity;
 	private int       priority;	
 	private int       comparator;
+	private String    property;
 	private String    valor;
 	private String    uid;
 	private Timestamp tms;
+	
 	public String getItemName() {
 		return itemName;
 	}
@@ -81,6 +83,11 @@ public class RuleRule {
 	public void setTms(Timestamp tms) {
 		this.tms = tms;
 	}
-
+	public String getProperty() {
+		return property;
+	}
+	public void setProperty(String property) {
+		this.property = property;
+	}
 	
 }

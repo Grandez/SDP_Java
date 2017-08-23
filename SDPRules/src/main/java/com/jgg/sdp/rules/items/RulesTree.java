@@ -1,4 +1,4 @@
-package com.jgg.sdp.rules;
+package com.jgg.sdp.rules.items;
 
 import java.util.HashMap;
 
@@ -7,7 +7,7 @@ import com.jgg.sdp.domain.services.rules.*;
 
 public class RulesTree {
 
-	private HashMap<String,  RuleGroup> namesTree = new HashMap<String, RuleGroup>();
+	//private HashMap<String,  RuleGroup> namesTree = new HashMap<String, RuleGroup>();
 	private HashMap<Integer, RuleGroup> keysTree  = new HashMap<Integer, RuleGroup>();
 	
 	
@@ -17,13 +17,19 @@ public class RulesTree {
 	
 	private static RulesTree        tree = null;
 	
-	private RulesTree() {
+	private RulesTree() {		
 		reload();
 	}
-	
+
 	public static RulesTree getInstance() {
+		return getInstance(false);
+	}
+	
+	public static RulesTree getInstance(boolean reload) {
+		if (reload) tree = null;
 		if (tree == null) tree = new RulesTree();
-		return tree;
+//		tree.printTree();
+		return tree;		
 	}
 
 	public RuleGroup getGroupById(int id) {
@@ -31,7 +37,7 @@ public class RulesTree {
 	}
 	
 	public void reload() {
-		namesTree = new HashMap<String, RuleGroup>();
+//		namesTree = new HashMap<String, RuleGroup>();
 		keysTree  = new HashMap<Integer, RuleGroup>();
 		
 		for (RULGroup grp : groupsService.listActiveGroups()) {
@@ -77,6 +83,22 @@ public class RulesTree {
 		rule.setIdRule(rul.getIdRule());
 		rule.setPriority(rul.getPriority());
 		rule.setSeverity(rul.getSeverity());
+		rule.setType(rul.getTipo());
+		rule.setProperty(rul.getPropiedad());
+		rule.setValor(rul.getValor());
 		return rule;
+	}
+	
+	private void printTree() {
+		for (Integer key : keysTree.keySet())   {
+			RuleGroup grp = keysTree.get(key);
+			System.out.println("Grupo: " + grp.getId());
+			for (RuleItem itm : grp.getItems()) {
+				System.out.println("\tItem: " + itm.getIdItem());
+				for (RuleRule rul : itm.getRules()) {
+					System.out.println("\t\tRule: " + rul.getIdRule());
+				}
+			}
+        }	
 	}
 }

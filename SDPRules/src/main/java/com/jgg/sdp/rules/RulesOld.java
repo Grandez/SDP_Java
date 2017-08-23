@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.rules.*;
+import com.jgg.sdp.rules.items.RuleGroup;
 
 public class RulesOld {
 	

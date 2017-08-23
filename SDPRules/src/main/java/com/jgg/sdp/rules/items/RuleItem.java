@@ -1,4 +1,4 @@
-package com.jgg.sdp.rules;
+package com.jgg.sdp.rules.items;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

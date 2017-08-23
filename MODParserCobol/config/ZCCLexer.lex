@@ -71,20 +71,10 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       return symbol(code);
    }
                   
-   public void checkSymbol() {
-      // Chequea el uso de SKIP, EJECT, etc
-   }                  
-   
    public Symbol symbol(int code){
       return symbol(code, yytext());
    }
 
-   public Symbol symbolCheck(int code) {
-      checkSymbol();
-      return symbol(code);
-   }
-
-   
    public Symbol symbol(int code, String txt) {
       return symbol(code, txt, yyline, yycolumn);
    }
@@ -161,8 +151,11 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   ^[\*]         { commentInit(yytext(), yyline);  }
   ^[\/]         { commentInit(yytext(), yyline);  }  
   ^[dD]         { commentInit(yytext(), yyline);  }
-  ^\-           { checkSymbol();                  }  
+  ^\-           { /* JGG, Pendiente de revisar */ }    
 
+  ^[ \t]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+  ^[ \t]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }  
+  
   ^[ ]+EXECUTE { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   ^[ ]+EXEC    { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
 
@@ -294,7 +287,6 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   DUPLICATES                  { return symbol(DUPLICATES              ); } 
   DYNAMIC                     { return symbol(DYNAMIC                 ); } 
   EGCS                        { return symbol(EGCS                    ); } 
-  EJECT                       { checkSymbol();                  } 
   ELSE                        { return symbol(ELSE                    ); } 
   END                         { return symbol(END                     ); } 
   END-ADD                     { return symbol(END_VERB                ); } 
@@ -499,7 +491,6 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   SHIFT-OUT                   { return symbol(SHIFT_OUT               ); } 
   SIGN                        { return symbol(SIGN                    ); } 
   SIZE                        { return symbol(SIZE                    ); } 
-  SKIP[1-3]                   { checkSymbol();                  } 
   SORT                        { return symbol(SORT                    ); } 
   SORT-CONTROL                { return symbol(SORT_CONTROL            ); } 
   SORT-CORE-SIZE              { return symbol(SORT_CORE_SIZE          ); } 
@@ -839,7 +830,9 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 }
 
 <COMMENT> {
-  {BLANKS}      { commentAppend(yytext()); }
+  {BLANKS}      { ruleTabsInText(yytext(), yyline, yycolumn);
+                  commentAppend(yytext()); 
+                }
   \n            { commentEnd(yyline);      }                 
   [a-zA-Z0-9]+  { commentAppend(yytext()); }
   [^]           { commentAppend(yytext()); }    

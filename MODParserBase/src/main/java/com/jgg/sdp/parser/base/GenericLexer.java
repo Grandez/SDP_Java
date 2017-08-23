@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.jgg.sdp.core.config.Configuration;
-//import com.jgg.sdp.parser.work.CopyLoader;
-import com.jgg.sdp.rules.*;
 import com.jgg.sdp.module.base.*;
-//import com.jgg.sdp.info.module.items.Copy;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.parser.tools.Comments;
 
@@ -61,7 +58,7 @@ public abstract class GenericLexer {
    protected int                      begCopy   = -1;   // Linea de la sentencia de COPY/INCLUDE
    protected ArrayList<StringBuilder> chgTokens = null;
    protected StringBuilder            chgToken  = null;
-   protected RulesChecker             rules     = RulesChecker.getInstance();   
+   
    
    protected Symbol      exec      = null;
    protected Symbol      endExec   = null;
@@ -291,18 +288,26 @@ public abstract class GenericLexer {
    /*****************************************************************/
    
    protected void ruleTabs(int line, int column) {
-	   rules.checkTab(line + 1, column + COLOFFSET);
+	   info.rules.checkTab(line + 1, column + COLOFFSET);
    }
 
    protected void ruleTabsInText(String txt, int line, int column) {
 	   int pos = txt.indexOf('\t');
 	   if (pos != -1) {
-	       rules.checkTab(line + 1, column + pos + COLOFFSET);
+	       info.rules.checkTab(line + 1, column + pos + COLOFFSET);
 	   }    
    }
 
    protected void ruleNoPrintable(int line, int column) {
-	   rules.checkNoPrintable(line, column);
+	   info.rules.checkNoPrintable(line, column);
+   }
+
+   protected void rulePrintDirective(String directive, int yyline) {
+	   info.rules.checkPrintDirective(directive, yyline);
+   }
+   
+   protected void ruleCompileDirective(int yyline) {
+	   info.rules.checkCompileDirective(yyline);
    }
 
 }

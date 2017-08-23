@@ -38,7 +38,8 @@ public class Parser {
 
    
     private Configuration cfg = Configuration.getInstance();
-
+    ParserInfo info = ParserInfo.getInstance();
+    
     public Parser() {
     	
     }
@@ -63,8 +64,7 @@ public class Parser {
 	   // Chequea si hay MQSeries
 	   checkMQAndCalls(module);
 	   
-	   RulesChecker rules = RulesChecker.getInstance();
-	   module.addIssues(rules.getIssues());
+	   module.addIssues(info.rules.getIssues());
 	   
 	   //Procesa el grafo
 	   //module.makeGraph();
@@ -74,8 +74,6 @@ public class Parser {
 	private void parseCobol(Module module, int type) throws SDPException, Exception {
         ProxyLexer    lexer  = null;
         GenericParser parser = null;
-
-	    ParserInfo info = ParserInfo.getInstance();
 	    
         Source source =  unit.getMainSource();
 

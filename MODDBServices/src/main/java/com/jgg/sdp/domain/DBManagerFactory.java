@@ -45,6 +45,10 @@ public class DBManagerFactory {
         if (tx == null) tx = em.getTransaction();
         return tx;
     }
+
+    public void clearSession() {
+    	em.getSession().clear();
+    }
     
 	private DBManagerFactory() {
 //	    Properties props = getDBProperties();
@@ -66,10 +70,8 @@ public class DBManagerFactory {
 	
 	private Properties getDBProperties() {
 	   Properties props = new Properties();
-       InputStream in = null;
-       
+       InputStream in = null;       
 
-       System.out.println("JGG: BUscando " + SYS.DBCONFIG_ENV);
        String dbCfg = System.getenv(SYS.DBCONFIG_ENV);
        dbCfg = cfg.getString(CFG.DIR_CONFIG);
        

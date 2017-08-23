@@ -94,19 +94,10 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
        return symbol(LEVEL);
    }
                               
-   public void checkSymbol() {
-      // Chequea el uso de SKIP, EJECT, etc
-   }                  
-   
    public Symbol symbol(int code){
       return symbol(code, yytext());
    }
 
-   public Symbol symbolCheck(int code) {
-      checkSymbol();
-      return symbol(code);
-   }
-   
    public Symbol symbol(int code, String txt) {
       setLastSymbol(code);
       data = true;
@@ -184,8 +175,8 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
  ^[\*]               { commentInit(yytext(), yyline);  }
  ^[\/]               { commentInit(yytext(), yyline);  }  
  ^[dD]               { commentInit(yytext(), yyline);  }
- ^[ ]+SKIP[1-9]?     { checkSymbol();                  }
- ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                  }
+ ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
+ ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
 IDENTIFICATION{BLANKS}DIVISION  { checkDivision(); 
                                   inDesc = false;
@@ -206,11 +197,11 @@ EXECUTE      { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
 EXEC         { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
 
   
-CBL                { checkSymbol(); pushState(EATLINE);  }
+CBL                { ruleCompileDirective(yyline + 1); pushState(EATLINE);  }
 REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 {SPACES}           { /* nada */ }
 {TABS}             { ruleTabs(yyline, yycolumn); }
-{ID}               { checkSymbol();  pushState(EATLINE);    }
+{ID}               { ruleCompileDirective(yyline + 1);   pushState(EATLINE);    }
 
 
 
@@ -229,11 +220,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <ID_DIVISION> {
   ^[\*]>[ \t]+SDP     { tmp = new StringBuilder(); pushState(SDP);  }
-  ^[\*]               { commentInit(yytext(), yyline); }
-  ^[\/]               { commentInit(yytext(), yyline); }  
-  ^[dD]               { commentInit(yytext(), yyline); }
-  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
+  ^[\*]               { commentInit(yytext(), yyline);  }
+  ^[\/]               { commentInit(yytext(), yyline);  }  
+  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
   AUTHOR           { inDesc = false; return symbol(AUTHOR); }
   COMMON           { data = true; }
@@ -295,11 +286,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <ENV_DIVISION> {
 
-  ^[\*]               { commentInit(yytext(), yyline); }
-  ^[\/]               { commentInit(yytext(), yyline); }  
-  ^[dD]               { commentInit(yytext(), yyline); }
-  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
+  ^[\*]               { commentInit(yytext(), yyline);  }
+  ^[\/]               { commentInit(yytext(), yyline);  }  
+  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
                                    
   CONFIGURATION{BLANKS}SECTION   { pushState(CONF_SECT);   
                                    ruleTabsInText(yytext(), yyline, yycolumn);
@@ -348,11 +339,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <CONF_SECT> {
-  ^[\*]               { commentInit(yytext(), yyline); }
-  ^[\/]               { commentInit(yytext(), yyline); }  
-  ^[dD]               { commentInit(yytext(), yyline); }
-  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
+  ^[\*]               { commentInit(yytext(), yyline);  }
+  ^[\/]               { commentInit(yytext(), yyline);  }  
+  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
   \'               { pushState(QUOTE_STRING);  }  
   \"               { pushState(DQUOTE_STRING); }
@@ -411,11 +402,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <IO_SECT> {
-  ^[\*]               { commentInit(yytext(), yyline); }
-  ^[\/]               { commentInit(yytext(), yyline); }  
-  ^[dD]               { commentInit(yytext(), yyline); }
-  ^[ ]+SKIP[1-9]?     { checkSymbol();                 }
-  ^[ ]+EJECT[ ]*[\.]? { checkSymbol();                 }
+  ^[\*]               { commentInit(yytext(), yyline);  }
+  ^[\/]               { commentInit(yytext(), yyline);  }  
+  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
   ACCESS         { return symbol(ACCESS);       }
   ALTERNATE      { return symbol(ALTERNATE);    }  
@@ -438,7 +429,6 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   RELATIVE       { return symbol(RELATIVE);     }
   SELECT         { return symbol(SELECT);       }
   SEQUENTIAL     { return symbol(SEQUENTIAL);   }
-  SKIP[1-9]?     { data = true;                 }
   STATUS         { return symbol(STATUS);       }
   TO             { data = true;                 }
   WITH           { data = true;                 }
@@ -490,12 +480,12 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <DATA_DIVISION> {
 
-  ^[\*]                 { commentInit(yytext(), yyline);    }
-  ^[\/]                 { commentInit(yytext(), yyline);    }  
-  ^[dD]                 { commentInit(yytext(), yyline);    }
-  ^[ \t]+SKIP[1-9]?     { checkSymbol();     }
-  ^[ \t]+EJECT[ ]*[\.]? { checkSymbol();     }
-  ^\-                   { checkSymbol();     }  
+  ^[\*]                 { commentInit(yytext(), yyline);  }
+  ^[\/]                 { commentInit(yytext(), yyline);  }  
+  ^[dD]                 { commentInit(yytext(), yyline);  }
+  ^[ \t]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
+  ^[ \t]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+  ^\-                   { /* JGG, Pendiente de revisar */ }  
   ^[ \t]+[0-9]+         { return levelOrNum(); }
   
   FILE{BLANKS}SECTION            { ruleTabsInText(yytext(), yyline, yycolumn); return symbol(FILE_SECTION);    }

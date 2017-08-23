@@ -3,13 +3,14 @@ package com.jgg.sdp.parser.blocks;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.parser.stmt.Statement;
 import com.jgg.sdp.rules.*;
+import com.jgg.sdp.rules.items.RuleRule;
 
 import java_cup.runtime.Symbol;
 
 public class IssuesChecker {
 
 	private Module module;
-	private RulesChecker rules = RulesChecker.getInstance();
+//	private RulesChecker rules = RulesChecker.getInstance();
 	
 	public IssuesChecker(Module module) {
 		this.module = module;
@@ -20,7 +21,7 @@ public class IssuesChecker {
 	    
 	}
 	public void checkIdentification(BlockCode block) {
-		/*
+/*
 		if (!rules.setGroup(block.getName())) return;
 		for (RuleItem item : rules.getItemsByGroup(block.getName())) {
  			Statement stmt = block.getStatement(item.getKeyTxt());
@@ -30,10 +31,11 @@ public class IssuesChecker {
 			    }
 			}
 		}
-		*/	
+	*/
 	}
 	
     private void processVerb(RuleRule issue, BlockCode block, Statement stmt) {
+    	/*
 		switch (issue.getComparator()) {
 		   case RULES.MISSING: 
 			    if (stmt == null) createIssue(issue, block.getHeader());
@@ -43,11 +45,11 @@ public class IssuesChecker {
 			    break;
 
 		}
-
+*/
     }
     
 	private void createIssue(RuleRule rule, Symbol sym) {
-/*		
+	/*	
     	Issue i = new Issue(rule.getIdIssue());
     	i.setBegLine(sym.left);
     	i.setBegColumn(sym.right);
@@ -56,11 +58,11 @@ public class IssuesChecker {
     	i.setBloque((String) sym.value);
     	i.setFirma(Firma.createDefault());
         module.addIssue(i);
-*/        
+      */  
 	}
 	
 	private void createIssue(RuleRule rule, Statement stmt, String bloque) {
-/*		
+		/*
     	Issue i = new Issue(rule.getIdIssue());
     	i.setBegLine(stmt.getBegLine());
     	i.setBegColumn(stmt.getBegColumn());
@@ -69,7 +71,7 @@ public class IssuesChecker {
     	i.setBloque(bloque);
     	i.setFirma(stmt.getFirma());
         module.addIssue(i);
-*/        
+        */
 	}
 
 }

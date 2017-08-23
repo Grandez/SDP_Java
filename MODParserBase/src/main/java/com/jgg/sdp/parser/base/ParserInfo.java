@@ -14,6 +14,7 @@ import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.SDPUnit;
+import com.jgg.sdp.rules.RulesChecker;
 
 import java_cup.runtime.Symbol;
 
@@ -22,6 +23,8 @@ public class ParserInfo {
 	private static ParserInfo info = null;
 
 	private Configuration cfg = Configuration.getInstance();
+	
+	public RulesChecker rules = new RulesChecker();   
 	
     public SDPUnit   unit   = null;
     public Module    module = null;

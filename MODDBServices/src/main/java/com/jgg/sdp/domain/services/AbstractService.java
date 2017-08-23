@@ -51,6 +51,10 @@ public abstract class AbstractService <T>  {
        em = entityManager;
     }
 
+    public void clearSession() {
+    	em.clear();
+    }
+    
     public void beginTrans() {
         begin = System.currentTimeMillis();
     	if (tx == null) {

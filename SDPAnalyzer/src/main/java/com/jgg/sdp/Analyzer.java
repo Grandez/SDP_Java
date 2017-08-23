@@ -27,6 +27,10 @@ public class Analyzer {
     private Configuration cfg = Configuration.getInstance();
     
 
+    public Analyzer() {
+    	
+    }
+    
     public Module getModule() { return module; }
     
 	public static void main(String[] args) throws Exception {

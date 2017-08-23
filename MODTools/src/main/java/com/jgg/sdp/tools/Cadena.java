@@ -46,4 +46,17 @@ public class Cadena {
 		Arrays.fill(data, ' ');
 		return new String(data);
 	}
+	
+	public static String left(String s, int len) {
+		if (s == null) return null;
+		return s.substring(0, len);
+	}
+
+	public static String right(String s, int len) {
+		if (s == null) return null;
+		if (len >= s.length()) return s;
+		
+		return s.substring(s.length() - len + 1);
+	}
+	
 }

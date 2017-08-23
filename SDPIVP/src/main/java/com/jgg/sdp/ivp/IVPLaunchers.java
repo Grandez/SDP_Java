@@ -8,13 +8,13 @@ import java.util.concurrent.TimeUnit;
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CFG;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
-import com.jgg.sdp.print.Printer;
+import com.jgg.sdp.printer.JGGPrinter;
 
 public class IVPLaunchers {
 
     private Configuration cfg = DBConfiguration.getInstance();
 
-    private Printer printer = new Printer();
+    private JGGPrinter printer = new JGGPrinter();
     
 	public int setEnvironment(int level) {
 		printer.lineBeg("Estableciendo entorno para bloque " + level);

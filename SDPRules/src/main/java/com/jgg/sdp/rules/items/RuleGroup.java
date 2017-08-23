@@ -1,4 +1,4 @@
-package com.jgg.sdp.rules;
+package com.jgg.sdp.rules.items;
 
 import java.util.*;
 

@@ -26,8 +26,8 @@ import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.jgg.sdp.parser.base.ParseException;
-import com.jgg.sdp.print.Printer;
-
+import com.jgg.sdp.printer.JGGPrinter;
+import com.jgg.sdp.domain.DBManagerFactory;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 
 public class IVP {
@@ -40,7 +40,7 @@ public class IVP {
     private XMLIVP xml = new XMLIVP();
     
     private IVPLaunchers launcher = new IVPLaunchers();
-	private Printer printer = new Printer();
+	private JGGPrinter printer = new JGGPrinter();
 
 	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
     private HashSet<String> modules = new HashSet<String>();
@@ -67,7 +67,6 @@ public class IVP {
 			
 		cfg.setTitles(MSG.TITLE_SDP_IVP);
 		args = cfg.processCommandLine(IVPParms.parms, args);
-
 		
 		banner();
 		
@@ -85,6 +84,12 @@ public class IVP {
 		
 		// Bloque inicial
 		processBloque(xml.getCases());
+
+/**
+ * JGG - Hay un problema de caches, cuando carga los datos, recupera la version anterior
+ * Por ahora solo soportamos un bloque		
+ */
+/*		
 		
 		// Cuando acaba la primera ronda busca otros bloques
 		// Los ordenamos 
@@ -101,10 +106,13 @@ public class IVP {
             block = bloques.get(bloque);
 			processBloque(block.getCases());
 		}
+*/		
 	}
 	
 	private void processBloque(List<Case> cases) {
 		bannerBloque(currBloque);
+		
+		DBManagerFactory.getInstance().getEntityManager().clear();
 		
 		if (launcher.setEnvironment(currBloque) != 0) {
 			printer.lineBeg("ERROR Cargando entorno para el bloque " + currBloque);
@@ -127,7 +135,7 @@ public class IVP {
            for (Archivo archivo : FileFinder.find(cfg.getString(CFG.IVP_INPUT), pattern)) { 
         	   currArchivo = archivo.getFileName();
         	   modules.add(currArchivo);
-        	   printer.lineBeg(String.format("%5d - %8s - ", ++count, archivo.getBaseName()));
+        	   printer.lineBeg(String.format("%5d - %8s", ++count, archivo.getBaseName()));
         	   module = analyze(archivo);
         	   int rc = evaluate(module); 
                if (rc == 0) printer.lineEnd("OK");
@@ -176,7 +184,7 @@ public class IVP {
 			rc = evaluateCase(module, c); 
 			if (rc == 1) {
 				if (ko == 0) printer.lineEnd("KO");
-				printer.line(msgErr);
+				printer.line("        ERROR: " + msgErr);
 			}
 			ko += rc;
 		}
@@ -186,14 +194,13 @@ public class IVP {
 	}
 	
 	private int evaluateCase(Module module, IVPCase c) {
-		printer.lineCnt(c.getDescription());
+		if (c.getDescription().length() > 0) printer.lineCnt(" - " + c.getDescription());
 		int obj = selectObject(c.getObject()); 
 		switch(obj) {
 		   case SDPANALYZER: return evaluateAnalyzer(module, c);
-		   default: evaluateComponent(obj, module, c);
+		   default: return evaluateComponent(obj, module, c);
 		}
-		return 0;
-	}
+    }
 	
 	private int selectObject(String txt) {
 		if (txt.compareToIgnoreCase("SDPAnalyzer") == 0) return SDPANALYZER;

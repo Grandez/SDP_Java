@@ -9,8 +9,7 @@ import javax.persistence.*;
 @Table(name="RUL_RULES")
 public class RULRule implements Serializable {
 	
-
-	private static final long serialVersionUID = 5890804460774397842L;
+	private static final long serialVersionUID = 5431386457814904667L;
 
 	public final static String listByItem       = "Select i from RULRule i where idItem = ?1";
 	public final static String listActiveByItem = "Select i from RULRule i " +
@@ -34,6 +33,9 @@ public class RULRule implements Serializable {
 
 	@Column(name="priority")
 	private Integer priority;
+
+	@Column(name="propiedad")
+	private String propiedad;
 	
 	@Column(name="severity")
 	private Integer severity;
@@ -141,6 +143,14 @@ public class RULRule implements Serializable {
 		this.tms = tms;
 	}
 
+	public String getPropiedad() {
+		return propiedad;
+	}
+
+	public void setPropiedad(String propiedad) {
+		this.propiedad = propiedad;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -151,6 +161,7 @@ public class RULRule implements Serializable {
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
 		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
+		result = prime * result + ((propiedad == null) ? 0 : propiedad.hashCode());
 		result = prime * result + ((severity == null) ? 0 : severity.hashCode());
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
@@ -197,6 +208,11 @@ public class RULRule implements Serializable {
 			if (other.priority != null)
 				return false;
 		} else if (!priority.equals(other.priority))
+			return false;
+		if (propiedad == null) {
+			if (other.propiedad != null)
+				return false;
+		} else if (!propiedad.equals(other.propiedad))
 			return false;
 		if (severity == null) {
 			if (other.severity != null)

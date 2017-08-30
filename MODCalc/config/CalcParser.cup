@@ -1,18 +1,30 @@
 package com.jgg.sdp.calculator;
 
 import java.util.*;
-import java.math.BigDecimal;
 import java_cup.runtime.*;
+
+import com.jgg.sdp.tools.JGGJava;
 
 parser code {:
 
-   HashMap<String, BigDecimal> vars = null;
+   Object base = null;
+   Object root = null;
+   
+   HashMap<String, CalcItem> vars = new HashMap<String, CalcItem>();
+   
+   public void setObjectBase(Object base) {
+      this.base = base;
+   }
+   
+   public void setObjectRoot(Object root) {
+      this.root = root;
+   }
    
    public void setVariables(HashMap<String, Integer> vars) {
       if (vars == null) return;
-      this.vars = new HashMap<String, BigDecimal>();
+      this.vars = new HashMap<String, CalcItem>();
       for (Map.Entry<String, Integer> entry : vars.entrySet()) {
-         this.vars.put(entry.getKey(), new BigDecimal(entry.getValue()));
+         this.vars.put(entry.getKey(), new CalcItem(entry.getValue()));
       }
    }
    
@@ -20,44 +32,62 @@ parser code {:
 
 action code {:
 
-   private BigDecimal getValue(Symbol s) throws CalculatorException {
+   private CalcItem getGlobalValue(Symbol s) throws CalculatorException {
       String name = (String) s.value;
-      BigDecimal value = parser.vars.get(name);
+      
+      // Primero mira en la tabla de simbolos
+      CalcItem value = parser.vars.get(name);
       if (value == null) {
-          throw new CalculatorException(s, "Variable doesn't exists");
+          value = loadValue(name, s);
+          if (value == null) {
+              throw new CalculatorException(s, "Variable doesn't exists");
+          }
+          parser.vars.put(name, value);
       }
-      return value;
-   }
-
-   private double compareNumbers(BigDecimal l, BigDecimal r) {
-       return l.subtract(r).doubleValue();
-       
+      return new CalcItem(value);
    }
    
-   private BigDecimal storeVar(Symbol s, BigDecimal value) {
+   private CalcItem getLocalValue(Symbol s) throws CalculatorException {
+      CalcItem value = parser.vars.get((String) s.value);
+      if (value == null) throw new CalculatorException(s, "Variable doesn't exists");
+      return value;
+   }
+   
+   private CalcItem loadValue(String name, Symbol s) {
+      CalcItem item = null;
+      
+      String[] toks = name.substring(1).split("\\.");
+      int idx = 0;
+      Object obj = parser.base;
+      
+      if (toks.length > 1) {
+         obj = parser.root;
+
+         do {
+           obj = JGGJava.executeMethod(obj, "get" + toks[idx++]);
+         } while (idx + 1 < toks.length);
+      }
+      
+      Object res = JGGJava.executeMethod(obj, "get" + toks[idx]);
+      
+      if (res instanceof Integer)  item = new CalcItem((Integer) res);
+      if (res instanceof Long)     item = new CalcItem((Long) res);
+      if (res instanceof int[])    item = new CalcItem((int[]) res);
+      if (res instanceof long[])   item = new CalcItem((long[]) res);
+      
+      if (item != null) item.setSymbol(s);
+      
+      return item;
+  
+   }
+
+   private CalcItem storeVar(Symbol s, CalcItem value) {
       String var = (String) ((Symbol) s.value).value;
-      if (parser.vars == null) parser.vars = new HashMap<String, BigDecimal>();
+      if (parser.vars == null) parser.vars = new HashMap<String, CalcItem>();
       parser.vars.put(var, value);
       return value;
    }
-   
-   private void print(String txt) {
-      System.out.println(txt);
-   }
-   
-   private void printClass(Object o) {
-       if (o instanceof BigDecimal) {
-          System.out.print("BigDecimal ");
-       } else if (o instanceof Boolean) {
-          System.out.print("Boolean ");
-       } else if (o instanceof Symbol) {
-          System.out.print("Symbol ");
-       } else {
-          System.out.print("Object ");
-       }
-       System.out.println(o.toString());
-   }
-   
+      
 :}
 
 init with {:
@@ -76,13 +106,13 @@ terminal Symbol LOG       ;
 terminal Symbol LOG2      ;
 terminal Symbol LN        ;
 terminal Symbol EXP       ;
+terminal Symbol SUM       ;
+terminal Symbol PROD      ;
 
 terminal Symbol AND       ;
 terminal Symbol OR        ;
 
-terminal BigDecimal NUMBER    ;
-terminal Symbol VAR       ;
-terminal Symbol STORE       ;
+terminal CalcItem NUMBER    ;
 
 terminal Symbol PLUS      ; 
 terminal Symbol MINUS     ;
@@ -94,12 +124,17 @@ terminal Symbol POW       ;
 terminal Symbol LPAR      ;
 terminal Symbol RPAR      ;
 
+terminal Symbol ASSIGN    ;
 terminal Symbol EQ        ;
 terminal Symbol NE        ;
 terminal Symbol GT        ;
 terminal Symbol GE        ;
 terminal Symbol LT        ;
 terminal Symbol LE        ;
+
+terminal Symbol STORE     ;
+terminal Symbol LOCAL     ;
+terminal Symbol GLOBAL    ;
 
 terminal Symbol ENDS      ;
 
@@ -117,23 +152,24 @@ non terminal Symbol     operation             ;
 non terminal            assign_operation_list ;
 non terminal            assign_operation_lst  ;
 non terminal            assign_operation      ;
-non terminal BigDecimal numeric_operation     ;
+non terminal CalcItem   numeric_operation     ;
 
-non terminal Boolean logical_operation ;
-non terminal Boolean relational_operation ;
-non terminal Boolean logical_or        ;
-non terminal Boolean logical_and       ;
+non terminal Boolean    logical_operation ;
+non terminal Boolean    relational_operation ;
+non terminal Boolean    logical_or        ;
+non terminal Boolean    logical_and       ;
 
 
-non terminal BigDecimal factor        ;
-non terminal BigDecimal function      ;
-non terminal BigDecimal func_op       ;
-non terminal BigDecimal primary       ;  
+non terminal CalcItem factor        ;
+non terminal CalcItem function      ;
+non terminal CalcItem func_op       ;
+non terminal CalcItem primary       ;  
 
                     
 precedence left PLUS, MINUS    ;
 precedence left MULT, DIV, MOD ;
 precedence left POW            ;
+
 precedence nonassoc LPAR, RPAR ;
 
 /**********************************************************************/
@@ -156,7 +192,7 @@ main_operation ::= full_operation:f   {: RESULT = f; :}
 full_operation ::= operation:o ENDS   {: RESULT = o;  :}
                ;
 
-operation ::= numeric_operation:n {: RESULT = new Symbol(n.intValue(), 0,0, n); :}
+operation ::= numeric_operation:n {: RESULT = new Symbol(n.intValue(), 0,0, n.getValue()); :}
           |   logical_operation:l {: RESULT = new Symbol(0, 0,0, l); :}
           ;                         
    
@@ -169,11 +205,11 @@ assign_operation_list ::= assign_operation_lst:l {: RESULT = l; :}
                       |
                       ;
                       
-assign_operation_lst ::= assign_operation:a                      {: RESULT = a; :}
-                     |   assign_operation_lst assign_operation:a {: RESULT = a; :}
+assign_operation_lst ::= assign_operation:a                           {: RESULT = a; :}
+                     |   assign_operation_lst ENDS assign_operation:a {: RESULT = a; :}
                      ;
 
-assign_operation ::= STORE VAR:v EQ numeric_operation:d ENDS  {: RESULT = storeVar(v, d); :}
+assign_operation ::= STORE LOCAL:v ASSIGN numeric_operation:d ENDS  {: RESULT = storeVar(v, d); :}
                  ;
 
 /*************************************************************************************/
@@ -185,34 +221,37 @@ numeric_operation ::= factor:f PLUS  numeric_operation:o   {: RESULT = f.add(o);
                   |   factor:f MULT  numeric_operation:o   {: RESULT = f.multiply(o);       :}
                   |   factor:f POW   numeric_operation:o   {: RESULT = f.pow(o.intValue()); :}
                   |   factor:f MOD   numeric_operation:o   {: RESULT = f.remainder(o);      :}          
-                  |   factor:f                     {: RESULT = f; :}
-                  |   factor:f DIV   numeric_operation:o   {: BigDecimal aux = null;
+                  |   factor:f                             {: RESULT = f; :}
+                  |   factor:f DIV   numeric_operation:o   {: CalcItem aux = null;
                                                       try {
                                                         aux = f.divide(o);
                                                      } catch (ArithmeticException ex) {
-                                                        aux = new BigDecimal(f.doubleValue()/o.doubleValue());
+                                                        aux = new CalcItem(f.doubleValue()/o.doubleValue());
                                                      }       
                                                      RESULT = aux;
                                                    :}
                 ;
 
-factor ::= LPAR numeric_operation:o RPAR {: RESULT = o; :}
-       |   function:f            {: RESULT = f; :} 
-       |   primary:p             {: RESULT = p; :}
+factor ::= LPAR numeric_operation:o RPAR      {: RESULT = o;       :}
+       |   function:f                         {: RESULT = f;       :} 
+       |   primary:p                          {: RESULT = p;       :}   
        ;
 
-function ::= LOG  func_op:f {: RESULT = new BigDecimal(Math.log10(f.doubleValue())); :}
-         |   LOG2 func_op:f {: RESULT = new BigDecimal(Math.log10(f.doubleValue()) / Math.log(2)); :}
-         |   LN   func_op:f {: RESULT = new BigDecimal(Math.log(f.doubleValue())); :}
-         |   EXP  func_op:f {: RESULT = new BigDecimal(Math.exp(f.doubleValue())); :}
-         |   ABS  func_op:f {: RESULT = f.abs(); :}
+function ::= LOG  func_op:f {: RESULT = new CalcItem(Math.log10(f.doubleValue())); :}
+         |   LOG2 func_op:f {: RESULT = new CalcItem(Math.log10(f.doubleValue()) / Math.log(2)); :}
+         |   LN   func_op:f {: RESULT = new CalcItem(Math.log(f.doubleValue())); :}
+         |   EXP  func_op:f {: RESULT = new CalcItem(Math.exp(f.doubleValue())); :}
+         |   ABS  func_op:f {: RESULT = f.abs();  :}
+         |   SUM  func_op:f {: RESULT = f.sum();  :}         
+         |   PROD func_op:f {: RESULT = f.prod(); :}         
          ;
 
 func_op ::= LPAR numeric_operation:o RPAR  {: RESULT = o; :}
         ;
         
 primary ::= NUMBER:n    {: RESULT = n; :}
-        |   VAR:v       {: RESULT = getValue(v); :}
+        |   LOCAL:v     {: RESULT = getLocalValue(v);  :}
+        |   GLOBAL:v    {: RESULT = getGlobalValue(v); :}        
         ;
                
 /*************************************************************************************/
@@ -231,10 +270,10 @@ logical_and ::= relational_operation:o                   {: RESULT = o; :}
             |   logical_and:a AND relational_operation:o {: RESULT = (a && o); :}
             ;
             
-relational_operation ::= numeric_operation:l EQ numeric_operation:r  {: RESULT = (compareNumbers(l, r) == 0); :}
-                  |   numeric_operation:l NE numeric_operation:r  {: RESULT = (compareNumbers(l, r) != 0); :}
-                  |   numeric_operation:l GT numeric_operation:r  {: RESULT = (compareNumbers(l, r) >  0); :}
-                  |   numeric_operation:l LT numeric_operation:r  {: RESULT = (compareNumbers(l, r) <  0); :}
-                  |   numeric_operation:l GE numeric_operation:r  {: RESULT = (compareNumbers(l, r) >= 0); :}
-                  |   numeric_operation:l LE numeric_operation:r  {: RESULT = (compareNumbers(l, r) <= 0); :}                                    
-                  ;
+relational_operation ::= numeric_operation:l EQ numeric_operation:r  {: RESULT = (l.compare(r) == 0); :}
+                     |   numeric_operation:l NE numeric_operation:r  {: RESULT = (l.compare(r) != 0); :}
+                     |   numeric_operation:l GT numeric_operation:r  {: RESULT = (l.compare(r) >  0); :}
+                     |   numeric_operation:l LT numeric_operation:r  {: RESULT = (l.compare(r) <  0); :}
+                     |   numeric_operation:l GE numeric_operation:r  {: RESULT = (l.compare(r) >= 0); :}
+                     |   numeric_operation:l LE numeric_operation:r  {: RESULT = (l.compare(r) <= 0); :}                                    
+                    ;

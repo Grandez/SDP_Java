@@ -10,7 +10,7 @@
  */
 package com.jgg.sdp.analyzer;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,6 +30,7 @@ import com.jgg.sdp.core.ctes.LOG;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.status.StatusItem;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.jgg.sdp.tools.*;
 
@@ -38,7 +39,8 @@ public class Persister {
     private CommonService          commonService     = new CommonService();
     private SDPModuloService       moduloService     = new SDPModuloService();
     private SDPRelModuloAppService relModAppService  = new SDPRelModuloAppService();
-
+    private SDPStatusService       statusService     = new SDPStatusService();
+    
     private LOGInputService log = new LOGInputService();
     
     XMLTable xml = new XMLTable();	
@@ -124,9 +126,11 @@ public class Persister {
    	   updateCalls();
    	   updateBadStatements();
    	   updateIssues();
+   	   updateStatus();
    	   updateCICS();
    	   updateSQL();
    	   updateGrafo();
+   	   
     }
 
     private void updateModule() {
@@ -163,7 +167,7 @@ public class Persister {
     	version.setDesc(module.getDescription());
     	version.setUid(System.getProperty("user.name"));
     	version.setTms(Fechas.getTimestamp());
-    	version.setEstado  (module.getStatus());
+    	version.setEstado  (module.getParserStatus());
     	version.setMissing(module.getCopyStatus());
     	version.setArbol(module.getTreeStatus());
     	version.setAuthor(module.getAuthor());
@@ -367,6 +371,86 @@ public class Persister {
             i.setIdException(0L);
             generate(i);
         }
+    }
+
+    private void updateStatus() {
+    	List<StatusItem> items = module.getStatus().getStatusItemList();
+    	for (StatusItem item : items) {
+    		MODStatus st = new MODStatus();
+    		st.setIdVersion(idVersion);
+    		st.setActual(item.getActual());
+    		st.setDelta(item.getDelta());
+    		st.setExcepcion(item.getExcepcion());
+    		st.setIdGrupo(item.getIdGroup());
+    		st.setMaximo(item.getMaximo());
+    		st.setProgreso(item.getProgreso());
+    		st.setStatus(item.getStatus());
+    		generate(st);
+    	}
+        updateStatusModule(items);
+    }
+    
+    private void updateStatusModule(List<StatusItem> items) {
+    	
+    	int iCurr = 0;
+    	int iNew = 0;
+    	boolean update = false;
+    	
+    	List<SDPStatus> current = statusService.listAll(module.getName());
+    	Collections.sort(items);
+    	
+    	while (iCurr < current.size() && iNew < items.size()) {
+    	   update = false;
+    	   SDPStatus c = current.get(iCurr);
+    	   StatusItem i = items.get(iNew);
+    	   switch (compareItemStatus(c, i)) {
+    	       case 0: c = updateSDPActual(c, i);
+    	    	   iCurr++;
+    	    	   iNew++;
+    	    	   update = true;
+    	    	   break;
+    	       case 1: 
+    	    	   c = createSDPActual(i);
+    	    	   iNew++;
+    	    	   update = true;
+    	    	   break;
+    	       case -1: 
+    	    	   iCurr++;
+                   break;
+    	   }
+    	   if (update) generate(c);
+    	}
+
+    	while (iNew < items.size()) {
+    		SDPStatus c = createSDPActual(items.get(iNew++));
+    		generate(c);
+    	}
+    }
+
+    private SDPStatus createSDPActual(StatusItem i) {
+ 	   SDPStatus c = new SDPStatus();
+ 	   c.setIdModulo(idModule);
+	   c.setIdGrupo(i.getIdGroup());
+	   c.setIdItem(i.getIdItem());
+        return updateSDPActual(c, i);
+     }
+    
+    private SDPStatus updateSDPActual(SDPStatus c, StatusItem i) {
+ 	   c.setActual(i.getActual());
+ 	   c.setDelta(i.getDelta());
+ 	   c.setExcepcion(i.getExcepcion());
+ 	   c.setMaximo(i.getMaximo());
+ 	   c.setProgreso(i.getStatus());
+ 	   c.setStatus(i.getStatus());
+       return c;
+    }
+    
+    private int compareItemStatus(SDPStatus c, StatusItem i) {
+    	int diff = c.getIdGrupo() - i.getIdGroup();
+    	if (diff != 0) return diff / Math.abs(diff);
+    	diff = c.getIdItem() - i.getIdItem();
+    	if (diff != 0) diff = diff / Math.abs(diff);
+    	return diff;
     }
 
     private void updateCICS() {

@@ -16,6 +16,7 @@ import com.jgg.sdp.module.graph.Graph;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.ivp.TBIVPCases;
+import com.jgg.sdp.module.status.Status;
 import com.jgg.sdp.module.tables.*;
 
 public class Module {
@@ -32,6 +33,7 @@ public class Module {
 	private TBCics          tbCics       = new TBCics();
 	private Sections        sections     = new Sections();	
 	private Comment         comment      = new Comment();
+	private TBSumIssues     sumIssues    = new TBSumIssues();
 	
 	private TBFiles       tbFiles      = new TBFiles();
     private Graph         grafo        = new Graph(this);
@@ -45,6 +47,8 @@ public class Module {
 	private TBRoutines    tbRuts       = new TBRoutines();
 	private TBSql         tbSql        = new TBSql();	
 	private TBIVPCases    tbCases      = new TBIVPCases();
+	
+	private Status        status       = new Status();
 	
 	private boolean fullParsed  = true;
 	private String  fullName    = null;
@@ -91,8 +95,8 @@ public class Module {
 	public void setFull()         { estado = CDG.STATUS_FULL;    }
 	public boolean isFull()       { return estado == CDG.STATUS_FULL; }
 	
-	public void setStatus(int e)  { estado = e; }
-	public int  getStatus()       { return estado; }
+	public void setParserStatus(int e)  { estado = e; }
+	public int  getParserStatus()       { return estado; }
 	
 	/************************************************************************/
 	/*** GETTERS DE LOS OTROS OBJETOS                                     ***/
@@ -102,6 +106,7 @@ public class Module {
     public Summary         getSummary()         { return summary;        }
     public Codigo          getCodigo()          { return codigo;         }    
     public Comment         getComment()         { return comment;        }
+    public TBSumIssues     getSumIssues()       { return sumIssues;      }
     
 	public ArrayList<Persistence> getFicheros()   { return tbFiles.getFiles();           }
 	public ArrayList<Block>       getBloques()    {	return tbBloques.getBloques();       }
@@ -109,7 +114,7 @@ public class Module {
 	public ArrayList<BadStmt>     getBadStmts()   { return tbBad.getBadStmts();          }
 	public TBIssues               getTbIssues()   { return tbIssues; }
 	public ArrayList<Issue>       getIssues()     { return tbIssues.getIssues();         }
-	public void                   addIssues(List<Issue> issues)     { tbIssues.setIssues(issues);         }
+
 	
 	public TBParagraphs getTBParagraphs()     { return tbParagraphs;   }
     public TBVars       getTBVars()           { return tbVars;         }
@@ -120,6 +125,8 @@ public class Module {
 	public String getXMLHash()                { return xmlHash;        }
 	public void   setSDPGroup(String var)     { sdpGroup = var;        }
 	public String getSDPGroup()               { return sdpGroup;       }
+	
+	public Status getStatus()                 { return status;         }
 	
 	/************************************************************************/
 	/*** setters y getters de las variables privadas                      ***/
@@ -319,7 +326,14 @@ public class Module {
     //// *********************************************************************
     
     public void addIssue(Issue issue)  { tbIssues.addIssue(issue);  }
-    
+	public void addIssues(List<Issue> issues) {
+		for (Issue issue : issues) {
+			tbIssues.addIssue(issue);
+			sumIssues.incCountIssues(issue.getSeverity());
+		}
+
+	}
+	
     //// ********************************************************************
     //// Tratamiento de persistencia                                      
     //// ********************************************************************

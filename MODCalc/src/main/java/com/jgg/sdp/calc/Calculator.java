@@ -12,23 +12,36 @@ public class Calculator {
 
 	Reader reader = null;
     HashMap<String, Integer> vars = null;
-	
+
+    private Object base = null;
+    private Object root = null;
+    
 	public Calculator() {
 	}
 	
 	public Calculator(String data) {
-	    reader = new Reader(data + ";");	
+		if (!data.endsWith(";")) data = data +";";
+	    reader = new Reader(data);	
 	}
 
 	public Calculator(String data, HashMap<String, Integer> vars) {
-	    reader = new Reader(data + ";");
+		if (!data.endsWith(";")) data = data +";";
+	    reader = new Reader(data);	
 	    this.vars = vars;
 	}
 	
 	public void setData(String data) {
-		reader = new Reader(data + ";");
+		if (!data.endsWith(";")) data = data +";";
+	    reader = new Reader(data);	
 	}
 	
+	public void setObjectBase(Object base) {
+		this.base = base;
+	}
+	
+	public void setObjectRoot(Object root) {
+		this.root = root;
+	}
 	public void setVars(HashMap<String, Integer> vars) {
 		this.vars= vars; 
 	}
@@ -50,6 +63,8 @@ public class Calculator {
 	private Symbol parse() throws Exception {
 		CalcLexer lexer = new CalcLexer(reader);
 		CalcParser parser = new CalcParser(lexer);
+		parser.setObjectBase(base);
+		parser.setObjectRoot(root);
 		parser.setVariables(vars);
 		return parser.parse();
 //		return parser.debug_parse();

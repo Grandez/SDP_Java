@@ -37,6 +37,12 @@ public class DBManagerFactory {
     	return db;
     }
     
+    public EntityManagerImpl getEntityManager(boolean create) {
+        if (em.isOpen()) em.close();
+        em = (EntityManagerImpl) emf.createEntityManager();
+        return em;
+    }
+    
     public EntityManagerImpl getEntityManager() {
         return em;
     }

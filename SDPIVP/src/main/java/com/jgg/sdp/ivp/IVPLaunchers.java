@@ -34,6 +34,7 @@ public class IVPLaunchers {
 		String dir = cfg.getConfigDir();
 		String base = cfg.getString(CFG.IVP_LOADER);
 		String fileName = dir + base + level + ext;
+		fileName = "P:\\SDP\\config\\IVPLoader" + level + ".bat";
 		File f = new File(fileName);
 		return (f.exists()) ? f : null;
 	}

@@ -230,7 +230,7 @@ public class ProxyLexer implements GenericScanner {
 		   info.module.setCopyStatus(CDG.CPY_ST_IGNORED);
 		   copy.setEstado(CDG.CPY_ST_IGNORED);
 		   info.module.addCopy(copy);
-		   info.module.setStatus(CDG.STATUS_PARTIAL);
+		   info.module.setParserStatus(CDG.STATUS_PARTIAL);
 		   lexer.popState();
 		   return;
 	   }
@@ -238,7 +238,7 @@ public class ProxyLexer implements GenericScanner {
 	   Source source = loader.load(name, tokens);
 	   
 	   if (source == null) {
-	       info.module.setStatus(CDG.STATUS_PARTIAL);
+	       info.module.setParserStatus(CDG.STATUS_PARTIAL);
 	       copy.setEstado(CDG.CPY_ST_MISSING);
 		   return;
 	   }

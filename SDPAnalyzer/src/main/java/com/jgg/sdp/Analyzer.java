@@ -115,7 +115,7 @@ public class Analyzer {
 		finally {
 //			storeCompileUnit(unit);
 			if (unit.getStatus() > CDG.STATUS_BAD) {
-				module.setStatus(unit.getStatus());
+				module.setParserStatus(unit.getStatus());
 				storeModuleInfo(unit, false);
 			}
 			ModulesFactory.cleanModules();
@@ -126,7 +126,7 @@ public class Analyzer {
     }
     
 	private void createIgnoredModule(SDPUnit unit) {
-		module.setStatus(CDG.STATUS_IGNORED);
+		module.setParserStatus(CDG.STATUS_IGNORED);
 		unit.setStatus(CDG.STATUS_IGNORED);
 	}
 	
@@ -147,8 +147,8 @@ public class Analyzer {
 		Parser parser = new Parser(unit);
 		parser.process();
 		
-	   if (module.getStatus() == CDG.STATUS_UNDEF) {
-		   module.setStatus(CDG.STATUS_FULL);
+	   if (module.getParserStatus() == CDG.STATUS_UNDEF) {
+		   module.setParserStatus(CDG.STATUS_FULL);
 	   }
 	   return RC.OK;
 	}

@@ -17,8 +17,12 @@ import java.lang.reflect.*;
 import java.util.*;
 
 import javax.persistence.*;
+import javax.persistence.Cache;
+import javax.persistence.Query;
 
-import org.hibernate.Session;
+import org.hibernate.*;
+import org.hibernate.persister.collection.AbstractCollectionPersister;
+import org.hibernate.persister.entity.*;
 
 import com.jgg.sdp.core.exceptions.DBException;
 import com.jgg.sdp.domain.DBCache;
@@ -51,9 +55,44 @@ public abstract class AbstractService <T>  {
        em = entityManager;
     }
 
+    protected void createEntityManager() {
+    	em = DBManagerFactory.getInstance().getEntityManager(true);
+    }
+    
     public void clearSession() {
     	em.clear();
     }
+
+    public void clearCache() {
+    	em.clear();
+    	Cache cache = em.getEntityManagerFactory().getCache();
+    	cache.evictAll();
+    	Session session = em.unwrap(Session.class);
+    	session.setCacheMode(CacheMode.IGNORE);
+    }
+    
+  @PersistenceContext  
+  public void clearHibernateCache() {
+	  clearCache();
+/*	  
+	  Session s = (Session)em.getDelegate();      
+	  SessionFactory sf = s.getSessionFactory();         
+	  Map classMetadata = sf.getAllClassMetadata();      
+	  for (Object o :  classMetadata.values()) {    
+		  EntityPersister ep = (EntityPersister) o;
+		  if (ep.hasCache()) {              
+			  sf.evictEntity(ep.getCache().getRegionName());          
+		  }      
+      }        
+	  Map collMetadata = sf.getAllCollectionMetadata();      
+	  for (AbstractCollectionPersister acp : collMetadata.values()) {          
+		  if (acp.hasCache()) {              
+			  sf.evictCollection(acp.getCache().getRegionName());          
+		  }      
+	  }
+	           */
+	  return;  		
+  }
     
     public void beginTrans() {
         begin = System.currentTimeMillis();

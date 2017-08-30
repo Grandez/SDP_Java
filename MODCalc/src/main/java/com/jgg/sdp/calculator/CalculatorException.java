@@ -2,7 +2,7 @@ package com.jgg.sdp.calculator;
 
 import java_cup.runtime.Symbol;
 
-public class CalculatorException extends Exception {
+public class CalculatorException extends RuntimeException {
 	
 	private static final long serialVersionUID = 2814275270116253902L;
 

@@ -1,20 +1,18 @@
-package com.jgg.sdp.domain.core;
+package com.jgg.sdp.domain.module;
 
 import java.io.Serializable;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="SDP_STATUS")
-public class SDPStatus implements Serializable {
+@Table(name="MOD_STATUS")
+public class MODStatus implements Serializable {
 
-	private static final long serialVersionUID = -4708530901737499642L;
-
-	public static final String listAll = "SELECT s FROM SDPStatus s WHERE idModulo = ?1 ORDER BY idgrupo, idItem";
+	private static final long serialVersionUID = 4755565955017576806L;
 
 	@Id
-    @Column(name="idModulo")
-    Long idModulo;
+    @Column(name="idVersion")
+    Long idVersion;
 
 	@Id
     @Column(name="idGrupo")
@@ -42,12 +40,12 @@ public class SDPStatus implements Serializable {
     @Column(name="status")
     Integer status;
 
-	public Long getIdModulo() {
-		return idModulo;
+	public Long getIdVersion() {
+		return idVersion;
 	}
 
-	public void setIdModulo(Long idModulo) {
-		this.idModulo = idModulo;
+	public void setIdVersion(Long idVersion) {
+		this.idVersion = idVersion;
 	}
 
 	public Integer getIdGrupo() {
@@ -123,7 +121,7 @@ public class SDPStatus implements Serializable {
 		result = prime * result + ((excepcion == null) ? 0 : excepcion.hashCode());
 		result = prime * result + ((idGrupo == null) ? 0 : idGrupo.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
-		result = prime * result + ((idModulo == null) ? 0 : idModulo.hashCode());
+		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
 		result = prime * result + ((maximo == null) ? 0 : maximo.hashCode());
 		result = prime * result + ((progreso == null) ? 0 : progreso.hashCode());
 		result = prime * result + ((status == null) ? 0 : status.hashCode());
@@ -138,7 +136,7 @@ public class SDPStatus implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SDPStatus other = (SDPStatus) obj;
+		MODStatus other = (MODStatus) obj;
 		if (actual == null) {
 			if (other.actual != null)
 				return false;
@@ -164,10 +162,10 @@ public class SDPStatus implements Serializable {
 				return false;
 		} else if (!idItem.equals(other.idItem))
 			return false;
-		if (idModulo == null) {
-			if (other.idModulo != null)
+		if (idVersion == null) {
+			if (other.idVersion != null)
 				return false;
-		} else if (!idModulo.equals(other.idModulo))
+		} else if (!idVersion.equals(other.idVersion))
 			return false;
 		if (maximo == null) {
 			if (other.maximo != null)
@@ -186,7 +184,6 @@ public class SDPStatus implements Serializable {
 			return false;
 		return true;
 	}
-    
-    
 
+    
 }

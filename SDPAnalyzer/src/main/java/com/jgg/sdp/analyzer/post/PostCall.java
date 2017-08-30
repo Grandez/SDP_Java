@@ -47,8 +47,8 @@ public class PostCall {
 				module.addTreeVariable();
 			}
 		}
-		if (module.getStatus() != CDG.STATUS_UNDEF) { // Parcial
-			if (!incomplete) module.setStatus(CDG.STATUS_PARTIAL_NO_DOUBT);
+		if (module.getParserStatus() != CDG.STATUS_UNDEF) { // Parcial
+			if (!incomplete) module.setParserStatus(CDG.STATUS_PARTIAL_NO_DOUBT);
 		}
 		
 	}

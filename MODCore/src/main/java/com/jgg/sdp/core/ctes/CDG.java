@@ -48,6 +48,9 @@ public class CDG {
     // Error generico
     public static final int STATUS_ERROR            =  99;
     
+    public static final int STATUS_OK               =   0;
+    public static final int STATUS_KO               =   1;
+    public static final int STATUS_EXCEP            =  -1;    
     
 	// Codigos para los tipos de modulos
 

@@ -10,6 +10,7 @@
         
 <!--         <class>com.jgg.sdp.domain.admin.ADMUsuario</class> -->
                 
+        <class>com.jgg.sdp.domain.cfg.ATest</class>                
         <class>com.jgg.sdp.domain.cfg.CFGConfiguracion</class>
         <class>com.jgg.sdp.domain.cfg.CFGCodigo</class>
         <class>com.jgg.sdp.domain.cfg.CFGTranslate</class>
@@ -20,6 +21,7 @@
         <class>com.jgg.sdp.domain.core.SDPAplicacion</class>
         <class>com.jgg.sdp.domain.core.SDPDependencia</class>        
         <class>com.jgg.sdp.domain.core.SDPFile</class>        
+        <class>com.jgg.sdp.domain.core.SDPFormula</class>        
         <class>com.jgg.sdp.domain.core.SDPSource</class>              
         <class>com.jgg.sdp.domain.core.SDPIssueException</class>        
         <class>com.jgg.sdp.domain.core.SDPModulo</class>
@@ -40,6 +42,7 @@
         <class>com.jgg.sdp.domain.module.MODMissing</class>
         <class>com.jgg.sdp.domain.module.MODParrafo</class>
         <class>com.jgg.sdp.domain.module.MODSecciones</class>
+        <class>com.jgg.sdp.domain.module.MODStatus</class>        
         <class>com.jgg.sdp.domain.module.MODSummary</class>        
         <class>com.jgg.sdp.domain.module.MODVersion</class>
 

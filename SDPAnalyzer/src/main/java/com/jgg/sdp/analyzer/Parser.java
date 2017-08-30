@@ -19,17 +19,19 @@ import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.tools.*;
+import com.jgg.sdp.domain.core.SDPStatus;
+import com.jgg.sdp.domain.services.core.SDPStatusService;
 
 import java_cup.runtime.Scanner;
 
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.factorias.*;
 import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.module.status.*;
+import com.jgg.sdp.module.tables.TBSumIssues;
 import com.jgg.sdp.module.unit.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.rules.RulesChecker;
 
 public class Parser {
 
@@ -68,6 +70,10 @@ public class Parser {
 	   
 	   //Procesa el grafo
 	   //module.makeGraph();
+	   
+	   info.rules.checkModule(module);
+	   
+	   mountStatus(module);
 
 	}
 
@@ -94,6 +100,124 @@ public class Parser {
         parser = FactoryParser.getParser((Scanner) lexer, Parsers.ZCOBOLCODE);
         parser.parse();
 	}
+
+	private void mountStatus(Module module) {
+		Status current = getCurrentStatus(module);
+		Status actual  = module.getStatus();
+		
+		calculateIssues(actual, module);
+		calculateProgress(actual, current);
+	}
+
+	private Status getCurrentStatus(Module module) {
+		Status status = new Status();
+		SDPStatusService service = new SDPStatusService();
+		for (SDPStatus st : service.listAll(module.getName())) {
+			StatusItem item = new StatusItem(st.getIdGrupo(), st.getIdItem());
+			item.setActual(st.getActual());
+			item.setExcepcion(st.getExcepcion());
+			item.setMaximo(st.getMaximo());
+			item.setProgreso(st.getProgreso());
+			item.setDelta(st.getDelta());
+			item.setStatus(st.getStatus());
+			status.add(st.getIdGrupo(), st.getIdItem(), item);
+		}
+		return status;
+	}
+	
+	private void calculateIssues(Status actual, Module module) {
+		int level = 0;
+		TBSumIssues issues = module.getSumIssues();
+		StatusGroup group = actual.getGroup(Status.ISSUES);
+		
+		for (int idx = 0; idx < 7; idx++) {
+			level = (idx == 6) ? 99 : idx;
+			StatusItem item = new StatusItem(group.getId(), level);
+			item.setActual(issues.getCount(level));
+			item.setMaximo(issues.getMaximum(level));
+			item.setStatus(item.getActual() > item.getMaximo() ? 1 : 0);
+            group.add(level, item);
+		}
+	}
+
+	/**
+	 * El maximo puede ser un maximo o un minimo.
+	 * Si es minimo ira en negativo
+	 * Si es maximo puede tener un cero
+	 * 
+	 * @param actual
+	 * @param last
+	 */
+	private void calculateProgress(Status actual, Status last) {
+		for (StatusGroup grp : actual.getGroups()) {
+			for (StatusItem itm : grp.getItems()) {
+				StatusItem l = last.getItem(grp.getId(), itm.getIdItem());
+				if (itm.getMaximo() < 0) {
+					calculateProgressMinimum(itm,l);
+				}
+				else {
+					calculateProgressMaximum(itm, l);
+				}
+			}
+		}
+	}
+	
+	private void calculateProgressMinimum(StatusItem actual, StatusItem last) {
+		actual.setDelta(100);
+		actual.setProgreso(100);
+	}
+
+	private void calculateProgressMaximum(StatusItem actual, StatusItem last) {
+		// Primera ejecucion
+		if (last == null)  {
+			calculateProgressMaximumFirst(actual);
+			return;
+		}
+
+		// Se ha alcanzado el objetivo
+		if (actual.getActual() <= actual.getMaximo()) {
+			actual.setProgreso(100);
+			actual.setDelta(100);
+			return;
+		}
+		
+		// No ha habido cambios
+		if (actual.getActual() == last.getActual()) {
+			actual.setProgreso(last.getProgreso());
+			actual.setDelta(0);
+			return;
+		}
+		
+		if (last.getActual() <= last.getMaximo()) {
+			actual.setDelta(100 - last.getDelta());
+			int prg = (actual.getMaximo() == 0) ? actual.getDelta() 
+					                            : actual.getActual() * 100 / actual.getMaximo(); 
+			actual.setProgreso(prg);
+			return;
+		}
+		
+		int diff = last.getActual() - actual.getActual();
+		actual.setDelta(diff / (last.getActual() - last.getMaximo()));
+		actual.setProgreso(last.getProgreso() + ((1 - last.getProgreso()) * actual.getDelta()));
+	}
+	
+	private void calculateProgressMaximumFirst(StatusItem actual) {
+		if (actual.getActual() <= actual.getMaximo()) {
+			actual.setProgreso(100);
+			actual.setDelta(100);
+			return;
+		}
+		
+		if (actual.getMaximo() == 0) {
+		    actual.setProgreso(0);
+		    actual.setDelta(0);
+		}
+		else {
+			actual.setProgreso(actual.getActual() * 100 / actual.getMaximo());
+			actual.setDelta(actual.getProgreso());
+		}
+    }
+ 
 	
 	/*
 	private void storeInfo (Module module) {

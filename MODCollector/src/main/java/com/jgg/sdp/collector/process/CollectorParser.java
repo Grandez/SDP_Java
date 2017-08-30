@@ -207,6 +207,7 @@ public class CollectorParser implements IProcess {
     }
 
     private void insertaEstado(SDPModulo mod) {
+/*    	
         SDPStatus status = new SDPStatus();
         status.setIdModulo(mod.getIdModulo());
         status.setIdVersion(0L);
@@ -214,6 +215,7 @@ public class CollectorParser implements IProcess {
         status.setUid(SYS.DEF_USER);
         status.setEstado(CDG.ST_PENDING);
         status.setTms(System.currentTimeMillis());
+*/        
     }
     
     private Long updateVersion(MODVersion ver) {

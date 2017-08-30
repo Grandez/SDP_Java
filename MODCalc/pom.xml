@@ -35,6 +35,12 @@
     </dependency>
 
      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODTools</artifactId>
+       <version>${sdp.version}</version>
+     </dependency>
+
+     <dependency>
         <groupId>com.google.guava</groupId>
         <artifactId>guava</artifactId>
         <version>19.0</version>

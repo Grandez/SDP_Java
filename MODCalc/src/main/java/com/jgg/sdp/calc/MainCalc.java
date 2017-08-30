@@ -2,6 +2,9 @@ package com.jgg.sdp.calc;
 
 public class MainCalc {
 
+	private Object base = null;
+	private Object root = null;
+	
 	public static void main(String[] args) throws Exception {
         MainCalc calc = new MainCalc();
         calc.process();
@@ -21,6 +24,8 @@ public class MainCalc {
 			System.out.print(data[idx] + " = ");
 			try {
 			   Calculator c = new Calculator(data[idx]);
+			   c.setObjectBase(base);
+			   c.setObjectRoot(root);
 			   System.out.println(c.evaluateExpression());
 			}
 			catch (Exception ex) {

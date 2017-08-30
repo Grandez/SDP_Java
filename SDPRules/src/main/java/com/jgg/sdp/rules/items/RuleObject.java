@@ -6,7 +6,9 @@ public class RuleObject {
 	private int endLine = 0;
 	private int endColumn = 0;
 
+	private Object value = 0;
 	private String bloque = "";
+	private Object root      = null;
 	private Object component = null;
 	
     	
@@ -65,11 +67,27 @@ public class RuleObject {
 	}
 
 
-	public void setComponent(Object component) {
-		this.component = component;
+	public void setRoot(Object root) {
+		this.root = root;
+	}
+
+	public Object getRoot() {
+		return root;
 	}
 
 
+	public void setComponent(Object component) {
+		this.component = component;
+	}
+	
+    public void setValue(Object value) {
+    	this.value = value;
+    }
+
+    public Object getValue() {
+    	return value;
+    }
+    
 	public String getObjectAsString() {
 		return (String) component;
 	}

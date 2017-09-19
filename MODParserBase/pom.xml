@@ -11,7 +11,7 @@
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
 
   <groupId>com.jgg.sdp</groupId>
@@ -22,14 +22,7 @@
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPBase</artifactId>
-       <version>${sdp.version}</version>
-       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPRules</artifactId>
+       <artifactId>MODRules</artifactId>
        <version>${sdp.version}</version>
        <scope>provided</scope>       
     </dependency>

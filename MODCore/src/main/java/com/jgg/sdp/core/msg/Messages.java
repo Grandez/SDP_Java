@@ -9,6 +9,7 @@ import java.util.*;
 import org.slf4j.*;
 
 import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.core.config.ConfigurationBase;
 import com.jgg.sdp.core.exceptions.SDPException;
 
 
@@ -23,6 +24,7 @@ public class Messages {
     private boolean inLine = false;
 	
 	private SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+	
 	private Messages() {
 	    if (LOGGER == null) {
 	        LOGGER = LoggerFactory.getLogger("SDP");
@@ -100,6 +102,8 @@ public class Messages {
 	}
 	
 	public String getMsg(int code, Object... args) {
+		if (code == 0) return "";
+		
 		String txtCode = String.format("%05d", code);
 		String fmt = montaMensaje(txtCode); 
 		
@@ -118,7 +122,7 @@ public class Messages {
 	}
 	
 	private void loadConfiguracion() {
-        cfg = Configuration.getInstance();
+        cfg = ConfigurationBase.getInstance();
         levelInfo = cfg.getVerbose(); 
     }
 

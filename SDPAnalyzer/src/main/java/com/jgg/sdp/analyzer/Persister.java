@@ -19,6 +19,7 @@ import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.graph.*;
 import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.services.CommonService;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.log.LOGInputService;
 import com.jgg.sdp.domain.sql.*;
@@ -45,7 +46,7 @@ public class Persister {
     
     XMLTable xml = new XMLTable();	
 //    JMSQueue jms = null;
-    Configuration cfg = Configuration.getInstance();
+    Configuration cfg = DBConfiguration.getInstance();
 
     Document doc = null;
 	Element  root = null;
@@ -378,10 +379,12 @@ public class Persister {
     	for (StatusItem item : items) {
     		MODStatus st = new MODStatus();
     		st.setIdVersion(idVersion);
+    		st.setIdGrupo(item.getIdGroup());
+    		st.setIdItem(item.getIdItem());
     		st.setActual(item.getActual());
     		st.setDelta(item.getDelta());
     		st.setExcepcion(item.getExcepcion());
-    		st.setIdGrupo(item.getIdGroup());
+    		
     		st.setMaximo(item.getMaximo());
     		st.setProgreso(item.getProgreso());
     		st.setStatus(item.getStatus());

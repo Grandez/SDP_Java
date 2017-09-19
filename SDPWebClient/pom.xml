@@ -5,16 +5,16 @@
           
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.jgg.sdp</groupId>
-  <artifactId>SDPWebClient</artifactId>
-  <packaging>war</packaging>
-         
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
+
+  <groupId>com.jgg.sdp</groupId>
+  <artifactId>SDPWebClient</artifactId>
+  <packaging>war</packaging>
   
   <dependencies>
 
@@ -47,6 +47,7 @@
        <artifactId>MODWebCore</artifactId>
        <version>${sdp.version}</version>
     </dependency>
+
 
 <!--     <dependency> -->
 <!--        <groupId>com.jgg.sdp</groupId> -->
@@ -139,7 +140,13 @@
         <version>1.7.5</version>
     </dependency>
 
-      
+
+   <dependency>
+      <groupId>org.commonjava.googlecode.markdown4j</groupId>
+      <artifactId>markdown4j</artifactId>
+      <version>[2.2-cj-1.1,)</version>
+   </dependency>
+         
   </dependencies>
   
   <build>

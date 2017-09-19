@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.core.config.ConfigurationBase;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.parser.tools.Comments;
@@ -50,7 +51,7 @@ public abstract class GenericLexer {
    
    protected boolean inDesc      = false;  // Procesando Descripcion?      
    
-   protected Configuration cfg = Configuration.getInstance();
+   protected Configuration cfg = ConfigurationBase.getInstance();
 
    // Para el control de COPYs e INCLUDEs
    

@@ -54,6 +54,7 @@ public class CFG {
 	public static final String COPY_EXT     = "parser.copy.ext";
 	public static final String TEMP_NAME    = "parser.temp.name";
 	public static final String FILE_INPUT   = "parser.file.input";
+	public static final String FILE_TYPE    = "parser.files.type";	
 	
 	public static final String PARSER_ERR   = "parser.error";
     public static final String PARSER_LOCAL = "parser.local";
@@ -81,7 +82,11 @@ public class CFG {
 	public static final String JMS_OUTPUT    = "jms.output.queue";
 	public static final String JMS_HOST      = "jms.hostname";
 	public static final String JMS_PORT      = "jms.port";
+	public static final String JMS_PERSISTER = "jms.service.persister";	
 
+	public static final String SEND_NONE     = "parser.no.send.none";
+	public static final String SEND_COPY     = "parser.no.send.copy";
+	public static final String SEND_INCLUDE  = "parser.no.send.include";	
 	
 	public static final String PRF_VERIFY    = "profiler.verify";
     public static final String PRF_PROFILE   = "profiler.profile";

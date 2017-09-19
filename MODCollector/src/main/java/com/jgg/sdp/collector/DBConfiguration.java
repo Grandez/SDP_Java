@@ -3,28 +3,24 @@
  */
 package com.jgg.sdp.collector;
 
-import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.domain.cfg.CFGConfiguracion;
 import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
 
-public class DBConfiguration extends Configuration {
+public class DBConfiguration extends ConfigurationBase implements Configuration {
 
     private static Configuration cfg = null;
     
     private DBConfiguration() {
-        super();
-        loadConfFromDatabase();
+        CFGConfigurationService confService = new CFGConfigurationService();
+        for (CFGConfiguracion cfg : confService.getAll()) {
+            setParameter(cfg.getClave(),  cfg.getValor());
+        }
     }
     
     public static Configuration getInstance() {
-        if (cfg == null) cfg = (Configuration) new DBConfiguration();
+        if (cfg == null) cfg = new DBConfiguration();
         return cfg;
     }
     
-    private void loadConfFromDatabase() {
-        CFGConfigurationService confService = new CFGConfigurationService();
-        for (CFGConfiguracion cfg : confService.getAll()) {
-            conf.put(cfg.getClave(),  cfg.getValor());
-        }
-    }
 }

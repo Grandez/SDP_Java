@@ -9,7 +9,7 @@ import com.jgg.sdp.core.config.Configuration;
 
 public class Collector {
 
-	private Configuration cfg = Configuration.getInstance();
+	private Configuration cfg = DBConfiguration.getInstance();
 	
 	String prm[][] = { 
 		    {"P", "p" , "parser"  , ""           , "collector.type"  , "0" , "205" , Args.STRING}			          
@@ -33,6 +33,7 @@ public class Collector {
 	}
 
 	private int start(String[] args) {
+/*		
         IProcess proceso = null;
 		cfg.processCommandLine(prm, args);
 		switch (cfg.getCollectorProcess()) {
@@ -41,5 +42,7 @@ public class Collector {
 		   case 'C': proceso = new Consolidator(); break;
 		}
         return proceso.process();
+        */
+		return 0;
 	}
 }	

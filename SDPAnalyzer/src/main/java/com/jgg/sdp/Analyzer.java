@@ -12,6 +12,7 @@ import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.domain.core.SDPFile;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.SDPFileService;
 
 import com.jgg.sdp.parser.base.*;
@@ -24,7 +25,7 @@ public class Analyzer {
 	private SDPFileService fileService = new SDPFileService();
 	
     private Messages      msg = Messages.getInstance("PARSER");    
-    private Configuration cfg = Configuration.getInstance();
+    private Configuration cfg = DBConfiguration.getInstance();
     
 
     public Analyzer() {

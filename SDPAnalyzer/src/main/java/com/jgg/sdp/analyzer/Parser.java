@@ -20,6 +20,7 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.domain.core.SDPStatus;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.SDPStatusService;
 
 import java_cup.runtime.Scanner;
@@ -39,7 +40,7 @@ public class Parser {
     private Module  module = null;
 
    
-    private Configuration cfg = Configuration.getInstance();
+    private Configuration cfg = DBConfiguration.getInstance();
     ParserInfo info = ParserInfo.getInstance();
     
     public Parser() {

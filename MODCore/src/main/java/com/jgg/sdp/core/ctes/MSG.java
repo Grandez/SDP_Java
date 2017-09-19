@@ -14,17 +14,27 @@ public class MSG {
 	public static final int TITLE_SDP_EXTRACTOR =    11;
 	public static final int TITLE_SDP_CICS      =    12;
 	public static final int TITLE_SDP_LITE      =    13;
-	public static final int TITLE_SDP_TREE      =    14;	
-	public static final int TITLE_SDP_ANALYZER  =    15;
+	public static final int TITLE_SDP_TREE      =    14;
+	public static final int TITLE_SDP_TRAPPER   =    15;	
 	public static final int TITLE_SDP_TS        =    16;	
 	public static final int TITLE_SDP_CALL      =    17;
 	public static final int TITLE_SDP_BATCH     =    18;
 	public static final int TITLE_SDP_IVP       =    20;	
 	
+	public static final int TITLE_SDP_ANALYZER  =    22;
+	
+
+	public static final int USE_SDP_TRAPPER     =    20;	
 	public static final int USE_SDP_LITE        =    23;
 	public static final int USE_SDP_ANALYZER    =    23;	
 	public static final int USE_SDP_CALL        =    27;	
 	public static final int LANG                =    30;
+
+
+	public static final int DESC_TRAPPER        =    40;
+	public static final int DESC_TRAPPER_41     =    41;
+	public static final int DESC_TRAPPER_42     =    42;
+	public static final int DESC_TRAPPER_43     =    43;	
 	
 	public static final int NO_DATA             =   100;
 

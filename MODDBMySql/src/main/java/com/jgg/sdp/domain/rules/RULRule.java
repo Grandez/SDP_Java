@@ -9,9 +9,10 @@ import javax.persistence.*;
 @Table(name="RUL_RULES")
 public class RULRule implements Serializable {
 	
-	private static final long serialVersionUID = 5431386457814904667L;
+	private static final long serialVersionUID = -8064928861200075885L;
 
-	public final static String listByItem       = "Select i from RULRule i where idItem = ?1";
+	public final static String listAll          = "Select i from RULRule i";
+	public final static String listByItem       = "Select i from RULRule i where idGroup = ?1 AND idItem = ?2";
 	public final static String listActiveByItem = "Select i from RULRule i " +
 	                                              "WHERE idGroup = ?1 AND idItem = ?2 AND activo = 1 " +
 			                                      "ORDER BY i.priority ";
@@ -28,6 +29,9 @@ public class RULRule implements Serializable {
 	@Column(name="idRule")
 	private Integer idRule;
 
+	@Column(name="idDesc")
+	private Integer idDesc;
+	
 	@Column(name="activo")
 	private Integer activo;
 
@@ -36,7 +40,7 @@ public class RULRule implements Serializable {
 
 	@Column(name="propiedad")
 	private String propiedad;
-	
+
 	@Column(name="severity")
 	private Integer severity;
 	
@@ -79,6 +83,14 @@ public class RULRule implements Serializable {
 		this.idRule = idRule;
 	}
 
+	public Integer getIdDesc() {
+		return idDesc;
+	}
+
+	public void setIdDesc(Integer idDesc) {
+		this.idDesc = idDesc;
+	}
+
 	public Integer getActivo() {
 		return activo;
 	}
@@ -93,6 +105,14 @@ public class RULRule implements Serializable {
 
 	public void setPriority(Integer priority) {
 		this.priority = priority;
+	}
+
+	public String getPropiedad() {
+		return propiedad;
+	}
+
+	public void setPropiedad(String propiedad) {
+		this.propiedad = propiedad;
 	}
 
 	public Integer getSeverity() {
@@ -143,20 +163,13 @@ public class RULRule implements Serializable {
 		this.tms = tms;
 	}
 
-	public String getPropiedad() {
-		return propiedad;
-	}
-
-	public void setPropiedad(String propiedad) {
-		this.propiedad = propiedad;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((activo == null) ? 0 : activo.hashCode());
 		result = prime * result + ((comparador == null) ? 0 : comparador.hashCode());
+		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
 		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
@@ -188,6 +201,11 @@ public class RULRule implements Serializable {
 			if (other.comparador != null)
 				return false;
 		} else if (!comparador.equals(other.comparador))
+			return false;
+		if (idDesc == null) {
+			if (other.idDesc != null)
+				return false;
+		} else if (!idDesc.equals(other.idDesc))
 			return false;
 		if (idGroup == null) {
 			if (other.idGroup != null)

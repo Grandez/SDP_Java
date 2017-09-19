@@ -11,7 +11,9 @@ import com.jgg.sdp.domain.services.AbstractService;
 public class SDPFileService extends AbstractService<SDPFile> {
 
 	public SDPFile findById(long idFile) {
-		return findQuery(SDPFile.findById, idFile);
+		List<SDPFile> l = listQuery(SDPFile.findById, idFile);
+		if (l.isEmpty()) return null;
+		return l.get(0);
 	}
 	
 	public List<SDPFile> listByName(String name) {
@@ -19,7 +21,9 @@ public class SDPFileService extends AbstractService<SDPFile> {
 	}
 	
 	public SDPFile findByNameAndType(String name, int type) {
-		return findQuery(SDPFile.findByNameAndType, name, type);
+		List<SDPFile> l = listQuery(SDPFile.findByNameAndType, name, type);
+		if (l.isEmpty()) return null;
+		return l.get(0);
 	}
 
 	public void deleteByNameAndType(String name, int type) {

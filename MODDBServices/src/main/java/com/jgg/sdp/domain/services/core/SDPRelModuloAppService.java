@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.jgg.sdp.domain.core.SDPAplicacion;
 import com.jgg.sdp.domain.core.SDPRelModuloApp;
 import com.jgg.sdp.domain.services.AbstractService;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CFG;
 import com.jgg.sdp.core.ctes.SYS;
@@ -23,7 +24,7 @@ import com.jgg.sdp.tools.Fechas;
 @Repository
 public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 
-	private Configuration cfg = Configuration.getInstance();
+	private Configuration cfg = DBConfiguration.getInstance();
 	private SDPAplicacionService appService = new SDPAplicacionService();
 	
     public SDPRelModuloApp findByName(String mask) {

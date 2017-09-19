@@ -1,6 +1,135 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         
   <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.jgg</groupId>
+    <artifactId>sdp</artifactId>
+    <version>5.0</version>
+    <relativePath>../ZZZSDP</relativePath>
+  </parent>
+
   <groupId>com.jgg.sdp</groupId>
-  <artifactId>SDPTrapper</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <artifactId>MODTrapper</artifactId>
+  <packaging>jar</packaging>
+
+  <name>Serendipity Trapper</name>
+  <profiles>
+  	   <profile>
+  	   	   <id>Development</id>
+  	   	   <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+ 	   	     <dependencies>
+
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODCore</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+                
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClients</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+                
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>SDPClientHTML</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+
+           </dependencies>
+
+  	   </profile>	
+  	   <profile>
+  	   	   <id>Distribution</id>
+ 	   	     <dependencies>
+
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODCore</artifactId>
+                   <version>${sdp.version}</version>  
+                   <scope>provided</scope>    
+                </dependency>
+                
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClients</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+                
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClientHTML</artifactId>
+                   <version>${sdp.version}</version>      
+                   <scope>provided</scope>                   
+                </dependency>
+
+           </dependencies>
+  	   	   
+         <build>
+             <plugins>
+                  <plugin>
+                      <artifactId>maven-assembly-plugin</artifactId>
+                      <configuration>
+                          <descriptorRefs>
+                            <descriptorRef>jar-with-dependencies</descriptorRef>
+                          </descriptorRefs>
+                          <appendAssemblyId>false</appendAssemblyId>
+                      </configuration>
+                      <executions>
+                          <execution>
+                              <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                              <phase>package</phase> <!-- bind to the packaging phase -->
+                              <goals>
+                                <goal>single</goal>
+                              </goals>
+                          </execution>
+                      </executions>
+                  </plugin>
+             
+                  <!-- La copia al directorio destino -->
+                  <plugin>
+                     <groupId>org.apache.maven.plugins</groupId>
+                     <artifactId>maven-dependency-plugin</artifactId>
+                     <version>2.10</version>
+                  
+                     <executions>
+                         <execution>
+                            <id>copy-installed</id>
+                            <phase>install</phase>
+                            <goals>
+                                <goal>copy</goal>
+                            </goals>
+                            <configuration>
+                               <artifactItems>
+                                   <artifactItem>
+                                      <groupId>${project.groupId}</groupId>
+                                      <artifactId>${project.artifactId}</artifactId>
+                                      <version>${project.version}</version>
+                                      <type>${project.packaging}</type>
+                                      <destFileName>SDPTrapper.jar</destFileName>
+                                   </artifactItem>
+                               </artifactItems>
+                       
+                               <outputDirectory>${sdp.lib}</outputDirectory>
+                           </configuration>
+                         </execution>
+                     </executions>
+                  </plugin>
+             
+                     
+             </plugins>
+         
+         </build>
+  	   	   
+  	   </profile>	
+
+  </profiles>
+
 </project>

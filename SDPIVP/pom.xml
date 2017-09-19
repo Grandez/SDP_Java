@@ -3,19 +3,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+  <name>Serendipity Installation and verification</name>
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
 
   <artifactId>SDPIVP</artifactId>
   <packaging>jar</packaging>
-
-  <name>Serendipity Installation and verification</name>
 
   <dependencies>
 

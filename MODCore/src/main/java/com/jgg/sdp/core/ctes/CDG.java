@@ -26,6 +26,8 @@ public class CDG {
     public static final int SOURCE_INCLUDE = 3;
     
     // Codigos de estado del analisis nivel fichero
+    public static final int STATUS_PENDING          =  -1;
+    
     public static final int STATUS_UNDEF            =   0;
     // Completo
     public static final int STATUS_FULL             =   1;
@@ -154,7 +156,24 @@ public class CDG {
 	public static final int TS_BOTH    = 3;
     public static final int TS_QR      = 6;
 	
-	
+
+    public static final String JMS_HTTP   = "HTTP";
+    public static final String JMS_WMQ    = "WMQ";
+    public static final String JMS_WMQJMS = "WMQJMS";
+    
+
+    // Tipos de mensajes para consola
+    public static final int TXT_NORMAL =  0;
+    public static final int TXT_TITLE  =  1;
+    public static final int TXT_USE    =  2;    
+    public static final int TXT_DESC   =  3;
+    public static final int TXT_WARN   =  4; 
+    public static final int TXT_ERROR  =  5;
+    public static final int TXT_SKIP   =  9;
+    public static final int TXT_ITEM   = 10;
+    public static final int TXT_NEXT   = 11;    
+    public static final int TXT_DEBUG  = 99;
+    
 	private CDG() {
 		
 	}

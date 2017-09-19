@@ -20,6 +20,7 @@ import org.hibernate.jpa.internal.*;
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.SDPException;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 
 public class DBManagerFactory {
 
@@ -29,7 +30,7 @@ public class DBManagerFactory {
     
     private static DBManagerFactory db = null;
     
-    private Configuration cfg = Configuration.getInstance();
+//    private Configuration cfg = DBConfiguration.getInstance();
 
 
     public static DBManagerFactory getInstance() {
@@ -73,7 +74,7 @@ public class DBManagerFactory {
      *     es de la forma /dir/dir/ y se le añade el fichero por defecto
      * @return
      */
-	
+/*	
 	private Properties getDBProperties() {
 	   Properties props = new Properties();
        InputStream in = null;       
@@ -100,4 +101,5 @@ public class DBManagerFactory {
        return props;
 
    }
+*/   
 }

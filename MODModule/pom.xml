@@ -8,7 +8,7 @@
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
 
 <!--   <parent> -->

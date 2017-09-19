@@ -80,6 +80,10 @@ public class ColoredPrinter implements IColoredPrinter {
             _level = level;
             _timestampFlag = tsFlag;
         }
+        public Builder() {
+            _level = 0;
+            _timestampFlag = false;
+        }
 
         /**
          * @param level specifies the maximum level of debug this printer can

@@ -19,7 +19,7 @@ parser code {:
    GenericScanner scanner = null;
    Module        module   = ModulesFactory.getDefaultModule();
    Summary       summary  = module.getSummary();
-   Configuration cfg      = Configuration.getInstance();
+   Configuration cfg      = ConfigurationBase.getInstance();
    ParserInfo    info     = ParserInfo.getInstance();
              
    public void syntax_error(Symbol token) throws ParseException {

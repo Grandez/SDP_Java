@@ -31,7 +31,7 @@ import static com.jgg.sdp.calculator.CalcSym.*;
    ComplexSymbolFactory symbolFactory = null;
    
    private Symbol symbol(int id) {
-       System.out.println("Devuelve " + yytext()); 
+//       System.out.println("Devuelve " + yytext()); 
        return symbolFactory.newSymbol(yytext(), id, new Symbol(id, yyline, yycolumn, yytext()));
    }
           

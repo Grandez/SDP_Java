@@ -3,32 +3,29 @@
  */
 package com.jgg.sdp.domain.services.cfg;
 
-import java.util.*;
-
 import com.jgg.sdp.domain.cfg.*;
 import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
 
+import com.jgg.sdp.core.config.*;
 
+public class DBConfiguration extends ConfigurationBase implements Configuration {
 
-import com.jgg.sdp.core.config.Configuration;
-
-public class DBConfiguration extends Configuration {
-
+	private static boolean loading = false;
+	
     private DBConfiguration() {
-        super();
-        loadConfFromDatabase();
+        CFGConfigurationService confService = new CFGConfigurationService();
+        for (CFGConfiguracion config : confService.getAll()) {
+            conf.put(config.getClave(),  config.getValor());
+        }    	
+
     }
     
     public static Configuration getInstance() {
-        if (cfg == null) cfg = (Configuration) new DBConfiguration();
-        return cfg;
+		if (cfg == null && loading == false) {
+			loading = true;
+			cfg = new DBConfiguration();
+		}
+		return cfg;		
     }
     
-    private void loadConfFromDatabase() {
-        CFGConfigurationService confService = new CFGConfigurationService();
-        for (CFGConfiguracion cfg : confService.getAll()) {
-            conf.put(cfg.getClave(),  cfg.getValor());
-        }
-    }
-
 }

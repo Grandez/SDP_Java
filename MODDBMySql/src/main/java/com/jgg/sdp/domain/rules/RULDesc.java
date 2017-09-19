@@ -8,9 +8,9 @@ import javax.persistence.*;
 @Table(name="RUL_DESC")
 public class RULDesc implements Serializable {
 
-	private static final long serialVersionUID = -8250377074272339218L;
+	private static final long serialVersionUID = -576089848894078051L;
 
-	public static final String getDescription = "SELECT r FROM RULDesc r where r.cdgMsg = ?1 AND r.idLang = ?2 AND r.idDialect = ?3";
+	public static final String getDescription = "SELECT r FROM RULDesc r where r.idDesc = ?1 AND r.idLang = ?2 AND r.idDialect = ?3";
 	
 	@Id
 	@Column(name="idDesc")
@@ -24,8 +24,8 @@ public class RULDesc implements Serializable {
 	@Column(name="idDialect")
 	private String idDialect;
 
-	@Column(name="msg")
-	private String msg;
+	@Column(name="txt")
+	private String txt;
 
 	public Integer getIdDesc() {
 		return idDesc;
@@ -51,12 +51,12 @@ public class RULDesc implements Serializable {
 		this.idDialect = idDialect;
 	}
 
-	public String getMsg() {
-		return msg;
+	public String getTxt() {
+		return txt;
 	}
 
-	public void setMsg(String msg) {
-		this.msg = msg;
+	public void setTxt(String txt) {
+		this.txt = txt;
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class RULDesc implements Serializable {
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idDialect == null) ? 0 : idDialect.hashCode());
 		result = prime * result + ((idLang == null) ? 0 : idLang.hashCode());
-		result = prime * result + ((msg == null) ? 0 : msg.hashCode());
+		result = prime * result + ((txt == null) ? 0 : txt.hashCode());
 		return result;
 	}
 
@@ -94,13 +94,12 @@ public class RULDesc implements Serializable {
 				return false;
 		} else if (!idLang.equals(other.idLang))
 			return false;
-		if (msg == null) {
-			if (other.msg != null)
+		if (txt == null) {
+			if (other.txt != null)
 				return false;
-		} else if (!msg.equals(other.msg))
+		} else if (!txt.equals(other.txt))
 			return false;
 		return true;
 	}
-	
 	
 }

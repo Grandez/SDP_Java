@@ -11,7 +11,7 @@
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
     <version>5.0</version>
   </parent>
   

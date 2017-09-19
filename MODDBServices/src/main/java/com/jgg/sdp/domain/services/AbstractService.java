@@ -71,9 +71,9 @@ public abstract class AbstractService <T>  {
     	session.setCacheMode(CacheMode.IGNORE);
     }
     
-  @PersistenceContext  
+  
   public void clearHibernateCache() {
-	  clearCache();
+//	  clearCache();
 /*	  
 	  Session s = (Session)em.getDelegate();      
 	  SessionFactory sf = s.getSessionFactory();         

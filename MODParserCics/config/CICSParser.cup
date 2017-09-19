@@ -10,7 +10,7 @@ import com.jgg.sdp.parser.stmt.*;
 import com.jgg.sdp.parser.code.*;
 
 parser code {:
-      Configuration cfg  = Configuration.getInstance();
+      Configuration cfg  = ConfigurationBase.getInstance();
       ParserInfo    info = ParserInfo.getInstance();
 
       public void syntax_error(Symbol token) {

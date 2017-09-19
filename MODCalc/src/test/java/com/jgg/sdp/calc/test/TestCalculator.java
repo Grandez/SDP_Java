@@ -19,7 +19,7 @@ public class TestCalculator {
 		   Assert.fail("Excepcion generada");
 	   }
 	}
-
+/*
    @Test(dataProvider = "relational")
    public void testBoolean(String formula, boolean value) {
 	   Calculator calc = new Calculator(formula);
@@ -30,7 +30,7 @@ public class TestCalculator {
 		   Assert.fail("Excepcion generada");
 	   }
 	}
-
+*/
 	@DataProvider(name = "values")
 	public Object[][] provideDataValues() {
 

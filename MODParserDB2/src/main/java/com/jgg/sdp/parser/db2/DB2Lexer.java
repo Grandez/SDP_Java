@@ -1,6 +1,6 @@
 package com.jgg.sdp.parser.db2;
 
-import com.jgg.sdp.module.unit.Source;
+import com.jgg.sdp.core.unit.Source;
 import com.jgg.sdp.parser.base.GenericLexer;
 import com.jgg.sdp.parser.lang.*;
 

@@ -11,7 +11,7 @@
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
 
   <groupId>com.jgg.sdp</groupId>
@@ -35,7 +35,7 @@
   </dependencies>
 
   <build>
-  
+
     <plugins>
 
      <plugin>
@@ -56,37 +56,9 @@
         </executions>
       </plugin>
 
-<!--           <plugin> -->
-<!--              <groupId>org.apache.maven.plugins</groupId> -->
-<!--              <artifactId>maven-dependency-plugin</artifactId> -->
-<!--              <version>2.10</version> -->
-          
-<!--              <executions> -->
-<!--                  <execution> -->
-<!--                     <id>copy-installed</id> -->
-<!--                     <phase>install</phase> -->
-<!--                     <goals> -->
-<!--                         <goal>copy</goal> -->
-<!--                     </goals> -->
-<!--                     <configuration> -->
-<!--                        <artifactItems> -->
-<!--                            <artifactItem> -->
-<!--                               <groupId>${project.groupId}</groupId> -->
-<!--                               <artifactId>${project.artifactId}</artifactId> -->
-<!--                               <version>${project.version}</version> -->
-<!--                               <type>${project.packaging}</type> -->
-<!--                               <destFileName>MODDBServices.jar</destFileName> -->
-<!--                            </artifactItem> -->
-<!--                        </artifactItems> -->
-               
-<!--                        <outputDirectory>${sdp.lib}</outputDirectory> -->
-<!--                    </configuration> -->
-<!--                  </execution> -->
-<!--              </executions> -->
-<!--           </plugin> -->
 
     </plugins>
 
-</build>
+  </build>
 
 </project>

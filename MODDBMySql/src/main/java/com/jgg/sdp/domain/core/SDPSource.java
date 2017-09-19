@@ -17,6 +17,10 @@ public class SDPSource implements Serializable {
 	@Column(name="idFile")
 	Long idFile;
 
+	@Id
+	@Column(name="idVersion")
+	Long idVersion;
+
 	@Lob
 	@Column(name="source")
 	byte[] source;
@@ -29,6 +33,14 @@ public class SDPSource implements Serializable {
 		this.idFile = id;
 	}
 
+	public Long getIdVersion() {
+		return idVersion;
+	}
+
+	public void setIdVersion(Long idVersion) {
+		this.idVersion = idVersion;
+	}
+
 	public byte[] getSource() {
 		return source;
 	}
@@ -37,4 +49,5 @@ public class SDPSource implements Serializable {
 		this.source = source;
 	}
 
+	
 }

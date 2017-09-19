@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name="RUL_ITEMS")
 public class RULItem implements Serializable {
 
-	private static final long serialVersionUID = 1057811313977487107L;
+	private static final long serialVersionUID = -3035001051783710425L;
 
 	public static String listAll           = "SELECT i FROM RULItem i ";
 	public static String listActive        = "SELECT i FROM RULItem i WHERE i.activo = 1";
@@ -27,6 +27,9 @@ public class RULItem implements Serializable {
 	@Column(name="activo")
 	private Integer activo;
 	
+	@Column(name="idDesc")
+	private Integer idDesc;
+
 	@Column(name="clave")
 	private String clave;
 
@@ -60,6 +63,14 @@ public class RULItem implements Serializable {
 		this.activo = activo;
 	}
 
+	public Integer getIdDesc() {
+		return idDesc;
+	}
+
+	public void setIdDesc(Integer idDesc) {
+		this.idDesc = idDesc;
+	}
+
 	public String getClave() {
 		return clave;
 	}
@@ -89,9 +100,10 @@ public class RULItem implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((activo == null) ? 0 : activo.hashCode());
+		result = prime * result + ((clave == null) ? 0 : clave.hashCode());
+		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
-		result = prime * result + ((clave == null) ? 0 : clave.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
 		return result;
@@ -111,6 +123,16 @@ public class RULItem implements Serializable {
 				return false;
 		} else if (!activo.equals(other.activo))
 			return false;
+		if (clave == null) {
+			if (other.clave != null)
+				return false;
+		} else if (!clave.equals(other.clave))
+			return false;
+		if (idDesc == null) {
+			if (other.idDesc != null)
+				return false;
+		} else if (!idDesc.equals(other.idDesc))
+			return false;
 		if (idGroup == null) {
 			if (other.idGroup != null)
 				return false;
@@ -120,11 +142,6 @@ public class RULItem implements Serializable {
 			if (other.idItem != null)
 				return false;
 		} else if (!idItem.equals(other.idItem))
-			return false;
-		if (clave == null) {
-			if (other.clave != null)
-				return false;
-		} else if (!clave.equals(other.clave))
 			return false;
 		if (tms == null) {
 			if (other.tms != null)

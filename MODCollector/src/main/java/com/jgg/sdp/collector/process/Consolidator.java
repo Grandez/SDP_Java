@@ -13,28 +13,22 @@ package com.jgg.sdp.collector.process;
 import java.util.ArrayList;
 
 import com.jgg.sdp.collector.consolidator.*;
-import com.jgg.sdp.domain.core.SDPModulo;
-import com.jgg.sdp.domain.module.MODVersion;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.*;
-import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.traps.*;
 import com.jgg.sdp.domain.session.*;
 import com.jgg.sdp.domain.traps.*;
 import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.MSG;
-import com.jgg.sdp.core.exceptions.SDPException;
 // import com.jgg.sdp.core.jms.*;
 import com.jgg.sdp.core.msg.Messages;
 
 public class Consolidator implements IProcess {
 
 //	private JMSQueue qInput;
-	private Configuration cfg = Configuration.getInstance();
+	private Configuration cfg = DBConfiguration.getInstance();
 
 	private SDPModuloService     moduloService   = new SDPModuloService();
-
-	private MODVersionService versionService  = new MODVersionService();
 
 	private TRPSesionService  trpSesionService = new TRPSesionService();
 	private SESSesionService  sesSesionService = new SESSesionService();

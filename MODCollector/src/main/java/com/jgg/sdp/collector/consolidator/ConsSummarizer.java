@@ -6,6 +6,7 @@ package com.jgg.sdp.collector.consolidator;
 import java.util.List;
 
 import com.jgg.sdp.domain.module.*;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.log.*;
 import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.domain.services.session.*;
@@ -26,7 +27,7 @@ public class ConsSummarizer {
     private SUMParrafoService sumParrService = new SUMParrafoService();
     private LOGInputService   logService     = new LOGInputService();
     
-    private Configuration cfg = Configuration.getInstance();
+    private Configuration cfg = DBConfiguration.getInstance();
 
     private ConsClaves claves;
     

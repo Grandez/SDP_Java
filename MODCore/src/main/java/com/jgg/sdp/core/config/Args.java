@@ -93,11 +93,11 @@ public class Args {
 	 */
 	private void loadDefaults() {
 		String def[][] = { 
-	             {"" , ""  , "config" , "SDP_CONFIG" , CFG.DIR_CONFIG , DIR      , "216" }
+		         {"1", "v" , "verbose", ""           , CFG.VERBOSE    , BOOLEAN  , "209" }	   
+		        ,{"2", "V" , "VERBOSE", ""           , CFG.VERBOSE    , BOOLEAN  , "210" }	
+	            ,{"1", "h" , "help"   , ""           , CFG.HELP       , BOOLEAN  , "222" }		        
+				,{"" , ""  , "config" , "SDP_CONFIG" , CFG.DIR_CONFIG , DIR      , "216" }
 		        ,{"1", ""  , "def"    , ""           , CFG.DEF        , BOOLEAN  , "223" }
-	            ,{"1", "h" , "help"   , ""           , CFG.HELP       , BOOLEAN  , "222" }
-		        ,{"1", "v" , "verbose", ""           , CFG.VERBOSE    , BOOLEAN  , "209" }	   
-		        ,{"2", "V" , "VERBOSE", ""           , CFG.VERBOSE    , BOOLEAN  , "210" }	 
 		      };
 		   
 	       for (int idx = 0; idx < def.length; idx++) {
@@ -139,8 +139,8 @@ public class Args {
 			throw new ParameterException(MSG.PARM_VALUE_MISSING, args[idx]);
 		}
 		
-		if (prm[5] != STRING) {
-			validateParm(args[next], prm[7]);
+		if (prm[5] != Args.STRING) {
+			validateParm(args[next], prm[5]);
 		}
 		
 		params.put(prm[4], args[next]);

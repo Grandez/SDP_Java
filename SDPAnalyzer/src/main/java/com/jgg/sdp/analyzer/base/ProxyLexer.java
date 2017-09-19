@@ -19,6 +19,7 @@ import com.jgg.sdp.analyzer.work.CopyLoader;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.tools.Archivo;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.unit.*;
 
@@ -32,7 +33,7 @@ import static com.jgg.sdp.analyzer.base.Parsers.*;
 
 public class ProxyLexer implements GenericScanner {
 	
-	private Configuration cfg  = Configuration.getInstance();	
+	private Configuration cfg  = DBConfiguration.getInstance();	
 	private ParserInfo    info = ParserInfo.getInstance();
 	
 	private CopyLoader    loader  = new CopyLoader();	
@@ -223,7 +224,7 @@ public class ProxyLexer implements GenericScanner {
    }
    
    private void loadCopy(String name, ArrayList<String> tokens) {
-   
+   /*
 	   // La copy esta marcada como ignorada
 	   if (cfg.isIgnored(name)) {
 //		   info.markCopyIgnored();
@@ -234,7 +235,7 @@ public class ProxyLexer implements GenericScanner {
 		   lexer.popState();
 		   return;
 	   }
-
+*/
 	   Source source = loader.load(name, tokens);
 	   
 	   if (source == null) {

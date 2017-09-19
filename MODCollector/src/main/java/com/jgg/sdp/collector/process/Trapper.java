@@ -5,6 +5,7 @@ package com.jgg.sdp.collector.process;
 
 import java.sql.Timestamp;
 
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.traps.*;
 import com.jgg.sdp.domain.traps.*;
@@ -49,7 +50,7 @@ public class Trapper implements IProcess {
 //	private JMSQueue qInput;
 //	private JMSQueue qOutput;
 
-	private Configuration cfg = Configuration.getInstance();
+	private Configuration cfg = DBConfiguration.getInstance();
 
 	private SDPModuloService          moduloService   = new SDPModuloService();
 	

@@ -329,7 +329,7 @@ public class CalcLexer implements java_cup.runtime.Scanner {
    ComplexSymbolFactory symbolFactory = null;
    
    private Symbol symbol(int id) {
-       System.out.println("Devuelve " + yytext()); 
+//       System.out.println("Devuelve " + yytext()); 
        return symbolFactory.newSymbol(yytext(), id, new Symbol(id, yyline, yycolumn, yytext()));
    }
           

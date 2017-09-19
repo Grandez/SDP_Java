@@ -6,12 +6,13 @@ import java.util.*;
 import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CFG;
 import com.jgg.sdp.core.tools.Archivo;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.module.factorias.SourcesFactory;
 import com.jgg.sdp.module.unit.Source;
 
 public class CopyLoader {
 
-	private Configuration cfg = Configuration.getInstance();
+	private Configuration cfg = DBConfiguration.getInstance();
 	    
 	public Source load(String name, ArrayList<String> toks) {
 		String cpyFile = getFullPathCopy(name);

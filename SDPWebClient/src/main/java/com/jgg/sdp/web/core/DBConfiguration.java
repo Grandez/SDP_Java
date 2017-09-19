@@ -11,8 +11,9 @@ import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
 
 
 import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.core.config.ConfigurationBase;
 
-public class DBConfiguration extends Configuration {
+public class DBConfiguration extends ConfigurationBase implements Configuration {
 
     private static Configuration cfg = null;
     

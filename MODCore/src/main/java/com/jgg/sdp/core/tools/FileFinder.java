@@ -12,11 +12,11 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 
-import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.core.config.*;
 
 public class FileFinder {
 
-	static Configuration cfg = Configuration.getInstance();
+	private static Configuration cfg = ConfigurationBase.getInstance();
 	
 	/**
      * Busca los nombres de los ficheros de acuerdo a sus patrones.

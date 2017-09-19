@@ -15,8 +15,7 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.core.msg.*;
 import com.jgg.sdp.core.tools.*;
-import com.jgg.sdp.tools.*;
-import com.jgg.sdp.module.unit.Source;
+import com.jgg.sdp.core.unit.Source;
 import com.jgg.sdp.parser.base.GenericLexer;
 
 import java_cup.runtime.ComplexSymbolFactory;
@@ -26,7 +25,7 @@ public class DB2ParserMain {
 
     
     private Messages      msg = Messages.getInstance("PARSER");    
-    private Configuration cfg = Configuration.getInstance();
+    private Configuration cfg = ConfigurationBase.getInstance();
 	
   	/* Tabla de parametros aceptados
 	 * 0 - valor simbolico

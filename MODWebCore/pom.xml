@@ -7,16 +7,17 @@
           
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.jgg.sdp</groupId>
-  <artifactId>MODWebCore</artifactId>
-  <packaging>jar</packaging>
-         
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
+
+  <groupId>com.jgg.sdp</groupId>
+  <artifactId>MODWebCore</artifactId>
+  <packaging>jar</packaging>
+         
   
   <dependencies>
 

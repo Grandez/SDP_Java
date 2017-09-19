@@ -15,17 +15,15 @@ package com.jgg.sdp.module.unit;
 
 import java.util.*;
 
-import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CDG;
-import com.jgg.sdp.core.ctes.MSG;
 import com.jgg.sdp.core.tools.Archivo;
+import com.jgg.sdp.core.unit.SDPUnitBase;
+import com.jgg.sdp.core.unit.Source;
+import com.jgg.sdp.core.unit.SourcesFactory;
 import com.jgg.sdp.tools.*;
 import com.jgg.sdp.module.base.*;
-import com.jgg.sdp.module.factorias.*;
 
-public class SDPUnit {
-
-	private Configuration cfg = Configuration.getInstance();
+public class SDPUnit extends SDPUnitBase {
 
 	// Lista de ficheros fuente (al menos uno)
 	private ArrayList<Source> sources = new ArrayList<Source>();
@@ -52,11 +50,12 @@ public class SDPUnit {
     private boolean exist = false;
     
 	public SDPUnit (Archivo archivo) {
+		super(archivo);
         SourcesFactory.cleanSources();
         
         Source source = SourcesFactory.getSourceCode(archivo);
         sources.add(source);
-        modules.add(ModulesFactory.getModule(source));
+//        modules.add(ModulesFactory.getModule(source));
         
         module = modules.get(0);
         module.setName(source.getBaseName());
@@ -97,10 +96,11 @@ public class SDPUnit {
 	 * @param archivo
 	 * @return
 	 */
+/*    
 	public int isIgnored() {
 		return cfg.isIgnored(source.getBaseName()) ? MSG.IGNORED : MSG.OK;
 	}
-
+*/
 	public long getId() {
 		return id;
 	}

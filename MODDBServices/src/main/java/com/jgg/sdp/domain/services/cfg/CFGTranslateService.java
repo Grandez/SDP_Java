@@ -21,7 +21,7 @@ public class CFGTranslateService extends AbstractService<CFGTranslate> {
 	
 	private HashSet<String> noXlate = new HashSet<String>();
 
-	private Configuration cfg = Configuration.getInstance();
+	private Configuration cfg = DBConfiguration.getInstance();
 	
 	private CFGTranslate record = null;
 	

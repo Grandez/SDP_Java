@@ -39,10 +39,6 @@ public class SDPModuloService extends AbstractService<SDPModulo> {
 		return findQuery(SDPModulo.findByNameAndType, name, type);
 	}
 	
-	public SDPModulo findByModuleName(String name) {
-		return find("findByModuleName", name);
-	}
-	
 	public List<SDPModulo> getModulesByPseudoMask(String mask) {
 	    return list("ModulosPorPseudoMascara", mask + "%"); 	
 	}

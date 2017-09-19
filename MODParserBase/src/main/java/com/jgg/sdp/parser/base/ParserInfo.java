@@ -7,6 +7,7 @@ package com.jgg.sdp.parser.base;
 import java.util.*;
 
 import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.core.config.ConfigurationBase;
 import com.jgg.sdp.core.ctes.CFG;
 import com.jgg.sdp.core.ctes.MSG;
 import com.jgg.sdp.module.base.Module;
@@ -22,7 +23,7 @@ public class ParserInfo {
 
 	private static ParserInfo info = null;
 
-	private Configuration cfg = Configuration.getInstance();
+	private Configuration cfg = ConfigurationBase.getInstance();
 	
 	public RulesChecker rules = new RulesChecker();   
 	

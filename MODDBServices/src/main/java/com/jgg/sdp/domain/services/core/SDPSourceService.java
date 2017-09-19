@@ -15,7 +15,7 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class SDPSourceService extends AbstractService<SDPSource> {
 
-	public SDPSource getSource (Long idVersion) {
-		return find("find", idVersion);
+	public SDPSource getSource (Long idFile) {
+		return find("find", idFile);
 	}
 }

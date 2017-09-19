@@ -9,8 +9,8 @@ package com.jgg.sdp.module.factorias;
 
 import java.util.*;
 
+import com.jgg.sdp.core.unit.Source;
 import com.jgg.sdp.module.base.Module;
-import com.jgg.sdp.module.unit.Source;
 
 public class ModulesFactory {
 

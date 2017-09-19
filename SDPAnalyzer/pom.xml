@@ -5,18 +5,18 @@
          
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Serendipity Parser and Analyzer: Local mode</name>
+
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
     <version>5.0</version>
-    <relativePath>../SDP</relativePath>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
 
   <groupId>com.jgg.sdp</groupId>
   <artifactId>SDPAnalyzer</artifactId>
   <packaging>jar</packaging>
-
-  <name>Serendipity Parser and Analyzer: Local mode</name>
 
   <dependencies>
 
@@ -37,6 +37,12 @@
       <dependency>
         <groupId>com.jgg.sdp</groupId>
         <artifactId>MODParserBase</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
+
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODParserCobol</artifactId>
         <version>${sdp.version}</version>
      </dependency>
 

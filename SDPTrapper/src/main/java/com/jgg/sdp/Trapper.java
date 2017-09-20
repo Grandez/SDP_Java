@@ -26,6 +26,10 @@ public class Trapper {
     
 
     private SDPUnitBase unit   = null;
+
+    private Trapper() {
+    	initObject();
+    }
     
 	public static void main(String[] args) throws Exception {
 	   int rc = RC.OK;
@@ -38,9 +42,6 @@ public class Trapper {
 		int     rc      = RC.OK;
 		int     maxRC   = RC.OK;
 
-		initObject();
-		
-				
 		args = cfg.processCommandLine(TrapperParms.parms, args);
 		
 		if (args.length == 0) args = new String[]{"*"};

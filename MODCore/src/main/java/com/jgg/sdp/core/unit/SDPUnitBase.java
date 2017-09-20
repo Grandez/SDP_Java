@@ -38,7 +38,7 @@ public class SDPUnitBase {
         this.firma = source.getFirma();
         this.source = sources.get(0);
         this.id = Fechas.serial();
-        this.numModulos = 1;
+        this.numModulos = 0;
         this.nombre = archivo.getBaseName();
         this.tipo = CDG.SOURCE_CODE;
         this.estado = CDG.STATUS_UNDEF;

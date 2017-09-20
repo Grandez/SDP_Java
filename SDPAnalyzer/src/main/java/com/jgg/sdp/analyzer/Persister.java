@@ -87,6 +87,10 @@ public class Persister {
     	persistCompileUnit(unit);
     	persistSource(unit);
     }
+
+    public void persistStatus(SDPFile file) {
+    	generate(file);
+    }
     
     private void persistCompileUnit(SDPUnit unit) {
     	

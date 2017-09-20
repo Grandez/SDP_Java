@@ -49,16 +49,15 @@ public class SDPUnit extends SDPUnitBase {
     private int     estado;
     private boolean exist = false;
     
-	public SDPUnit (Archivo archivo) {
+	public SDPUnit(Archivo archivo) {
 		super(archivo);
-        SourcesFactory.cleanSources();
-        
+
+		SourcesFactory.cleanSources();
         Source source = SourcesFactory.getSourceCode(archivo);
         sources.add(source);
-//        modules.add(ModulesFactory.getModule(source));
         
-        module = modules.get(0);
-        module.setName(source.getBaseName());
+        module = new Module(archivo.getFullPath());
+        modules.add(module);
         
         members.push(source.getBaseName());
 

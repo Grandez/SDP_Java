@@ -27,13 +27,13 @@ public class Module {
     private int           cpyType      = 0;
     private boolean       cpyIgnored   = false;
 	
-//	private Stack<Source>   sources      = new Stack<Source>();
-	private Summary         summary      = new Summary();
-	private Codigo          codigo       = new Codigo();	
-	private TBCics          tbCics       = new TBCics();
-	private Sections        sections     = new Sections();	
-	private Comment         comment      = new Comment();
-	private TBSumIssues     sumIssues    = new TBSumIssues();
+//	private Stack<Source> sources      = new Stack<Source>();
+	private Summary       summary      = new Summary();
+	private Codigo        codigo       = new Codigo();	
+	private TBCics        tbCics       = new TBCics();
+	private Sections      sections     = new Sections();	
+	private Comment       comment      = new Comment();
+	private TBSumIssues   sumIssues    = new TBSumIssues();
 	
 	private TBFiles       tbFiles      = new TBFiles();
     private Graph         grafo        = new Graph(this);
@@ -50,16 +50,16 @@ public class Module {
 	
 	private Status        status       = new Status();
 	
-	private boolean fullParsed  = true;
-	private String  fullName    = null;
-	private String  name        = null;
+	private boolean       fullParsed  = true;
+	private String        fullName    = null;
+	private String        name        = null;
 
-	private String  author      = "N/A";
-    private int     tipo        = -1;
+	private String        author      = "N/A";
+    private int           tipo        = -1;
     
     // Por defecto completo, se actualiza si hay fallos
-    private int     copys       = CDG.CPY_ST_FULL;
-    private int     tree        = 0;
+    private int          copys       = CDG.CPY_ST_FULL;
+    private int          tree        = 0;
     
     
     // Firma digital del nuevo fuente

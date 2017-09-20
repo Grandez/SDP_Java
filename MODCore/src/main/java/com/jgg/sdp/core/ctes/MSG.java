@@ -11,7 +11,8 @@ package com.jgg.sdp.core.ctes;
 public class MSG {
 
 	public static final int TITLE_SDP           =    10;	
-	public static final int TITLE_SDP_EXTRACTOR =    11;
+	public static final int TITLE_SDP_ANALYZER  =    11;
+	
 	public static final int TITLE_SDP_CICS      =    12;
 	public static final int TITLE_SDP_LITE      =    13;
 	public static final int TITLE_SDP_TREE      =    14;
@@ -19,11 +20,13 @@ public class MSG {
 	public static final int TITLE_SDP_TS        =    16;	
 	public static final int TITLE_SDP_CALL      =    17;
 	public static final int TITLE_SDP_BATCH     =    18;
+	public static final int TITLE_SDP_EXTRACTOR =    19;	
 	public static final int TITLE_SDP_IVP       =    20;	
 	
-	public static final int TITLE_SDP_ANALYZER  =    22;
-	
 
+	
+	
+	
 	public static final int USE_SDP_TRAPPER     =    20;	
 	public static final int USE_SDP_LITE        =    23;
 	public static final int USE_SDP_ANALYZER    =    23;	

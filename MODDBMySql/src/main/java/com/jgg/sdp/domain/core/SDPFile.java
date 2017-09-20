@@ -15,7 +15,7 @@ public class SDPFile implements Serializable {
 		   "SELECT f  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";
 
 	public static final String listPendingCursor = 
-			   "SELECT f FROM SDPFile f WHERE f.archivo > ?1 AND f.tipo = ?2";
+			   "SELECT f FROM SDPFile f WHERE f.idFile > ?1 AND f.estado = -1 AND f.tipo = ?2";
 	
 	public static final String deleteByNameAndType = 
 			   "DELETE  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";

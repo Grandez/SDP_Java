@@ -14,7 +14,7 @@ import java.net.URI;
 public class Archivo extends java.io.File {
 
 	private static final long serialVersionUID = -6418706965490670167L;
-
+ 
     private String driveName;
 	private String dirName;
 	private String fileName;

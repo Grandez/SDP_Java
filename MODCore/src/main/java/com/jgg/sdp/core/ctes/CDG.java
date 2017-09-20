@@ -173,6 +173,10 @@ public class CDG {
     public static final int TXT_ITEM   = 10;
     public static final int TXT_NEXT   = 11;    
     public static final int TXT_DEBUG  = 99;
+
+    // Modos de funcionamiento del Analizador
+    public static final int MODE_DB    =  0;
+    public static final int MODE_LOCAL =  1;
     
 	private CDG() {
 		

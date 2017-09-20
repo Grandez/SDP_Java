@@ -18,119 +18,183 @@
   <artifactId>SDPAnalyzer</artifactId>
   <packaging>jar</packaging>
 
-  <dependencies>
+  <profiles>
+      <profile>
+          <id>Development</id>
+          <activation>
+               <activeByDefault>true</activeByDefault>
+          </activation>
 
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPBase</artifactId>
-       <version>${sdp.version}</version>
-       <scope>provided</scope>       
-    </dependency>
+         <dependencies>
+       
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODCore</artifactId>
+              <version>${sdp.version}</version>       
+           </dependency>
+           
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODTools</artifactId>
+              <version>${sdp.version}</version>       
+           </dependency>
 
-<!--       <dependency> -->
-<!--         <groupId>com.jgg.sdp</groupId> -->
-<!--         <artifactId>SDPParser</artifactId> -->
-<!--         <version>${sdp.version}</version> -->
-<!--         <scope>provided</scope> -->
-<!--      </dependency> -->
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODModule</artifactId>
+              <version>${sdp.version}</version>       
+           </dependency>
 
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODParserBase</artifactId>
-        <version>${sdp.version}</version>
-     </dependency>
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODParserBase</artifactId>
+              <version>${sdp.version}</version>
+           </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODParserCobol</artifactId>
+              <version>${sdp.version}</version>
+           </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODParserCics</artifactId>
+              <version>${sdp.version}</version>
+           </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODParserCopy</artifactId>
+              <version>${sdp.version}</version>
+           </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODParserDB2</artifactId>
+              <version>${sdp.version}</version>
+           </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODDBMySql</artifactId>
+              <version>${sdp.version}</version>
+            </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODDBServices</artifactId>
+              <version>${sdp.version}</version>
+           </dependency>
+         
+           <dependency>
+             <groupId>com.jgg.sdp</groupId>
+             <artifactId>MODRules</artifactId>
+             <version>${sdp.version}</version>        
+          </dependency>
 
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODParserCobol</artifactId>
-        <version>${sdp.version}</version>
-     </dependency>
-
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODParserCics</artifactId>
-        <version>${sdp.version}</version>
-     </dependency>
-
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODParserCopy</artifactId>
-        <version>${sdp.version}</version>
-     </dependency>
-
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODParserDB2</artifactId>
-        <version>${sdp.version}</version>
-     </dependency>
-
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODDBMySql</artifactId>
-        <version>${sdp.version}</version>
-<!--         <scope>provided</scope> -->
-     </dependency>
-
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODDBServices</artifactId>
-        <version>${sdp.version}</version>
-<!--         <scope>provided</scope> -->
-     </dependency>
-    
-<!--       <dependency> -->
-<!--         <groupId>com.jgg.sdp</groupId> -->
-<!--         <artifactId>SDPDBOffline</artifactId> -->
-<!--         <version>${sdp.version}</version> -->
-<!--         <scope>provided</scope>         -->
-<!--      </dependency> -->
-
-      <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>SDPRules</artifactId>
-        <version>${sdp.version}</version>
-        <scope>provided</scope>        
-     </dependency>
-
-  </dependencies>
-
-  <build>
-    
-    <plugins>
-
-          <!-- La copia al directorio destino -->
-          <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-dependency-plugin</artifactId>
-             <version>2.10</version>
+         </dependencies>
           
-             <executions>
-                 <execution>
-                    <id>copy-installed</id>
-                    <phase>install</phase>
-                    <goals>
-                        <goal>copy</goal>
-                    </goals>
-                    <configuration>
-                       <artifactItems>
-                           <artifactItem>
-                              <groupId>${project.groupId}</groupId>
-                              <artifactId>${project.artifactId}</artifactId>
-                              <version>${project.version}</version>
-                              <type>${project.packaging}</type>
-                              <destFileName>SDPAnalyzer.jar</destFileName>
-                              <overWrite>true</overWrite>
-                           </artifactItem>
-                       </artifactItems>
-               
-                       <outputDirectory>${sdp.lib}</outputDirectory>
-                   </configuration>
-                 </execution>
-             </executions>
-          </plugin>
-            
-    </plugins>
+      </profile>
 
-  </build>
+      <profile>
+          <id>Distribution</id>
+
+         <dependencies>
+       
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>SDPBase</artifactId>
+              <version>${sdp.version}</version>
+              <scope>provided</scope>       
+           </dependency>
+
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>SDPModule</artifactId>
+              <version>${sdp.version}</version>
+              <scope>provided</scope>
+           </dependency>
+
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>SDPParser</artifactId>
+              <version>${sdp.version}</version>
+              <scope>provided</scope>
+           </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODDBMySql</artifactId>
+              <version>${sdp.version}</version>
+            </dependency>
+     
+           <dependency>
+              <groupId>com.jgg.sdp</groupId>
+              <artifactId>MODDBServices</artifactId>
+              <version>${sdp.version}</version>
+           </dependency>
+         
+         </dependencies>
+
+           <build>
+               <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptorRefs>
+                              <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <appendAssemblyId>false</appendAssemblyId>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                                <phase>package</phase> <!-- bind to the packaging phase -->
+                                <goals>
+                                  <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+               
+                    <!-- La copia al directorio destino -->
+                    <plugin>
+                       <groupId>org.apache.maven.plugins</groupId>
+                       <artifactId>maven-dependency-plugin</artifactId>
+                       <version>2.10</version>
+                    
+                       <executions>
+                           <execution>
+                              <id>copy-installed</id>
+                              <phase>install</phase>
+                              <goals>
+                                  <goal>copy</goal>
+                              </goals>
+                              <configuration>
+                                 <artifactItems>
+                                     <artifactItem>
+                                        <groupId>${project.groupId}</groupId>
+                                        <artifactId>${project.artifactId}</artifactId>
+                                        <version>${project.version}</version>
+                                        <type>${project.packaging}</type>
+                                        <destFileName>SDPAnalyzer.jar</destFileName>
+                                     </artifactItem>
+                                 </artifactItems>
+                         
+                                 <outputDirectory>${sdp.lib}</outputDirectory>
+                             </configuration>
+                           </execution>
+                       </executions>
+                    </plugin>
+               
+                       
+               </plugins>
+           
+           </build>
+          
+      </profile>
+
+  </profiles>
 
 </project>

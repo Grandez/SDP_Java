@@ -70,30 +70,7 @@ public abstract class AbstractService <T>  {
     	Session session = em.unwrap(Session.class);
     	session.setCacheMode(CacheMode.IGNORE);
     }
-    
-  
-  public void clearHibernateCache() {
-//	  clearCache();
-/*	  
-	  Session s = (Session)em.getDelegate();      
-	  SessionFactory sf = s.getSessionFactory();         
-	  Map classMetadata = sf.getAllClassMetadata();      
-	  for (Object o :  classMetadata.values()) {    
-		  EntityPersister ep = (EntityPersister) o;
-		  if (ep.hasCache()) {              
-			  sf.evictEntity(ep.getCache().getRegionName());          
-		  }      
-      }        
-	  Map collMetadata = sf.getAllCollectionMetadata();      
-	  for (AbstractCollectionPersister acp : collMetadata.values()) {          
-		  if (acp.hasCache()) {              
-			  sf.evictCollection(acp.getCache().getRegionName());          
-		  }      
-	  }
-	           */
-	  return;  		
-  }
-    
+        
     public void beginTrans() {
         begin = System.currentTimeMillis();
     	if (tx == null) {

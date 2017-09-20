@@ -7,14 +7,15 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.core.msg.*;
 import com.jgg.sdp.core.tools.*;
-
+import com.jgg.sdp.core.unit.Source;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.domain.core.SDPFile;
+import com.jgg.sdp.domain.core.SDPSource;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.SDPFileService;
-
+import com.jgg.sdp.domain.services.core.SDPSourceService;
 import com.jgg.sdp.parser.base.*;
 
 public class Analyzer {
@@ -22,14 +23,21 @@ public class Analyzer {
     private Module  module = null;
 	private SDPUnit unit   = null;
 
-	private SDPFileService fileService = new SDPFileService();
+	private SDPFileService   fileService    = new SDPFileService();
+	private SDPSourceService sourceService = new SDPSourceService();
 	
     private Messages      msg = Messages.getInstance("PARSER");    
     private Configuration cfg = DBConfiguration.getInstance();
+
+    // Lo usamos para actualizar el estado
+	private SDPFile       file = null;
+
     
+	private int     rc      = RC.OK;
+	private int     maxRC   = RC.OK;
 
     public Analyzer() {
-    	
+          initObject();    	
     }
     
     public Module getModule() { return module; }
@@ -42,71 +50,61 @@ public class Analyzer {
 	}
 
 	private int start(String[] args) {
-		int     rc   = RC.OK;
-		
-		cfg.setTitles(MSG.TITLE_SDP_ANALYZER, MSG.USE_SDP_ANALYZER);
-		
 		args = cfg.processCommandLine(AnalyzerParms.parms, args);
 		
 		if (cfg.isLocalMode()) {
-			rc = processLocalMode(args);
+			processLocalMode(args);
 		} else if (args.length == 0) {
-			rc = processMassive();
+			processMassive();
 		} else {
-			rc = processModules(args);
+			processModules(args);
 		}
 		
        return rc;		
 	}
 
-	private int processLocalMode(String[] args) {
-		int     rc      = RC.OK;
-		int     maxRC   = RC.OK;
-
+	private void processLocalMode(String[] args) {
 		if (args.length == 0) args = new String[]{"*"};
 		
 		for (Archivo archivo : FileFinder.find(cfg.getInputDir(), args)) {
-			rc = analyzeArchivo(archivo);
-			if (rc > maxRC) maxRC = rc;
+	        unit = new SDPUnit(archivo);
+			analyzeUnit(unit);
 		}
-        return maxRC;
 	}
 
-	private int processMassive() {
-		int     rc      = RC.OK;
-		int     maxRC   = RC.OK;
+	private void processMassive() {
 		
-		SDPFile file = null;
-
 		fileService.cursorPendingOpen();
 		while ((file = fileService.cursorPendingNext()) != null) {
-			
+			Archivo archivo = new Archivo(file.getFullName());
+			unit = new SDPUnit(archivo);
+			unit.setFirma(file.getFirma());
+			unit.setTipo(file.getTipo());
+			unit.setStatus(file.getEstado());
+			setSource(unit, file);
+			analyzeUnit(unit);			
 		}
-        return maxRC;
 	}
 
-	private int processModules(String[] args) {
-		int     rc      = RC.OK;
-		int     maxRC   = RC.OK;
-
-        return maxRC;
+	// Por nombre idFile idVersion???
+	
+	private void processModules(String[] args) {
 	}
 	
-	private int analyzeArchivo(Archivo archivo) {
+	private void analyzeUnit(SDPUnit unit) {
 		int procesar = RC.OK;
-		int rc       = RC.OK;
 		
-		if (cfg.getVerbose() > 0) msg.progressCont(MSG.PARSING, archivo.getBaseName());
+		if (cfg.getVerbose() > 0) msg.progressCont(MSG.PARSING, unit.getMemberName());
         
 		try {		
-	        unit = new SDPUnit(archivo);
+
 			
         	procesar = hasToProcess(unit);
         	
 //Nada            	if (procesar == MSG.OK)      procesar = unit.isIgnored();
 //Nada              if (procesar == MSG.IGNORED) createIgnoredModule(unit);
 				if (procesar == RC.OK)      analyze(unit);
-				if (procesar == RC.OK)      procesar = storeModuleInfo(unit, true);
+				if (procesar == RC.OK)      procesar = storeModuleInfo(unit);
 			if (cfg.getVerbose() > 1)    msg.progress(procesar);
 		// Caso, alguien ha borrado el fichero entre el find y el proceso
 		} catch (FileException f) {
@@ -138,16 +136,15 @@ public class Analyzer {
             rc = RC.FATAL;
 		}
 		finally {
-//			storeCompileUnit(unit);
 			if (unit.getStatus() > CDG.STATUS_BAD) {
 				module.setParserStatus(unit.getStatus());
-				storeModuleInfo(unit, false);
+				storeModuleInfo(unit);
 			}
 			ModulesFactory.cleanModules();
 			
 		}
 		
-		return rc;
+		if (rc > maxRC) maxRC = rc;
     }
     
 	private void createIgnoredModule(SDPUnit unit) {
@@ -179,7 +176,7 @@ public class Analyzer {
 	}
 
     
-	private int storeModuleInfo (SDPUnit unit, boolean full) {
+	private int storeModuleInfo (SDPUnit unit) {
 		long idUnit = unit.existUnit() ? unit.getId() : 0l;
 		Persister pers = new Persister();
 		pers.beginTrans();
@@ -187,7 +184,11 @@ public class Analyzer {
 	         pers.persistModule(module, idUnit);
 	    }
 	    
-	    if (full && !unit.existUnit()) pers.persistUnit(unit);
+	    if (cfg.isLocalMode() && !unit.existUnit()) pers.persistUnit(unit);
+	    if (!cfg.isLocalMode()) {
+	    	file.setEstado(unit.getStatus());
+	    	pers.persistStatus(file);
+	    }
 	    
 	    pers.commit();
 	    
@@ -204,7 +205,9 @@ public class Analyzer {
 		SDPFile f = fileService.findByNameAndType(unit.getMemberName(), CDG.SOURCE_CODE);
 		if (f == null) return RC.OK;
 		
-		if (f.getFirma().compareTo(unit.getFirma()) != 0) return RC.OK;
+		if (f.getEstado() == CDG.STATUS_PENDING) return RC.OK;
+		
+		// if (f.getFirma().compareTo(unit.getFirma()) != 0) return RC.OK;
 		
 		unit.setExist();
 		
@@ -212,5 +215,17 @@ public class Analyzer {
 		
 		return RC.OK;
 	}
+
+	private void setSource(SDPUnit unit, SDPFile file) {
+		Source src = unit.getCurrentSource();
+		src.setFirma(file.getFirma());
+		src.setId(file.getIdFile());
+		SDPSource source = sourceService.getSource(file.getIdFile(), file.getIdVersion());
+		src.setRawData(source.getSource());
+	}
 	
+	private void initObject() {
+		cfg.addTitle(CDG.TXT_TITLE, MSG.TITLE_SDP_ANALYZER);		
+	}
+
 }

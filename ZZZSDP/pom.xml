@@ -76,6 +76,7 @@
                                      
                <!--  Ejecutables  -->
                
+               <module>../SDPAnalyzer</module>
                <module>../SDPClientHTML</module>
                <module>../SDPClientWMQS</module>
                
@@ -125,6 +126,7 @@
                <module>../SDPClientWMQS</module>
                               
                <!-- Distribution MAIN JARs  -->
+               <module>../SDPAnalyzer</module>
                <module>../SDPTrapper</module>
 
                <!-- Distribution WARs  -->

@@ -21,8 +21,6 @@ import com.jgg.sdp.tools.*;
 
 public class Source extends Reader {
 
-	private static int    count = 0;
-	
 	private Archivo       archivo    = null;
 	
 	private String        firma   = null;
@@ -44,7 +42,13 @@ public class Source extends Reader {
 	
 	public Source (Archivo archivo, ArrayList<String> toks) {
 		this.archivo = archivo;
-		id = (System.currentTimeMillis() * 100) + (count++ % 100);
+
+		if (cfg.getBoolean(CFG.PARSER_LOCAL)) loadData(archivo, toks);
+	}
+	
+	private void loadData(Archivo archivo, ArrayList<String> toks) {
+		
+		id = Fechas.serial();
         checkFile();
         
 		size = ((Long)archivo.length()).intValue();
@@ -59,11 +63,12 @@ public class Source extends Reader {
 	    	throw new FileException(MSG.FILE_NOT_READ, archivo.getAbsolutePath());
         }
 		
-        prepareData(toks);
+		prepareData(toks);
 	}
     
 
-	public long getId() { return id; }
+	public long getId()        { return id; }
+	public void setId(long id) { this.id = id; }
 	
 	public Source prepareData(ArrayList<String> toks) {
 		prepararDatos();
@@ -80,6 +85,11 @@ public class Source extends Reader {
 
 	public char[] getRawData() {
 		return rawData;
+	}
+
+	public void setRawData(byte[] bytes) {
+		this.rawData = (new String(bytes)).toCharArray();
+		prepararDatos();
 	}
 
 	public void setData(String newData) {
@@ -108,6 +118,9 @@ public class Source extends Reader {
 	
 	public String getFirma() {
 		return firma;
+	}
+	public void setFirma(String firma) {
+		this.firma = firma;
 	}
 
 	public int getSize() {

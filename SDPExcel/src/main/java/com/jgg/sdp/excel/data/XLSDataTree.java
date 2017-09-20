@@ -54,7 +54,7 @@ public class XLSDataTree implements XLSDataRecord {
     }
     
 	public boolean open(String table, Long key) {
-        MODVersion ver = verService.getByVersion(key);
+        MODVersion ver = verService.findById(key);
         if (ver == null) {
         	root.setModo(CDG.DEP_ST_NOT_PARSED);
         	return false;

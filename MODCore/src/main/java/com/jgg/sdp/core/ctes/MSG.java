@@ -59,6 +59,7 @@ public class MSG {
 	public static final int SKIP                =   512;
 	public static final int NODATA              =   513;
 	public static final int IGNORED             =   514;
+	public static final int ERROR               =   515;	
 	
 	public static final int PARSE_ERRORS        =   520;
 	

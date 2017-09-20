@@ -17,6 +17,13 @@
   <artifactId>MODDBMySql</artifactId>
   <packaging>jar</packaging>
 
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+
   <dependencies>
 
     <dependency>
@@ -57,8 +64,49 @@
     </dependency>
 
   </dependencies>
+           
+      </profile>
 
-  <build>
+      <profile>
+           <id>Distribution</id>
+           
+                   <dependencies>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+      <artifactId>SDPBase</artifactId>
+       <version>${sdp.version}</version>
+       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+        <version>${hibernate.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-entitymanager</artifactId>
+        <version>${hibernate.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.javassist</groupId>
+        <artifactId>javassist</artifactId>
+        <version>${javassist.version}</version>
+        <scope>compile</scope>
+    </dependency>
+
+  </dependencies>
+
+                   <build>
 
     <plugins>
 
@@ -112,5 +160,10 @@
     </plugins>
 
 </build>
+                 
+      </profile>
+  </profiles>  
+
+
   
 </project>

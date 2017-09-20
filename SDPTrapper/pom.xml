@@ -52,7 +52,7 @@
 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODCore</artifactId>
+                   <artifactId>SDPBase</artifactId>
                    <version>${sdp.version}</version>  
                    <scope>provided</scope>    
                 </dependency>
@@ -65,7 +65,7 @@
                 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODClientHTML</artifactId>
+                   <artifactId>SDPClientHTML</artifactId>
                    <version>${sdp.version}</version>      
                    <scope>provided</scope>                   
                 </dependency>

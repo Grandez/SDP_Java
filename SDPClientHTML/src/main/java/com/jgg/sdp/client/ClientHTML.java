@@ -28,7 +28,7 @@ public class ClientHTML implements IClientPersister {
 		this.service = cfg.getJMSServicePersister();
 
     }
-	public int sendZipFile(String name, int type, byte[] raw) {
+	public int sendZipFile(String fullPath, int type, byte[] raw) {
 		URL serverUrl;
 		String txtPort = "";
 		
@@ -44,7 +44,7 @@ public class ClientHTML implements IClientPersister {
 			 		
 			OutputStream os = conn.getOutputStream();
 			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-            bw.write(mountJSON(name, type, raw));
+            bw.write(mountJSON(fullPath, type, raw));
             bw.flush();
 			os.close();
 			bw.close();
@@ -70,9 +70,10 @@ public class ClientHTML implements IClientPersister {
 */
 
 	@SuppressWarnings("unchecked")
-	private String mountJSON(String name, int type, byte[] raw) {
+	private String mountJSON(String fullPath, int type, byte[] raw) {
 		JSONObject obj = new JSONObject();
-        obj.put("fileName", name);
+		
+        obj.put("fullName", fullPath);
         obj.put("fileType", new Integer(type));
         obj.put("user", System.getProperty("user.name"));
         obj.put("modules", new Integer(1));

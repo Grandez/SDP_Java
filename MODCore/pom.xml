@@ -17,10 +17,22 @@
   <artifactId>MODCore</artifactId>
   <packaging>jar</packaging>
 
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
          <dependencies>
             <dependency>
                <groupId>com.jgg.sdp</groupId>
                <artifactId>MODTools</artifactId>
+               <version>${sdp.version}</version>
+           </dependency>
+
+            <dependency>
+               <groupId>com.jgg.sdp</groupId>
+               <artifactId>MODPrinter</artifactId>
                <version>${sdp.version}</version>
            </dependency>
        
@@ -36,28 +48,38 @@
                <version>1.7.5</version>
            </dependency>
          </dependencies>
-  
-         <build>
-            <plugins>       
-               <plugin>
-                  <artifactId>maven-assembly-plugin</artifactId>
-                  <configuration>
-                    <descriptorRefs>
-                      <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                  </configuration>
-                  <executions>
-                    <execution>
-                      <id>make-assembly</id> <!--  this is used for inheritance merges -->
-                      <phase>package</phase> <!--  bind to the packaging phase -->
-                      <goals>
-                        <goal>single</goal>
-                      </goals>
-                    </execution>
-                  </executions>
-               </plugin>
-            </plugins>
-        
-         </build>
+           
+      </profile>
+
+      <profile>
+           <id>Distribution</id>      
+         <dependencies>
+            <dependency>
+               <groupId>com.jgg.sdp</groupId>
+               <artifactId>MODTools</artifactId>
+               <version>${sdp.version}</version>
+           </dependency>
+
+            <dependency>
+               <groupId>com.jgg.sdp</groupId>
+               <artifactId>MODPrinter</artifactId>
+               <version>${sdp.version}</version>
+           </dependency>
+       
+           <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-api</artifactId>
+               <version>1.7.5</version>
+           </dependency>
+           
+           <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-log4j12</artifactId>
+               <version>1.7.5</version>
+           </dependency>
+         </dependencies>
+
+      </profile>
+  </profiles>  
 
 </project>

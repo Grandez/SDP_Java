@@ -61,12 +61,11 @@ public class Trapper {
         
 		try {		
 	        unit = new SDPUnitBase(archivo);
-			rc = sendFile(unit.getCurrentSource(), cfg.getInteger(CFG.FILE_TYPE, 0));
+			rc = sendFile(unit.getCurrentSource(), cfg.getInteger(CFG.FILE_TYPE, CDG.SOURCE_CODE));
 			if (rc != 0) res = MSG.KO;
 			if (cfg.getVerbose() > 1)    msg.progress(res);
-		// Caso, alguien ha borrado el fichero entre el find y el proceso
 		} catch (Exception e) {
-			if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
+			if (cfg.getVerbose() > 1) msg.progress(MSG.ERROR);
 			unit.setStatus(CDG.STATUS_ERROR);
             msg.exception(new SDPException(e, MSG.EXCEPTION_PARSER, unit.getMemberName()));
             e.printStackTrace();
@@ -78,7 +77,8 @@ public class Trapper {
 	private int sendFile(Source source, int type) {
 		
 		IClientPersister html = ClientFactory.getClient();
-		int rc = html.sendZipFile(source.getBaseName(), type, new String(source.getRawData()).getBytes(StandardCharsets.UTF_8));
+		byte[] data = new String(source.getRawData()).getBytes(StandardCharsets.UTF_8);
+		int rc = html.sendZipFile(source.getArchivo().getAbsolutePath(), type, data);
 		return rc;
 	}
 

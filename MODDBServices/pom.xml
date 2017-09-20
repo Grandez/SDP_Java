@@ -17,66 +17,126 @@
   <artifactId>MODDBServices</artifactId>
   <packaging>jar</packaging>
 
-  <dependencies>
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
 
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBMySql</artifactId>
-       <version>${sdp.version}</version>
-<!--        <scope>provided</scope> -->
-    </dependency>
+           <dependencies>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODDBMySql</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
+           
+           
+             <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-core</artifactId>
+                 <version>${hibernate.version}</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-entitymanager</artifactId>
+                 <version>${hibernate.version}</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-c3p0</artifactId>
+                 <version>4.3.10.Final</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>log4j</groupId>
+                 <artifactId>log4j</artifactId>
+                 <version>${log4j.version}</version>
+                 <scope>provided</scope>
+             </dependency>
+             
+             <dependency>
+                 <groupId>org.javassist</groupId>
+                 <artifactId>javassist</artifactId>
+                 <version>${javassist.version}</version>
+                 <scope>compile</scope>
+             </dependency>
+           
+           </dependencies>
+                    
+      </profile>
 
-<!--     <dependency> -->
-<!--        <groupId>com.jgg.sdp</groupId> -->
-<!--        <artifactId>MODDBNamed</artifactId> -->
-<!--        <version>${sdp.version}</version> -->
-<!--     </dependency> -->
+      <profile>
+           <id>Distribution</id>      
 
-    <dependency>
-       <groupId>mysql</groupId>
-       <artifactId>mysql-connector-java</artifactId>
-       <version>${mysql.version}</version>
-    </dependency>
+           <dependencies>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>SDPBase</artifactId>
+                <version>${sdp.version}</version>
+                <scope>provided</scope>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODDBMySql</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
+           
+           
+             <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-core</artifactId>
+                 <version>${hibernate.version}</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-entitymanager</artifactId>
+                 <version>${hibernate.version}</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>org.hibernate</groupId>
+                 <artifactId>hibernate-c3p0</artifactId>
+                 <version>4.3.10.Final</version>
+             </dependency>
+           
+             <dependency>
+                 <groupId>log4j</groupId>
+                 <artifactId>log4j</artifactId>
+                 <version>${log4j.version}</version>
+                 <scope>provided</scope>
+             </dependency>
+             
+             <dependency>
+                 <groupId>org.javassist</groupId>
+                 <artifactId>javassist</artifactId>
+                 <version>${javassist.version}</version>
+                 <scope>compile</scope>
+             </dependency>
+           
+           </dependencies>
 
-    <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>${hibernate.version}</version>
-    </dependency>
+      </profile>
+  </profiles>  
 
-    <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${hibernate.version}</version>
-    </dependency>
-
-    <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-c3p0</artifactId>
-        <version>4.3.10.Final</version>
-    </dependency>
-
-    <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
-        <scope>provided</scope>
-    </dependency>
-    
-<!--     <dependency> -->
-<!--        <groupId>org.slf4j</groupId> -->
-<!--        <artifactId>slf4j-log4j12</artifactId> -->
-<!--        <version>${slf4j.version}</version> -->
-<!--     </dependency> -->
-    
-    <dependency>
-        <groupId>org.javassist</groupId>
-        <artifactId>javassist</artifactId>
-        <version>${javassist.version}</version>
-        <scope>compile</scope>
-    </dependency>
-
-  </dependencies>
 
   <build>
 

@@ -14,11 +14,16 @@ public class SDPFile implements Serializable {
 	public static final String findByNameAndType = 
 		   "SELECT f  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";
 
+	public static final String listPendingCursor = 
+			   "SELECT f FROM SDPFile f WHERE f.archivo > ?1 AND f.tipo = ?2";
+	
 	public static final String deleteByNameAndType = 
 			   "DELETE  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";
 	
 	private static final long serialVersionUID = -8884394016232675188L;
 
+	// archivo + tipo es clave unica 
+	
 	@Id
 	@Column(name="idFile")
 	Long idFile;
@@ -26,10 +31,13 @@ public class SDPFile implements Serializable {
 	@Id
 	@Column(name="idVersion")
 	Long idVersion;
-	
+
 	@Column(name="archivo")
 	String archivo;
 
+	@Column(name="fullName")
+	String fullName;
+	
 	@Column(name="tipo")
 	Integer tipo;
 	
@@ -72,6 +80,14 @@ public class SDPFile implements Serializable {
 		this.archivo = archivo;
 	}
 	
+	public String getFullName() {
+		return fullName;
+	}
+
+	public void setFullName(String fullName) {
+		this.fullName = fullName;
+	}
+
 	public Integer getTipo() {
 		return tipo;
 	}
@@ -127,6 +143,7 @@ public class SDPFile implements Serializable {
 		result = prime * result + ((archivo == null) ? 0 : archivo.hashCode());
 		result = prime * result + ((estado == null) ? 0 : estado.hashCode());
 		result = prime * result + ((firma == null) ? 0 : firma.hashCode());
+		result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
 		result = prime * result + ((idFile == null) ? 0 : idFile.hashCode());
 		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
 		result = prime * result + ((numModulos == null) ? 0 : numModulos.hashCode());
@@ -160,6 +177,11 @@ public class SDPFile implements Serializable {
 				return false;
 		} else if (!firma.equals(other.firma))
 			return false;
+		if (fullName == null) {
+			if (other.fullName != null)
+				return false;
+		} else if (!fullName.equals(other.fullName))
+			return false;
 		if (idFile == null) {
 			if (other.idFile != null)
 				return false;
@@ -192,5 +214,5 @@ public class SDPFile implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }

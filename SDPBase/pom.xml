@@ -20,31 +20,6 @@
   
   <profiles>
        <profile>
-           <id>Development</id>
-             <dependencies>
-
-                <dependency>
-                   <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODCore</artifactId>
-                   <version>${sdp.version}</version>      
-                </dependency>
-                
-                <dependency>
-                   <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODModule</artifactId>
-                   <version>${sdp.version}</version>      
-                </dependency>
-                
-                <dependency>
-                   <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODClientHTML</artifactId>
-                   <version>${sdp.version}</version>      
-                </dependency>
-
-           </dependencies>
-
-       </profile>   
-       <profile>
            <id>Distribution</id>
            <activation>
                <activeByDefault>true</activeByDefault>
@@ -67,6 +42,12 @@
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
                    <artifactId>MODCalc</artifactId>
+                   <version>${sdp.version}</version>                        
+                </dependency>
+
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODPrinter</artifactId>
                    <version>${sdp.version}</version>                        
                 </dependency>
                 

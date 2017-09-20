@@ -8,7 +8,7 @@ import com.jgg.sdp.core.ctes.*;
 
 import com.jgg.sdp.core.exceptions.ParameterException;
 import com.jgg.sdp.core.msg.Messages;
-import com.jgg.sdp.printer.color.*;
+import com.jgg.sdp.printer.color.ColoredPrinter;
 import com.jgg.sdp.printer.color.api.Ansi.*;
 import com.jgg.sdp.tools.Propiedades;
 

@@ -2,7 +2,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
-         
+
+  <name>Serendipity Messages collector</name>
+           
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -13,70 +15,67 @@
   </parent>
 
   <groupId>com.jgg.sdp</groupId>
-  <artifactId>SDPCollector</artifactId>
-<!--   <version>${sdp.version}</version> -->
+  <artifactId>MODCollector</artifactId>
   <packaging>jar</packaging>
 
-  <name>Serendipity Messages collector</name>
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
 
+            <dependencies>
 
-  <dependencies>
-
-     <dependency>
-        <groupId>com.jgg.sdp</groupId>
-        <artifactId>MODCore</artifactId>
-        <version>${sdp.version}</version>
-     </dependency>
-
-     <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDbMySQL</artifactId>
-       <version>${sdp.version}</version>
-     </dependency>
-
-     <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDbServices</artifactId>
-       <version>${sdp.version}</version>
-     </dependency>
+               <dependency>
+                  <groupId>com.jgg.sdp</groupId>
+                  <artifactId>MODCore</artifactId>
+                  <version>${sdp.version}</version>
+               </dependency>
+          
+<!--                <dependency> -->
+<!--                  <groupId>com.jgg.sdp</groupId> -->
+<!--                  <artifactId>MODDbMySQL</artifactId> -->
+<!--                  <version>${sdp.version}</version> -->
+<!--                </dependency> -->
+          
+               <dependency>
+                 <groupId>com.jgg.sdp</groupId>
+                 <artifactId>MODDbServices</artifactId>
+                 <version>${sdp.version}</version>
+               </dependency>
     
-  </dependencies>
-  
-  <build>
-     <plugins>
+            </dependencies>
+           
+      </profile>
 
-        <!-- La copia al directorio destino -->
-        <plugin>
-           <groupId>org.apache.maven.plugins</groupId>
-           <artifactId>maven-dependency-plugin</artifactId>
-           <version>2.10</version>
-        
-           <executions>
-               <execution>
-                  <id>copy-installed</id>
-                  <phase>install</phase>
-                  <goals>
-                      <goal>copy</goal>
-                  </goals>
-                  <configuration>
-                     <artifactItems>
-                         <artifactItem>
-                            <groupId>${project.groupId}</groupId>
-                            <artifactId>${project.artifactId}</artifactId>
-                            <version>${project.version}</version>
-                            <type>${project.packaging}</type>
-                             <destFileName>SDPCollector.jar</destFileName>
-                         </artifactItem>
-                     </artifactItems>
-             
-                     <outputDirectory>${sdp.lib}</outputDirectory>
-                 </configuration>
-               </execution>
-           </executions>
-        </plugin>
-  
-  </plugins>
+      <profile>
+           <id>Distribution</id>     
+           
+           <dependencies>
 
-</build>
+               <dependency>
+                  <groupId>com.jgg.sdp</groupId>
+                  <artifactId>SDPBase</artifactId>
+                  <version>${sdp.version}</version>
+                  <scope>provided</scope>
+               </dependency>
+          
+               <dependency>
+                 <groupId>com.jgg.sdp</groupId>
+                 <artifactId>MODDbMySQL</artifactId>
+                 <version>${sdp.version}</version>
+               </dependency>
+          
+               <dependency>
+                 <groupId>com.jgg.sdp</groupId>
+                 <artifactId>MODDbServices</artifactId>
+                 <version>${sdp.version}</version>
+               </dependency>
+    
+            </dependencies>
+            
+      </profile>
+  </profiles>  
 
 </project>

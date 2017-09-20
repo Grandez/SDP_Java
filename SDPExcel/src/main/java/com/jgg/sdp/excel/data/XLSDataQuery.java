@@ -81,7 +81,7 @@ public class XLSDataQuery implements XLSDataRecord {
 	}
 		
 	private String getModuleName() {
-		MODVersion version = versionService.getByVersion(key);
+		MODVersion version = versionService.findById(key);
 		if (version == null) return null;
 		return version.getNombre();
 	}	

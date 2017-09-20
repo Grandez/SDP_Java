@@ -18,91 +18,85 @@
   <artifactId>MODRules</artifactId>
   <packaging>jar</packaging>
 
-  <dependencies>
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+           
+           <dependencies>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODTools</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODCalc</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODModule</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODDBMySql</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODDBServices</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
+             
+           </dependencies>
+           
+      </profile>
 
-
-<!--     <dependency> -->
-<!--        <groupId>com.jgg.sdp</groupId> -->
-<!--        <artifactId>SDPBase</artifactId> -->
-<!--        <version>${sdp.version}</version> -->
-<!--        <scope>provided</scope> -->
-<!--     </dependency> -->
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODTools</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODCalc</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODModule</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBMySql</artifactId>
-       <version>${sdp.version}</version>
-<!--        <scope>provided</scope> -->
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODDBServices</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
-
-<!--     <dependency> -->
-<!--        <groupId>com.jgg.sdp</groupId> -->
-<!--        <artifactId>MODDBServices</artifactId> -->
-<!--        <version>${sdp.version}</version> -->
-<!--        <scope>provided</scope> -->
-<!--     </dependency> -->
-    
-  </dependencies>
-
-  <build>
-    
-    <plugins>
-
-          <plugin>
-             <groupId>org.apache.maven.plugins</groupId>
-             <artifactId>maven-dependency-plugin</artifactId>
-             <version>2.10</version>
-          
-             <executions>
-                 <execution>
-                    <id>copy-installed</id>
-                    <phase>install</phase>
-                    <goals>
-                        <goal>copy</goal>
-                    </goals>
-                    <configuration>
-                       <artifactItems>
-                           <artifactItem>
-                              <groupId>${project.groupId}</groupId>
-                              <artifactId>${project.artifactId}</artifactId>
-                              <version>${project.version}</version>
-                              <type>${project.packaging}</type>
-                              <destFileName>SDPRules.jar</destFileName>
-                           </artifactItem>
-                       </artifactItems>
-               
-                       <outputDirectory>${sdp.lib}</outputDirectory>
-                   </configuration>
-                 </execution>
-             </executions>
-          </plugin>
-            
-    </plugins>
-
-  </build>
+      <profile>
+           <id>Distribution</id>
+           
+           <dependencies>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>SDPBase</artifactId>
+                <version>${sdp.version}</version>
+                <scope>provided</scope>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODModule</artifactId>
+                <version>${sdp.version}</version>
+                <scope>provided</scope>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODDBMySql</artifactId>
+                <version>${sdp.version}</version>
+                <scope>provided</scope>
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODDBServices</artifactId>
+                <version>${sdp.version}</version>
+                <scope>provided</scope>
+             </dependency>
+             
+           </dependencies>
+           
+      </profile>
+  </profiles>  
 
 </project>

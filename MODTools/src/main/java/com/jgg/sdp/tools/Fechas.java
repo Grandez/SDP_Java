@@ -11,6 +11,7 @@ package com.jgg.sdp.tools;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.temporal.*;
+import java.util.*;
 
 public class Fechas {
 
@@ -21,7 +22,7 @@ public class Fechas {
 	public static final int RANGE_MONTH   = 3;
 	public static final int RANGE_QUARTER = 4;
 	
-	private static int nSerial = 0;
+	private static Random rnd = new Random(System.currentTimeMillis());
 	
 	/**
 	 *  Genera un numero unico como:
@@ -30,8 +31,7 @@ public class Fechas {
 	 */
 	
 	public static long serial() {
-		nSerial %= 32765;
-		return ((System.currentTimeMillis() - 1419120000000L) * 100) + (++nSerial % 100);
+		return ((System.currentTimeMillis() - 1419120000000L) * 1000) +  rnd.nextInt(1000);
 	}
 	
 	public static Timestamp getTimestamp() {

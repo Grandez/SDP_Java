@@ -26,7 +26,7 @@ public class XLSDataIssue extends XLSDataService {
 
 	public Object getValue(String member) {
 		MODIssue issue = (MODIssue) datos.get(pos);
-		if (member.compareTo("ID")        == 0) return issue.getIdIssue();
+		if (member.compareTo("ID")        == 0) return issue.getIdRule();
 		if (member.compareTo("SEVERITY")  == 0) return issue.getSeverity();
 		if (member.compareTo("BEGLINE")   == 0) return issue.getBegLine();
 		if (member.compareTo("ENDLINE")   == 0) return issue.getEndLine();		

@@ -26,7 +26,7 @@ import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.SDPUnit;
 import com.jgg.sdp.parser.base.ParseException;
-import com.jgg.sdp.printer.JGGPrinter;
+import com.jgg.sdp.printer.Printer;
 import com.jgg.sdp.domain.DBManagerFactory;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 
@@ -40,7 +40,7 @@ public class IVP {
     private XMLIVP xml = new XMLIVP();
     
     private IVPLaunchers launcher = new IVPLaunchers();
-	private JGGPrinter printer = new JGGPrinter();
+	private Printer printer = new Printer();
 
 	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
     private HashSet<String> modules = new HashSet<String>();

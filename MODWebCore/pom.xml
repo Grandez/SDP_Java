@@ -18,35 +18,36 @@
   <artifactId>MODWebCore</artifactId>
   <packaging>jar</packaging>
          
-  
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
   <dependencies>
 
      <dependency>
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODTools</artifactId>
        <version>${sdp.version}</version>
-       <scope>provided</scope>
      </dependency>
 
      <dependency>
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODCore</artifactId>
        <version>${sdp.version}</version>
-       <scope>provided</scope>
      </dependency>
 
       <dependency>
         <groupId>com.jgg.sdp</groupId>
         <artifactId>MODDBMySql</artifactId>
         <version>${sdp.version}</version>
-<!--         <scope>provided</scope> -->
      </dependency>
 
       <dependency>
         <groupId>com.jgg.sdp</groupId>
         <artifactId>MODDBServices</artifactId>
         <version>${sdp.version}</version>
-<!--         <scope>provided</scope> -->
      </dependency>
 
     <dependency>
@@ -67,13 +68,56 @@
         <version>${spring.version}</version>
     </dependency>
 
-<!--      <dependency> -->
-<!--         <groupId>log4j</groupId> -->
-<!--         <artifactId>log4j</artifactId> -->
-<!--         <version>${log4j.version}</version> -->
-<!--     </dependency> -->
-    
   </dependencies>
+           
+      </profile>
+
+      <profile>
+           <id>Distribution</id>
+           
+                   <dependencies>
+
+     <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPBase</artifactId>
+       <version>${sdp.version}</version>
+       <scope>provided</scope>
+     </dependency>
+
+
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODDBMySql</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
+
+      <dependency>
+        <groupId>com.jgg.sdp</groupId>
+        <artifactId>MODDBServices</artifactId>
+        <version>${sdp.version}</version>
+     </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-core</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+    </dependency>
+              </dependencies>   
+      </profile>
+  </profiles>  
+  
 
   <build>
      <plugins>

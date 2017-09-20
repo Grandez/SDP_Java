@@ -14,8 +14,8 @@
   <parent>
     <groupId>com.jgg</groupId>
     <artifactId>sdp</artifactId>
-    <version>4.0</version>
-    <relativePath>../SDP</relativePath>
+    <version>5.0</version>
+    <relativePath>../ZZZSDP</relativePath>
   </parent>
 
   <dependencies>
@@ -28,13 +28,19 @@
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPTools</artifactId>
+       <artifactId>MODTools</artifactId>
        <version>${sdp.version}</version>
     </dependency>
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>SDPCollector</artifactId>
+       <artifactId>MODDBServices</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODCollector</artifactId>
        <version>${sdp.version}</version>
     </dependency>
   

@@ -5,7 +5,7 @@ import org.apache.poi.xssf.usermodel.*;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.tools.*;
-import com.jgg.sdp.domain.services.base.*;
+import com.jgg.sdp.domain.services.cfg.CFGTranslateService;
 import com.jgg.sdp.excel.data.*;
 import com.jgg.sdp.excel.xls.*;
 import com.jgg.sdp.tools.Numero;
@@ -15,7 +15,7 @@ public class XLSMapper {
     private XLSTools   tools      = new XLSTools();
     
     private CFGTranslateService xlateService = new CFGTranslateService();
-    private Configuration cfg = Configuration.getInstance();
+    private Configuration cfg = ConfigurationLocal.getInstance();
     
 	private Long   idVersion  = 0L;
 

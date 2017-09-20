@@ -21,8 +21,6 @@ import javax.persistence.Cache;
 import javax.persistence.Query;
 
 import org.hibernate.*;
-import org.hibernate.persister.collection.AbstractCollectionPersister;
-import org.hibernate.persister.entity.*;
 
 import com.jgg.sdp.core.exceptions.DBException;
 import com.jgg.sdp.domain.DBCache;
@@ -38,6 +36,8 @@ public abstract class AbstractService <T>  {
     protected DBCache<T> dbCache = new DBCache<T>();
     
     protected String tableName = "";
+
+    private final int maxResult = 50;
     
     @SuppressWarnings("unchecked")
 	public AbstractService() {
@@ -178,6 +178,12 @@ public abstract class AbstractService <T>  {
 		Query query = em.createQuery(qryName);
 		return queryList(query, keys);
 
+	}
+
+	protected List<T> listQueryCursor(String qryName, Object... keys) {
+		Query query = em.createQuery(qryName);
+		query.setMaxResults(maxResult);
+		return queryList(query, keys);
 	}
 	
 	protected List<T> list(String qryName, Object... keys) {

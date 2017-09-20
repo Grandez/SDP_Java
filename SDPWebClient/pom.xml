@@ -15,6 +15,20 @@
   <groupId>com.jgg.sdp</groupId>
   <artifactId>SDPWebClient</artifactId>
   <packaging>war</packaging>
+
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+           
+      </profile>
+
+      <profile>
+           <id>Distribution</id>      
+      </profile>
+  </profiles>  
   
   <dependencies>
 

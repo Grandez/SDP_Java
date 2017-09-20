@@ -50,6 +50,10 @@ public class Analyzer {
 		
 		if (cfg.isLocalMode()) {
 			rc = processLocalMode(args);
+		} else if (args.length == 0) {
+			rc = processMassive();
+		} else {
+			rc = processModules(args);
 		}
 		
        return rc;		
@@ -65,6 +69,26 @@ public class Analyzer {
 			rc = analyzeArchivo(archivo);
 			if (rc > maxRC) maxRC = rc;
 		}
+        return maxRC;
+	}
+
+	private int processMassive() {
+		int     rc      = RC.OK;
+		int     maxRC   = RC.OK;
+		
+		SDPFile file = null;
+
+		fileService.cursorPendingOpen();
+		while ((file = fileService.cursorPendingNext()) != null) {
+			
+		}
+        return maxRC;
+	}
+
+	private int processModules(String[] args) {
+		int     rc      = RC.OK;
+		int     maxRC   = RC.OK;
+
         return maxRC;
 	}
 	

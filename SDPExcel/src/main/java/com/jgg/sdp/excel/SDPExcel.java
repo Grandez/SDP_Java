@@ -24,12 +24,13 @@ import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.excel.map.XLSLoader;
 import com.jgg.sdp.excel.map.XLSMapper;
+import com.jgg.sdp.tools.Propiedades;
 
 
 public class SDPExcel {
 
     private Messages      msg = Messages.getInstance("PARSER");    
-    private Configuration cfg = Configuration.getInstance();
+    private Configuration cfg = ConfigurationBase.getInstance();
         
     private SDPModuloService  moduloService  = new SDPModuloService();
     private MODVersionService versionService = new MODVersionService();
@@ -90,7 +91,7 @@ public class SDPExcel {
 	    XLSMapper  mapper = new XLSMapper();
 		wb = loader.getWorkBook();
 		
-		version = versionService.getByVersion(modulo.getIdVersion());
+		version = versionService.findById(modulo.getIdVersion());
 		idVersion = version.getIdVersion();
 		
 		mapper.map(modulo.getNombre(), loader.getMap(), idVersion);

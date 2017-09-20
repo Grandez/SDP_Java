@@ -18,76 +18,53 @@
   <artifactId>MODParserBase</artifactId>
   <packaging>jar</packaging>
 
-  <dependencies>
+  <profiles>
+      <profile>
+           <id>Development</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
 
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODRules</artifactId>
-       <version>${sdp.version}</version>
-       <scope>provided</scope>       
-    </dependency>
+           <dependencies>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODRules</artifactId>
+                <version>${sdp.version}</version>      
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.parsers</groupId>
+                <artifactId>runtime</artifactId>
+                <version>[2.0,)</version>
+             </dependency>
+             
+           </dependencies>
+           
+      </profile>
 
-    <dependency>
-       <groupId>com.jgg.parsers</groupId>
-       <artifactId>runtime</artifactId>
-       <version>[2.0,)</version>
-    </dependency>
-    
-  </dependencies>
+      <profile>
+           <id>Distribution</id>      
 
-  <build>
+           <dependencies>
+           
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>SDPModule</artifactId>
+                <version>${sdp.version}</version>
+                <scope>provided</scope>       
+             </dependency>
+           
+             <dependency>
+                <groupId>com.jgg.parsers</groupId>
+                <artifactId>runtime</artifactId>
+                <version>[2.0,)</version>
+             </dependency>
+             
+           </dependencies>
 
-    <plugins>
-
-     <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id> <!--  this is used for inheritance merges -->
-            <phase>package</phase> <!--  bind to the packaging phase -->
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-<!--           <plugin> -->
-<!--              <groupId>org.apache.maven.plugins</groupId> -->
-<!--              <artifactId>maven-dependency-plugin</artifactId> -->
-<!--              <version>2.10</version> -->
-          
-<!--              <executions> -->
-<!--                  <execution> -->
-<!--                     <id>copy-installed</id> -->
-<!--                     <phase>install</phase> -->
-<!--                     <goals> -->
-<!--                         <goal>copy</goal> -->
-<!--                     </goals> -->
-<!--                     <configuration> -->
-<!--                        <artifactItems> -->
-<!--                            <artifactItem> -->
-<!--                               <groupId>${project.groupId}</groupId> -->
-<!--                               <artifactId>${project.artifactId}</artifactId> -->
-<!--                               <version>${project.version}</version> -->
-<!--                               <type>${project.packaging}</type> -->
-<!--                               <destFileName>MODDBServices.jar</destFileName> -->
-<!--                            </artifactItem> -->
-<!--                        </artifactItems> -->
-               
-<!--                        <outputDirectory>${sdp.lib}</outputDirectory> -->
-<!--                    </configuration> -->
-<!--                  </execution> -->
-<!--              </executions> -->
-<!--           </plugin> -->
-
-    </plugins>
-
-  </build>
+      </profile>
+      
+  </profiles>  
        
 </project>

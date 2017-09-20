@@ -44,27 +44,26 @@
                 <activeByDefault>true</activeByDefault>  
            </activation>
            <modules>
+           
                <!--  Base -->
-
                <module>../MODTools</module>
                <module>../MODCore</module>
                <module>../MODCalc</module>
-
-               <!--  Clients  -->
+               <module>../MODPrinter</module>
                
+               <!--  Clients  -->
                <module>../MODClients</module>
                
                <!--  DataBase  -->
-               
                <module>../MODDBMySql</module>
                <module>../MODDBServices</module>
-           <!--     <module>../MODDBNamed</module> -->
            
+               <!--  Other Modules  -->
                <module>../MODModule</module>           
                <module>../MODRules</module>
-               
+               <module>../MODCollector</module>
+                              
                <!--  Parsers  -->
-               
                <module>../MODParserBase</module>
                <module>../MODParserCics</module>
                <module>../MODParserCobol</module>
@@ -72,14 +71,14 @@
                <module>../MODParserDB2</module>
 
                <!--  Web  -->
-               
                <module>../MODWebCore</module>
                <module>../SDPWebCollector</module>
                                      
                <!--  Ejecutables  -->
                
                <module>../SDPClientHTML</module>
-
+               <module>../SDPClientWMQS</module>
+               
            </modules>                                
            
        </profile>
@@ -88,27 +87,26 @@
            <id>Distribution</id>
 
            <modules>
+           
                <!--  Base -->
-
                <module>../MODTools</module>
                <module>../MODCore</module>
                <module>../MODCalc</module>
+               <module>../MODPrinter</module>
 
-               <!--  Clients  -->
-               
+               <!--  Clients  -->             
                <module>../MODClients</module>
                
                <!--  DataBase  -->
-               
                <module>../MODDBMySql</module>
                <module>../MODDBServices</module>
-           <!--     <module>../MODDBNamed</module> -->
            
+               <!--  Other Modules  -->
                <module>../MODModule</module>           
                <module>../MODRules</module>
+               <module>../MODCollector</module>
                
-               <!--  Parsers  -->
-               
+               <!--  Parsers  -->               
                <module>../MODParserBase</module>
                <module>../MODParserCics</module>
                <module>../MODParserCobol</module>
@@ -116,16 +114,22 @@
                <module>../MODParserDB2</module>
 
                <!--  Web  -->
-               
                <module>../MODWebCore</module>
-               <module>../SDPWebCollector</module>               
+               
            
                <!-- Distribution JARs  -->  
                <module>../SDPBase</module>    
+               <module>../SDPModule</module>               
+               <module>../SDPParser</module>               
                <module>../SDPClientHTML</module>
+               <module>../SDPClientWMQS</module>
+                              
+               <!-- Distribution MAIN JARs  -->
                <module>../SDPTrapper</module>
 
-               <!-- Distribution WARs  -->  
+               <!-- Distribution WARs  -->
+               <module>../SDPWebCollector</module>
+               
 <!--                <module>../SDPWebClient</module>     -->
 <!--                <module>../SDPWebPersister</module>     -->
                       

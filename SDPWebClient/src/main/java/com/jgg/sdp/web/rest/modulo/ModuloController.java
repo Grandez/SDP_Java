@@ -138,7 +138,7 @@ public class ModuloController {
     
     private Summary calculaSummary(SDPModulo mod, MODVersion ver) {
     	Summary summ = new Summary();
-    	SDPFile file = fileService.findById(ver.getIdFile());
+    	SDPFile file = fileService.findById(mod.getIdFile());
     	summ.setFileName(file == null ? "" : file.getArchivo());
     	summ.setMemberName(mod.getNombre());
     	summ.setAuthor(ver.getAuthor());

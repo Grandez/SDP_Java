@@ -17,20 +17,19 @@ public class SDPFileService extends AbstractService<SDPFile> {
 	private Long last = 0L;
 
 	public SDPFile findById(long idFile) {
+/* JGG No cache				
         SDPFile value = dbCache.get(idFile);
         if (value == null) {
     		List<SDPFile> l = listQuery(SDPFile.findById, idFile);
     		if (l.isEmpty()) return null;
     		value = dbCache.put(idFile, l.get(0));
         }
-		return value;
-	}
-	
-	public List<SDPFile> listByName(String name) {
-		return null; 
+*/        
+		return getFirst(listQuery(SDPFile.findById, idFile));
 	}
 	
 	public SDPFile findByNameAndType(String name, int type) {
+/* JGG No cache		
 		for (SDPFile f : dbCache.getAll()) {
 			if (f.getArchivo().compareTo(name) == 0) {
 				if (f.getTipo() == type) {
@@ -38,17 +37,23 @@ public class SDPFileService extends AbstractService<SDPFile> {
 				}
 			}
 		}
-		
-		List<SDPFile> l = listQuery(SDPFile.findByNameAndType, name, type);
+*/		
+		return getFirst(listQuery(SDPFile.findByNameAndType, name, type));
+	}
+	
+	private SDPFile getFirst(List<SDPFile> l) {
 		if (l.isEmpty()) return null;
-		SDPFile f = l.get(0);
-		return dbCache.put(f.getIdFile(), f);
+		return l.get(0);
 	}
 
 	public void deleteByNameAndType(String name, int type) {
         deleteQuery(SDPFile.deleteByNameAndType, name, type);
 	}
 
+	public List<SDPFile> listByName(String name) {
+		return null; 
+	}
+		
 	public void cursorPendingOpen() {
 		data = new ArrayList<SDPFile>();
         data = listQueryCursor(SDPFile.listPendingCursor, last, CDG.SOURCE_CODE);

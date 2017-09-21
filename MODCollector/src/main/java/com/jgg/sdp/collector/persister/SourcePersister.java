@@ -51,6 +51,7 @@ public class SourcePersister {
 		source.setIdFile(idFile);
 		source.setIdVersion(idVersion);
 		source.setSource(member.getSource().getBytes());
+		source.setEncoded("UTF-8");
 		sourceService.update(source);
 	}
 }

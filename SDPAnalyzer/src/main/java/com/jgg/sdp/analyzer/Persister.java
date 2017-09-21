@@ -51,17 +51,21 @@ public class Persister {
     Document doc = null;
 	Element  root = null;
     
-    Module module    = null;
-    Long   idFile    = null;
-    Long   idModule  = null;
-    Long   idVersion = null;
+    Module  module    = null;
+    SDPUnit unit      = null;
+    
+    Long   idFile         = null;
+    Long   idFileVersion  = null;    
+    Long   idModule       = null;
+    Long   idVersion      = null;
     
     private String xmlText;
 
     public Persister() {
-       idModule  = Fechas.serial();
-       idVersion = Fechas.serial();
-       idFile    = Fechas.serial();
+       idModule      = Fechas.serial();
+       idVersion     = Fechas.serial();
+       idFile        = Fechas.serial();
+       idFileVersion = Fechas.serial();
     }
     
     public void beginTrans() {
@@ -76,14 +80,19 @@ public class Persister {
     	return xmlText;
     }
     
-    public void  persistModule(Module module, long idUnit)  {
-    	if (idUnit != 0) idFile = idUnit;
-    	
+    public void  persistModule(Module module, SDPUnit unit)  {
 	   this.module = module;	   
+	   this.unit  = unit;
+	   this.idFile = unit.getId();
+	   this.idFileVersion = unit.getIdVersion();
+	   
        persistModuleData();   
     }
 
     public void persistUnit(SDPUnit unit) {
+ 	   this.idFile = unit.getId();
+ 	   this.idFileVersion = unit.getIdVersion();
+
     	persistCompileUnit(unit);
     	persistSource(unit);
     }
@@ -97,6 +106,7 @@ public class Persister {
     	SDPFile file = new SDPFile();
 
     	file.setIdFile(idFile);
+    	file.setIdVersion(idFileVersion);
         file.setArchivo(unit.getNombre());
         file.setTipo(unit.getTipo());
         file.setEstado(unit.getStatus());
@@ -112,6 +122,8 @@ public class Persister {
     	SDPSource fuente = new SDPSource();
     	
     	fuente.setIdFile(idFile);
+    	fuente.setIdVersion(idFileVersion);
+    	fuente.setEncoded("ZIP");
         fuente.setSource(Zipper.zip(unit.getNombre(), unit.getMainSource().getRawData()));
         generate(fuente);
         
@@ -148,6 +160,7 @@ public class Persister {
             mod.setTipo(module.getType());
             mod.setActivo(CDG.MODULE_ACTIVE);
             mod.setIdVersion(idVersion);
+            mod.setIdFile(idFile);
             mod.setVersiones(0);
 //            actualizaAplicacion(mod.getIdAppl());
 //            insertaEstado(mod);
@@ -166,7 +179,7 @@ public class Persister {
     private void updateVersion() {
     	MODVersion version = new MODVersion(idModule, idVersion);
 
-    	version.setIdFile(idFile);
+    	version.setIdVersionFile(idFileVersion);
         version.setNombre(module.getName());
     	version.setTipo(module.getType());
     	version.setDesc(module.getDescription());

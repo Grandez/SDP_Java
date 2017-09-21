@@ -26,6 +26,7 @@ public class CDG {
     public static final int SOURCE_INCLUDE = 3;
     
     // Codigos de estado del analisis nivel fichero
+
     public static final int STATUS_PENDING          =  -1;
     
     public static final int STATUS_UNDEF            =   0;

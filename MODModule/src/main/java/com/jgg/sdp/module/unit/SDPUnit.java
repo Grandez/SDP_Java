@@ -32,7 +32,7 @@ public class SDPUnit extends SDPUnitBase {
 	// Puede tener varios modulos
 	private ArrayList<Module> modules = new ArrayList<Module>();
 
-	// Nombre de los miembros activos 
+	// Pila de miembros activos
 	private Stack<String>  members  = new Stack<String>();
 
 	// Fichero fuente activo (incluido pseudofiles en memory)
@@ -41,7 +41,12 @@ public class SDPUnit extends SDPUnitBase {
     // Modulo activo
     private Module module = null;
     
-    private long    id;
+    // Objecto SDPFile enmascardo 
+    private Object objFile = null;
+    
+    
+    private long    idFile;
+    private long    idVersion;
     private String  nombre;
     private int     tipo;
     private String  firma;
@@ -63,7 +68,7 @@ public class SDPUnit extends SDPUnitBase {
 
         this.firma = source.getFirma();
         this.source = sources.get(0);
-        this.id = Fechas.serial();
+        this.idFile = Fechas.serial();
         this.numModulos = 1;
         this.nombre = archivo.getBaseName();
         this.tipo = CDG.SOURCE_CODE;
@@ -75,6 +80,14 @@ public class SDPUnit extends SDPUnitBase {
     public Source getCurrentSource() { return source; 	}	
     public boolean existUnit()       { return exist;    }
     public void    setExist()        { exist = true;    }
+    
+    public void setFileObject(Object obj) {
+    	objFile = obj;
+    }
+    
+    public Object getFileObject(Object obj) {
+    	return objFile;
+    }
     
     public ArrayList<Module> getModules() {
     	return modules;
@@ -100,14 +113,22 @@ public class SDPUnit extends SDPUnitBase {
 		return cfg.isIgnored(source.getBaseName()) ? MSG.IGNORED : MSG.OK;
 	}
 */
-	public long getId() {
-		return id;
+	public long getIdFile() {
+		return idFile;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setIdVersion(long id) {
+		this.idVersion = id;
 	}
 
+	public long getIdVersion() {
+		return idVersion;
+	}
+
+	public void setIdFile(long id) {
+		this.idFile = id;
+	}
+	
 	public String getNombre() {
 		return nombre;
 	}

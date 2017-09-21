@@ -81,6 +81,7 @@ public class Analyzer {
 			unit.setFirma(file.getFirma());
 			unit.setTipo(file.getTipo());
 			unit.setStatus(file.getEstado());
+			unit.setFileObject(file);
 			setSource(unit, file);
 			analyzeUnit(unit);			
 		}
@@ -97,8 +98,6 @@ public class Analyzer {
 		if (cfg.getVerbose() > 0) msg.progressCont(MSG.PARSING, unit.getMemberName());
         
 		try {		
-
-			
         	procesar = hasToProcess(unit);
         	
 //Nada            	if (procesar == MSG.OK)      procesar = unit.isIgnored();
@@ -177,11 +176,11 @@ public class Analyzer {
 
     
 	private int storeModuleInfo (SDPUnit unit) {
-		long idUnit = unit.existUnit() ? unit.getId() : 0l;
+		// long idUnit = unit.existUnit() ? unit.getId() : 0l;
 		Persister pers = new Persister();
 		pers.beginTrans();
 	    for (Module module : unit.getModules()) {
-	         pers.persistModule(module, idUnit);
+	         pers.persistModule(module, unit);
 	    }
 	    
 	    if (cfg.isLocalMode() && !unit.existUnit()) pers.persistUnit(unit);
@@ -202,15 +201,19 @@ public class Analyzer {
 	 */
 	private int hasToProcess(SDPUnit unit) {
 		
-		SDPFile f = fileService.findByNameAndType(unit.getMemberName(), CDG.SOURCE_CODE);
-		if (f == null) return RC.OK;
-		
-		if (f.getEstado() == CDG.STATUS_PENDING) return RC.OK;
+		if (file == null) {
+		   SDPFile f = fileService.findByNameAndType(unit.getMemberName(), CDG.SOURCE_CODE);
+		   if (f == null) return RC.OK;
+		}
+		else {
+		   if (file.getEstado() == CDG.STATUS_PENDING) return RC.OK;
+		}
 		
 		// if (f.getFirma().compareTo(unit.getFirma()) != 0) return RC.OK;
 		
 		unit.setExist();
 		
+		// Forzar a reprocesar
 		if (!cfg.getBoolean(CFG.PARSER_FORCE)) return RC.SKIP;
 		
 		return RC.OK;

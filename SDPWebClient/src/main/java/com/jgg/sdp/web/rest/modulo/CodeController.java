@@ -45,7 +45,7 @@ public class CodeController {
     	SDPModulo mod = modService.findById(idModulo);
     	MODVersion ver = verService.findById(mod.getIdVersion());
         if (ver == null) return new ArrayList<Fuente>();
-    	return prepareSource(ver);
+    	return prepareSource(mod.getIdFile(), ver);
     }
     
     @RequestMapping("/code/{idModulo}/{idVersion}")
@@ -53,11 +53,11 @@ public class CodeController {
 
        MODVersion ver = verService.findById(idVersion);
        if (ver == null) return new ArrayList<Fuente>();
-       return prepareSource(ver);
+       return prepareSource(0, ver);
     }
     
-    private List<Fuente> prepareSource(MODVersion ver) {
-       SDPFile source = fteService.findById(ver.getIdFile());
+    private List<Fuente> prepareSource(long idFile, MODVersion ver) {
+       SDPFile source = fteService.findById(ver.getIdVersionFile());
        if (source == null) return new ArrayList<Fuente>();
        return new ArrayList<Fuente>();
 /* JGG       

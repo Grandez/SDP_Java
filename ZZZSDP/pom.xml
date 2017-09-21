@@ -55,7 +55,7 @@
                <module>../MODClients</module>
                
                <!--  DataBase  -->
-               <module>../MODDBMySql</module>
+               <module>../MODDBEntities</module>
                <module>../MODDBServices</module>
            
                <!--  Other Modules  -->
@@ -99,7 +99,7 @@
                <module>../MODClients</module>
                
                <!--  DataBase  -->
-               <module>../MODDBMySql</module>
+               <module>../MODDBEntities</module>
                <module>../MODDBServices</module>
            
                <!--  Other Modules  -->
@@ -121,7 +121,8 @@
                <!-- Distribution JARs  -->  
                <module>../SDPBase</module>    
                <module>../SDPModule</module>               
-               <module>../SDPParser</module>               
+               <module>../SDPParser</module>
+               <module>../SDPDataBase</module>                              
                <module>../SDPClientHTML</module>
                <module>../SDPClientWMQS</module>
                               

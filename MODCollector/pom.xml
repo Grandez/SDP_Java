@@ -33,15 +33,9 @@
                   <version>${sdp.version}</version>
                </dependency>
           
-<!--                <dependency> -->
-<!--                  <groupId>com.jgg.sdp</groupId> -->
-<!--                  <artifactId>MODDbMySQL</artifactId> -->
-<!--                  <version>${sdp.version}</version> -->
-<!--                </dependency> -->
-          
                <dependency>
                  <groupId>com.jgg.sdp</groupId>
-                 <artifactId>MODDbServices</artifactId>
+                 <artifactId>MODDBServices</artifactId>
                  <version>${sdp.version}</version>
                </dependency>
     

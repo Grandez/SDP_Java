@@ -40,12 +40,6 @@
            
              <dependency>
                 <groupId>com.jgg.sdp</groupId>
-                <artifactId>MODDBMySql</artifactId>
-                <version>${sdp.version}</version>
-             </dependency>
-           
-             <dependency>
-                <groupId>com.jgg.sdp</groupId>
                 <artifactId>MODDBServices</artifactId>
                 <version>${sdp.version}</version>
              </dependency>
@@ -120,12 +114,6 @@
            
              <dependency>
                 <groupId>com.jgg.sdp</groupId>
-                <artifactId>MODDBMySql</artifactId>
-                <version>${sdp.version}</version>
-             </dependency>
-           
-             <dependency>
-                <groupId>com.jgg.sdp</groupId>
                 <artifactId>MODDBServices</artifactId>
                 <version>${sdp.version}</version>
              </dependency>
@@ -176,7 +164,7 @@
            
            </dependencies>
            <build>
-             <finalName>SDPWebCollector</finalName>
+             <finalName>Collector</finalName>
            </build>
 
       </profile>

@@ -28,7 +28,7 @@
            
              <dependency>
                 <groupId>com.jgg.sdp</groupId>
-                <artifactId>MODDBMySql</artifactId>
+                <artifactId>MODDBEntities</artifactId>
                 <version>${sdp.version}</version>
              </dependency>
            

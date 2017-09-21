@@ -15,11 +15,15 @@ public class SDPFileService extends AbstractService<SDPFile> {
 	private List<SDPFile> data = new ArrayList<SDPFile>();
 	
 	private Long last = 0L;
-	
+
 	public SDPFile findById(long idFile) {
-		List<SDPFile> l = listQuery(SDPFile.findById, idFile);
-		if (l.isEmpty()) return null;
-		return l.get(0);
+        SDPFile value = dbCache.get(idFile);
+        if (value == null) {
+    		List<SDPFile> l = listQuery(SDPFile.findById, idFile);
+    		if (l.isEmpty()) return null;
+    		value = dbCache.put(idFile, l.get(0));
+        }
+		return value;
 	}
 	
 	public List<SDPFile> listByName(String name) {
@@ -27,9 +31,18 @@ public class SDPFileService extends AbstractService<SDPFile> {
 	}
 	
 	public SDPFile findByNameAndType(String name, int type) {
+		for (SDPFile f : dbCache.getAll()) {
+			if (f.getArchivo().compareTo(name) == 0) {
+				if (f.getTipo() == type) {
+					return f;
+				}
+			}
+		}
+		
 		List<SDPFile> l = listQuery(SDPFile.findByNameAndType, name, type);
 		if (l.isEmpty()) return null;
-		return l.get(0);
+		SDPFile f = l.get(0);
+		return dbCache.put(f.getIdFile(), f);
 	}
 
 	public void deleteByNameAndType(String name, int type) {

@@ -56,7 +56,7 @@ action code {:
    private CalcItem loadValue(String name, Symbol s) {
       CalcItem item = null;
       
-      String[] toks = name.substring(1).split("\\.");
+      String[] toks = name.split("\\.");
       int idx = 0;
       Object obj = parser.base;
       

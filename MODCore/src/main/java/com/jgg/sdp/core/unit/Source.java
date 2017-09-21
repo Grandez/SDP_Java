@@ -10,6 +10,7 @@ package com.jgg.sdp.core.unit;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -88,10 +89,17 @@ public class Source extends Reader {
 	}
 
 	public void setRawData(byte[] bytes) {
-		this.rawData = (new String(bytes)).toCharArray();
+		String str = new String(bytes, StandardCharsets.UTF_8);
+		this.rawData = str.toCharArray();
 		prepararDatos();
 	}
 
+	public void setRawData(byte[] bytes, ArrayList<String> toks) {
+		String str = new String(bytes, StandardCharsets.UTF_8);
+		this.rawData = str.toCharArray();
+		prepareData(toks);
+	}
+	
 	public void setData(String newData) {
 		this.size   = newData.length();
 		this.length = newData.length();

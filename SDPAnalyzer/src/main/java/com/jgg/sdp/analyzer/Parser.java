@@ -27,7 +27,6 @@ import com.jgg.sdp.domain.services.core.SDPStatusService;
 import java_cup.runtime.Scanner;
 
 import com.jgg.sdp.module.base.*;
-import com.jgg.sdp.module.factorias.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.status.*;
 import com.jgg.sdp.module.tables.TBSumIssues;

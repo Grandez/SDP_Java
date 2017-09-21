@@ -14,7 +14,7 @@ public class RULRule implements Serializable {
 	public final static String listAll          = "Select i from RULRule i";
 	public final static String listByItem       = "Select i from RULRule i where idGroup = ?1 AND idItem = ?2";
 	public final static String listActiveByItem = "Select i from RULRule i " +
-	                                              "WHERE idGroup = ?1 AND idItem = ?2 AND activo = 1 " +
+	                                              "WHERE idGroup = ?1 AND idItem = ?2 AND activo = 0 " +
 			                                      "ORDER BY i.priority ";
 
 	@Id

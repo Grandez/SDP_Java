@@ -30,7 +30,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %xstate QUOTE_STRING   
 %xstate DQUOTE_STRING 
 
-%xstate COPYS  
+%xstate COPYS , ST_REPLACING, REP_EQUALS, REP_DQUOTE, REP_QUOTE
 
 %{
 
@@ -840,11 +840,39 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
    
 <COPYS> {
   ^[\*\/]            { pushState(COMMENT);           }
+  REPLACING          { appendEmbedded(yytext()); popState(ST_REPLACING); }
   \.                 { popState(); return symbol(ENDCOPY);  }
-  \r                 { info.buffer.append(yytext()); }
-  \n                 { info.buffer.append(yytext()); }
-  {WORD}             { info.buffer.append(yytext()); }
-  .                  { info.buffer.append(yytext()); }  
+  \r                 { /* eat */ }
+  \n                 { appendEmbedded(yytext()); }
+  {WORD}             { appendEmbedded(yytext()); }
+  .                  { appendEmbedded(yytext()); }  
+}
+
+<ST_REPLACING> {
+  ^[\*\/]            { pushState(COMMENT);           }
+ "=="                { appendEmbedded(yytext()); pushState(REP_EQUALS); }
+  \"                 { appendEmbedded(yytext()); pushState(REP_DQUOTE); } 
+  \'                 { appendEmbedded(yytext()); pushState(REP_QUOTE); }  
+  \.                 { popState(2); return symbol(ENDCOPY);  }
+  \r                 { /* eat */ }
+  \n                 { appendEmbedded(yytext()); }
+  {WORD}             { appendEmbedded(yytext()); }
+  .                  { appendEmbedded(yytext()); }  
+}
+
+<REP_EQUALS> {
+ "=="                { appendEmbedded(yytext()); popState(); }
+  \n                 { appendEmbedded(yytext()); } 
+  .                  { appendEmbedded(yytext()); }  
+}
+
+<REP_DQUOTE> {
+  \"                 { appendEmbedded(yytext()); popState(); } 
+  .                  { appendEmbedded(yytext()); }  
+}
+<REP_QUOTE> {
+  \'                 { appendEmbedded(yytext()); popState(); } 
+  .                  { appendEmbedded(yytext()); }  
 }
 
 

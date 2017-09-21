@@ -149,11 +149,6 @@ public class ProxyLexer implements GenericScanner {
 	   info.setIncludeParsed(false);
 	   Symbol s = parseAlter(Parsers.DB2);
    	   
-	   if (s == null) {
-   		   System.out.println("SQL PARATE");
-   		   return;
-   	   }
-
 	   // En funcion de los EOF puede incluir stmtSQL en niveles
 	   // mas internos
 	   while (!(s.value instanceof StmtSQL)) s = (Symbol) s.value;
@@ -163,7 +158,7 @@ public class ProxyLexer implements GenericScanner {
    	   if (sql.isInclude()) {
    		   createCopy(s, CDG.DEP_INCLUDE);
    		   updateCopy(s);
-   	       loadCopy(sql.getRValue(0).getName(), null);
+   	       loadCopy(sql.getRValue(0).getName(), CDG.SOURCE_INCLUDE, null);
    	       return;
    	   } 
    	   
@@ -190,7 +185,7 @@ public class ProxyLexer implements GenericScanner {
 
 	   createCopy(s, CDG.DEP_COPY);
        updateCopy(s);
-       loadCopy(cpy.getCopyName(), cpy.getReplacingTokens());
+       loadCopy(cpy.getCopyName(), CDG.SOURCE_COPY, cpy.getReplacingTokens());
    }
    
    private Symbol parseAlter(int type) throws Exception {
@@ -223,7 +218,7 @@ public class ProxyLexer implements GenericScanner {
 	   return s;
    }
    
-   private void loadCopy(String name, ArrayList<String> tokens) {
+   private void loadCopy(String name, int type, ArrayList<String> tokens) {
    /*
 	   // La copy esta marcada como ignorada
 	   if (cfg.isIgnored(name)) {
@@ -236,7 +231,7 @@ public class ProxyLexer implements GenericScanner {
 		   return;
 	   }
 */
-	   Source source = loader.load(name, tokens);
+	   Source source = loader.load(name, type, tokens);
 	   
 	   if (source == null) {
 	       info.module.setParserStatus(CDG.STATUS_PARTIAL);

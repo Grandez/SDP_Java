@@ -7,16 +7,24 @@ import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.CFG;
 import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.core.unit.*;
+import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
+import com.jgg.sdp.domain.services.core.*;
 
 public class CopyLoader {
 
 	private Configuration cfg = DBConfiguration.getInstance();
-	    
-	public Source load(String name, ArrayList<String> toks) {
+
+	private SDPFileService   fileService   = new SDPFileService();
+	private SDPSourceService sourceService = new SDPSourceService();
+	
+	public Source load(String name, int type, ArrayList<String> toks) {
 		String cpyFile = getFullPathCopy(name);
 		if (cpyFile == null) return null;
-		return SourcesFactory.getCopy(new Archivo(cpyFile), toks);
+		Source copy = SourcesFactory.getCopy(new Archivo(cpyFile), toks);
+		copy.setTipo(type);
+		if (!cfg.isLocalMode()) copy = loadDataFromDB(copy, toks);
+		return copy;
 	}
 	
 	private String getFullPathCopy(String name) {
@@ -45,5 +53,16 @@ public class CopyLoader {
 			}
 		}
 		return null;
+	}
+	
+	private Source loadDataFromDB(Source copy, ArrayList<String> toks) {
+         SDPFile file = fileService.findByNameAndType(copy.getBaseName(), copy.getTipo());	
+         if (file == null) return null;
+         // Si existe el fichero existe el codigo
+         SDPSource source = sourceService.getSource(file.getIdFile(), file.getIdVersion());
+         copy.setFirma(file.getFirma());
+         copy.setId(file.getIdFile());
+         copy.setRawData(source.getSource(), toks);
+         return copy;
 	}
 }

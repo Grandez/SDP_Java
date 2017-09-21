@@ -235,6 +235,10 @@ public abstract class GenericLexer {
        info.buffer = new StringBuilder(4096);
    }
 
+   protected void appendEmbedded(String txt) {
+	   info.buffer.append(txt);
+   }
+   
    /********************************************************/
    /* Issues en el analizador lexico                       */
    /********************************************************/
@@ -257,33 +261,6 @@ public abstract class GenericLexer {
    }
 
    
-   /*
-   protected void issue(int type, int line, int column) { 
-	   issues.addIssue(type, line + 1, column); 
-   }
-   
-
-                	   
-	public Symbol tokenCobolData() throws java.lang.Exception {
-		return null;
-	}
-	public Symbol tokenCobolCode() throws java.lang.Exception {
-		return null;
-	}
-
-	public Symbol tokenCICS () throws java.lang.Exception {
-		return null;
-	}
-	public Symbol tokenCOPY () throws java.lang.Exception {
-		return null;
-	}
-   
-   public Symbol tokenSQL() throws Exception {
-	   Symbol s = next_token(); 
-	   return s;
-   }
-   */
-
    /*****************************************************************/
    /** Reglas                                                       */
    /*****************************************************************/

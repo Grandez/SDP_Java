@@ -12,7 +12,7 @@
  */
 package com.jgg.sdp.domain;
 
-import java.util.HashMap;
+import java.util.*;
 
 public class DBCache<T> {
 
@@ -25,5 +25,9 @@ public class DBCache<T> {
     public T put(Long key, T value) {
         cache.put(key, value);
         return value;
+    }
+    
+    public List<T> getAll() {
+    	return new ArrayList<T> (cache.values());
     }
 }

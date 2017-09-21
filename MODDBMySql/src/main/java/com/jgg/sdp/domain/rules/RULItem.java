@@ -12,9 +12,9 @@ public class RULItem implements Serializable {
 	private static final long serialVersionUID = -3035001051783710425L;
 
 	public static String listAll           = "SELECT i FROM RULItem i ";
-	public static String listActive        = "SELECT i FROM RULItem i WHERE i.activo = 1";
+	public static String listActive        = "SELECT i FROM RULItem i WHERE i.activo = 0";
 	public static String listByGroup       = "SELECT i FROM RULItem i WHERE i.idGroup = ?1";
-	public static String listActiveByGroup = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.activo = 1";
+	public static String listActiveByGroup = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.activo = 0";
 	
 	@Id
 	@Column(name="idGroup")

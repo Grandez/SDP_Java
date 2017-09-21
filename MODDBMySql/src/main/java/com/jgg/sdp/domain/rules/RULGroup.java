@@ -10,7 +10,7 @@ public class RULGroup implements Serializable {
     private static final long serialVersionUID = 5691054216369129050L;
 
     public static String listAll    = "SELECT r FROM RULGroup r";
-	public static String listActive = "SELECT r FROM RULGroup r WHERE r.activo = 1";
+	public static String listActive = "SELECT r FROM RULGroup r WHERE r.activo = 0";
 	
 	@Id
 	@Column(name="idGroup")

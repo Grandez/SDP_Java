@@ -29,14 +29,27 @@ import static com.jgg.sdp.calculator.CalcSym.*;
 %{
    
    ComplexSymbolFactory symbolFactory = null;
+
+   private Symbol varLocal(int id) {
+       return symbol(id, yytext().substring(1));
+   }   
+
+   private Symbol varGlobal(int id) {
+       String str = yytext();
+       return symbol(id, str.substring(1, str.length() - 1));
+   }   
    
    private Symbol symbol(int id) {
-//       System.out.println("Devuelve " + yytext()); 
-       return symbolFactory.newSymbol(yytext(), id, new Symbol(id, yyline, yycolumn, yytext()));
+       return symbol(id, yytext());
+   }
+   
+   private Symbol symbol(int id, String txt) {
+//       System.out.println("Devuelve " + txt); 
+       return symbolFactory.newSymbol(txt, id, new Symbol(id, yyline, yycolumn, txt));
    }
           
    private Symbol decimal(int id) {
-      System.out.println("Devuelve " + yytext());
+//      System.out.println("Devuelve " + yytext());
       return new Symbol(id, yyline, yycolumn, new CalcItem(yytext())); 
    }
 %}
@@ -52,7 +65,8 @@ NUMBER={SIGNED}([\.]?[0-9]+)?({EXP})?
 
 VARBASE = [a-zA-Z]{ALPHANUM}*
 VAR = {VARBASE}(\.{VARBASE})*
-
+LOCAL = \${VAR}
+GLOBAL=\{{VAR}\}
 
 %% 
 
@@ -89,7 +103,7 @@ VAR = {VARBASE}(\.{VARBASE})*
   {NUMBER}      { return decimal(NUMBER); }
   {SPACES}      { /* nada */              }
   STORE         { return symbol(STORE);   }
-  \${VAR}       { return symbol(GLOBAL);  }
-  {VAR}         { return symbol(LOCAL);   }
-  \n            { return symbol(ENDS);    }
-  .             { System.out.println("JGG " + yytext()); }      
+  {GLOBAL}      { return varGlobal(GLOBAL); }
+  {LOCAL}       { return varLocal(LOCAL);   }
+  \n            { return symbol(ENDS);      }
+      

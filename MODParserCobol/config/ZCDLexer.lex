@@ -40,7 +40,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %xstate SDP, SDPIVP, SDPIVPDESC, SDPDESC
 
 // Estados para COPY REPLACING
-%xstate COPYS  
+%xstate COPYS , ST_REPLACING, REP_EQUALS, REP_DQUOTE, REP_QUOTE  
 
 %{
 
@@ -143,7 +143,7 @@ TABS=[\t]+
 BLANKS=[ \t]+
 
 // Generico para cargar buffer
-WORD=[a-zA-Z0-9\_\-\.]+
+WORD=[a-zA-Z0-9\_\-]+
 ENDVERB=END-[a-zA-Z]+
 
 ALPHA=[a-zA-Z]+
@@ -742,13 +742,40 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
  
 <COPYS> {
   ^[\*\/]            { pushState(COMMENT);           }
+  REPLACING          { appendEmbedded(yytext()); popState(ST_REPLACING); }
   \.                 { popState(); return symbol(ENDCOPY);  }
-  \r                 { info.buffer.append(yytext()); }
-  \n                 { info.buffer.append(yytext()); }
-  {WORD}             { info.buffer.append(yytext()); }
-  .                  { info.buffer.append(yytext()); }  
+  \r                 { /* eat */ }
+  \n                 { appendEmbedded(yytext()); }
+  {WORD}             { appendEmbedded(yytext()); }
+  .                  { appendEmbedded(yytext()); }  
 }
 
+<ST_REPLACING> {
+  ^[\*\/]            { pushState(COMMENT);           }
+ "=="                { appendEmbedded(yytext()); pushState(REP_EQUALS); }
+  \"                 { appendEmbedded(yytext()); pushState(REP_DQUOTE); } 
+  \'                 { appendEmbedded(yytext()); pushState(REP_QUOTE); }  
+  \.                 { popState(2); return symbol(ENDCOPY);  }
+  \r                 { /* eat */ }
+  \n                 { appendEmbedded(yytext()); }
+  {WORD}             { appendEmbedded(yytext()); }
+  .                  { appendEmbedded(yytext()); }  
+}
+
+<REP_EQUALS> {
+ "=="                { appendEmbedded(yytext()); popState(); }
+  \n                 { appendEmbedded(yytext()); } 
+  .                  { appendEmbedded(yytext()); }  
+}
+
+<REP_DQUOTE> {
+  \"                 { appendEmbedded(yytext()); popState(); } 
+  .                  { appendEmbedded(yytext()); }  
+}
+<REP_QUOTE> {
+  \'                 { appendEmbedded(yytext()); popState(); } 
+  .                  { appendEmbedded(yytext()); }  
+}
 
 // Transforma DFHRESP(xx) y DFHVALUE(xx) en DFHCICS
 
@@ -822,7 +849,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
    {WORD}        { tmp.append(yytext());  }
    " - "         { tmp.append(yytext());  }
   {SPACES}       { tmp.append(yytext());  }
-     
+    \.           { tmp.append(yytext());  }
     .            { tmp.append(yytext());  }
     \r           { /* Nada */ }
     \n           { info.module.incLines(data);  
@@ -834,6 +861,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 <SDPDESC> {
    {WORD}        { tmp.append(yytext());  }
    {SPACES}      { tmp.append(yytext());  }
+    \.           { tmp.append(yytext());  }   
     .            { tmp.append(yytext());  }
     \r           { /* Nada */ }
     \n           { info.module.incLines(data);  

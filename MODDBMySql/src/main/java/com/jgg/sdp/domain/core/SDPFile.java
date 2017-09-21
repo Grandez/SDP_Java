@@ -12,13 +12,13 @@ public class SDPFile implements Serializable {
 	public static final String findById =  "SELECT f FROM SDPFile f WHERE f.idFile = ?1 ORDER BY f.idVersion DESC";
 
 	public static final String findByNameAndType = 
-		   "SELECT f  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";
+		   "SELECT f  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2 ORDER BY f.tms DESC";
 
 	public static final String listPendingCursor = 
-			   "SELECT f FROM SDPFile f WHERE f.idFile > ?1 AND f.estado = -1 AND f.tipo = ?2";
+		   "SELECT f FROM SDPFile f WHERE f.idFile > ?1 AND f.estado = -1 AND f.tipo = ?2";
 	
 	public static final String deleteByNameAndType = 
-			   "DELETE  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";
+		   "DELETE  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2";
 	
 	private static final long serialVersionUID = -8884394016232675188L;
 

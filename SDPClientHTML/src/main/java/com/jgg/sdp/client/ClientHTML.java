@@ -5,11 +5,11 @@ import static java.nio.charset.StandardCharsets.*;
 import java.io.*;
 import java.net.*;
 
-import com.jgg.sdp.clients.IClientPersister;
+import com.jgg.sdp.clients.MQSClient;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.tools.json.JSONObject;
 
-public class ClientHTML implements IClientPersister {
+public class ClientHTML implements MQSClient {
 	
 	private Configuration cfg = ConfigurationLocal.getInstance();
 	

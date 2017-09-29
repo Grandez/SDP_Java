@@ -46,6 +46,7 @@
            <modules>
            
                <!--  Base -->
+               <module>../MODADT</module>
                <module>../MODTools</module>
                <module>../MODCore</module>
                <module>../MODCalc</module>
@@ -71,8 +72,10 @@
                <module>../MODParserDB2</module>
 
                <!--  Web  -->
-               <module>../MODWebCore</module>
-               <module>../SDPWebCollector</module>
+               <module>../SDPWebCore</module>
+               <module>../SDPWebAdmin</module>
+               <module>../SDPWebClient</module>
+               <module>../SDPWebCollector</module>               
                                      
                <!--  Ejecutables  -->
                
@@ -90,6 +93,7 @@
            <modules>
            
                <!--  Base -->
+               <module>../MODADT</module>               
                <module>../MODTools</module>
                <module>../MODCore</module>
                <module>../MODCalc</module>
@@ -115,7 +119,7 @@
                <module>../MODParserDB2</module>
 
                <!--  Web  -->
-               <module>../MODWebCore</module>
+               <module>../SDPWebCore</module>
                
            
                <!-- Distribution JARs  -->  
@@ -131,10 +135,9 @@
                <module>../SDPTrapper</module>
 
                <!-- Distribution WARs  -->
+               <module>../SDPWebAdmin</module>
+               <module>../SDPWebClient</module>    
                <module>../SDPWebCollector</module>
-               
-<!--                <module>../SDPWebClient</module>     -->
-<!--                <module>../SDPWebPersister</module>     -->
                       
            </modules>                                
            

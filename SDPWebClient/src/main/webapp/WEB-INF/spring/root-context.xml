@@ -18,22 +18,5 @@
      
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />
-<!--  
-    <http auto-config="true" use-expressions="true" entry-point-ref="SDPEntryPoint">
-        <session-management>
-            <concurrency-control max-sessions="1" />
-        </session-management>
-        <intercept-url pattern="/**" access="isAuthenticated()" />
-        <intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
-        <logout logout-url="/logout" />
-    </http>
- 
-    <authentication-manager alias="authenticationManager">
-        <authentication-provider ref="loginController" />
-    </authentication-manager>
-     
-    <beans:bean id="SDPEntryPoint" class="com.jgg.sdp.web.admin.EntryController">
-        <beans:constructor-arg value="/login"/>
-    </beans:bean>
--->    
+
 </beans:beans>

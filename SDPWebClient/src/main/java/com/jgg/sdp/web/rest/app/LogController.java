@@ -67,7 +67,7 @@ public class LogController {
         
         List<Log> lista = new ArrayList<Log>();
         Set<Long> grupo = appService.getConjuntoActivo(id);
-        String lang = LANG.getLanguage(headers);
+        String lang[] = LANG.getLanguage(headers);
         Timestamp from = Fechas.calculaInicio(rango);
 
         hasFilter = aplicaFiltros(filtros, idMsg, object, tms, uid);
@@ -94,10 +94,10 @@ public class LogController {
         return lista;
     }
 
-    private String montaMensaje(LOGLogging l, String lang) {
+    private String montaMensaje(LOGLogging l, String[] lang) {
         Object[] parms = new Object[10];
         for (int idx = 0; idx < 10; idx++) parms[idx] = l.getDato(idx);
-        String fmt = msgService.getMessage(l.getIdMsg(), lang);
+        String fmt = msgService.getMessage(l.getIdMsg(), lang[0]);
         return String.format(fmt, parms);
     }
     

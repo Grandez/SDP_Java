@@ -1,0 +1,199 @@
+package com.jgg.sdp.ivp.lang;
+
+import java.util.*;
+
+import java_cup.*;
+import java_cup.runtime.*;
+
+import java.util.Hashtable;
+import java.util.Stack;
+
+import com.jgg.sdp.ivp.generator.cobol.*; 
+
+action code {:
+
+  ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+  
+  CUPCode code = new CUPCode();
+      
+:}
+
+
+parser code {:
+
+  public boolean debugSymbols;
+  public void setDebugSymbols(boolean debugSymbols){
+    this.debugSymbols = debugSymbols;
+  }
+  public void report_fatal_error(
+    String   message,
+    Object   info)
+    {
+      done_parsing();
+      System.err.println("Can't recover from previous error(s), giving up." + (Symbol)info);
+      System.exit(1);
+    }
+
+    public void report_error(String message, Object info) {
+      System.out.println("REPORT_ERROR");
+    }
+:};
+
+terminal Symbol
+  CODE, ACTION, PARSER, TERMINAL, NON, INIT, SCAN, WITH, 
+  START, SEMI, COMMA, DOT, COLON, COLON_COLON_EQUALS, BAR, PRECEDENCE,
+  LEFT, RIGHT, NONASSOC, PERCENT_PREC, LBRACK, RBRACK, NONTERMINAL, GT, LT;
+
+terminal Symbol ID;
+
+non terminal CUPAST spec;
+non terminal Symbol empty;
+
+non terminal non_terminal,
+  symbol_list, start_spec, production_list, 
+  multipart_id, symbol, 
+  type_id, term_name_list, non_terminal_list, production, prod_part_list, 
+  prod_part, non_terminal_id, rhs_list, rhs, 
+  precedence_list, preced, terminal_list, precedence_l, declares_term, 
+  declares_non_term;
+
+non terminal Symbol  label_id, opt_label, terminal_id,
+                     term_id, robust_id, typearglist, typearguement;
+
+start with spec;
+
+spec ::= symbol_list
+         precedence_list
+         start_spec
+         production_list
+         {: RESULT = code.getAST(); :}
+    ;
+
+symbol_list ::= symbol_list symbol | symbol;
+ 
+
+symbol ::= TERMINAL type_id declares_term
+       |   TERMINAL declares_term
+       |   non_terminal type_id declares_non_term
+       |   non_terminal declares_non_term
+       ; 
+
+type_id ::= multipart_id
+        |   type_id LBRACK RBRACK
+        ;
+
+multipart_id ::= multipart_id DOT robust_id
+             |   multipart_id LT typearglist GT
+             |   robust_id 
+             ;
+
+/* all ids that aren't reserved words in Java */
+/* package is reserved. */
+/* import is reserved. */
+
+robust_id ::= ID 
+          |   CODE      
+          | ACTION    
+          | PARSER    
+          | TERMINAL  
+          | NON       
+          | NONTERMINAL 
+          | INIT      
+          | SCAN      
+          | WITH      
+          | START     
+          | PRECEDENCE 
+          | LEFT      
+          | RIGHT     
+          | NONASSOC  
+          ;
+
+declares_term ::= term_name_list SEMI
+              ;
+
+term_name_list ::= term_name_list COMMA term_id 
+               |   term_id
+               ;
+
+term_id ::= ID:id  {: code.addTerminal(id);  :}
+        ;
+
+declares_non_term ::= non_terminal_list SEMI
+                  ;
+
+
+non_terminal_list ::= non_terminal_list COMMA non_terminal_id
+                  |   non_terminal_id
+                  ;
+
+non_terminal_id ::= ID:id {: code.addNonTerminal(id); :} 
+                ; 
+
+terminal_list ::= terminal_list COMMA terminal_id
+              |   terminal_id
+              ;
+
+terminal_id ::= ID:sym 
+            ; 
+            
+production_list ::= production_list production 
+                |   production
+                ;
+
+production ::= ID:id {: code.setCurrentLHS(id); :} COLON_COLON_EQUALS rhs_list SEMI
+           ;
+
+rhs_list ::= rhs_list BAR {: code.setCurrentRHS(); :} rhs   {: code.addRHS(); :} 
+         |                {: code.setCurrentRHS(); :} rhs   {: code.addRHS(); :}
+         ;
+
+rhs ::=  prod_part_list PERCENT_PREC term_id:term_name 
+    |    prod_part_list  
+    ;
+
+prod_part_list ::= prod_part_list prod_part 
+               |   empty:id                
+               ;
+
+prod_part ::= ID:id opt_label {: code.addComponent(id); :}
+          ;
+
+opt_label ::= COLON label_id
+          |   empty
+          ;
+
+
+typearglist ::= typearguement
+            |   typearglist COMMA typearguement
+            ;
+
+typearguement ::= type_id
+              ;
+label_id ::= robust_id
+         ;
+
+non_terminal ::= NON TERMINAL 
+             |   NONTERMINAL;
+
+
+empty ::= {: Symbol s = new Symbol(-1, 0, 0, "empty");
+             RESULT = symbolFactory.newSymbol("empty", -1, s);
+          :}  
+      ;
+      
+precedence_list ::= precedence_l 
+                |   empty
+                ;  
+
+precedence_l ::= precedence_l preced 
+             |   preced
+             ;
+
+preced ::= PRECEDENCE LEFT     terminal_list SEMI
+       |   PRECEDENCE RIGHT    terminal_list SEMI
+       |   PRECEDENCE NONASSOC terminal_list SEMI
+       ;
+
+start_spec ::= START WITH ID SEMI
+           |   empty
+           ;

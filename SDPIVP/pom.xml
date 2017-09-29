@@ -21,6 +21,12 @@
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
+       <artifactId>MODADT</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
        <artifactId>MODCore</artifactId>
        <version>${sdp.version}</version>
     </dependency>

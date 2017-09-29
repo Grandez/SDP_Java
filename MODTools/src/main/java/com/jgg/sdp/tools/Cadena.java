@@ -58,5 +58,5 @@ public class Cadena {
 		
 		return s.substring(s.length() - len + 1);
 	}
-	
+
 }

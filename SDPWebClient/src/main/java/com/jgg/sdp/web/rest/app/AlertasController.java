@@ -43,10 +43,11 @@ public class AlertasController {
      *            the rango
      * @return the alertas
      */
-    @RequestMapping("/alertas/{id}/{rango}")
-    public Alertas cargarAlertas(@PathVariable Long id, @PathVariable Integer rango) {    
+    @RequestMapping("/alertas/{id}")
+    public Alertas cargarAlertas(@PathVariable Long id
+    		                   , @CookieValue(value = "range", defaultValue = "0") Integer range) {    
         Set<Long>     grupo  = appService.getConjuntoActivo(id);
-        Timestamp     inicio = Fechas.calculaInicio(rango);
+        Timestamp     inicio = Fechas.calculaInicio(range);
         
         Alertas alertas = new Alertas();
         alertas.setFallidas(obtenerFallidas(grupo, id, inicio));

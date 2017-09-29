@@ -19,9 +19,6 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.core.tools.FileFinder;
-import com.jgg.sdp.ivp.cases.Case;
-import com.jgg.sdp.ivp.cases.Groups;
-import com.jgg.sdp.ivp.cases.BlockCases;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.SDPUnit;
@@ -29,6 +26,9 @@ import com.jgg.sdp.parser.base.ParseException;
 import com.jgg.sdp.printer.Printer;
 import com.jgg.sdp.domain.DBManagerFactory;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
+import com.jgg.sdp.ivp.items.BlockCases;
+import com.jgg.sdp.ivp.items.Case;
+import com.jgg.sdp.ivp.items.Groups;
 
 public class IVP {
 
@@ -85,12 +85,6 @@ public class IVP {
 		// Bloque inicial
 		processBloque(xml.getCases());
 
-/**
- * JGG - Hay un problema de caches, cuando carga los datos, recupera la version anterior
- * Por ahora solo soportamos un bloque		
- */
-/*		
-		
 		// Cuando acaba la primera ronda busca otros bloques
 		// Los ordenamos 
 		ArrayList<Integer> blocks = new ArrayList<Integer>();
@@ -106,13 +100,11 @@ public class IVP {
             block = bloques.get(bloque);
 			processBloque(block.getCases());
 		}
-*/		
+		
 	}
 	
 	private void processBloque(List<Case> cases) {
 		bannerBloque(currBloque);
-		
-		DBManagerFactory.getInstance().getEntityManager().clear();
 		
 		if (launcher.setEnvironment(currBloque) != 0) {
 			printer.lineBeg("ERROR Cargando entorno para el bloque " + currBloque);

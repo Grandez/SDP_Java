@@ -30,12 +30,6 @@ parser code {:
       info.unrecovered_syntax_error(token);
    }
    
-/*   
-   public void setScanner(GenericScanner scanner) {
-       super.setScanner(scanner);
-       this.scanner = scanner;
-   }
-*/
 :}
 
 action code {:

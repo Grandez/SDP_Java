@@ -7,7 +7,7 @@ import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
 
-import com.jgg.sdp.ivp.cases.Case;
+import com.jgg.sdp.ivp.items.Case;
 
 public class XMLIVP {
 

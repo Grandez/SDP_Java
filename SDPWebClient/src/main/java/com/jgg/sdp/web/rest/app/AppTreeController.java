@@ -18,7 +18,7 @@ import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.web.core.*;
 import com.jgg.sdp.web.json.*;
 
-import com.jgg.sdp.web.WebCtes;
+import static com.jgg.sdp.web.core.WEBCodes.*;
 
 @RestController
 public class AppTreeController {
@@ -56,14 +56,14 @@ public class AppTreeController {
     private void addAplicaciones(ArrayList<ApplTree> appTree, ApplTree padre) {
     	List<SDPAplicacion> appList = appNamed.listByParent(padre.getId());
     	for (SDPAplicacion app : appList) {
-    		padre.setTipo(WebCtes.AREA);
+    		padre.setTipo(AREA);
             ApplTree node = new ApplTree();
             node.setId(app.getId());
             node.setText(app.getAplicacion());
             node.setParent(padre.getId().toString());
             node.setModulos(app.getVolumen());
             node.setParent(padre.getId().toString());
-            node.setTipo(0);
+            node.setTipo(APPL);
             padre.setModulos(padre.getModulos() + node.getModulos());
             appTree.add(node);
             addModulos(appTree, node);
@@ -87,12 +87,12 @@ public class AppTreeController {
     }
     
     private int calculateType(long idVersion) {
-    	int tipo = WebCtes.MOD;
+    	int tipo = MOD;
     	MODSummary summ = sumNamed.find(idVersion);
-       if (summ.hasCics()) tipo += WebCtes.CICS;
-       if (summ.hasSgdb()) tipo += WebCtes.DB2;
-       if (summ.hasMq())   tipo += WebCtes.MQ;
-       if (summ.hasFichero()) tipo += WebCtes.FILE;
+       if (summ.hasCics()) tipo += CICS;
+       if (summ.hasSgdb()) tipo += DB2;
+       if (summ.hasMq())   tipo += MQ;
+       if (summ.hasFichero()) tipo += FILE;
        return tipo;
     }
     
@@ -100,7 +100,7 @@ public class AppTreeController {
         ApplTree node = new ApplTree();
         node.setId(id);
         node.setParent( "#");
-        node.setTipo(WebCtes.APPL);
+        node.setTipo(ROOT);
         
         if (id == 0) {
             node.setText(cfg.getString(CFG.INST_NAME));

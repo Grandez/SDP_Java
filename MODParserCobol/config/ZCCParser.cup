@@ -934,6 +934,10 @@ non terminal Symbol    logical_and_or     ;
 non terminal           logical_op_opt     ;
 non terminal           logical_op         ;
 non terminal           logical_oper       ;
+non terminal           logical_oper_not   ;
+non terminal           logical_oper_not_value ;
+non terminal           logical_oper_or_opt;
+
 non terminal           logical_not        ;
 non terminal           logical_yes        ;
 
@@ -1010,8 +1014,12 @@ non terminal Symbol opt_data      ;
 non terminal Symbol opt_date_fmt  ;
 non terminal Symbol opt_in        ;
 non terminal Symbol opt_key       ;
+non terminal Symbol opt_not       ;
 non terminal Symbol opt_to        ;
 non terminal Symbol opt_with      ;
+
+non terminal Symbol optword_than  ;
+non terminal Symbol optword_to    ;
 
 precedence nonassoc LPAR, RPAR    ;
 
@@ -2024,10 +2032,10 @@ rvalue_options ::= rvalue_option
                |   rvalue_options rvalue_option    
                ;
                
-rvalue_options ::= option_all
-               |   option_corr
-               |   option_rounded
-               ;
+rvalue_option ::= option_all
+              |   option_corr
+              |   option_rounded
+              ;
                               
 option_all ::= ALL:o {: RESULT = new Option(o); :}
            ;
@@ -2147,6 +2155,26 @@ expr_primary ::= rvalue
 /***              EXPRESION LOGICA                             ***/
 /*****************************************************************/
 /*****************************************************************/
+
+logical_oper ::= logical_oper_not 
+             |   GREATER optword_than logical_oper_or_opt
+             |   EQUAL
+             |   REL_EQ
+             |   REL_GT
+             |   REL_GE
+             ;
+
+logical_oper_not ::= NOT logical_oper_not_value
+                 ;
+                               
+logical_oper_not_value ::= LESS
+                       |   REL_LT
+                       ;
+                                                      
+logical_oper_or_opt ::= OR EQUAL optword_to
+                    |
+                    ;
+                                 
 // Casos
 // IF TRUE
 // IF VAR88
@@ -2408,7 +2436,18 @@ opt_key ::= KEY:s {: RESULT = s; :}
         |
         ;
 
+opt_not ::= NOT:s {: RESULT = s; :}
+        |
+        ;
+          
 opt_with ::= WITH:s {: RESULT = s; :}
          |
          ;
           
+optword_than ::= THAN:s  {: RESULT = s; :}
+        |
+        ;        
+        
+optword_to ::= TO:s  {: RESULT = s; :}
+           |
+           ;                

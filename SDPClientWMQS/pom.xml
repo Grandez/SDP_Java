@@ -2,7 +2,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <name>Serendipity Client Websphere MQSeries</name>
+  <name>Serendipity Communication Client over WMQSeries</name>
            
   <modelVersion>4.0.0</modelVersion>
 
@@ -40,7 +40,13 @@
 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODClients</artifactId>
+                   <artifactId>MODClientBase</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClientWMQS</artifactId>
                    <version>${sdp.version}</version>      
                 </dependency>
              
@@ -61,9 +67,8 @@
 
              <dependency>
                  <groupId>com.jgg.sdp</groupId>
-                 <artifactId>MODClients</artifactId>
+                 <artifactId>MODClientWMQS</artifactId>
                  <version>${sdp.version}</version>
-                 <scope>provided</scope>
              </dependency>
                         
            </dependencies>

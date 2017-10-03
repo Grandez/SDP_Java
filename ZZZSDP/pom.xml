@@ -53,8 +53,11 @@
                <module>../MODPrinter</module>
                
                <!--  Clients  -->
-               <module>../MODClients</module>
-               
+               <module>../MODClientBase</module>
+               <module>../MODClientJMS</module>
+               <module>../MODClientHTTP</module>
+               <module>../MODClientWMQS</module>               
+                                             
                <!--  DataBase  -->
                <module>../MODDBEntities</module>
                <module>../MODDBServices</module>
@@ -71,6 +74,10 @@
                <module>../MODParserCopy</module>
                <module>../MODParserDB2</module>
 
+               <!--  Logger  -->
+               <module>../MODLoggerClient</module>
+               <module>../MODLoggerServer</module>               
+               
                <!--  Web  -->
                <module>../SDPWebCore</module>
                <module>../SDPWebAdmin</module>
@@ -80,8 +87,9 @@
                <!--  Ejecutables  -->
                
                <module>../SDPAnalyzer</module>
-               <module>../SDPClientHTML</module>
+               <module>../SDPClientHTTP</module>
                <module>../SDPClientWMQS</module>
+               <module>../SDPClientJMS</module>               
                
            </modules>                                
            
@@ -90,6 +98,7 @@
        <profile>
            <id>Distribution</id>
 
+           <!--  Deben Contruirse en orden para que Maven funcione  -->
            <modules>
            
                <!--  Base -->
@@ -98,9 +107,13 @@
                <module>../MODCore</module>
                <module>../MODCalc</module>
                <module>../MODPrinter</module>
-
-               <!--  Clients  -->             
-               <module>../MODClients</module>
+               <module>../SDPBase</module>
+               
+               <!--  Clients  -->
+               <module>../MODClientBase</module>
+               <module>../MODClientJMS</module>
+               <module>../MODClientHTTP</module>
+               <module>../MODClientWMQS</module>               
                
                <!--  DataBase  -->
                <module>../MODDBEntities</module>
@@ -118,22 +131,35 @@
                <module>../MODParserCopy</module>
                <module>../MODParserDB2</module>
 
+               <!--  Logger  -->
+               <module>../MODLoggerClient</module>
+               <module>../MODLoggerServer</module>               
+
+               <!--     DISTRIBUTION      --> 
+               
                <!--  Web  -->
                <module>../SDPWebCore</module>
                
            
-               <!-- Distribution JARs  -->  
-               <module>../SDPBase</module>    
+               <!-- base  -->  
+    
                <module>../SDPModule</module>               
                <module>../SDPParser</module>
+               
+               <!-- DataBase  -->
                <module>../SDPDataBase</module>                              
-               <module>../SDPClientHTML</module>
-               <module>../SDPClientWMQS</module>
-                              
-               <!-- Distribution MAIN JARs  -->
-               <module>../SDPAnalyzer</module>
-               <module>../SDPTrapper</module>
 
+               <!-- Clients  -->
+               <module>../SDPClientHTTP</module>
+               <module>../SDPClientWMQS</module>
+               <module>../SDPClientJMS</module>               
+                              
+               <!-- Distribution Standalone JARs  -->
+<!--                <module>../SDPAnalyzer</module> -->
+               <module>../SDPTrapper</module>
+               <module>../SDPCollector</module>
+               <module>../SDPLogger</module>
+                              
                <!-- Distribution WARs  -->
                <module>../SDPWebAdmin</module>
                <module>../SDPWebClient</module>    

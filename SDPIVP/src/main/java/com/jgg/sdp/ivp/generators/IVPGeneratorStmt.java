@@ -1,14 +1,19 @@
+/**
+ * Una instruccion SIEMPRE empieza por un verbo
+ * stmt ::= VERBO cosas
+ */
 package com.jgg.sdp.ivp.generators;
+
+import java.util.Iterator;
+import java.util.Stack;
 
 import com.jgg.sdp.ivp.generator.cobol.*;
 
 public class IVPGeneratorStmt {
 
-	private CUPComponent[] production;
-	private String[] words = new String[100];
-	private int[]    iWords = new int[100];
-    int nWords;
-    	
+	private CUPComponent[]  production;
+	private StringBuilder[] pieces= null;
+	
 	public static void main(String[] args) throws Exception {
 		   int rc = 0;
 		   IVPGeneratorStmt launcher = new IVPGeneratorStmt();
@@ -18,9 +23,7 @@ public class IVPGeneratorStmt {
 
 	private int start(String[] args) {
 		CUPAST ast = parseLanguage();
-
 		generatePrograms(ast);
-
 		return 0;
 	}
 	
@@ -39,104 +42,92 @@ public class IVPGeneratorStmt {
 		// Para cada statement
 		
 //		CUPNonTerminal root = ast.nonTerminals.get("stmtAdd");
-		processStatement(ast.nonTerminals.get("stmtAdd"));
+		processStatement(ast.nonTerminals.get("stmtTest"));
 	}
 	
 	private void processStatement(CUPNonTerminal root){
+		// Solo hay 1
 		for (CUPRHS rhs : root.getProductions()) {
 	    	production = rhs.getProductionAsArray();
-
-	    	processProduction();
-/*	    	
-			sb1.append("stmtAdd = ");
-			if (rhs.isProduction()) {
-				stmt = new StringBuilder();
-				processRule(rhs);
-			}
-			else {
-				sb1.append(" " + rhs.getName());
-			}
-			System.out.println(sb1);
-*/			
-		}
-		
+			pieces = new StringBuilder[production.length];
+//	    	System.out.print("Regla: " + root.getName() + ": ");
+//	    	for (int idx = 0; idx < production.length; idx++) {
+//	    		System.out.print(production[idx].getName() + " ");
+//	    	}
+	    	System.out.println("");
+	    	processRule(0);
+		}		
 	}
 
-	private void processProduction() {
-		nWords = 0;
-		processRule(0);
-	}
-	
 	/**
 	 * Empieza en el 0 y va llamando a las siguientes
 	 * @param rhi
 	 */
-    private void processRule(int rhi) {
+    private boolean processRule(int rhi) {
+    	boolean processed = false;
+
     	if (rhi == production.length) {
     		writeSentence();
-    		return;
+    		return true;
     	}
-
-    	nWords = iWords[rhi];
+    	initSentence(rhi);
+    	
     	CUPComponent c = production[rhi];
-    	if (c instanceof CUPTerminal) { 
-    	    processTerminal((CUPTerminal) c, rhi);
-    	    processRule(rhi +1);
-    	}
-    	else {
-            processNonTerminal((CUPNonTerminal) c, rhi);
-    	}
-/*    	
     	if (c instanceof CUPTerminal) {
-    	   if ( 
-    		   nWords = iWords[rhi];
+    		pieces[rhi].append(processTerminal((CUPTerminal) c, rhi));
     	}
     	else {
-    		
+    		processed = processNonTerminal((CUPNonTerminal) c, rhi);
     	}
-    	processRule(rhi + 1);
-*/    	
+    	
+    	if (!processed) processed = processRule(rhi + 1);
+    	return processed;
     }
 
-    private boolean processTerminal(CUPTerminal term, int rhi) {
-    	System.out.println("Procesando " + term.getName());
-    	words[nWords++] = term.getName();
-    	words[nWords] = null;
-    	iWords[rhi +1 ] = nWords; 
-//    	idxRule++;
-//    	writeSentence();
-//		if (rhi == (production.length - 1)) {
-//			writeSentence();
-//			return true;
-//		}
-		return false;
+    private String processTerminal(CUPTerminal term, int rhi) {
+		return term.getName();
     }
       
-    private void processNonTerminal (CUPNonTerminal nt, int rhi) {
-    	System.out.println("Procesando " + nt.getName());
-    	if (nt.getName().compareTo("option_giving") == 0) {
-    		writeSentence();
-    	}
+    private boolean processNonTerminal (CUPNonTerminal nt, int rhi) {
+        boolean processed = processNonTerminalChild (nt, rhi);
+        return processed;
+    }
+    
+    private boolean processNonTerminalChild (CUPNonTerminal nt, int rhi) {
+    	boolean processed = false;
     	for (CUPRHS rhs : nt.getProductions()) {
+    		processed = false;
+    		initSentence(rhi);
     		for (CUPComponent c : rhs.getRhs()) {
     	    	if (c instanceof CUPTerminal) { 
-                    processTerminal((CUPTerminal) c, rhi);
+                    pieces[rhi].append(processTerminal((CUPTerminal) c, rhi));
+                    pieces[rhi].append(" ");
     	    	}
     	    	else {
-    	    		processNonTerminal((CUPNonTerminal) c, rhi);
+    	    		processed = processNonTerminalChild((CUPNonTerminal) c, rhi);
+    	        	//System.out.println("Estoy en " + nt.getName());
     	    	}
     	   }
-    	   processRule(rhi +1);
+    	   if (!processed) processed = processRule(rhi + 1);
     	}		
+    	return processed;
     }
     
     private void writeSentence() {
-    	StringBuilder sb = new StringBuilder();
-    	int i = 0;
-    	while (words[i] != null) {
-        	sb.append(words[i++]);
-        	sb.append(" ");
-        }
-        System.out.println(sb);
+
+    	System.out.print("Sentence: ");
+    	for (int idx = 0; idx < pieces.length; idx++) {
+    		System.out.print(pieces[idx]);
+    		System.out.print(" ");
+    	}
+    	System.out.println("");
     }
+    
+	private void initSentence(int from) {
+		for (int idx = from; idx < pieces.length; idx++) {
+			pieces[idx] = new StringBuilder();
+		}
+	}
+	
+
 }

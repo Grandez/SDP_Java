@@ -152,7 +152,7 @@ rhs ::=  prod_part_list PERCENT_PREC term_id:term_name
     ;
 
 prod_part_list ::= prod_part_list prod_part 
-               |   empty:id                
+               |   empty:id   {: code.addComponent(id); :}
                ;
 
 prod_part ::= ID:id opt_label {: code.addComponent(id); :}

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <name>Serendipity Messages collector</name>
+  <name>Serendipity Module: Messages Collector</name>
            
   <modelVersion>4.0.0</modelVersion>
 
@@ -57,16 +57,11 @@
           
                <dependency>
                  <groupId>com.jgg.sdp</groupId>
-                 <artifactId>MODDbMySQL</artifactId>
+                 <artifactId>SDPDataBase</artifactId>
                  <version>${sdp.version}</version>
+                  <scope>provided</scope>                 
                </dependency>
           
-               <dependency>
-                 <groupId>com.jgg.sdp</groupId>
-                 <artifactId>MODDbServices</artifactId>
-                 <version>${sdp.version}</version>
-               </dependency>
-    
             </dependencies>
             
       </profile>

@@ -66,12 +66,15 @@ public class IVPLaunchers {
 	}
 	
 	private void executeSQL(String sqlStmt) {
-		dbService.execute(sqlStmt);	
+		String tmp = sqlStmt.trim();
+		if (tmp.length() > 0) dbService.execute(sqlStmt);	
 	}
 	
 
 	private void processSQLScript(String scriptName) {
 		StringBuilder fileName = new StringBuilder(System.getProperty("user.dir"));
+		StringBuilder stmt = new StringBuilder();
+		String tmp = "";
 		BufferedReader br = null;
 		FileReader fr = null;
 		String line;
@@ -83,15 +86,22 @@ public class IVPLaunchers {
 			fr = new FileReader(fileName.toString());
 			br = new BufferedReader(fr);
 			while ((line = br.readLine()) != null) {
+				line = line.trim();
 				System.out.println("-" + line + "-");
-				String stmt = prepareSQLStatement(line);
-				if (stmt.length() > 0) 
-					executeSQL(stmt);
-			}
-
+				if (prepareSQLStatement(line, stmt)) {
+					int pos = stmt.indexOf( ";"); 
+					if ( pos == -1) {
+						executeSQL(stmt.toString());
+					}
+					else {
+						tmp = stmt.substring(pos + 1);
+						executeSQL(stmt.substring(0, pos).toString());
+					}
+					stmt = new StringBuilder(tmp);
+				}
+			}		
 		} catch (IOException e) {
 			e.printStackTrace();
-
 		} finally {
 			try {
 				if (br != null) br.close();
@@ -104,18 +114,15 @@ public class IVPLaunchers {
 
 	}
 
-    private String prepareSQLStatement(String line) {
-		String stmt = line.trim();
-		if (stmt.length() == 0)        return "";
-		if (stmt.startsWith("--"))     return "";
-		if (stmt.startsWith("USE"))    return "";
-		if (stmt.startsWith("COMMIT")) return "";
-		int pos = stmt.indexOf(";");
-		if (pos > -1) {
-			stmt = stmt.substring(0,  pos);
-			stmt = stmt.trim();
-		}
-		return stmt;
+    private boolean prepareSQLStatement(String line, StringBuilder stmt) {
+		String cad = line.trim();
+		if (cad.length() == 0)        return false;
+		if (cad.startsWith("--"))     return false;
+		if (cad.startsWith("USE"))    return false;
+		if (cad.startsWith("COMMIT")) return false;
+		
+		stmt.append(cad);
+		return (cad.indexOf(";") == -1) ? true : false;
     }
     
 	private void setBlockEnvironment(IVPConfig config) {

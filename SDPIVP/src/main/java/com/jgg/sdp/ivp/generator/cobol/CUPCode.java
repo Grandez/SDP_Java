@@ -28,7 +28,6 @@ public class CUPCode {
 			};
 	
 	private final Set<String> IGNORED = new HashSet<>(Arrays.asList(IGN_WORDS));
-	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
 	
 	private CUPNonTerminal lhs = null;
 	private CUPRHS         rhs = null;
@@ -62,7 +61,9 @@ public class CUPCode {
 	}
 	
 	public void addNonTerminal(Symbol s) {
-		if (isIgnored((String) s.value)) return;
+		if (isIgnored((String) s.value)) {
+			return;
+		}
 		
 		CUPNonTerminal t = new CUPNonTerminal();
 		t.setId(s.sym);
@@ -89,6 +90,6 @@ public class CUPCode {
 	}
 	
 	public void addRHS() {
-		if (lhs != null) lhs.addProduction(rhs);
+		if (lhs != null && rhs.hasRule()) lhs.addProduction(rhs);
 	}
 }

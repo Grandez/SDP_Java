@@ -45,6 +45,10 @@ public class CUPRHS {
 		this.alias = name;
 	}
 
+	public boolean hasRule() {
+		return (!rhs.isEmpty());
+	}
+	
 	public boolean isProduction() {
 		return (nonTerminals > 0);
 	}

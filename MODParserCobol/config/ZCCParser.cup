@@ -872,6 +872,7 @@ non terminal StmtCobol stmtExec      ;
 non terminal StmtCobol stmtReturn ;             
 non terminal StmtCobol stmtStop   ;             
 non terminal StmtCobol stmtAdd    ;             
+non terminal StmtCobol stmtTest    ;
              
 non terminal StmtCobol stmtSet       ;       
 non terminal StmtCobol set_verb      ;
@@ -1224,9 +1225,10 @@ stmtIO2 ::= stmtAccept:s         {: RESULT = s; :}
 /* Sentencias de operaciones aritmeticas */
 stmtArit ::= stmtMultiply:s    {: RESULT = s; :}
          |   stmtCompute:s     {: RESULT = s; :}
-         |   stmtAdd:s         {: RESULT = s; :}
+//         |   stmtAdd:s         {: RESULT = s; :}
          |   stmtDivide:s      {: RESULT = s; :}
          |   stmtSubtract:s    {: RESULT = s; :}
+         |   stmtTest:s        {: RESULT = s; :}
          ;
             
 /* Sentencias del lenguaje */
@@ -1325,6 +1327,9 @@ accept_data ::= SYM
 
 // ADD
 
+stmtTest ::= ADD rvalue TO lvalue {: RESULT = currStmt; :}
+         ;
+         
 stmtAdd ::=  add_verb rvalue_options_opt rvalue_list TO lvalue_list add_options_opt {: RESULT = currStmt; :}     
         ;
              

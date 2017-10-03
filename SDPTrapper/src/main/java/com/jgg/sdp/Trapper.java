@@ -9,7 +9,7 @@ package com.jgg.sdp;
 
 import java.nio.charset.StandardCharsets;
 
-import com.jgg.sdp.clients.MQSClient;
+import com.jgg.sdp.client.ICommClient;
 import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.core.exceptions.SDPException;
@@ -77,9 +77,9 @@ public class Trapper {
 	
 	private int sendFile(Source source, int type) {
 		
-		MQSClient html = ClientFactory.getClient();
+		ICommClient html = ClientFactory.getClient();
 		byte[] data = new String(source.getRawData()).getBytes(StandardCharsets.UTF_8);
-		int rc = html.sendZipFile(source.getArchivo().getAbsolutePath(), type, data);
+		int rc = html.sendFile(source.getArchivo().getAbsolutePath(), type, data);
 		return rc;
 	}
 

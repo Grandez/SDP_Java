@@ -155,6 +155,12 @@ public class CFG {
 	public static final String IVP_CONFIG         = "ivp.config.file";
 	public static final String IVP_INPUT          = "ivp.input.dir";
 	public static final String IVP_LOADER         = "ivp.loader";
+
+    ////////////////////////////////////////////////////////////////////////
+	// Logger
+	////////////////////////////////////////////////////////////////////////
+	
+	public static final String LOGGER_PORT        = "logger.listen";
 	
 	private CFG() {
 		

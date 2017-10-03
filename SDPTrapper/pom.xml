@@ -33,13 +33,23 @@
                 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODClients</artifactId>
+                   <artifactId>MODClientBase</artifactId>
                    <version>${sdp.version}</version>      
                 </dependency>
                 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>SDPClientHTML</artifactId>
+                   <artifactId>MODClientHTTP</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClientWMQS</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClientJMS</artifactId>
                    <version>${sdp.version}</version>      
                 </dependency>
 
@@ -48,26 +58,41 @@
   	   </profile>	
   	   <profile>
   	   	   <id>Distribution</id>
+
  	   	     <dependencies>
 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>SDPBase</artifactId>
+                   <artifactId>MODCore</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+                
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClientBase</artifactId>
+                   <version>${sdp.version}</version>    
+                   <scope>provided</scope>  
+                </dependency>
+                
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODClientHTTP</artifactId>
                    <version>${sdp.version}</version>  
-                   <scope>provided</scope>    
+                   <scope>provided</scope>
                 </dependency>
                 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODClients</artifactId>
-                   <version>${sdp.version}</version>      
+                   <artifactId>MODClientWMQS</artifactId>
+                   <version>${sdp.version}</version>
+                   <scope>provided</scope>
                 </dependency>
                 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>SDPClientHTML</artifactId>
-                   <version>${sdp.version}</version>      
-                   <scope>provided</scope>                   
+                   <artifactId>MODClientJMS</artifactId>
+                   <version>${sdp.version}</version>
+                   <scope>provided</scope>
                 </dependency>
 
            </dependencies>

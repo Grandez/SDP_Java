@@ -1,29 +1,28 @@
 package com.jgg.sdp.test.jms;
 
-import javax.jms.JMSException;
-
-import com.jgg.sdp.jms.JMSClient;
+import com.jgg.sdp.client.ClientJMS;
+import com.jgg.sdp.core.exceptions.ClientException;
 
 public class TestJMSSend {
 
 	public static void main(String[] args) {
 
-		    TestJMSSend client = new TestJMSSend();
-		    client.process();
+//		    TestJMSSend client = new TestJMSSend();
+		    //client.process();
 	}
 	
 	private void process() {
-		    JMSClient client = new JMSClient();
+		    ClientJMS client = new ClientJMS();
 		    
 		    try {
 		    client.openConnection("localhost", 5672);
-		    client.openOutputQueue("SDPLogging");
+		    client.openEndPointOutput("SDPLogging");
 		    for (int idx = 0; idx < 5; idx++) {
-		    	client.put("Message " + idx);
+		    	client.sendText("Message " + idx);
 		    }
 		    client.close();
 		    }
-		    catch (JMSException e) {
+		    catch (ClientException e) {
 		    	e.printStackTrace();
 		    }
 	}

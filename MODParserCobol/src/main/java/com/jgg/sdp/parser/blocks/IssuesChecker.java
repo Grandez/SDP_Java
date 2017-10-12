@@ -3,7 +3,7 @@ package com.jgg.sdp.parser.blocks;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.parser.stmt.Statement;
 import com.jgg.sdp.rules.*;
-import com.jgg.sdp.rules.items.RuleRule;
+import com.jgg.sdp.rules.objects.RuleRule;
 
 import java_cup.runtime.Symbol;
 

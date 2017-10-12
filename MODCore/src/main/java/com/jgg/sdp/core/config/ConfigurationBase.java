@@ -54,16 +54,35 @@ public class ConfigurationBase implements Configuration {
 	public int     getJMSWaitInterval() { return getInteger(CFG.JMS_WAIT);    }
 	public String  getJMSQueue()        { return getValue(CFG.JMS_TRAPPER);   }
 	public String  getJMSOutputQueue()  { return getValue(CFG.JMS_OUTPUT);    }
-	public String  getJMSHostName()     { return getValue(CFG.JMS_HOST);      }	
-	public int     getJMSPort()         { return getInteger(CFG.JMS_PORT);    }
-    public String  getMemberName()      { return getValue(CFG.CURR_MODULE);   }
 
-	public String  getJMSServicePersister()      { return getValue(CFG.JMS_PERSISTER);   } 
-	
+    public String  getMemberName()      { return getValue(CFG.CURR_MODULE);   }
+    
     public boolean isForcedMode()         { return getBoolean(CFG.PARSER_FORCE); }
     public boolean isLocalMode()          { return getBoolean(CFG.PARSER_LOCAL); }
 //	public boolean isIgnored(String name) { return ignore.contains(name);        }
 	
+
+	public String  getJMSHostName()         { return getValue(CFG.JMS_HOST);      }	
+	public Integer getJMSPort()             { return getInteger(CFG.JMS_PORT);    }
+	public String  getJMSServicePersister() { return getValue(CFG.JMS_PERSISTER); } 
+
+	public String  getJMSHostName(String type) {         
+	       String sz = getValue(mountKey(CFG.JMS_HOST, type, 1));      
+	       if (sz != null) return sz;
+	       return getJMSHostName();
+	}
+	
+	public Integer getJMSPort(String type) {             
+	       Integer p = getInteger(mountKey(CFG.JMS_PORT, type, 1));
+	       if (p != null) return p;
+	       return getJMSPort();
+	}
+	
+	public String  getJMSServicePersister(String type) { 
+		String sz = getValue(mountKey(CFG.JMS_PERSISTER, type, 1));
+	       if (sz != null) return sz;
+	       return getJMSServicePersister();
+	}
     
 	private static String setFullDirectory(String tmp) {
 		if (tmp == null) return null;
@@ -359,4 +378,17 @@ public class ConfigurationBase implements Configuration {
 		this.cfg = cfg;
 	}
 
+	String mountKey(String oldKey, String type, int pos) {
+		int n = 0;
+		int from = 0;
+		int dot = -1;
+		while (n < pos) {
+			dot = oldKey.indexOf('.', from);
+			from = dot + 1;
+			n++;
+		}
+		String left = oldKey.substring(0, dot);
+		String right = oldKey.substring(dot);
+		return left + "." + type + right;
+	}
 }

@@ -158,9 +158,9 @@ public class CDG {
     public static final int TS_QR      = 6;
 	
 
-    public static final String JMS_HTTP   = "HTTP";
-    public static final String JMS_WMQ    = "WMQ";
-    public static final String JMS_WMQJMS = "WMQJMS";
+    public static final String JMS_HTTP   = "http";
+    public static final String JMS_WMQ    = "wmq";
+    public static final String JMS_WMQJMS = "wmqjms";
     
 
     // Tipos de mensajes para consola

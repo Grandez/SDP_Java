@@ -24,9 +24,14 @@ public interface Configuration {
 	public String  getJMSType();	
 	public String  getJMSQueue();
 	public String  getJMSOutputQueue();
+	
+	public String  getJMSHostName(String type);
 	public String  getJMSHostName();
-	public int     getJMSPort();
+	public Integer getJMSPort(String type);
+	public Integer getJMSPort();	
 	public String  getJMSServicePersister();
+	public String  getJMSServicePersister(String type);
+	
     public String  getMemberName();
 
     public boolean isForcedMode();

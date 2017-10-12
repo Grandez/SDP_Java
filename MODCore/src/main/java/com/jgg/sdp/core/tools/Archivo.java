@@ -9,6 +9,7 @@
  */
 package com.jgg.sdp.core.tools;
 
+import java.io.File;
 import java.net.URI;
 
 public class Archivo extends java.io.File {
@@ -35,6 +36,10 @@ public class Archivo extends java.io.File {
 	
 	public Archivo(URI uri) {
 		super(uri);
+	}
+
+	public Archivo(File  file) {
+		super(file.getAbsolutePath());
 	}
 	
 	public String getBaseName()  { return fileName;  }

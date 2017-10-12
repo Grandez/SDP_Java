@@ -11,24 +11,30 @@ public class RULItem implements Serializable {
 
 	private static final long serialVersionUID = -3035001051783710425L;
 
-	public static String listAll           = "SELECT i FROM RULItem i ";
-	public static String listActive        = "SELECT i FROM RULItem i WHERE i.activo = 0";
-	public static String listByGroup       = "SELECT i FROM RULItem i WHERE i.idGroup = ?1";
-	public static String listActiveByGroup = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.activo = 0";
+	public static final String delItemsOfGroup = "DELETE FROM RULItem i where i.idGroup = ?1";
+	
+    public static final String findByTextKey   = "SELECT i FROM RULItem i WHERE i.clave  = ?1";
+    public static final String findById        = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.idItem = ?1";    
+	public static final String findMaxId       = "SELECT MAX(i.idItem) FROM RULItem i WHERE idGroup = ?1";
+	
+	public static final String listAll           = "SELECT i FROM RULItem i ";
+	public static final String listActive        = "SELECT i FROM RULItem i WHERE i.activo = 0";
+	public static final String listByGroup       = "SELECT i FROM RULItem i WHERE i.idGroup = ?1";
+	public static final String listActiveByGroup = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.activo = 0";
 	
 	@Id
 	@Column(name="idGroup")
-	private Integer idGroup;
+	private Long idGroup;
 
 	@Id
 	@Column(name="idItem")
-	private Integer idItem;
+	private Long idItem;
 
 	@Column(name="activo")
 	private Integer activo;
 	
 	@Column(name="idDesc")
-	private Integer idDesc;
+	private Long idDesc;
 
 	@Column(name="clave")
 	private String clave;
@@ -39,19 +45,19 @@ public class RULItem implements Serializable {
 	@Column(name="tms")
 	private Timestamp tms;
 
-	public Integer getIdGroup() {
+	public Long getIdGroup() {
 		return idGroup;
 	}
 
-	public void setIdGroup(Integer idGroup) {
+	public void setIdGroup(Long idGroup) {
 		this.idGroup = idGroup;
 	}
 
-	public Integer getIdItem() {
+	public Long getIdItem() {
 		return idItem;
 	}
 
-	public void setIdItem(Integer idItem) {
+	public void setIdItem(Long idItem) {
 		this.idItem = idItem;
 	}
 
@@ -63,11 +69,11 @@ public class RULItem implements Serializable {
 		this.activo = activo;
 	}
 
-	public Integer getIdDesc() {
+	public Long getIdDesc() {
 		return idDesc;
 	}
 
-	public void setIdDesc(Integer idDesc) {
+	public void setIdDesc(Long idDesc) {
 		this.idDesc = idDesc;
 	}
 

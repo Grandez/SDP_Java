@@ -9,38 +9,45 @@ public class RULGroup implements Serializable {
 
     private static final long serialVersionUID = 5691054216369129050L;
 
-    public static String listAll    = "SELECT r FROM RULGroup r";
-	public static String listActive = "SELECT r FROM RULGroup r WHERE r.activo = 0";
+    public static final String delGroup      = "DELETE FROM RULGroup g where g.idGroup = ?1";
+    
+    public static final String findByTextKey = "SELECT r FROM RULGroup r WHERE r.prefix  = ?1";
+    public static final String findById      = "SELECT r FROM RULGroup r WHERE r.idGroup = ?1";    
+	public static final String findMaxId     = "SELECT MAX(r.idGroup) FROM RULGroup r";
+	
+    public static final String listAll       = "SELECT r FROM RULGroup r";
+	public static final String listActive    = "SELECT r FROM RULGroup r WHERE r.activo = 0";
+
 	
 	@Id
 	@Column(name="idGroup")
-	private Integer idGroup;
+	private Long idGroup;
 
 	@Column(name="idParent")
-	private Integer idParent;
+	private Long idParent;
 
 	@Column(name="activo")
 	private Integer activo;
 	
 	@Column(name="idDesc")
-	private Integer idDesc;
+	private Long idDesc;
 
     @Column(name="prefix")
     private String prefix;
 
-    public Integer getIdGroup() {
+    public Long getIdGroup() {
         return idGroup;
     }
 
-    public void setIdGroup(Integer idGroup) {
+    public void setIdGroup(Long idGroup) {
         this.idGroup = idGroup;
     }
 
-    public Integer getIdParent() {
+    public Long getIdParent() {
         return idParent;
     }
 
-    public void setIdParent(Integer idParent) {
+    public void setIdParent(Long idParent) {
         this.idParent = idParent;
     }
 
@@ -52,11 +59,11 @@ public class RULGroup implements Serializable {
         this.activo = activo;
     }
 
-    public Integer getIdDesc() {
+    public Long getIdDesc() {
         return idDesc;
     }
 
-    public void setIdDesc(Integer idDesc) {
+    public void setIdDesc(Long idDesc) {
         this.idDesc = idDesc;
     }
 

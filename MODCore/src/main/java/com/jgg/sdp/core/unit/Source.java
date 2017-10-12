@@ -44,7 +44,8 @@ public class Source extends Reader {
 	public Source (Archivo archivo, ArrayList<String> toks) {
 		this.archivo = archivo;
 
-		if (cfg.getBoolean(CFG.PARSER_LOCAL)) loadData(archivo, toks);
+//		if (cfg.getBoolean(CFG.PARSER_LOCAL)) loadData(archivo, toks);
+		loadData(archivo, toks);
 	}
 	
 	private void loadData(Archivo archivo, ArrayList<String> toks) {

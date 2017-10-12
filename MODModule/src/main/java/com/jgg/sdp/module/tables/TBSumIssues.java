@@ -7,9 +7,9 @@ public class TBSumIssues {
 	private int[] issuesMax    = {0,0,0,0,0,0};
 	private int[] issuesStatus = {0,0,0,0,0,0};
 	
-	private int totalCount  = 0;
-	private int totalMax    = 0;
-	private int totalStatus = 0;
+	private int  totalCount  = 0;
+	private int  totalMax    = 0;
+	private int  totalStatus = 0;
 	
 	public TBSumIssues() {
 	}
@@ -18,30 +18,30 @@ public class TBSumIssues {
 		issuesCount[severity]++;
 	}
 
-	public void setCount(int severity, int value) {
+	public void setCount(long severity, int value) {
 		if (severity == 99) {
 			totalCount = value;  
 		}
 		else {
-            issuesCount[severity] = value;
+            issuesCount[(int) severity] = value;
 		}	
 	}
 
-	public int getCount(int severity) {
+	public int getCount(long severity) {
 		if (severity == 99) {
 			return totalCount;
 		}
 		else {
-		    return issuesCount[severity];
+		    return issuesCount[(int) severity];
 		}    
 	}
 	
-	public void setMaximum(int severity, int max) {
+	public void setMaximum(long severity, int max) {
 		if (severity == 99) {
 			totalMax = max;  
 		}
 		else {
-            issuesMax[severity] = max;
+            issuesMax[(int) severity] = max;
 		}
 	}
 	
@@ -50,12 +50,12 @@ public class TBSumIssues {
         return  issuesMax[severity];
     }
 	
-	public void setStatus(int severity, int st) {
+	public void setStatus(long severity, int st) {
 		if (severity == 99) {
 			totalStatus = st;  
 		}
 		else {
-		   issuesStatus[severity] = st;
+		   issuesStatus[(int) severity] = st;
 		}
 	}
 	

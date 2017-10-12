@@ -9,7 +9,6 @@ import static com.jgg.sdp.calculator.CalcSym.*;
 
 %public
 %class      CalcLexer
-
 %line
 %column
 %char

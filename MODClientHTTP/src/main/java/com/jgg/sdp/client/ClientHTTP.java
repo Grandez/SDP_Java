@@ -7,56 +7,36 @@ import java.net.*;
 
 import com.jgg.sdp.client.ICommClient;
 import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.core.ctes.MSG;
 import com.jgg.sdp.core.exceptions.ClientException;
+import com.jgg.sdp.core.exceptions.SDPException;
+import com.jgg.sdp.core.msg.Messages;
 import com.jgg.sdp.tools.json.JSONObject;
 
 public class ClientHTTP implements ICommClient {
 	
 	private Configuration cfg = ConfigurationLocal.getInstance();
+	private Messages      msg = Messages.getInstance();
 	
 /*	
     private final static char[] MULTIPART_CHARS =
 		        "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 		             .toCharArray();
 */
-	private String server;
-	private int    port;
-	private String service;
+	private String  server;
+	private Integer port;
+	private String  service;
 
     public ClientHTTP() {
-		this.server  = cfg.getJMSHostName();
-		this.port    = cfg.getJMSPort();
-		this.service = cfg.getJMSServicePersister();
-
-    }
-	public int sendZipFile(String fullPath, int type, byte[] raw) {
-		URL serverUrl;
-		String txtPort = "";
-		
-		if (port > 0) txtPort = ":" + port;
-		
-		try {
-			serverUrl = new URL("http://" + server + txtPort + "/" + service);
-			HttpURLConnection conn = (HttpURLConnection) serverUrl.openConnection();
-
-			conn.setRequestMethod("POST");
-			conn.addRequestProperty("Content-Type", "application/json");
-			conn.setDoOutput(true);
-			 		
-			OutputStream os = conn.getOutputStream();
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-            bw.write(mountJSON(fullPath, type, raw));
-            bw.flush();
-			os.close();
-			bw.close();
-
-			int rc = (conn.getResponseCode() == 200) ? 0 : conn.getResponseCode();
-			return rc;
-			
-		} catch (Exception e) {
-			return 500;
+		this.server  = cfg.getJMSHostName(CDG.JMS_HTTP);
+		this.port    = cfg.getJMSPort(CDG.JMS_HTTP);
+		this.service = cfg.getJMSServicePersister(CDG.JMS_HTTP);
+		if (server == null || port == null || service == null) {
+			throw new SDPException(MSG.EXCEPTION_KEY, 
+					               msg.getMsg(MSG.EXCEPTION_KEY_SERVER)); 
 		}
-	}
+    }
 	
 /*
 	private String generateBoundary() {
@@ -110,10 +90,34 @@ public class ClientHTTP implements ICommClient {
 		return 0;
 		
 	}
-	@Override
-	public int sendFile(String name, int type, byte[] data) throws ClientException {
-		// TODO Auto-generated method stub
-		return 0;
+
+	public int sendFile(String fullPath, int type, byte[] data) throws ClientException {
+		URL serverUrl;
+		String txtPort = "";
+		
+		if (port > 0) txtPort = ":" + port;
+		
+		try {
+			serverUrl = new URL("http://" + server + txtPort + "/" + service);
+			HttpURLConnection conn = (HttpURLConnection) serverUrl.openConnection();
+
+			conn.setRequestMethod("POST");
+			conn.addRequestProperty("Content-Type", "application/json");
+			conn.setDoOutput(true);
+			 		
+			OutputStream os = conn.getOutputStream();
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
+            bw.write(mountJSON(fullPath, type, data));
+            bw.flush();
+			os.close();
+			bw.close();
+
+			int rc = (conn.getResponseCode() == 200) ? 0 : conn.getResponseCode();
+			return rc;
+			
+		} catch (Exception e) {
+			throw new ClientException(e);
+		}
 	}
 
 }

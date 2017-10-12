@@ -43,22 +43,22 @@ public class Loader {
         while ((line = br.readLine()) != null) {
             String[] toks = line.split(";");
             RULGroup grp = new RULGroup();
-            grp.setIdGroup(Integer.parseInt(toks[0]));
-            grp.setIdParent(Integer.parseInt(toks[1]));
+            grp.setIdGroup(Long.parseLong(toks[0]));
+            grp.setIdParent(Long.parseLong(toks[1]));
             grp.setActivo(1);
             grp.setPrefix(toks[2]);
-            grp.setIdDesc(Integer.parseInt(toks[0]));
+            grp.setIdDesc(Long.parseLong(toks[0]));
             grpService.update(grp);
             
             RULDesc txt = new RULDesc();
-            txt.setIdDesc(Integer.parseInt(toks[0]));
+            txt.setIdDesc(Long.parseLong(toks[0]));
             txt.setIdLang("XX");
             txt.setIdDialect("XX");
             txt.setTxt(toks[3]);
             msgService.update(txt);
             
             txt = new RULDesc();
-            txt.setIdDesc(Integer.parseInt(toks[0]));
+            txt.setIdDesc(Long.parseLong(toks[0]));
             txt.setIdLang("ES");
             txt.setIdDialect("es");
             txt.setTxt(toks[3]);

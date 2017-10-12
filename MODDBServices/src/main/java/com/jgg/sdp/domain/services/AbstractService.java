@@ -119,12 +119,6 @@ public abstract class AbstractService <T>  {
         em.remove(t);
     }
 
-    public void delete(Object... keys) {
-        Query qry = em.createNamedQuery(tableName + ".delete");
-        addParameters(qry, keys);
-        qry.executeUpdate();
-    }
-    
     protected void deleteQuery(String sqlStmt, Object... keys) {
         Query qry = em.createQuery(sqlStmt);
         addParameters(qry, keys);

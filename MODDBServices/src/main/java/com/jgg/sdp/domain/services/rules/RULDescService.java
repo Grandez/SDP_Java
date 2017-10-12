@@ -11,9 +11,9 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class RULDescService extends AbstractService<RULDesc> {
 
-	private HashMap<Integer, String> msgs = new HashMap<Integer, String>();
+	private HashMap<Long, String> msgs = new HashMap<Long, String>();
 	
-	public String getDescription(Integer code, String lang, String dialect) {
+	public String getDescription(Long code, String lang, String dialect) {
 		RULDesc desc = null;
 		
 		String msg = msgs.get(code);
@@ -28,4 +28,11 @@ public class RULDescService extends AbstractService<RULDesc> {
 		return (desc == null) ? "N/A" : desc.getTxt();
 	}
 	
+	public RULDesc getDescriptionObject(Long code, String lang, String dialect) {
+		return findQuery (RULDesc.getDescription, code, lang, dialect);
+	}
+	
+	public void deleteDescription(Long idDesc) {
+		deleteQuery(RULDesc.delDescription, idDesc);
+	}
 }

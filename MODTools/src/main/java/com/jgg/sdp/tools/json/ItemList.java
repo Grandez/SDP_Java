@@ -46,7 +46,7 @@ public class ItemList {
 		return (String[])this.items.toArray();
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void split(String s,String sp,List append,boolean isMultiToken){
 		if(s==null || sp==null)
 			return;

@@ -50,19 +50,6 @@ public class ConfigurationLocal extends ConfigurationBase implements Configurati
 	}
 	
 	
-/*	
-	public char getCollectorProcess() {
-		String value = getValue(CFG.COLLECTOR);
-		return value.toUpperCase().charAt(0);
-	}
-	
-*/
-
-
-
-	
-
-
     private void loadFilesToIgnore() {
     	String f = getString(CFG.FILE_IGNORE);
     	String d = getConfigDir();

@@ -3,9 +3,9 @@ package com.jgg.sdp.module.items;
 public class Issue  {
 
 	private long id;
-	private int idGroup;
-	private int idItem;
-	private int idRule;
+	private long idGroup;
+	private long idItem;
+	private long idRule;
 	private int severity;
 	private int begLine;
 	private int begColumn;
@@ -15,7 +15,7 @@ public class Issue  {
 	private String bloque;
 	private String firma;
 	
-	public Issue(int idGroup, int idItem, int idRule) {
+	public Issue(long idGroup, long idItem, long idRule) {
 		this.idGroup = idGroup;
 		this.idItem = idItem;
 		this.idRule = idRule;
@@ -29,23 +29,23 @@ public class Issue  {
 		this.id = id;
 	}
 
-	public int getIdGroup() {
+	public long getIdGroup() {
 		return idGroup;
 	}
 
-	public void setIdGroup(int idGroup) {
+	public void setIdGroup(long idGroup) {
 		this.idGroup = idGroup;
 	}
 
-	public int getIdItem() {
+	public long getIdItem() {
 		return idItem;
 	}
 
-	public void setIdItem(int idItem) {
+	public void setIdItem(long idItem) {
 		this.idItem = idItem;
 	}
 
-	public int getIdRule() {
+	public long getIdRule() {
 		return idRule;
 	}
 

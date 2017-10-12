@@ -65,7 +65,7 @@ public class SDPExcel {
 	private int start(String[] args) {
 		int     maxRC   = RC.OK;
 		
-		cfg.setTitles(MSG.TITLE_SDP_TREE);
+		cfg.setTitles(MSG.TITLE_SDP_EXCEL);
 		
 		args = cfg.processCommandLine(prm, args);
 		

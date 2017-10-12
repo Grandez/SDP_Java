@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:RULES xmlns:p="http://www.sdp.com/SDPRULES" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://www.sdp.com/SDPRULES ../../../../../../../main/resources/SDPRULES.xsd ">
+
+  <p:group name="TST">
+    <prefix>TST</prefix>
+    <active>true</active>
+    
+    <p:item name="TST">
+       <object>Test</object>
+       <active>true</active>
+
+       <p:rule name="TST">
+          <active>true</active>
+          <priority>1</priority>
+          <severity>3</severity>
+          
+          <condition>
+             <objectType>value</objectType>
+             <comparator>gt</comparator>
+             <value>0</value>
+          </condition>
+       </p:rule>
+
+    </p:item>
+
+
+  </p:group>
+
+</p:RULES>

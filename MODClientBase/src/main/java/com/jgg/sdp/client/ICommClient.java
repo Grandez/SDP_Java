@@ -3,7 +3,6 @@ package com.jgg.sdp.client;
 import com.jgg.sdp.core.exceptions.ClientException;
 
 public interface ICommClient {
-//	public int sendZipFile(String name, int type, byte[] raw);
 	public void openConnection(String host, int port)         throws ClientException;
 	public void closeConnection()                             throws ClientException;
 	public void openEndPointOutput(String name)               throws ClientException;

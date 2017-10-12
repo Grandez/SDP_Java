@@ -11,10 +11,11 @@ public class RULDesc implements Serializable {
 	private static final long serialVersionUID = -576089848894078051L;
 
 	public static final String getDescription = "SELECT r FROM RULDesc r where r.idDesc = ?1 AND r.idLang = ?2 AND r.idDialect = ?3";
+	public static final String delDescription = "DELETE FROM RULDesc r where r.idDesc = ?1";
 	
 	@Id
 	@Column(name="idDesc")
-	private Integer idDesc;
+	private Long idDesc;
 
 	@Id
 	@Column(name="idLang")
@@ -27,11 +28,11 @@ public class RULDesc implements Serializable {
 	@Column(name="txt")
 	private String txt;
 
-	public Integer getIdDesc() {
+	public Long getIdDesc() {
 		return idDesc;
 	}
 
-	public void setIdDesc(Integer idDesc) {
+	public void setIdDesc(Long idDesc) {
 		this.idDesc = idDesc;
 	}
 

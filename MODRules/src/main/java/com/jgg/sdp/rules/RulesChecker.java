@@ -5,9 +5,11 @@ import java.util.*;
 
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Issue;
-import com.jgg.sdp.rules.items.RuleItem;
-import com.jgg.sdp.rules.items.RuleObject;
-import com.jgg.sdp.rules.items.RuleRule;
+import com.jgg.sdp.rules.objects.RuleItem;
+import com.jgg.sdp.rules.objects.RuleObject;
+import com.jgg.sdp.rules.objects.RuleRule;
+
+import static com.jgg.sdp.rules.CDGRules.*;
 
 public class RulesChecker {
 
@@ -91,15 +93,15 @@ public class RulesChecker {
         obj.setBegColumn(0);
         obj.setComponent(module.getSumIssues());
 
-        RuleItem item = processor.getRuleItemByName(RULES.GRP_ISSUES, "RULES");
+        RuleItem item = processor.getRuleItemByName(GRP_ISSUES, "RULES");
         
 		for (RuleRule rule : item.getRules()) {
-			int level = rule.getIdRule();
+			long level = rule.getIdRule();
 			obj.setValue(module.getSumIssues().getCount(level));
 			module.getSumIssues().setMaximum(level, new Integer(rule.getValor()));
 			
 			boolean res = processor.processRule(rule, obj);
-			module.getSumIssues().setStatus(level, (res) ? RULES.STAT_KO : RULES.STAT_KO);
+			module.getSumIssues().setStatus(level, (res) ? STAT_KO : STAT_KO);
 			if (level == 99) module.getSumIssues().setCount(level, ((BigDecimal) obj.getValue()).intValue());
 		}		
         
@@ -116,7 +118,7 @@ public class RulesChecker {
         obj.setBegColumn(column);
         obj.setComponent("\t");
 
-        processor.processRuleByName(RULES.GRP_LEXER, "TAB", obj);        
+        processor.processRuleByName(GRP_LEXER, "TAB", obj);        
 	}
 
 	public void checkComment(String text, int line) {
@@ -125,7 +127,7 @@ public class RulesChecker {
         obj.setBegLine(line);
         obj.setComponent(text);
 
-        processor.processRuleByName(RULES.GRP_COMMENT, "CMT", obj);
+        processor.processRuleByName(GRP_COMMENT, "CMT", obj);
 	}
 	
 	public void checkNoPrintable(int line, int column) {
@@ -134,7 +136,7 @@ public class RulesChecker {
         obj.setBegLine(line);
         obj.setBegColumn(column);
         obj.setComponent("");
-        processor.processRuleByName(RULES.GRP_LEXER, "HEX", obj);
+        processor.processRuleByName(GRP_LEXER, "HEX", obj);
 	}
 
 	public void checkCompileDirective(int line) {
@@ -142,7 +144,7 @@ public class RulesChecker {
         
         obj.setBegLine(line);
         obj.setComponent("CBL");
-        processor.processRuleByName(RULES.GRP_DIRECTIVES, "CBL", obj);		
+        processor.processRuleByName(GRP_DIRECTIVES, "CBL", obj);		
 	}
 	
 	public void checkPrintDirective(String directive, int line) {
@@ -150,7 +152,7 @@ public class RulesChecker {
         
         obj.setBegLine(line);
         obj.setComponent(directive);
-        processor.processRuleByName(RULES.GRP_DIRECTIVES, directive, obj);		
+        processor.processRuleByName(GRP_DIRECTIVES, directive, obj);		
 	}
 	
 }

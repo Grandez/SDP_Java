@@ -12,17 +12,21 @@ public class MSG {
 
 	public static final int TITLE_SDP           =    10;	
 	public static final int TITLE_SDP_ANALYZER  =    11;
+	public static final int TITLE_SDP_TRAPPER   =    12;
+	public static final int TITLE_SDP_COLLECTOR =    13;	
+	public static final int TITLE_SDP_LOGGER    =    14;
+	public static final int TITLE_SDP_IVP       =    15;	
+	public static final int TITLE_SDP_RULES     =    16;
+	public static final int TITLE_SDP_EXCEL     =    17;
 	
-	public static final int TITLE_SDP_CICS      =    12;
-	public static final int TITLE_SDP_LITE      =    13;
-	public static final int TITLE_SDP_TREE      =    14;
-	public static final int TITLE_SDP_TRAPPER   =    15;	
-	public static final int TITLE_SDP_TS        =    16;	
-	public static final int TITLE_SDP_CALL      =    17;
-	public static final int TITLE_SDP_BATCH     =    18;
-	public static final int TITLE_SDP_EXTRACTOR =    19;	
-	public static final int TITLE_SDP_IVP       =    20;	
-	
+//	public static final int TITLE_SDP_CICS      =    12;
+//
+//	public static final int TITLE_SDP_TREE      =    14;
+//	
+//	public static final int TITLE_SDP_TS        =    16;	
+//	public static final int TITLE_SDP_CALL      =    17;
+//	public static final int TITLE_SDP_BATCH     =    18;
+//	public static final int TITLE_SDP_EXTRACTOR =    19;	
 
 	
 	
@@ -117,6 +121,9 @@ public class MSG {
 	public static final int EXCEPTION_FORMAT    = 99504;
 	public static final int EXCEPTION_LOCK      = 99505;	
 
+	public static final int EXCEPTION_KEY        = 99600;
+	public static final int EXCEPTION_KEY_SERVER = 99601;
+	
 	public static final int FATAL_EXCEPTION     = 99900;
 	public static final int EXCEPTION           = 99999;
 	

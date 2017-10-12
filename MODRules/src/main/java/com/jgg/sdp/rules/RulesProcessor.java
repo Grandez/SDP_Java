@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import com.jgg.sdp.calc.Calculator;
 import com.jgg.sdp.domain.services.rules.RULFormulaService;
 import com.jgg.sdp.module.items.Issue;
-import com.jgg.sdp.rules.items.*;
+import com.jgg.sdp.rules.objects.*;
 import com.jgg.sdp.tools.*;
+
+import static com.jgg.sdp.rules.CDGRules.*;
 
 public class RulesProcessor {
 
@@ -55,10 +57,10 @@ public class RulesProcessor {
 	
 	boolean processRule(RuleRule rule, RuleObject obj) {
 		switch (rule.getType()) {
-		    case RULES.TYPE_VERB:    return processRuleVerb(rule, obj);
-		    case RULES.TYPE_METHOD:  return processRuleMethod(rule, obj);
-		    case RULES.TYPE_VALUE:   return processRuleValue(rule, obj);		    
-		    case RULES.TYPE_FORMULA: return processRuleFormula(rule, obj);
+		    case TYPE_VERB:    return processRuleVerb(rule, obj);
+		    case TYPE_METHOD:  return processRuleMethod(rule, obj);
+		    case TYPE_VALUE:   return processRuleValue(rule, obj);		    
+		    case TYPE_FORMULA: return processRuleFormula(rule, obj);
 		}
 		return true;
 	}
@@ -67,8 +69,8 @@ public class RulesProcessor {
 		boolean res = false;
 		
 		switch (rule.getComparator() % 100) {
-		   case RULES.OP_EXIST: return checkExist(rule, obj);
-		   case RULES.OP_START: return checkTypeStart(rule, obj);           
+		   case OP_EXIST: return checkExist(rule, obj);
+		   case OP_START: return checkTypeStart(rule, obj);           
 		}
 		return res;
 	}

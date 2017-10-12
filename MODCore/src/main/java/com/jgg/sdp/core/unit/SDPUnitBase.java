@@ -2,8 +2,6 @@ package com.jgg.sdp.core.unit;
 
 import java.util.*;
 
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.config.ConfigurationBase;
 import com.jgg.sdp.core.ctes.CDG;
 import com.jgg.sdp.core.tools.Archivo;
 import com.jgg.sdp.tools.*;

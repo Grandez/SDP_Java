@@ -11,6 +11,9 @@ public class RULRule implements Serializable {
 	
 	private static final long serialVersionUID = -8064928861200075885L;
 
+	public final static String delRulesOfItem   = "DELETE FROM RULRule r where r.idGroup = ?1 AND r.idItem = ?2";
+	public final static String findMaxId        = "SELECT MAX(r.idRule) FROM RULRule r WHERE idGroup = ?1 AND idItem = ?2";
+    public final static String findById         = "SELECT r FROM RULRule r WHERE idGroup = ?1 AND idItem = ?2 AND idRule = ?3";
 	public final static String listAll          = "Select i from RULRule i";
 	public final static String listByItem       = "Select i from RULRule i where idGroup = ?1 AND idItem = ?2";
 	public final static String listActiveByItem = "Select i from RULRule i " +
@@ -19,18 +22,18 @@ public class RULRule implements Serializable {
 
 	@Id
 	@Column(name="idGroup")
-	private Integer idGroup;
+	private Long idGroup;
 	
 	@Id
 	@Column(name="idItem")
-	private Integer idItem;
+	private Long idItem;
 
 	@Id
 	@Column(name="idRule")
-	private Integer idRule;
+	private Long idRule;
 
 	@Column(name="idDesc")
-	private Integer idDesc;
+	private Long idDesc;
 	
 	@Column(name="activo")
 	private Integer activo;
@@ -59,35 +62,35 @@ public class RULRule implements Serializable {
 	@Column(name="tms")
 	private Timestamp tms;
 
-	public Integer getIdGroup() {
+	public Long getIdGroup() {
 		return idGroup;
 	}
 
-	public void setIdGroup(Integer idGroup) {
+	public void setIdGroup(Long idGroup) {
 		this.idGroup = idGroup;
 	}
 
-	public Integer getIdItem() {
+	public Long getIdItem() {
 		return idItem;
 	}
 
-	public void setIdItem(Integer idItem) {
+	public void setIdItem(Long idItem) {
 		this.idItem = idItem;
 	}
 
-	public Integer getIdRule() {
+	public Long getIdRule() {
 		return idRule;
 	}
 
-	public void setIdRule(Integer idRule) {
+	public void setIdRule(Long idRule) {
 		this.idRule = idRule;
 	}
 
-	public Integer getIdDesc() {
+	public Long getIdDesc() {
 		return idDesc;
 	}
 
-	public void setIdDesc(Integer idDesc) {
+	public void setIdDesc(Long idDesc) {
 		this.idDesc = idDesc;
 	}
 

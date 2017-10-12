@@ -90,7 +90,7 @@
                <module>../SDPClientHTTP</module>
                <module>../SDPClientWMQS</module>
                <module>../SDPClientJMS</module>               
-               
+               <module>../SDPRules</module>               
            </modules>                                
            
        </profile>
@@ -132,8 +132,8 @@
                <module>../MODParserDB2</module>
 
                <!--  Logger  -->
-               <module>../MODLoggerClient</module>
-               <module>../MODLoggerServer</module>               
+<!--                <module>../MODLoggerClient</module> -->
+<!--                <module>../MODLoggerServer</module>                -->
 
                <!--     DISTRIBUTION      --> 
                
@@ -158,10 +158,11 @@
 <!--                <module>../SDPAnalyzer</module> -->
                <module>../SDPTrapper</module>
                <module>../SDPCollector</module>
-               <module>../SDPLogger</module>
-                              
+<!--                <module>../SDPLogger</module> -->
+               <module>../SDPRules</module>
+                                             
                <!-- Distribution WARs  -->
-               <module>../SDPWebAdmin</module>
+<!--                <module>../SDPWebAdmin</module> -->
                <module>../SDPWebClient</module>    
                <module>../SDPWebCollector</module>
                       

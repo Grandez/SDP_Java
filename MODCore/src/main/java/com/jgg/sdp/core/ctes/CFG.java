@@ -81,6 +81,7 @@ public class CFG {
 	public static final String JMS_COLLECTOR = "jms.queue.collector";
 	public static final String JMS_QUEUE     = "jms.queue";
 	public static final String JMS_OUTPUT    = "jms.output.queue";
+	
 	public static final String JMS_HOST      = "jms.hostname";
 	public static final String JMS_PORT      = "jms.port";
 	public static final String JMS_PERSISTER = "jms.service.persister";	

@@ -16,14 +16,11 @@ import java_cup.runtime.*;
 
 import com.jgg.sdp.analyzer.post.PostSQL;
 import com.jgg.sdp.analyzer.work.CopyLoader;
-import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.common.ctes.CDG;
+import com.jgg.sdp.common.files.Archive;
 import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.core.unit.Source;
-import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.module.items.Copy;
-import com.jgg.sdp.module.unit.*;
-
+import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.db2.DB2Lexer;
 import com.jgg.sdp.parser.lang.*;
@@ -134,8 +131,8 @@ public class ProxyLexer implements GenericScanner {
    private void alterParser() throws ParseException {
 	   try {
 	      switch (parserType) {
-               case Parsers.CICS: parseCICS(); break;
-               case Parsers.DB2:  parseSQL();  break;
+               case Parsers.CICS:     parseCICS(); break;
+               case Parsers.DB2:      parseSQL();  break;
                case Parsers.COPYBOOK: parseCOPY(); break;
 	      }
 	   }
@@ -189,7 +186,7 @@ public class ProxyLexer implements GenericScanner {
    }
    
    private Symbol parseAlter(int type) throws Exception {
-	   tmpSource = new Source(new Archivo("embedded.tmp"), true);
+	   tmpSource = new Source(new Archive("embedded.tmp"), true);
 	   tmpSource.setData(info.buffer.toString());
 	   
 	   GenericLexer  lexer  = getLexer(type, tmpSource);
@@ -231,7 +228,7 @@ public class ProxyLexer implements GenericScanner {
 		   return;
 	   }
 */
-	   Source source = loader.load(name, type, tokens);
+	   Source source = loader.load(info.unit, name, type, tokens);
 	   
 	   if (source == null) {
 	       info.module.setParserStatus(CDG.STATUS_PARTIAL);
@@ -241,7 +238,7 @@ public class ProxyLexer implements GenericScanner {
 
        copy.setEstado(CDG.CPY_ST_FULL);
        
-	   info.unit.addMember(name, source);
+	   info.unit.addSource(source);
        info.addOffset(0);
 	   lexer.yypushStream(source);
 	   

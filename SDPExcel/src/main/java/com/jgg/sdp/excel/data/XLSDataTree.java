@@ -14,7 +14,7 @@ package com.jgg.sdp.excel.data;
 
 import java.util.*;
 
-import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.domain.core.SDPModulo;
 import com.jgg.sdp.domain.module.MODCall;
 import com.jgg.sdp.domain.module.MODVersion;

@@ -8,8 +8,8 @@
  */
 package com.jgg.sdp.parser.base;
 
-import com.jgg.sdp.core.ctes.MSG;
-import com.jgg.sdp.core.exceptions.SDPException;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.exceptions.SDPException;
 
 public class ParseException extends SDPException {
 
@@ -21,7 +21,11 @@ public class ParseException extends SDPException {
 	}
 	
 	public ParseException(Exception e) {
-		txt = e.getMessage();
+		if (e instanceof NullPointerException) {
+			txt = "Null pointer";
+		} else {
+		   txt = e.getMessage();
+		}
 		exitCode = 2;
 		code = 3333;
 	}

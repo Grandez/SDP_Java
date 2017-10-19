@@ -26,6 +26,12 @@
          <dependencies>
             <dependency>
                <groupId>com.jgg.sdp</groupId>
+               <artifactId>MODCommon</artifactId>
+               <version>${sdp.version}</version>
+           </dependency>
+
+            <dependency>
+               <groupId>com.jgg.sdp</groupId>
                <artifactId>MODTools</artifactId>
                <version>${sdp.version}</version>
            </dependency>

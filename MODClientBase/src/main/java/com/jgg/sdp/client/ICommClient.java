@@ -9,5 +9,5 @@ public interface ICommClient {
 	public void openEndPointInput (String name)               throws ClientException;	
 	public int  sendText (String text)                        throws ClientException;
 	public int  sendData (byte[] data)                        throws ClientException;
-	public int  sendFile (String name, int type, byte[] data) throws ClientException;	
+	public int  sendUnit (Object object)                      throws ClientException;	
 }

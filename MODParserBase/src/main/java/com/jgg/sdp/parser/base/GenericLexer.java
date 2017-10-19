@@ -12,10 +12,9 @@ package com.jgg.sdp.parser.base;
 import java.io.IOException;
 import java.util.*;
 
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.config.ConfigurationBase;
+import com.jgg.sdp.common.config.*;
 import com.jgg.sdp.module.base.*;
-import com.jgg.sdp.module.unit.*;
+import com.jgg.sdp.module.unit.Unit;
 import com.jgg.sdp.parser.tools.Comments;
 
 import java_cup.runtime.*;
@@ -32,7 +31,7 @@ public abstract class GenericLexer {
    protected Stack<Integer>       stack = new Stack<Integer>();
    protected ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
 
-   protected SDPUnit         unit   = null;
+   protected Unit         unit   = null;
    protected boolean         data   = false;
    protected int             lastID = -1; 
 
@@ -81,9 +80,9 @@ public abstract class GenericLexer {
 	   cmt.setModule(module);
    }
    
-   public void setParseUnit (SDPUnit unit) {
+   public void setParseUnit (Unit unit) {
 	   this.unit = unit;
-	   setModule(unit.getCurrentModule());
+//	   setModule(unit.getCurrentModule());
    }
    
    protected void initLexer() {

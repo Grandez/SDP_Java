@@ -10,12 +10,15 @@ package com.jgg.sdp.parser.db2;
 
 import java.io.*;
 
-import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.*;
-import com.jgg.sdp.core.msg.*;
-import com.jgg.sdp.core.tools.*;
-import com.jgg.sdp.core.unit.Source;
+import com.jgg.sdp.common.config.*;
+
+import com.jgg.sdp.common.ctes.CFG;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.ctes.RC;
+import com.jgg.sdp.common.exceptions.SDPException;
+import com.jgg.sdp.common.files.*;
+
+import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.parser.base.GenericLexer;
 
 import java_cup.runtime.ComplexSymbolFactory;
@@ -58,7 +61,7 @@ public class DB2ParserMain {
 		
 		String[] def = {"*"};
 		
-		cfg.setTitles(MSG.TITLE_SDP_LITE, MSG.USE_SDP_LITE);
+//		cfg.setTitles(MSG.TITLE_SDP_LITE, MSG.USE_SDP_LITE);
 		
 		args = cfg.processCommandLine(prm, args);
 		
@@ -83,7 +86,7 @@ public class DB2ParserMain {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			while ((sqlName = br.readLine()) != null) {
-				Archivo archivo = new Archivo(dir + sqlName.trim());
+				Archive archivo = new Archive(dir + sqlName.trim());
 				rc = procesa(archivo);
 				if (rc > maxRC) maxRC = rc;
 			}
@@ -97,14 +100,14 @@ public class DB2ParserMain {
 	private int processCommandLine(String[] args) {
 		int rc;
 		int maxRC = 0;
-        for (Archivo archivo : FileFinder.find(cfg.getInputDir(), args)) {
+        for (Archive archivo : FileFinder.find(cfg.getInputDir(), args)) {
         	rc = procesa(archivo);
         	if (rc > maxRC) maxRC = rc;
         }
         return maxRC;
 	}
 	
-	private int procesa(Archivo archivo) {
+	private int procesa(Archive archivo) {
 		int procesar = MSG.OK;
     	if (cfg.getVerbose() > 1) msg.progressCont(MSG.PARSING, archivo.getBaseName());
         
@@ -121,9 +124,9 @@ public class DB2ParserMain {
 		return procesar;
 	}
 	
-	private void analyze(Archivo archivo) throws SDPException, Exception {
+	private void analyze(Archive archivo) throws SDPException, Exception {
 		String d = archivo.getFullPath();
- 		GenericLexer lexer = DB2Lexer.getLexer(new Source(new Archivo(d), null));
+ 		GenericLexer lexer = DB2Lexer.getLexer(new Source(new Archive(d), null));
 		DB2Parser parser = new DB2Parser((Scanner) lexer, new ComplexSymbolFactory());
 		parser.parse();
 	}

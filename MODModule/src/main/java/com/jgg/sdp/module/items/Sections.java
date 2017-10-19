@@ -7,7 +7,7 @@
  */
 package com.jgg.sdp.module.items;
 
-import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.common.ctes.CDG;
 
 public class Sections {
 

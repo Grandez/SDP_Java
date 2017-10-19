@@ -18,7 +18,7 @@ package com.jgg.sdp.module.tables;
 
 import java.util.*;
 
-import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.module.items.Routine;
 
 public class TBRoutines {

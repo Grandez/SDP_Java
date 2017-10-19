@@ -7,25 +7,33 @@ import java.util.ArrayList;
 
 public class Fuente {
 
+	private Integer parent;
 	private Integer linea;
-	private Integer tipo;
+	private Integer type;
 	private Integer bloque;
 	private String  code;
 	private Boolean usado = false;
 	private Boolean malo = false;
-    private ArrayList<Integer> issues = new ArrayList<Integer>();
+    private ArrayList<Long> issues = new ArrayList<Long>();
 	
+	public Integer getParent() {
+		return parent;
+	}
+	public void setParent(Integer parent) {
+		this.parent = parent;
+	}
+    
 	public Integer getLinea() {
 		return linea;
 	}
 	public void setLinea(Integer linea) {
 		this.linea = linea;
 	}
-	public Integer getTipo() {
-		return tipo;
+	public Integer getType() {
+		return type;
 	}
-	public void setTipo(Integer tipo) {
-		this.tipo = tipo;
+	public void setType(Integer type) {
+		this.type = type;
 	}
 	public Integer getBloque() {
 		return bloque;
@@ -51,10 +59,10 @@ public class Fuente {
     public void setMalo(Boolean malo) {
         this.malo = malo;
     }
-	public void addIssue(Integer issue) {
+	public void addIssue(Long issue) {
 		issues.add(issue);
 	}
-	public ArrayList<Integer> getIssues() {
+	public ArrayList<Long> getIssues() {
 		return issues;
 	}
 }

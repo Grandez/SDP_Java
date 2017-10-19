@@ -2,8 +2,8 @@ package com.jgg.sdp.excel.xls;
 
 import java.util.Properties;
 
-import com.jgg.sdp.core.ctes.MSG;
-import com.jgg.sdp.core.exceptions.SDPException;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.exceptions.SDPException;
 import com.jgg.sdp.excel.ctes.XLS;
 
 public class XLSDictionary {

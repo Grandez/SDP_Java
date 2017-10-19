@@ -11,6 +11,7 @@ import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.summary.*;
 import com.jgg.sdp.domain.services.traps.*;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;

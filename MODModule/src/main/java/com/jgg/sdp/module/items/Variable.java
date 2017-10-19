@@ -9,7 +9,7 @@ package com.jgg.sdp.module.items;
 
 import java.util.*;
 
-import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.core.ctes.VAR;
 

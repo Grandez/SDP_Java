@@ -3,8 +3,8 @@
  */
 package com.jgg.sdp.collector;
 
-import com.jgg.sdp.core.config.Args;
-import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.common.config.Args;
+import com.jgg.sdp.common.config.Configuration;
 
 public class Collector {
 

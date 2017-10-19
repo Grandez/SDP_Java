@@ -3,7 +3,7 @@
  */
 package com.jgg.sdp.collector;
 
-import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.common.config.*;
 import com.jgg.sdp.domain.cfg.CFGConfiguracion;
 import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
 

@@ -9,8 +9,8 @@ package com.jgg.sdp.module.base;
 
 import java.util.*;
 
-import com.jgg.sdp.core.ctes.CDG;
-import com.jgg.sdp.core.tools.*;
+import com.jgg.sdp.common.ctes.CDG;
+import com.jgg.sdp.common.files.Archive;
 import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.graph.Graph;
 import com.jgg.sdp.module.items.*;
@@ -18,9 +18,14 @@ import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.ivp.TBIVPCases;
 import com.jgg.sdp.module.status.Status;
 import com.jgg.sdp.module.tables.*;
+import com.jgg.sdp.module.unit.Source;
+import com.jgg.sdp.module.unit.Unit;
 
 public class Module {
 
+	private Module        parent  = null;
+	private Unit          unit    = null;
+	private Source        source   = null;
 	private int           estado  = 0;      // Resultado del analisis
 	
     private String        cpyName      = null;
@@ -55,7 +60,7 @@ public class Module {
 	private String        name        = null;
 
 	private String        author      = "N/A";
-    private int           tipo        = -1;
+    private int           tipo        = CDG.SOURCE_CODE;
     
     // Por defecto completo, se actualiza si hay fallos
     private int          copys       = CDG.CPY_ST_FULL;
@@ -82,12 +87,47 @@ public class Module {
 		
 	}
 
+	public Module (Unit unit) {
+		this.unit = unit;
+		this.fullName = unit.getMainSource().getFullName();
+		Archive a = new Archive(fullName);
+		name = a.getBaseName();
+	}
+	
+	public Module(Source source) {
+		Archive a = new Archive(source.getFullName());
+		name = a.getBaseName();
+		this.fullName = source.getFullName();
+		this.source = source;
+
+	}
+	
 	public Module(String fullName) {
-		Archivo a = new Archivo(fullName);
+		Archive a = new Archive(fullName);
 		name = a.getBaseName();
 		this.fullName = fullName; 
 	}
 
+	public void setUnit(Unit unit) {
+		this.unit = unit;
+	}
+	public Unit getUnit() {
+		return unit;
+	}
+	public void setSource(Source source) {
+		this.source = source;
+	}
+	public Source getSource() {
+		return source;
+	}
+
+	public void setParent(Module module) {
+		this.parent = module;
+	}
+	public Module getParent() {
+		return parent;
+	}
+	
 	/************************************************************************/
 	/*** ESTADO DEL ANALISIS                                              ***/
 	/************************************************************************/

@@ -9,85 +9,69 @@ import javax.persistence.*;
 @Table(name="RUL_CONDS")
 public class RULCond implements Serializable {
 	
-	private static final long serialVersionUID = -4594791622754587124L;
-
-	@Id
-	@Column(name="idGroup")
-	private Integer idGroup;
-	
-	@Id
-	@Column(name="idItem")
-	private Integer idItem;
+	private static final long serialVersionUID = -9159376801732479923L;
 
 	@Id
 	@Column(name="idCond")
-	private Integer idCond;
-
-	@Column(name="activo")
-	private Integer activo;
-
+	private Long idCond;
+	
 	@Column(name="idDesc")
-	private Integer idDesc;
+	private Long idDesc;
+
+	@Column(name="idName")
+	private Long idName;
+
+	@Column(name="idSample")
+	private Long idSample;
 	
 	@Column(name="tipo")
 	private Integer tipo;
 	
-	@Column(name="propiedad")
-	private String propiedad;
+	@Column(name="property")
+	private String property;
 	
-	@Column(name="comparador")
-	private Integer comparador;
+	@Column(name="comparator")
+	private Integer comparator;
 
 	@Column(name="valor")
 	private String valor;
 
-	@Column(name="idSample")
-	private Integer idSample;
-	
 	@Column(name="uid")
 	private String uid;
 	
 	@Column(name="tms")
 	private Timestamp tms;
 
-	public Integer getIdGroup() {
-		return idGroup;
-	}
-
-	public void setIdGroup(Integer idGroup) {
-		this.idGroup = idGroup;
-	}
-
-	public Integer getIdItem() {
-		return idItem;
-	}
-
-	public void setIdItem(Integer idItem) {
-		this.idItem = idItem;
-	}
-
-	public Integer getIdCond() {
+	public Long getIdCond() {
 		return idCond;
 	}
 
-	public void setIdCond(Integer idCond) {
+	public void setIdCond(Long idCond) {
 		this.idCond = idCond;
 	}
 
-	public Integer getActivo() {
-		return activo;
-	}
-
-	public void setActivo(Integer activo) {
-		this.activo = activo;
-	}
-
-	public Integer getIdDesc() {
+	public Long getIdDesc() {
 		return idDesc;
 	}
 
-	public void setIdDesc(Integer idDesc) {
+	public void setIdDesc(Long idDesc) {
 		this.idDesc = idDesc;
+	}
+
+	public Long getIdName() {
+		return idName;
+	}
+
+	public void setIdName(Long idName) {
+		this.idName = idName;
+	}
+
+	public Long getIdSample() {
+		return idSample;
+	}
+
+	public void setIdSample(Long idSample) {
+		this.idSample = idSample;
 	}
 
 	public Integer getTipo() {
@@ -98,20 +82,20 @@ public class RULCond implements Serializable {
 		this.tipo = tipo;
 	}
 
-	public String getPropiedad() {
-		return propiedad;
+	public String getProperty() {
+		return property;
 	}
 
-	public void setPropiedad(String propiedad) {
-		this.propiedad = propiedad;
+	public void setProperty(String property) {
+		this.property = property;
 	}
 
-	public Integer getComparador() {
-		return comparador;
+	public Integer getComparator() {
+		return comparator;
 	}
 
-	public void setComparador(Integer comparador) {
-		this.comparador = comparador;
+	public void setComparator(Integer comparator) {
+		this.comparator = comparator;
 	}
 
 	public String getValor() {
@@ -120,14 +104,6 @@ public class RULCond implements Serializable {
 
 	public void setValor(String valor) {
 		this.valor = valor;
-	}
-
-	public Integer getIdSample() {
-		return idSample;
-	}
-
-	public void setIdSample(Integer idSample) {
-		this.idSample = idSample;
 	}
 
 	public String getUid() {
@@ -150,14 +126,12 @@ public class RULCond implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((activo == null) ? 0 : activo.hashCode());
-		result = prime * result + ((comparador == null) ? 0 : comparador.hashCode());
+		result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
 		result = prime * result + ((idCond == null) ? 0 : idCond.hashCode());
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
-		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
-		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
+		result = prime * result + ((idName == null) ? 0 : idName.hashCode());
 		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
-		result = prime * result + ((propiedad == null) ? 0 : propiedad.hashCode());
+		result = prime * result + ((property == null) ? 0 : property.hashCode());
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
@@ -174,15 +148,10 @@ public class RULCond implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RULCond other = (RULCond) obj;
-		if (activo == null) {
-			if (other.activo != null)
+		if (comparator == null) {
+			if (other.comparator != null)
 				return false;
-		} else if (!activo.equals(other.activo))
-			return false;
-		if (comparador == null) {
-			if (other.comparador != null)
-				return false;
-		} else if (!comparador.equals(other.comparador))
+		} else if (!comparator.equals(other.comparator))
 			return false;
 		if (idCond == null) {
 			if (other.idCond != null)
@@ -194,25 +163,20 @@ public class RULCond implements Serializable {
 				return false;
 		} else if (!idDesc.equals(other.idDesc))
 			return false;
-		if (idGroup == null) {
-			if (other.idGroup != null)
+		if (idName == null) {
+			if (other.idName != null)
 				return false;
-		} else if (!idGroup.equals(other.idGroup))
-			return false;
-		if (idItem == null) {
-			if (other.idItem != null)
-				return false;
-		} else if (!idItem.equals(other.idItem))
+		} else if (!idName.equals(other.idName))
 			return false;
 		if (idSample == null) {
 			if (other.idSample != null)
 				return false;
 		} else if (!idSample.equals(other.idSample))
 			return false;
-		if (propiedad == null) {
-			if (other.propiedad != null)
+		if (property == null) {
+			if (other.property != null)
 				return false;
-		} else if (!propiedad.equals(other.propiedad))
+		} else if (!property.equals(other.property))
 			return false;
 		if (tipo == null) {
 			if (other.tipo != null)
@@ -236,7 +200,5 @@ public class RULCond implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
 
 }

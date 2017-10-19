@@ -29,13 +29,10 @@ public class ArbolController {
     private SDPModuloService moduloService;
     @Autowired
     private MODVersionService versionService;
-    
     @Autowired
     private SUMModuloService sumModuloService;
-    
     @Autowired
     private SUMArbolService sumArbolService;
-
     @Autowired
     LOGMsgService      msgService;
     

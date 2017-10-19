@@ -13,11 +13,14 @@ import java.util.*;
 
 import org.apache.poi.xssf.usermodel.*;
 
-import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.*;
-import com.jgg.sdp.core.msg.*;
-import com.jgg.sdp.core.tools.*;
+import com.jgg.sdp.common.config.*;
+
+import com.jgg.sdp.common.config.Args;
+import com.jgg.sdp.common.config.Messages;
+import com.jgg.sdp.common.ctes.CFG;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.ctes.RC;
+import com.jgg.sdp.common.exceptions.SDPException;
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.services.core.*;

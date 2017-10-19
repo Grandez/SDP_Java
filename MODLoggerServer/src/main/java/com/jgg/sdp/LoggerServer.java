@@ -1,14 +1,11 @@
 package com.jgg.sdp;
 
-import java.net.URI;
-
 import javax.jms.*;
 import javax.jms.Connection;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.*;
 
-import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.common.config.Configuration;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.logger.LoggerListener;
 import com.jgg.sdp.logger.LoggerParms;

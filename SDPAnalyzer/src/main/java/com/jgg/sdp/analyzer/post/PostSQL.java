@@ -1,9 +1,8 @@
 package com.jgg.sdp.analyzer.post;
 
-import com.jgg.sdp.core.unit.Source;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.items.*;
-import com.jgg.sdp.module.unit.*;
+import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.parser.base.ParserInfo;
 import com.jgg.sdp.parser.stmt.StmtSQL;
 import com.jgg.sdp.tools.Firma;

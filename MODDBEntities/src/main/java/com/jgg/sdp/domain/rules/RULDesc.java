@@ -10,8 +10,9 @@ public class RULDesc implements Serializable {
 
 	private static final long serialVersionUID = -576089848894078051L;
 
-	public static final String getDescription = "SELECT r FROM RULDesc r where r.idDesc = ?1 AND r.idLang = ?2 AND r.idDialect = ?3";
-	public static final String delDescription = "DELETE FROM RULDesc r where r.idDesc = ?1";
+	public static final String getDescription   = "SELECT r FROM RULDesc r where r.idDesc = ?1 AND r.idLang = ?2 AND r.idDialect = ?3";
+	public static final String listDescriptions = "SELECT r FROM RULDesc r where r.idDesc = ?1";
+	public static final String delDescription   = "DELETE   FROM RULDesc r where r.idDesc = ?1";
 	
 	@Id
 	@Column(name="idDesc")

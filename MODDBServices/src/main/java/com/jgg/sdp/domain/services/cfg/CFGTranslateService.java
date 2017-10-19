@@ -4,8 +4,8 @@ import java.util.HashSet;
 
 import org.springframework.stereotype.Repository;
 
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.CFG;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.domain.cfg.CFGTranslate;
 import com.jgg.sdp.domain.services.AbstractService;

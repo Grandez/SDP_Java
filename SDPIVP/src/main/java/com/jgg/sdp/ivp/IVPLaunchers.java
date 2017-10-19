@@ -2,8 +2,8 @@ package com.jgg.sdp.ivp;
 
 import java.io.*;
 
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.CFG;
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.domain.services.CommonService;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.ivp.items.*;

@@ -9,11 +9,10 @@ import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.traps.*;
 import com.jgg.sdp.domain.traps.*;
-import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.config.Messages;
+import com.jgg.sdp.common.exceptions.SDPException;
 import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.SDPException;
-// import com.jgg.sdp.core.jms.*;
-import com.jgg.sdp.core.msg.Messages;
 
 public class Trapper implements IProcess {
 

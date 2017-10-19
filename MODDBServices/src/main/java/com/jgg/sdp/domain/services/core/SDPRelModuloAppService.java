@@ -16,8 +16,8 @@ import com.jgg.sdp.domain.core.SDPAplicacion;
 import com.jgg.sdp.domain.core.SDPRelModuloApp;
 import com.jgg.sdp.domain.services.AbstractService;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.CFG;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.tools.Fechas;
 
@@ -59,7 +59,7 @@ public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 		app.setUid(SYS.DEF_USER);
 		app.setVolumen(1);
 		appService.update(app);
-/*		
+		
 		SDPRelModuloApp rel = new SDPRelModuloApp();
 		rel.setIdAppl(idAppl);
 		rel.setMask(partial + "*");
@@ -67,7 +67,7 @@ public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 		rel.setPeso(1000);
 		rel.setUid(SYS.DEF_USER);
 		update(rel);
-*/		
+		
 		return idAppl;
 	}
 	
@@ -80,9 +80,11 @@ public class SDPRelModuloAppService extends AbstractService<SDPRelModuloApp> {
 		
 		List<SDPRelModuloApp> lista = listQuery(SDPRelModuloApp.getMasks);
 		for (SDPRelModuloApp rel : lista) {
-			String p = rel.getMask().replaceAll("\\*",".*");
-			p = p.replaceAll("\\?", ".{1}");
-			if (Pattern.matches(p, moduleName)) return rel.getIdAppl();
+			if (rel.getMask().compareTo("*") != 0) {
+			    String p = rel.getMask().replaceAll("\\*",".*");
+			    p = p.replaceAll("\\?", ".{1}");
+			    if (Pattern.matches(p, moduleName)) return rel.getIdAppl();
+			}    
 		}
 		return null;
 	}

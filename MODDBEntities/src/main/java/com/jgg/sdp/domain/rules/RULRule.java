@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name="RUL_RULES")
 public class RULRule implements Serializable {
 	
-	private static final long serialVersionUID = -8064928861200075885L;
+	private static final long serialVersionUID = -7744994251713729860L;
 
 	public final static String delRulesOfItem   = "DELETE FROM RULRule r where r.idGroup = ?1 AND r.idItem = ?2";
 	public final static String findMaxId        = "SELECT MAX(r.idRule) FROM RULRule r WHERE idGroup = ?1 AND idItem = ?2";
@@ -34,21 +34,24 @@ public class RULRule implements Serializable {
 
 	@Column(name="idDesc")
 	private Long idDesc;
+
+	@Column(name="idSample")
+	private Long idSample;
 	
-	@Column(name="activo")
-	private Integer activo;
+	@Column(name="active")
+	private Long active;
 
 	@Column(name="priority")
 	private Integer priority;
 
-	@Column(name="propiedad")
-	private String propiedad;
-
 	@Column(name="severity")
 	private Integer severity;
 	
-	@Column(name="comparador")
-	private Integer comparador;
+	@Column(name="property")
+	private String property;
+
+	@Column(name="comparator")
+	private Integer comparator;
 
 	@Column(name="tipo")
 	private Integer tipo;
@@ -94,12 +97,20 @@ public class RULRule implements Serializable {
 		this.idDesc = idDesc;
 	}
 
-	public Integer getActivo() {
-		return activo;
+	public Long getIdSample() {
+		return idSample;
 	}
 
-	public void setActivo(Integer activo) {
-		this.activo = activo;
+	public void setIdSample(Long idSample) {
+		this.idSample = idSample;
+	}
+
+	public Long getActive() {
+		return active;
+	}
+
+	public void setActive(Long active) {
+		this.active = active;
 	}
 
 	public Integer getPriority() {
@@ -110,14 +121,6 @@ public class RULRule implements Serializable {
 		this.priority = priority;
 	}
 
-	public String getPropiedad() {
-		return propiedad;
-	}
-
-	public void setPropiedad(String propiedad) {
-		this.propiedad = propiedad;
-	}
-
 	public Integer getSeverity() {
 		return severity;
 	}
@@ -126,12 +129,20 @@ public class RULRule implements Serializable {
 		this.severity = severity;
 	}
 
-	public Integer getComparador() {
-		return comparador;
+	public String getProperty() {
+		return property;
 	}
 
-	public void setComparador(Integer comparador) {
-		this.comparador = comparador;
+	public void setProperty(String property) {
+		this.property = property;
+	}
+
+	public Integer getComparator() {
+		return comparator;
+	}
+
+	public void setComparator(Integer comparator) {
+		this.comparator = comparator;
 	}
 
 	public Integer getTipo() {
@@ -170,14 +181,15 @@ public class RULRule implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((activo == null) ? 0 : activo.hashCode());
-		result = prime * result + ((comparador == null) ? 0 : comparador.hashCode());
+		result = prime * result + ((active == null) ? 0 : active.hashCode());
+		result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
 		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
+		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
-		result = prime * result + ((propiedad == null) ? 0 : propiedad.hashCode());
+		result = prime * result + ((property == null) ? 0 : property.hashCode());
 		result = prime * result + ((severity == null) ? 0 : severity.hashCode());
 		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
@@ -195,15 +207,15 @@ public class RULRule implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RULRule other = (RULRule) obj;
-		if (activo == null) {
-			if (other.activo != null)
+		if (active == null) {
+			if (other.active != null)
 				return false;
-		} else if (!activo.equals(other.activo))
+		} else if (!active.equals(other.active))
 			return false;
-		if (comparador == null) {
-			if (other.comparador != null)
+		if (comparator == null) {
+			if (other.comparator != null)
 				return false;
-		} else if (!comparador.equals(other.comparador))
+		} else if (!comparator.equals(other.comparator))
 			return false;
 		if (idDesc == null) {
 			if (other.idDesc != null)
@@ -225,15 +237,20 @@ public class RULRule implements Serializable {
 				return false;
 		} else if (!idRule.equals(other.idRule))
 			return false;
+		if (idSample == null) {
+			if (other.idSample != null)
+				return false;
+		} else if (!idSample.equals(other.idSample))
+			return false;
 		if (priority == null) {
 			if (other.priority != null)
 				return false;
 		} else if (!priority.equals(other.priority))
 			return false;
-		if (propiedad == null) {
-			if (other.propiedad != null)
+		if (property == null) {
+			if (other.property != null)
 				return false;
-		} else if (!propiedad.equals(other.propiedad))
+		} else if (!property.equals(other.property))
 			return false;
 		if (severity == null) {
 			if (other.severity != null)

@@ -45,7 +45,7 @@ public class Loader {
             RULGroup grp = new RULGroup();
             grp.setIdGroup(Long.parseLong(toks[0]));
             grp.setIdParent(Long.parseLong(toks[1]));
-            grp.setActivo(1);
+            grp.setActive(1L);
             grp.setPrefix(toks[2]);
             grp.setIdDesc(Long.parseLong(toks[0]));
             grpService.update(grp);

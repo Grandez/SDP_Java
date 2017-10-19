@@ -8,8 +8,9 @@
  */
 package com.jgg.sdp.core.exceptions;
 
-import com.jgg.sdp.core.ctes.MSG;
-import com.jgg.sdp.core.ctes.RC;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.ctes.RC;
+import com.jgg.sdp.common.exceptions.SDPException;
 
 public class JMSException extends SDPException {
 

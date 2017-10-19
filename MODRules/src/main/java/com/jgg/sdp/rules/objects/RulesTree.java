@@ -44,7 +44,7 @@ public class RulesTree {
 			RuleGroup group = new RuleGroup();
 			group.setId(grp.getIdGroup());
 			group.setIdParent(grp.getIdParent());
-			group.setActivo(grp.getActivo());
+			group.setActivo(grp.getActive());
 			keysTree.put(group.getId(), group);
 			loadItems(group);
 		}
@@ -70,21 +70,21 @@ public class RulesTree {
 		RuleItem item = new RuleItem();
 		item.setIdGroup(itm.getIdGroup());
 		item.setIdItem(itm.getIdItem());
-		item.setClave(itm.getClave());
+		item.setObject(itm.getObject());
 		return item;
 	}
 
 	private RuleRule mountRule(RULRule rul) {
 		RuleRule rule = new RuleRule();
         
-		rule.setComparator(rul.getComparador());
+		rule.setComparator(rul.getComparator());
 		rule.setIdGroup(rul.getIdGroup());
 		rule.setIdItem(rul.getIdItem());
 		rule.setIdRule(rul.getIdRule());
 		rule.setPriority(rul.getPriority());
 		rule.setSeverity(rul.getSeverity());
 		rule.setType(rul.getTipo());
-		rule.setProperty(rul.getPropiedad());
+		rule.setProperty(rul.getProperty());
 		rule.setValor(rul.getValor());
 		return rule;
 	}

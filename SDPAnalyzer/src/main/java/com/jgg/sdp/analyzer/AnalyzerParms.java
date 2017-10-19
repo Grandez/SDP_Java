@@ -1,7 +1,7 @@
 package com.jgg.sdp.analyzer;
 
-import com.jgg.sdp.core.config.Args;
-import com.jgg.sdp.core.ctes.CFG;
+import com.jgg.sdp.common.config.Args;
+import com.jgg.sdp.common.ctes.CFG;
 
 public class AnalyzerParms {
 
@@ -16,7 +16,7 @@ public class AnalyzerParms {
      */
 
     public static final String parms[][] = {
-            {"1", "l" , "local"     , ""                 , CFG.PARSER_LOCAL  , Args.BOOLEAN,  "225"}
+            {"1", "l" , "local"     , ""                 , CFG.PARSER_MODE   , Args.BOOLEAN,  "225"}
      	   ,{" ", "p" , "pending"   , ""                 , CFG.PARSER_PENDING, Args.BOOLEAN,  "226"}   
            ,{"1", ""  , "force"     , ""                 , CFG.PARSER_FORCE  , Args.BOOLEAN,  "214"}     	   
     	   ,{" ", "i" , "input"     , "SDP_INPUT"        , CFG.DIR_INPUT     , Args.DIR,      "204"}    				    

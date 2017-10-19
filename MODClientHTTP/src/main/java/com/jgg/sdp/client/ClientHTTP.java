@@ -6,12 +6,13 @@ import java.io.*;
 import java.net.*;
 
 import com.jgg.sdp.client.ICommClient;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.config.Messages;
+import com.jgg.sdp.common.ctes.CDG;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.exceptions.SDPException;
 import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.CDG;
-import com.jgg.sdp.core.ctes.MSG;
 import com.jgg.sdp.core.exceptions.ClientException;
-import com.jgg.sdp.core.exceptions.SDPException;
-import com.jgg.sdp.core.msg.Messages;
 import com.jgg.sdp.tools.json.JSONObject;
 
 public class ClientHTTP implements ICommClient {
@@ -91,6 +92,32 @@ public class ClientHTTP implements ICommClient {
 		
 	}
 
+	public int sendUnit(Object obj) {
+		URL serverUrl;
+		String txtPort = "";
+		
+		if (port > 0) txtPort = ":" + port;
+		
+		try {
+			serverUrl = new URL("http://" + server + txtPort + "/" + service);
+			HttpURLConnection conn = (HttpURLConnection) serverUrl.openConnection();
+
+			conn.setRequestMethod("POST");
+//			conn.addRequestProperty("Content-Type", "application/json");
+			conn.setDoOutput(true);
+			 		
+			ObjectOutputStream oos = new ObjectOutputStream (conn.getOutputStream());
+			oos.writeObject(obj);
+            oos.flush(); 
+			oos.close();
+			int rc = (conn.getResponseCode() == 200) ? 0 : conn.getResponseCode();
+			return rc;
+			
+		} catch (Exception e) {
+			throw new ClientException(e);
+		}
+	}
+		
 	public int sendFile(String fullPath, int type, byte[] data) throws ClientException {
 		URL serverUrl;
 		String txtPort = "";

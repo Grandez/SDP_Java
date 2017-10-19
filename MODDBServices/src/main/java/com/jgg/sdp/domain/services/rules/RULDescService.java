@@ -1,6 +1,7 @@
 package com.jgg.sdp.domain.services.rules;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
@@ -32,6 +33,9 @@ public class RULDescService extends AbstractService<RULDesc> {
 		return findQuery (RULDesc.getDescription, code, lang, dialect);
 	}
 	
+	public List<RULDesc> findDescription(Long code) {
+		return listQuery(RULDesc.listDescriptions, code);
+	}
 	public void deleteDescription(Long idDesc) {
 		deleteQuery(RULDesc.delDescription, idDesc);
 	}

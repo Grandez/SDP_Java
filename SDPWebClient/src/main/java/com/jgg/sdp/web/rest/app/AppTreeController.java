@@ -8,8 +8,8 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.web.bind.annotation.*;
 
-import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.ctes.CFG;
 
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
@@ -50,7 +50,14 @@ public class AppTreeController {
         addModulos(appTree, node);    
         addAplicaciones(appTree, node);
         
-    	return appTree;
+        // TODO
+        // Por ahora devolver solo 500
+        ArrayList<ApplTree> appTree2 = new ArrayList<ApplTree>();
+        for (int idx = 0; idx < appTree.size(); idx++) {
+        	appTree2.add(appTree.get(idx));
+        	if (idx > 100) break;
+        }
+    	return appTree2;
     }
     
     private void addAplicaciones(ArrayList<ApplTree> appTree, ApplTree padre) {

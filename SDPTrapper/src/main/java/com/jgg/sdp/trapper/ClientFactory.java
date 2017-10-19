@@ -1,9 +1,9 @@
 package com.jgg.sdp.trapper;
 
 import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.CDG;
-
 import com.jgg.sdp.client.*;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.ctes.CDG;
 
 public class ClientFactory {
 

@@ -1,15 +1,17 @@
 package com.jgg.sdp.analyzer.work;
 
+import static com.jgg.sdp.common.ctes.CFG.*;
+
 import java.io.File;
 import java.util.*;
 
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.CFG;
-import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.core.unit.*;
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.ctes.CFG;
+import com.jgg.sdp.common.files.Archive;
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.*;
+import com.jgg.sdp.module.unit.*;
 
 public class CopyLoader {
 
@@ -18,13 +20,38 @@ public class CopyLoader {
 	private SDPFileService   fileService   = new SDPFileService();
 	private SDPSourceService sourceService = new SDPSourceService();
 	
-	public Source load(String name, int type, ArrayList<String> toks) {
+	public Source load(Unit unit, String name, int type, ArrayList<String> toks) {
+		// 1.- Chequear si ya ha sido cargado
+		Source src = unit.setCurrentSource(name, type);
+		if (src != null) {
+			src.prepareData(toks);
+			return src;
+		}
+		// 2.- Obtener la fuente
+		if (cfg.getParserMode() != PARSER_LOCAL) {
+		   return loadFromDataBase(name, type, toks);	
+		}
+		
 		String cpyFile = getFullPathCopy(name);
 		if (cpyFile == null) return null;
-		Source copy = SourcesFactory.getCopy(new Archivo(cpyFile), toks);
+		Source copy = new Source(new Archive(cpyFile), toks);
 		copy.setTipo(type);
-		if (!cfg.isLocalMode()) copy = loadDataFromDB(copy, toks);
 		return copy;
+	}
+	
+	public Source loadFromDataBase(String name, int type, ArrayList<String> toks) {
+		SDPFile file = fileService.findByNameAndType(name, type);
+		if (file == null) return null;
+		SDPSource src = sourceService.getSource(file.getIdFile(), file.getIdVersion());
+		if (src == null) return null;
+		Source source = new Source(file.getFullName());
+		source.setTipo(file.getTipo());
+		source.setIdSource(src.getIdFile());
+		source.setIdVersion(src.getIdVersion());
+		source.setRawData(file.getFullName(), src.getSource(), src.getEncoded());
+		source.setFirma(file.getFirma());
+		source.prepareData(toks);
+		return source;
 	}
 	
 	private String getFullPathCopy(String name) {
@@ -55,14 +82,4 @@ public class CopyLoader {
 		return null;
 	}
 	
-	private Source loadDataFromDB(Source copy, ArrayList<String> toks) {
-         SDPFile file = fileService.findByNameAndType(copy.getBaseName(), copy.getTipo());	
-         if (file == null) return null;
-         // Si existe el fichero existe el codigo
-         SDPSource source = sourceService.getSource(file.getIdFile(), file.getIdVersion());
-         copy.setFirma(file.getFirma());
-         copy.setId(file.getIdFile());
-         copy.setRawData(source.getSource(), toks);
-         return copy;
-	}
 }

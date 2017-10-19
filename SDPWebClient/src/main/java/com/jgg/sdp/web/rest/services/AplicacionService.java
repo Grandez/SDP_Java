@@ -3,20 +3,16 @@
  */
 package com.jgg.sdp.web.rest.services;
 
-import java.sql.Timestamp;
-import java.util.*;
-
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Service;
 
-import com.jgg.sdp.domain.core.*;
+import com.jgg.sdp.common.config.*;
+
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
-import com.jgg.sdp.tools.Fechas;
 import com.jgg.sdp.web.core.DBConfiguration;
 import com.jgg.sdp.web.json.*;
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.CFG;
+
 
 @Service
 public class AplicacionService {

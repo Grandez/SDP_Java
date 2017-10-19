@@ -14,6 +14,7 @@ public class RULFormula implements Serializable {
 	                                        "WHERE idFormula = ?1 AND idSeq > 0 " +
 			                                "ORDER BY idSeq";
 	public static final String getFormulaName = "SELECT f FROM RULFormula f WHERE idFormula = ?1 AND idSeq = 0 ";
+	public static final String delFormula     = "DELETE   FROM RULFormula f WHERE idFormula = ?1";
 	
 	@Id
 	@Column(name="idFormula")
@@ -21,11 +22,11 @@ public class RULFormula implements Serializable {
 
 	@Id
 	@Column(name="idType")
-	Long idType;
+	Integer idType;
 	
 	@Id
 	@Column(name="idSeq")
-	Long idSeq;
+	Integer idSeq;
 	
 	@Column(name="formula")
 	String formula;
@@ -38,19 +39,19 @@ public class RULFormula implements Serializable {
 		this.idFormula = idFormula;
 	}
 
-	public Long getIdType() {
+	public Integer getIdType() {
 		return idType;
 	}
 
-	public void setIdType(Long idType) {
+	public void setIdType(Integer idType) {
 		this.idType = idType;
 	}
 
-	public Long getIdSeq() {
+	public Integer getIdSeq() {
 		return idSeq;
 	}
 
-	public void setIdSeq(Long idSeq) {
+	public void setIdSeq(Integer idSeq) {
 		this.idSeq = idSeq;
 	}
 

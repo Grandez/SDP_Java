@@ -41,10 +41,14 @@ public class Cadena {
 	}
 
 	public static String spaces(int length) {
-		if (length <= 0) return "";
-		char[] data = new char[length];
-		Arrays.fill(data, ' ');
-		return new String(data);
+		String base = "          ";
+		StringBuilder tmp = new StringBuilder();
+		int pending = length;
+		while (pending > base.length()) {
+			tmp.append(base);
+			pending -= base.length();
+		}
+		return tmp.toString() + base.substring(0, pending);
 	}
 	
 	public static String left(String s, int len) {

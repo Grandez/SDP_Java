@@ -4,15 +4,15 @@ import java.sql.Timestamp;
 
 public class RuleItem {
 
-	private Integer   id;
+	private Long      id;
 	private String    code;
-	private Integer   idGroup;
-	private Integer   idItem;
-	private Integer   idRule;
-	private Integer   activeGroup;
-	private Integer   activeItem;
-	private Integer   activeRule;
-	private Integer   active;
+	private Long      idGroup;
+	private Long      idItem;
+	private Long      idRule;
+	private Long      activeGroup;
+	private Long      activeItem;
+	private Long      activeRule;
+	private Long      active;
 	private String    clave;
 	private Integer   priority;
 	private String    propiedad;
@@ -25,10 +25,10 @@ public class RuleItem {
 	private Timestamp tms;
 	private String    desc;
 	
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 	
@@ -38,34 +38,34 @@ public class RuleItem {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public Integer getIdGroup() {
+	public Long getIdGroup() {
 		return idGroup;
 	}
-	public void setIdGroup(Integer idGroup) {
+	public void setIdGroup(Long idGroup) {
 		this.idGroup = idGroup;
 	}
-	public Integer getIdItem() {
+	public Long getIdItem() {
 		return idItem;
 	}
-	public void setIdItem(Integer idItem) {
+	public void setIdItem(Long idItem) {
 		this.idItem = idItem;
 	}
-	public Integer getIdRule() {
+	public Long getIdRule() {
 		return idRule;
 	}
-	public void setIdRule(Integer idRule) {
+	public void setIdRule(Long idRule) {
 		this.idRule = idRule;
 	}
-	public Integer getActiveItem() {
+	public Long getActiveItem() {
 		return activeItem;
 	}
-	public void setActiveItem(Integer activeItem) {
+	public void setActiveItem(Long activeItem) {
 		this.activeItem = activeItem;
 	}
-	public Integer getActiveRule() {
+	public Long getActiveRule() {
 		return activeRule;
 	}
-	public void setActiveRule(Integer activeRule) {
+	public void setActiveRule(Long activeRule) {
 		this.activeRule = activeRule;
 	}
 	public String getClave() {
@@ -134,16 +134,16 @@ public class RuleItem {
 	public void setDesc(String desc) {
 		this.desc = desc;
 	}
-	public Integer getActive() {
+	public Long getActive() {
 		return active;
 	}
-	public void setActive(Integer active) {
+	public void setActive(Long active) {
 		this.active = active;
 	}
-	public Integer getActiveGroup() {
+	public Long getActiveGroup() {
 		return activeGroup;
 	}
-	public void setActiveGroup(Integer activeGroup) {
+	public void setActiveGroup(Long activeGroup) {
 		this.activeGroup = activeGroup;
 	}
 	

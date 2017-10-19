@@ -6,15 +6,13 @@ package com.jgg.sdp.parser.base;
 
 import java.util.*;
 
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.config.ConfigurationBase;
-import com.jgg.sdp.core.ctes.CFG;
-import com.jgg.sdp.core.ctes.MSG;
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.ctes.CFG;
+import com.jgg.sdp.common.ctes.MSG;
 import com.jgg.sdp.module.base.Module;
-//import com.jgg.sdp.parser.info.StmtCopy;
 import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.ivp.IVPCase;
-import com.jgg.sdp.module.unit.SDPUnit;
+import com.jgg.sdp.module.unit.Unit;
 import com.jgg.sdp.rules.RulesChecker;
 
 import java_cup.runtime.Symbol;
@@ -27,7 +25,7 @@ public class ParserInfo {
 	
 	public RulesChecker rules = new RulesChecker();   
 	
-    public SDPUnit   unit   = null;
+    public Unit   unit   = null;
     public Module    module = null;
 
     private IVPCase  c = null;
@@ -68,7 +66,7 @@ public class ParserInfo {
 		return getInstance();
 	}
 
-	public void setUnit(SDPUnit unit) {
+	public void setUnit(Unit unit) {
 		this.unit = unit;
 	}
 

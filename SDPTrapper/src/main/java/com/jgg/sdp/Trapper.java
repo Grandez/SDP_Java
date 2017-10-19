@@ -7,15 +7,13 @@
  */
 package com.jgg.sdp;
 
-import java.nio.charset.StandardCharsets;
-
 import com.jgg.sdp.client.ICommClient;
+import com.jgg.sdp.common.*;
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.ctes.*;
+import com.jgg.sdp.common.exceptions.SDPException;
+import com.jgg.sdp.common.files.*;
 import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.SDPException;
-import com.jgg.sdp.core.msg.*;
-import com.jgg.sdp.core.tools.*;
-import com.jgg.sdp.core.unit.*;
 import com.jgg.sdp.trapper.ClientFactory;
 import com.jgg.sdp.trapper.TrapperParms;
 
@@ -25,7 +23,7 @@ public class Trapper {
     private Messages      msg = Messages.getInstance("PARSER");    
     
 
-    private SDPUnitBase unit   = null;
+    private SDPUnit unit   = null;
 
     private Trapper() {
     	initObject();
@@ -46,7 +44,7 @@ public class Trapper {
 		
 		if (args.length == 0) args = new String[]{"*"};
 		
-		for (Archivo archivo : FileFinder.find(cfg.getInputDir(), args)) {
+		for (Archive archivo : FileFinder.find(cfg.getInputDir(), args)) {
 			rc = processArchivo(archivo);
 			if (rc > maxRC) maxRC = rc;
 		}
@@ -54,32 +52,58 @@ public class Trapper {
        return rc;		
 	}
 
-	private int processArchivo(Archivo archivo) {
+	private int processArchivo(Archive archivo) {
 		int rc  = RC.OK;
 		int res = MSG.OK;
 			
 		if (cfg.getVerbose() > 0) msg.progressCont(MSG.PARSING, archivo.getBaseName());
+
+        unit = new SDPUnit(archivo.getBaseName());
         
-		try {		
-	        unit = new SDPUnitBase(archivo);
-			rc = sendFile(unit.getCurrentSource(), cfg.getInteger(CFG.FILE_TYPE, CDG.SOURCE_CODE));
+		try {
+			SDPMember source = new SDPMember(archivo.getAbsolutePath(), CDG.SOURCE_CODE);
+			source.loadData();
+		    unit.addMember(source);	
+
+			rc = sendUnit(unit);
 			if (rc != 0) res = MSG.KO;
 			if (cfg.getVerbose() > 1)    msg.progress(res);
 		} catch (Exception e) {
 			if (cfg.getVerbose() > 1) msg.progress(MSG.ERROR);
-			unit.setStatus(CDG.STATUS_ERROR);
-            msg.exception(new SDPException(e, MSG.EXCEPTION_PARSER, unit.getMemberName()));
+            msg.exception(new SDPException(e, MSG.EXCEPTION_PARSER, unit.getName()));
             e.printStackTrace();
             rc = RC.FATAL;
 		}
 		return rc;
     }
 	
-	private int sendFile(Source source, int type) {
+	private int sendUnit(SDPUnit unit) {
+		/*
+		byte[] data = null;
 		
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutput out = null;
+		try {
+		  out = new ObjectOutputStream(bos);   
+		  out.writeObject(unit);
+		  out.flush();
+		  out.close();
+//		  data = bos.toByteArray();
+
+		} catch (Exception e) {
+			
+		}
+		finally {
+		  try {
+		    bos.close();
+		  } catch (IOException ex) {
+		    // ignore close exception
+		  }
+		}
+		*/
 		ICommClient html = ClientFactory.getClient();
-		byte[] data = new String(source.getRawData()).getBytes(StandardCharsets.UTF_8);
-		int rc = html.sendFile(source.getArchivo().getAbsolutePath(), type, data);
+//		byte[] data = new String(source.getRawData()).getBytes(StandardCharsets.UTF_8);
+		int rc = html.sendUnit(unit);
 		return rc;
 	}
 

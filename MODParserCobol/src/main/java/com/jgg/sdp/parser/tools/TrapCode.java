@@ -47,12 +47,13 @@ public class TrapCode implements Comparable<TrapCode> {
      */
 	public void addTrapLine(int index, String line) {
 		if (index == -1) index = lineas.size();
-		lineas.add(index, line);
+		lineas.add(index, line);		
 	}
-	
+		
 	public void setLine(int line) {
 		this.line = line;
 	}
+	
 	public int getLine() {
 		return line;
 	}

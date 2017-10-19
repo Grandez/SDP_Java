@@ -26,6 +26,10 @@ public class RULGroupsService extends AbstractService<RULGroup> {
 	public List<RULGroup> listActiveGroups() {
 		return listQuery(RULGroup.listActive);
 	}
+
+	public List<RULGroup> listChildren(Long idParent) {
+		return listQuery(RULGroup.listChilds, idParent);
+	}
 	
 	public void clean() {
 	    sqlExecute("DELETE FROM RUL_GROUPS");

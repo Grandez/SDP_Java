@@ -47,7 +47,7 @@ public class RulesController {
     	for (RULGroup g : grpService.listAll()) {
             RuleGroup o = new RuleGroup();
             o.setId(g.getIdGroup());
-            o.setActive(g.getActivo());
+            o.setActive(g.getActive());
             o.setIdDesc(g.getIdDesc());
             o.setIdGroup(g.getIdGroup());
             o.setIdParent(g.getIdParent());
@@ -70,19 +70,19 @@ public class RulesController {
  
    	   	for (RULRule rule : ruleService.listByItem(item.getIdGroup(), item.getIdItem())) {
     		RuleItem obj = new RuleItem();
-    		obj.setId(Integer.parseInt(String.format("%d%03d",item.getIdGroup(), item.getIdItem())));
-    		int idCode = item.getIdGroup();
+    		obj.setId(Long.parseLong(String.format("%d%03d",item.getIdGroup(), item.getIdItem())));
+    		long idCode = item.getIdGroup();
     		idCode = (idCode * 100) + item.getIdItem();
     		idCode = (idCode * 100) + rule.getIdRule();
     		obj.setCode(String.format("%s%05d", g.getPrefix(), idCode % 100000));
     		obj.setIdGroup(item.getIdGroup());
     		obj.setIdItem(item.getIdItem());
             obj.setActiveGroup(g.getActive());
-            obj.setActiveItem(item.getActivo());
-            obj.setActiveRule(rule.getActivo());
-            obj.setActive(rule.getActivo());
-    		if (g.getActive() != 0 || item.getActivo() != 0) {
-    			obj.setActive(RULES.INHERIT);
+            obj.setActiveItem(item.getActive());
+            obj.setActiveRule(rule.getActive());
+            obj.setActive(rule.getActive());
+    		if (g.getActive() != 0 || item.getActive() != 0) {
+    			obj.setActive(CDGRules.INHERIT);
     		}
     		obj.setDesc(mountDescription(item.getIdDesc(), item));
     		makeRule(obj, rule);
@@ -97,12 +97,12 @@ public class RulesController {
     
     private void makeRule(RuleItem item, RULRule r) {
         item.setIdRule(r.getIdRule());
-        item.setActiveRule(r.getActivo());
+        item.setActiveRule(r.getActive());
         item.setPriority(r.getPriority());
-        item.setPropiedad(r.getPropiedad());
+        item.setPropiedad(r.getProperty());
         item.setSeverity(r.getSeverity());
-        item.setComparator(r.getComparador() % 100);
-        item.setNegated(r.getComparador() > 100 ? true : false);
+        item.setComparator(r.getComparator() % 100);
+        item.setNegated(r.getComparator() > 100 ? true : false);
         item.setTipo(r.getTipo());
         item.setValor(r.getValor());
         item.setUid(r.getUid());
@@ -110,7 +110,7 @@ public class RulesController {
         item.setDesc(mountDescription(r.getIdDesc(), r));       
     }
     
-    private String mountDescription(int id, Object o) {
+    private String mountDescription(long id, Object o) {
     	String token = null;
     	String base = descService.getDescription(id, lang, dialect);
     	int start = base.indexOf('{');
@@ -135,7 +135,7 @@ public class RulesController {
     
     private String xlateComparator(String txt) {
     	StringBuilder cad = new StringBuilder();
-    	int valor = Integer.parseInt(txt);
+    	long valor = Integer.parseInt(txt);
     	if (valor > 99) cad.append("NO ");
     	valor %= 100;
     	cad.append(descService.getDescription(valor, lang, dialect));

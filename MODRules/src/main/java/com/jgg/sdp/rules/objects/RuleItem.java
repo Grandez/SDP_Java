@@ -7,7 +7,7 @@ public class RuleItem {
 
 	private long      idGroup;
 	private long      idItem;
-	private String    clave;
+	private String    object;
 	private String    uid;
 	private Timestamp tms;
 	
@@ -25,11 +25,11 @@ public class RuleItem {
 	public void setIdItem(long idItem) {
 		this.idItem = idItem;
 	}
-	public String getClave() {
-		return clave;
+	public String getObject() {
+		return object;
 	}
-	public void setClave(String clave) {
-		this.clave = clave;
+	public void setObject(String object) {
+		this.object = object;
 	}
 
 	public String getUid() {

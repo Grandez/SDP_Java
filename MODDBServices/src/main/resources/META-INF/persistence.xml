@@ -54,6 +54,7 @@
         <class>com.jgg.sdp.domain.rules.RULGroup</class>
         <class>com.jgg.sdp.domain.rules.RULItem</class>        
         <class>com.jgg.sdp.domain.rules.RULRule</class>
+        <class>com.jgg.sdp.domain.rules.RULSample</class>        
 
                 
         <class>com.jgg.sdp.domain.session.SESArbol</class>

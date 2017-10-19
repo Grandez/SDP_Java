@@ -128,15 +128,11 @@ public class ClientJMS implements ICommClient {
            closeConnection();		
 	}
 
-	@Override
 	public int sendData(byte[] data) throws ClientException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
-	@Override
-	public int sendFile(String name, int type, byte[] data) throws ClientException {
-		// TODO Auto-generated method stub
+	public int sendUnit(Object object) throws ClientException {
 		return 0;
 	}
 }

@@ -13,26 +13,30 @@ import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
-import com.jgg.sdp.tools.Zipper;
 import com.jgg.sdp.web.json.Fuente;
 
 @RestController
 public class CodeController {
 
-	private final static int LINE_EMPTY   = 0; 
-	private final static int LINE_COMMENT = 1;
-	private final static int LINE_PARRAFO = 2;
-	private final static int LINE_CODE    = 3;
+	private final static int LINE_EMPTY    = 0; 
+	private final static int LINE_COMMENT  = 1;
+	private final static int LINE_DIVISION = 2;
+	private final static int LINE_SECTION  = 3;
+	
+	private final static int LINE_PARRAFO = 20;
+	private final static int LINE_CODE    = 21;
 	
 	@Autowired
 	SDPModuloService    modService;
 	@Autowired
 	MODVersionService   verService;
 	@Autowired
-	SDPFileService    fteService;
+	SDPFileService      fteService;
+	@Autowired
+	SDPSourceService    srcService;
 
     @Autowired
-    MODSeccionesService   seccionesNamed;
+    MODSeccionesService   seccionService;
     @Autowired
     MODBloqueService    bloqueService;
     @Autowired
@@ -40,27 +44,24 @@ public class CodeController {
     @Autowired
     MODIssueService    issueService;
     
-    @RequestMapping("/code/{idModulo}")
+    @RequestMapping("/source/{idModulo}")
     public List<Fuente> getSourceLastVersion(@PathVariable Long idModulo) {
     	SDPModulo mod = modService.findById(idModulo);
-    	MODVersion ver = verService.findById(mod.getIdVersion());
-        if (ver == null) return new ArrayList<Fuente>();
-    	return prepareSource(mod.getIdFile(), ver);
+        return getSourceByVersion(idModulo, mod.getIdVersion());
     }
     
-    @RequestMapping("/code/{idModulo}/{idVersion}")
+    @RequestMapping("/source/{idModulo}/{idVersion}")
     public List<Fuente> getSourceByVersion(@PathVariable Long idModulo, @PathVariable Long idVersion) {
+    	SDPModulo mod = modService.findById(idModulo);
+    	MODVersion ver = verService.findById(idVersion);
+        if (ver == null) return new ArrayList<Fuente>();
 
-       MODVersion ver = verService.findById(idVersion);
-       if (ver == null) return new ArrayList<Fuente>();
-       return prepareSource(0, ver);
+       return prepareSource(mod.getIdFile(), ver);
     }
     
-    private List<Fuente> prepareSource(long idFile, MODVersion ver) {
-       SDPFile source = fteService.findById(ver.getIdVersionFile());
+    private List<Fuente> prepareSource(Long idFile, MODVersion ver) {
+       SDPSource source = srcService.getSource(idFile, ver.getIdVersionFile());
        if (source == null) return new ArrayList<Fuente>();
-       return new ArrayList<Fuente>();
-/* JGG       
        ArrayList<Fuente> fuente = mountSourceCode(source, ver);
        setLineType(fuente);
        applySecciones(fuente, ver.getIdVersion());
@@ -68,22 +69,23 @@ public class CodeController {
 //       applyErrores(fuente, idVersion);
 //       applyIssues(fuente, idVersion);
        return fuente;
-       */
     }
     
     private ArrayList<Fuente> mountSourceCode(SDPSource source, MODVersion ver) {
     	ArrayList<Fuente> fuente = new ArrayList<Fuente>();
-    	Zipper zipper = new Zipper();
+    	// Zipper zipper = new Zipper();
         
-    	char[] raw = zipper.unzip("",source.getSource());
-        String[] lineas = (new String(raw)).split("\\r\\n|\\n", -1);
-        
+    	//char[] raw = zipper.unzip("",source.getSource());
+        //String[] lineas = (new String(raw)).split("\\r\\n|\\n", -1);
+    	String[] lineas = (new String(source.getSource())).split("\\r\\n|\\n", -1);
+    	 
         int max = ver.getOffsetEnd();
         if (max == -1) max = lineas.length;
          
         for (int iLine = ver.getOffsetBeg(); iLine < max; iLine++) {
         	Fuente fte = new Fuente();
-        	fte.setLinea(iLine);
+        	fte.setParent(0);
+        	fte.setLinea(iLine + 1);
         	fte.setCode(lineas[iLine]);
         	fuente.add(fte);
         }
@@ -101,32 +103,33 @@ public class CodeController {
 
     	// Control de lineas vacias
     	if (linea.length() < 7) {
-    		fte.setTipo(LINE_EMPTY);
+    		fte.setType(LINE_EMPTY);
     		return;    		    		
     	}
     	
-    	if (linea.charAt(6) == '*') {
-    		fte.setTipo(LINE_COMMENT);
+    	char c = linea.charAt(6);
+    	if (c == '*' || c == '/' || c == 'D' || c == 'd') {
+    		fte.setType(LINE_COMMENT);
     		return;
     	}
 
     	int max = linea.length() > 72 ? 72 : linea.length();
     	
     	if (linea.substring(6, max).trim().length() == 0) {
-    		fte.setTipo(LINE_EMPTY);
+    		fte.setType(LINE_EMPTY);
     		return;    		
     	}
     	if (linea.charAt(7) == ' ') {
-    		fte.setTipo(LINE_CODE);
+    		fte.setType(LINE_CODE);
     		return;
     	}
     	// Aqui es algo en linea 8. puede ser parrafo o puede ser
     	// 01{espacio}algo
-    	if (linea.charAt(9) == ' ') {
-    		fte.setTipo(LINE_CODE);
-    		return;
+    	if (linea.charAt(9) != ' ') {
+    		fte.setType(LINE_PARRAFO);
+    	} else {	
+    		fte.setType(LINE_CODE);
     	}
-    	fte.setTipo(LINE_PARRAFO);
     }
     
     /**
@@ -138,16 +141,21 @@ public class CodeController {
      * @param idVersion
      */
     private void applySecciones(ArrayList<Fuente> fuente, Long idVersion) {
+    	int idx;
     	int[] pos = new int[5];
-    	MODSecciones secciones = seccionesNamed.getSecciones(idVersion);
+    	MODSecciones secciones = seccionService.getSecciones(idVersion);
     	pos[1] = secciones.getDivIdentification();
     	pos[2] = secciones.getDivEnvironment();
     	pos[3] = secciones.getDivData();
     	pos[4] = secciones.getDivProcedure();
     	
+    	for (idx = 0; idx < 4; idx++) {
+    		if (pos[idx] > -1) fuente.get(idx).setType(LINE_DIVISION);
+    	}
+    	
     	int bloque = 4;
     	
-    	for (int idx = fuente.size() - 1; idx >= 0; idx--) {
+    	for (idx = fuente.size() - 1; idx >= 0; idx--) {
     		Fuente fte = fuente.get(idx);
     		fte.setBloque(bloque);
     		if (bloque > 0 && pos[bloque] == idx) { // Fin seccion
@@ -170,8 +178,8 @@ public class CodeController {
     		aux = pos[idx] - 1;
     		if (aux > -1) {
     		   fte = fuente.get(aux);
-    		   while (aux > -1 && (fte.getTipo() == LINE_EMPTY || 
-    			                   fte.getTipo() == LINE_COMMENT)) {
+    		   while (aux > -1 && (fte.getType() == LINE_EMPTY || 
+    			                   fte.getType() == LINE_COMMENT)) {
     			     fte.setBloque(idx);
     			     aux--;
     		   }

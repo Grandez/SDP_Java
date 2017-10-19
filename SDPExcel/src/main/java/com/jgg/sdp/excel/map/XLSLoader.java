@@ -6,8 +6,8 @@ import org.apache.poi.xssf.usermodel.*;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
 
-import com.jgg.sdp.core.ctes.MSG;
-import com.jgg.sdp.core.exceptions.SDPException;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.exceptions.SDPException;
 import com.jgg.sdp.excel.ctes.XLS;
 
 public class XLSLoader {

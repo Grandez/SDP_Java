@@ -5,9 +5,9 @@ import java.util.*;
 import com.jgg.sdp.tools.Numero;
 
 public class RuleGroup {
-	private long   id;
-	private long   idParent;
-	private int    activo;
+	private Long   id;
+	private Long   idParent;
+	private Long   activo;
 	private String name;
 	private String prefix; 
 	
@@ -32,10 +32,10 @@ public class RuleGroup {
 	public long getIdParent() {
 		return idParent;
 	}
-	public void setActivo(int activo) {
+	public void setActivo(Long activo) {
 		this.activo = activo;
 	}
-	public int getActivo() {
+	public Long getActivo() {
 		return activo;
 	}
 	public void setIdParent(long idParent) {
@@ -57,10 +57,10 @@ public class RuleGroup {
 	public void addItem(RuleItem item) {
 		items.add(item);
 		int pos = items.size() - 1;
-		if (Numero.isInteger(item.getClave())) {
-			keyNum.put(Integer.parseInt(item.getClave()), pos);
+		if (Numero.isInteger(item.getObject())) {
+			keyNum.put(Integer.parseInt(item.getObject()), pos);
 		} else {
-			keyTxt.put(item.getClave(), pos);
+			keyTxt.put(item.getObject(), pos);
 		}
 	}
 	

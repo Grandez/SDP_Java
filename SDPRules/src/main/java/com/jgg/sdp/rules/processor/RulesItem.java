@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.jgg.sdp.domain.rules.RULItem;
 import com.jgg.sdp.domain.services.rules.RULItemsService;
-import com.jgg.sdp.rules.xml.*;
+import com.jgg.sdp.rules.xml.jaxb.*;
 
 import static com.jgg.sdp.rules.CDGRules.*;
 
@@ -20,9 +20,9 @@ public class RulesItem {
 	
 	public RULItem createItem(Long idGroup, Item xmlItem) {
 		RULItem item =  null;
-		Long id = xmlItem.getId();
+		Long id = xmlItem.getIdItem();
 		if (id == null || id == 0) {
-			item = itemsService.getByTextKey(xmlItem.getObject());
+			item = itemsService.getByTextKey(xmlItem.getName());
 		}
 		else {
 			item = itemsService.getById(idGroup, id);
@@ -33,10 +33,17 @@ public class RulesItem {
 			item = new RULItem();
 			item.setIdGroup(idGroup);
 			item.setIdItem(id);
+			item.setObject(xmlItem.getName());
 		}
 		
-		item.setClave(xmlItem.getObject());
-		item.setActivo(xmlItem.isActive() ? ACTIVE : INACTIVE);
+		ConditionType cond = xmlItem.getActivateOnCondition();
+		if (cond != null) {
+			item.setActive(processCondition(cond));
+		}
+		else {
+			item.setActive(xmlItem.isActive() ? ACTIVE : INACTIVE);
+		}
+		
 		item.setIdDesc(ruleDesc.createDescription(mountKey(item), xmlItem.getDescription()));
 		item.setUid(System.getProperty("user.name"));
 		item.setTms(new Timestamp(System.currentTimeMillis()));
@@ -52,8 +59,13 @@ public class RulesItem {
 		return items;
 	}
 
+	private Long processCondition(ConditionType cond) {
+		RulesCondition c = RulesCondition.getInstance();
+		return c.createCondition(cond);
+	}
+	
 	private Long mountKey(RULItem item) {
-		return Long.parseLong(String.format("%02d%02d%", item.getIdGroup(), item.getIdItem()));
+		return Long.parseLong(String.format("%02d%02d", item.getIdGroup(), item.getIdItem()));
 	}
 	
 }

@@ -1,8 +1,8 @@
 package com.jgg.sdp.rules.processor;
 
 import com.jgg.sdp.domain.services.rules.RULDescService;
-import com.jgg.sdp.rules.xml.Description;
-import com.jgg.sdp.rules.xml.Value;
+import com.jgg.sdp.rules.xml.jaxb.Description;
+import com.jgg.sdp.rules.xml.jaxb.Text;
 
 import java.util.ArrayList;
 
@@ -29,7 +29,7 @@ public class RulesDescription {
     public Long createDescription(Long key, Description desc) {
 		if (desc == null) return 0L;
 			
-		for (Value v : desc.getValue()) {
+		for (Text v : desc.getText()) {
 			String l = v.getLang() == null ? SYS.DEF_LANG : v.getLang();
 			String d = v.getDialect() == null ? l.toUpperCase() : v.getDialect();
 			RULDesc r = descService.getDescriptionObject(key, l, d);

@@ -27,7 +27,7 @@
 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
-                   <artifactId>MODCore</artifactId>
+                   <artifactId>MODCommon</artifactId>
                    <version>${sdp.version}</version>      
                 </dependency>
                 

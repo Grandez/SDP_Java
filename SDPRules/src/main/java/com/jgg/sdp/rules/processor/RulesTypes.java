@@ -2,8 +2,8 @@ package com.jgg.sdp.rules.processor;
 
 import static com.jgg.sdp.rules.CDGRules.*;
 
-import com.jgg.sdp.rules.xml.ComparatorType;
-import com.jgg.sdp.rules.xml.ObjectType;
+import com.jgg.sdp.rules.xml.jaxb.ComparatorType;
+import com.jgg.sdp.rules.xml.jaxb.ObjectType;
 
 public class RulesTypes {
 
@@ -27,14 +27,14 @@ public class RulesTypes {
 	}
 
 	public static int parseType(ObjectType type) {
+		if (type == null) return TYPE_NONE;
+		
 		switch (type) {
 		   case VERB:       return TYPE_VERB;
 		   case WORD:       return TYPE_VERB;
 		   case OPTION:     return TYPE_OPTION;
 		   case LVALUE:     return TYPE_LVALUE;
 		   case RVALUE:     return TYPE_RVALUE;
-		   case METHOD:     return TYPE_METHOD;
-		   case EXPRESSION: return TYPE_FORMULA;
 		   case VALUE:      return TYPE_VALUE;
 		   case SPECIAL:    return TYPE_SPECIAL;
 		   default:         return 0;

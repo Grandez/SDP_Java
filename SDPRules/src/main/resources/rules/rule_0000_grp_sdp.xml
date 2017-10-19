@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd">
+
+   <r:header>
+      <title>Raiz de las reglas</title>
+      <replace>false</replace>
+   </r:header>
+   
+   <r:group name="SDP">
+      <idGroup>0</idGroup>
+      <prefix>SDP</prefix>
+      <active>true</active>
+      <r:description>
+          <r:text lang="xx">Raiz de las reglas</r:text>      
+      </r:description>
+   </r:group>
+
+</r:SDPRules>

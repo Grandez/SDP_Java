@@ -3,10 +3,13 @@
  */
 package com.jgg.sdp.web.persister.rest;
 
+import java.io.ObjectInputStream;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -15,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.jgg.sdp.collector.persister.*;
+import com.jgg.sdp.common.SDPUnit;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.tools.FileNames;
 import com.jgg.sdp.tools.Firma;
@@ -23,21 +27,32 @@ import com.jgg.sdp.tools.json.*;
 @Controller
 public class PersisterController {
 	
+	@Autowired
+	private HttpServletRequest context;
+	
     @Autowired
     SDPFileService      fileService;	
     @Autowired
     SDPSourceService    sourceService;
 
-    @RequestMapping(value="/sources", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE )
-    @ResponseBody ResponseEntity<String> processFile ( @RequestBody final String body) {
+    @RequestMapping(value="/sources", method = RequestMethod.POST)
+    @ResponseBody ResponseEntity<String> processFile () {
+    	SDPUnit unit = null;
+    	try{
+            ObjectInputStream obj =  new ObjectInputStream(context.getInputStream());
+            unit = (SDPUnit) obj.readObject();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    	
     	SourcePersister persister = new SourcePersister();
 		try {
-	     SourceInfo member = deserialize(body);
-         persister.persist(member);	     
+//	     SourceInfo member = deserialize(body);
+         persister.persistUnit(unit);	     
 		}
-		catch (ParseException e) {
-			return new ResponseEntity<>("KO", HttpStatus.UNPROCESSABLE_ENTITY);
-		}
+//		catch (ParseException e) {
+//			return new ResponseEntity<>("KO", HttpStatus.UNPROCESSABLE_ENTITY);
+//		}
 		catch (Exception e) {
 			return new ResponseEntity<>("KO", HttpStatus.INTERNAL_SERVER_ERROR);
 		}

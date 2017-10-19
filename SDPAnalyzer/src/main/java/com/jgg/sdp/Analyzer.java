@@ -1,27 +1,28 @@
 package com.jgg.sdp;
 
-import com.jgg.sdp.analyzer.*;
+import com.jgg.sdp.common.ctes.*;
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.files.*;
 
-import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.analyzer.*;
+import com.jgg.sdp.common.config.Messages;
+import com.jgg.sdp.common.exceptions.*;
+
 import com.jgg.sdp.core.exceptions.*;
-import com.jgg.sdp.core.msg.*;
-import com.jgg.sdp.core.tools.*;
-import com.jgg.sdp.core.unit.Source;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.unit.*;
-import com.jgg.sdp.domain.core.SDPFile;
-import com.jgg.sdp.domain.core.SDPSource;
+import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
-import com.jgg.sdp.domain.services.core.SDPFileService;
-import com.jgg.sdp.domain.services.core.SDPSourceService;
+import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.parser.base.*;
+
+import static com.jgg.sdp.common.ctes.CFG.*;
 
 public class Analyzer {
 
     private Module  module = null;
-	private SDPUnit unit   = null;
+	private Unit unit   = null;
 
 	private SDPFileService   fileService    = new SDPFileService();
 	private SDPSourceService sourceService = new SDPSourceService();
@@ -52,37 +53,39 @@ public class Analyzer {
 	private int start(String[] args) {
 		args = cfg.processCommandLine(AnalyzerParms.parms, args);
 		
-		if (cfg.isLocalMode()) {
-			processLocalMode(args);
-		} else if (args.length == 0) {
-			processMassive();
-		} else {
-			processModules(args);
+		// No es local
+		if (cfg.getParserMode() == null) {
+			cfg.setParameter(CFG.PARSER_MODE, (args.length == 0) ? PARSER_MASSIVE 
+					                                             : PARSER_CMD);
 		}
 		
+		switch (cfg.getParserMode()) {
+		   case PARSER_LOCAL:   processLocalMode(args); break;
+		   case PARSER_MASSIVE: processMassive(args);   break;
+		   case PARSER_CMD:     processModules(args);   break;
+		}
        return rc;		
 	}
 
 	private void processLocalMode(String[] args) {
 		if (args.length == 0) args = new String[]{"*"};
 		
-		for (Archivo archivo : FileFinder.find(cfg.getInputDir(), args)) {
-	        unit = new SDPUnit(archivo);
+		for (Archive archivo : FileFinder.find(cfg.getInputDir(), args)) {
+	        unit = new Unit(archivo);
 			analyzeUnit(unit);
 		}
 	}
 
-	private void processMassive() {
+	/**
+	 * Procesa todos los fuentes de la base de datos con estado
+	 * UNPARSED
+	 */
+	private void processMassive(String[] args) {
 		
 		fileService.cursorPendingOpen();
 		while ((file = fileService.cursorPendingNext()) != null) {
-			Archivo archivo = new Archivo(file.getFullName());
-			unit = new SDPUnit(archivo);
-			unit.setFirma(file.getFirma());
-			unit.setTipo(file.getTipo());
-			unit.setStatus(file.getEstado());
-			unit.setFileObject(file);
-			setSource(unit, file);
+			Unit unit = new Unit();
+			setMainSource(unit, file);
 			analyzeUnit(unit);			
 		}
 	}
@@ -92,66 +95,67 @@ public class Analyzer {
 	private void processModules(String[] args) {
 	}
 	
-	private void analyzeUnit(SDPUnit unit) {
-		int procesar = RC.OK;
+	private void analyzeUnit(Unit unit) {
+		String txt = "";
+		int rc  = RC.OK;
+		int res = MSG.OK;
 		
 		if (cfg.getVerbose() > 0) msg.progressCont(MSG.PARSING, unit.getMemberName());
         
 		try {		
-        	procesar = hasToProcess(unit);
+        	rc = hasToProcess(unit);
         	
 //Nada            	if (procesar == MSG.OK)      procesar = unit.isIgnored();
 //Nada              if (procesar == MSG.IGNORED) createIgnoredModule(unit);
-				if (procesar == RC.OK)      analyze(unit);
-				if (procesar == RC.OK)      procesar = storeModuleInfo(unit);
-			if (cfg.getVerbose() > 1)    msg.progress(procesar);
+			if (rc == MSG.OK)      analyze(unit);
 		// Caso, alguien ha borrado el fichero entre el find y el proceso
 		} catch (FileException f) {
-			if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
 			unit.setStatus(CDG.STATUS_ERROR);
-		    msg.exception(f);
+		    txt = msg.getExceptionMessage(f);
             rc = RC.ERROR;
+            res = MSG.ERROR;
 		} catch (NotSupportedException s) {
-			if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
 			unit.setStatus(CDG.STATUS_NOT_SUPPORTED);
-		    msg.exception(s);
+			txt = msg.getExceptionMessage(s);
 		    rc = RC.NOT_SUP;
+		    res = MSG.KO;
         } catch (ParseException s) {
-            if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
-            msg.exception(s);
+        	txt = msg.getExceptionMessage(s);
             unit.setStatus(CDG.STATUS_SDP_ERROR);
             rc = RC.SEVERE;
+            res = MSG.KO;
 		} catch (SDPException s) {
-			if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
 			unit.setStatus(CDG.STATUS_SDP_ERROR);
-		    msg.exception(s);
+			txt = msg.getExceptionMessage(s);
 		    s.printStackTrace();
 		    rc = RC.ERROR;
+		    res = MSG.KO;
 		} catch (Exception e) {
-			if (cfg.getVerbose() > 1) msg.progress(MSG.KO);
 			unit.setStatus(CDG.STATUS_ERROR);
-            msg.exception(new SDPException(e, MSG.EXCEPTION_PARSER, module.getName()));
+			txt = msg.getExceptionMessage(new SDPException(e, MSG.EXCEPTION_PARSER, module.getName()));
             e.printStackTrace();
             rc = RC.FATAL;
+            res = MSG.KO;
 		}
 		finally {
 			if (unit.getStatus() > CDG.STATUS_BAD) {
 				module.setParserStatus(unit.getStatus());
-				storeModuleInfo(unit);
 			}
+			storeModuleInfo(unit);
 			ModulesFactory.cleanModules();
-			
+			if (cfg.getVerbose() > 0)    msg.progress(res);
+			if (txt.length() > 0)        msg.print(txt);
 		}
 		
 		if (rc > maxRC) maxRC = rc;
     }
     
-	private void createIgnoredModule(SDPUnit unit) {
+	private void createIgnoredModule(Unit unit) {
 		module.setParserStatus(CDG.STATUS_IGNORED);
 		unit.setStatus(CDG.STATUS_IGNORED);
 	}
 	
-	public int analyze(SDPUnit unit) throws FileException, 
+	public int analyze(Unit unit) throws FileException, 
 	                                             NotSupportedException,
 	                                             ParseException,
 	                                             SDPException, 
@@ -160,8 +164,7 @@ public class Analyzer {
 		ParserInfo info = ParserInfo.getInstance(true);
         
 		module = unit.getCurrentModule();
-        module.setType(CDG.SOURCE_CODE);
-
+        
 		info.setUnit(unit);
 		info.setModule(module);
 		
@@ -175,18 +178,26 @@ public class Analyzer {
 	}
 
     
-	private int storeModuleInfo (SDPUnit unit) {
-		// long idUnit = unit.existUnit() ? unit.getId() : 0l;
+	private int storeModuleInfo (Unit unit) {
 		Persister pers = new Persister();
 		pers.beginTrans();
-	    for (Module module : unit.getModules()) {
-	         pers.persistModule(module, unit);
-	    }
+		
+		// TODO Por ahora solo el principal
+		pers.persistModule(unit.getModules().get(0));
+//	    for (Module module : unit.getModules()) {
+//	         pers.persistModule(module, unit);
+//	    }
 	    
-	    if (cfg.isLocalMode() && !unit.existUnit()) pers.persistUnit(unit);
-	    if (!cfg.isLocalMode()) {
-	    	file.setEstado(unit.getStatus());
-	    	pers.persistStatus(file);
+		// Recargar el fichero dentro de la transaccion
+		SDPFile f = fileService.findById(file.getIdFile());
+	    int mode = cfg.getInteger(PARSER_MODE);
+	    
+	    if (mode == PARSER_LOCAL) {
+	    	pers.persistUnit(unit);
+	    }
+	    else {
+	    	f.setEstado(unit.getStatus());
+	    	pers.persistStatus(f);
 	    }
 	    
 	    pers.commit();
@@ -199,14 +210,14 @@ public class Analyzer {
 	 * @param source
 	 * @return
 	 */
-	private int hasToProcess(SDPUnit unit) {
+	private int hasToProcess(Unit unit) {
 		
 		if (file == null) {
 		   SDPFile f = fileService.findByNameAndType(unit.getMemberName(), CDG.SOURCE_CODE);
 		   if (f == null) return RC.OK;
 		}
 		else {
-		   if (file.getEstado() == CDG.STATUS_PENDING) return RC.OK;
+		   if (file.getEstado() == CDG.STATUS_UNPARSED) return RC.OK;
 		}
 		
 		// if (f.getFirma().compareTo(unit.getFirma()) != 0) return RC.OK;
@@ -214,17 +225,21 @@ public class Analyzer {
 		unit.setExist();
 		
 		// Forzar a reprocesar
-		if (!cfg.getBoolean(CFG.PARSER_FORCE)) return RC.SKIP;
+		if (!cfg.getBoolean(CFG.PARSER_FORCE)) return MSG.SKIP;
 		
 		return RC.OK;
 	}
 
-	private void setSource(SDPUnit unit, SDPFile file) {
-		Source src = unit.getCurrentSource();
-		src.setFirma(file.getFirma());
-		src.setId(file.getIdFile());
+	private void setMainSource(Unit unit, SDPFile file) {
 		SDPSource source = sourceService.getSource(file.getIdFile(), file.getIdVersion());
-		src.setRawData(source.getSource());
+		Source src = new Source(file.getFullName());
+		src.setFirma(file.getFirma());
+		src.setIdSource(file.getIdFile());
+		src.setIdVersion(file.getIdVersion());
+		src.setRawData(file.getFullName(), source.getSource(), source.getEncoded());
+		src.setTipo(file.getTipo());
+		
+		unit.addSource(src);
 	}
 	
 	private void initObject() {

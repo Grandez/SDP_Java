@@ -25,4 +25,8 @@ public class RULFormulaService extends AbstractService<RULFormula> {
 		if (l.size() == 0) return "N/A";
 		return l.get(0).getFormula();
 	}
+	
+	public void deleteFormula(Long key) {
+		deleteQuery(RULFormula.delFormula, key);
+	}
 }

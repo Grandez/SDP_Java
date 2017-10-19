@@ -49,7 +49,7 @@ public class Zipper {
      * @param rawChars Los datos del archivo
      * @return the char[] Los datos descomprimidos 
      */
-	public char[] unzip(String name, byte[] rawChars)  {
+	public static char[] unzip(String name, byte[] rawChars)  {
 	    ByteArrayInputStream bis = new ByteArrayInputStream(rawChars);
 	    ZipInputStream zipData = new ZipInputStream(bis);  
 

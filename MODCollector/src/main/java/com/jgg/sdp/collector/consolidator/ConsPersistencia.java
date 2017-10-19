@@ -13,6 +13,7 @@ import com.jgg.sdp.domain.session.SESIO;
 import com.jgg.sdp.domain.session.SESPersistencia;
 import com.jgg.sdp.domain.session.SESSesion;
 import com.jgg.sdp.domain.traps.*;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.core.ctes.*;
 
 public class ConsPersistencia {

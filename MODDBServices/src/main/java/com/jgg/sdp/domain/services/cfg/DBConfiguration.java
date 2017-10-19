@@ -5,8 +5,7 @@ package com.jgg.sdp.domain.services.cfg;
 
 import com.jgg.sdp.domain.cfg.*;
 import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
-
-import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.common.config.*;
 
 public class DBConfiguration extends ConfigurationBase implements Configuration {
 

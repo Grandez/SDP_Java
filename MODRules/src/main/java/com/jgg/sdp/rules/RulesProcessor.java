@@ -76,11 +76,13 @@ public class RulesProcessor {
 	}
 	
 	private boolean processRuleMethod(RuleRule rule, RuleObject obj) {
-		
+		System.out.println("JGG processRuleMethod");
+/*		
 		String method = rule.getProperty();
 		method = "get" + method.substring(0,1).toUpperCase() + method.substring(1);
 		Object result = JGGJava.executeMethod(obj, method);
 		if (result instanceof Integer) return  matchInteger((Integer) result, rule);
+*/		
 		return false;
 	}
 
@@ -92,6 +94,8 @@ public class RulesProcessor {
 	}
 
 	private boolean processRuleFormula(RuleRule rule, RuleObject obj) {
+		System.out.println("JGG processRuleFormula");
+/*		
 		RULFormulaService service = new RULFormulaService();
 		String formula = service.getFormula(Long.parseLong(rule.getProperty()));
         Calculator c = new Calculator(formula);
@@ -105,6 +109,8 @@ public class RulesProcessor {
 			e.printStackTrace();
 		}
 		return processRuleValue(rule, obj);
+		*/
+		return false;
 	}
 	
 	/**

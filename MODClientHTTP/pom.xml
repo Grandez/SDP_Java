@@ -26,11 +26,11 @@
 
               <dependencies>
 
-<!--                 <dependency> -->
-<!--                    <groupId>com.jgg.sdp</groupId> -->
-<!--                    <artifactId>MODCore</artifactId> -->
-<!--                    <version>${sdp.version}</version>       -->
-<!--                 </dependency> -->
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODCommon</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
            
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
@@ -51,12 +51,11 @@
 
            <dependencies>
 
-<!--                 <dependency> -->
-<!--                    <groupId>com.jgg.sdp</groupId> -->
-<!--                    <artifactId>MODCore</artifactId> -->
-<!--                    <version>${sdp.version}</version> -->
-<!--                    <scope>provided</scope> -->
-<!--                 </dependency> -->
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODCommon</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
            
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>

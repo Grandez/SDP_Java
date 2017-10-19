@@ -13,18 +13,19 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import com.jgg.sdp.common.ctes.*;
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.files.*;
+
 import com.jgg.sdp.Analyzer;
-import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.common.exceptions.*;
+
 import com.jgg.sdp.core.exceptions.*;
-import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.core.tools.FileFinder;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.ivp.IVPCase;
-import com.jgg.sdp.module.unit.SDPUnit;
+import com.jgg.sdp.module.unit.Unit;
 import com.jgg.sdp.parser.base.ParseException;
 import com.jgg.sdp.printer.Printer;
-import com.jgg.sdp.domain.DBManagerFactory;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.ivp.items.BlockCases;
 import com.jgg.sdp.ivp.items.Case;
@@ -124,7 +125,7 @@ public class IVP {
 		Module module = null;
 		
 	   for (String pattern : patterns) {
-           for (Archivo archivo : FileFinder.find(cfg.getString(CFG.IVP_INPUT), pattern)) { 
+           for (Archive archivo : FileFinder.find(cfg.getString(CFG.IVP_INPUT), pattern)) { 
         	   currArchivo = archivo.getFileName();
         	   modules.add(currArchivo);
         	   printer.lineBeg(String.format("%5d - %8s", ++count, archivo.getBaseName()));
@@ -137,12 +138,12 @@ public class IVP {
 	   
 	}
 	
-	private Module analyze(Archivo archivo) {
+	private Module analyze(Archive archivo) {
 		int   rc = 0;
 		Module module = null;
 		Exception ex = null;
   
-		SDPUnit unit = new SDPUnit(archivo);
+		Unit unit = new Unit(archivo);
 		
 		Analyzer analyzer = new Analyzer();
 		

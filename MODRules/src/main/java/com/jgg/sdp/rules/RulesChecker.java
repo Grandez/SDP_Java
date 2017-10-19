@@ -95,6 +95,8 @@ public class RulesChecker {
 
         RuleItem item = processor.getRuleItemByName(GRP_ISSUES, "RULES");
         
+        if (item == null) return;
+        
 		for (RuleRule rule : item.getRules()) {
 			long level = rule.getIdRule();
 			obj.setValue(module.getSumIssues().getCount(level));

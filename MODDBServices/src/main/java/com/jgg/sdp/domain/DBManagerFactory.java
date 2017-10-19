@@ -10,17 +10,11 @@
  */
 package com.jgg.sdp.domain;
 
-import java.io.*;
-import java.util.Properties;
-
 import javax.persistence.*;
 
 import org.hibernate.jpa.internal.*;
 
-import com.jgg.sdp.core.config.Configuration;
 import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.SDPException;
-import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 
 public class DBManagerFactory {
 

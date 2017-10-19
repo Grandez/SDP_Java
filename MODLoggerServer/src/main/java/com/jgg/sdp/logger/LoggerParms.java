@@ -1,7 +1,7 @@
 package com.jgg.sdp.logger;
 
-import com.jgg.sdp.core.config.Args;
-import com.jgg.sdp.core.ctes.CFG;
+import com.jgg.sdp.common.config.Args;
+import com.jgg.sdp.common.ctes.CFG;
 
 public class LoggerParms {
 

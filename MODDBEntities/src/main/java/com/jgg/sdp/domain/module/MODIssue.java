@@ -31,13 +31,13 @@ public class MODIssue implements Serializable {
     Integer idSeq;
 
     @Column(name="idGroup")
-    Integer idGroup;
+    Long idGroup;
 
     @Column(name="idItem")
-    Integer idItem;
+    Long idItem;
     
     @Column(name="idRule")
-    Integer idRule;
+    Long idRule;
     
     @Column(name="severity")
     Integer severity;
@@ -82,27 +82,27 @@ public class MODIssue implements Serializable {
 		this.idSeq = idSeq;
 	}
 
-	public Integer getIdGroup() {
+	public Long getIdGroup() {
 		return idGroup;
 	}
 
-	public void setIdGroup(Integer idGroup) {
+	public void setIdGroup(Long idGroup) {
 		this.idGroup = idGroup;
 	}
 
-	public Integer getIdItem() {
+	public Long getIdItem() {
 		return idItem;
 	}
 
-	public void setIdItem(Integer idItem) {
+	public void setIdItem(Long idItem) {
 		this.idItem = idItem;
 	}
 
-	public Integer getIdRule() {
+	public Long getIdRule() {
 		return idRule;
 	}
 
-	public void setIdRule(Integer idRule) {
+	public void setIdRule(Long idRule) {
 		this.idRule = idRule;
 	}
 

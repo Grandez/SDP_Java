@@ -15,6 +15,8 @@ import java.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.jgg.sdp.common.config.*;
+
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.graph.*;
 import com.jgg.sdp.domain.module.*;
@@ -23,16 +25,14 @@ import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.log.LOGInputService;
 import com.jgg.sdp.domain.sql.*;
+import com.jgg.sdp.common.ctes.CDG;
 
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.CDG;
-// import com.jgg.sdp.core.jms.*;
 import com.jgg.sdp.core.ctes.LOG;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.status.StatusItem;
-import com.jgg.sdp.module.unit.SDPUnit;
+import com.jgg.sdp.module.unit.Unit;
 import com.jgg.sdp.tools.*;
 
 public class Persister {
@@ -52,7 +52,7 @@ public class Persister {
 	Element  root = null;
     
     Module  module    = null;
-    SDPUnit unit      = null;
+    Unit unit      = null;
     
     Long   idFile         = null;
     Long   idFileVersion  = null;    
@@ -80,18 +80,14 @@ public class Persister {
     	return xmlText;
     }
     
-    public void  persistModule(Module module, SDPUnit unit)  {
+    public void  persistModule(Module module)  {
 	   this.module = module;	   
-	   this.unit  = unit;
-	   this.idFile = unit.getId();
-	   this.idFileVersion = unit.getIdVersion();
-	   
        persistModuleData();   
     }
 
-    public void persistUnit(SDPUnit unit) {
- 	   this.idFile = unit.getId();
- 	   this.idFileVersion = unit.getIdVersion();
+    public void persistUnit(Unit unit) {
+// 	   this.idFile = unit.getId();
+// 	   this.idFileVersion = unit.getIdVersion();
 
     	persistCompileUnit(unit);
     	persistSource(unit);
@@ -101,10 +97,10 @@ public class Persister {
     	generate(file);
     }
     
-    private void persistCompileUnit(SDPUnit unit) {
+    private void persistCompileUnit(Unit unit) {
     	
     	SDPFile file = new SDPFile();
-
+/*
     	file.setIdFile(idFile);
     	file.setIdVersion(idFileVersion);
         file.setArchivo(unit.getNombre());
@@ -116,17 +112,18 @@ public class Persister {
         file.setTms(Fechas.getTimestamp());
         
         generate(file);
+*/        
     }    
 
-    private void persistSource(SDPUnit unit) {        
+    private void persistSource(Unit unit) {        
     	SDPSource fuente = new SDPSource();
-    	
+    	/*
     	fuente.setIdFile(idFile);
     	fuente.setIdVersion(idFileVersion);
     	fuente.setEncoded("ZIP");
         fuente.setSource(Zipper.zip(unit.getNombre(), unit.getMainSource().getRawData()));
         generate(fuente);
-        
+*/        
     }
     
     private void persistModuleData() {
@@ -151,6 +148,7 @@ public class Persister {
     }
 
     private void updateModule() {
+    	int logAction = LOG.MOD_COMP;
         SDPModulo mod = moduloService.findByNameAndType(module.getName(), module.getType());
         if (mod == null) {
             mod = new SDPModulo();
@@ -159,27 +157,32 @@ public class Persister {
             mod.setIdAppl(relModAppService.getApplication(module.getName()));
             mod.setTipo(module.getType());
             mod.setActivo(CDG.MODULE_ACTIVE);
-            mod.setIdVersion(idVersion);
-            mod.setIdFile(idFile);
             mod.setVersiones(0);
 //            actualizaAplicacion(mod.getIdAppl());
 //            insertaEstado(mod);
-            log.registra(LOG.MOD_NEW, mod);
+            logAction = LOG.MOD_NEW;
         }
         
         idModule = mod.getIdModulo();
+        idVersion = Fechas.serial();
+        
+        mod.setIdVersion(idVersion);
+        mod.setIdFile(module.getSource().getIdSource());
        	mod.setUid(System.getProperty("user.name"));
        	mod.setTms(Fechas.getTimestamp());
        	mod.setTipo(module.getType());
        	mod.setActivo(CDG.MODULE_ACTIVE);
        	mod.setVersiones(mod.getVersiones() + 1);
-    	generate(mod);
+       	
+       	log.registra(logAction, mod);
+
+       	generate(mod);
     }
 
     private void updateVersion() {
     	MODVersion version = new MODVersion(idModule, idVersion);
 
-    	version.setIdVersionFile(idFileVersion);
+    	version.setIdVersionFile(module.getSource().getIdVersion());
         version.setNombre(module.getName());
     	version.setTipo(module.getType());
     	version.setDesc(module.getDescription());

@@ -14,24 +14,22 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.jgg.sdp.common.config.*;
+
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
 
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
 
-import com.jgg.sdp.domain.rules.RULRule;
-
-
 import com.jgg.sdp.domain.services.rules.RULRulesService;
 import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.traps.TRPSesionService;
-import com.jgg.sdp.domain.traps.TRPSesion;
 import com.jgg.sdp.tools.Fechas;
 import com.jgg.sdp.web.core.DBConfiguration;
 import com.jgg.sdp.web.json.modulo.*;
-import com.jgg.sdp.core.config.Configuration;
-import com.jgg.sdp.core.ctes.*;
+
+import com.jgg.sdp.common.ctes.CFG;
 
 @RestController
 public class ModuloController {
@@ -69,13 +67,14 @@ public class ModuloController {
 
     private Configuration cfg = DBConfiguration.getInstance();    
     
-    @RequestMapping("/module/{idModulo}")
-    public Modulo getModuleInfo(@PathVariable Long idModulo) {
-        return getModuleInfo(idModulo, cfg.getInteger(CFG.DATE_INTERVAL));
-    }
+//    @RequestMapping("/module/{idModulo}")
+//    public Modulo getModuleInfo(@PathVariable Long idModulo) {
+//        return getModuleInfo(idModulo, cfg.getInteger(CFG.DATE_INTERVAL));
+//    }
 
-    @RequestMapping("/module/{idModulo}/{rango}")
-    public Modulo getModuleInfo(@PathVariable Long idModulo, @PathVariable Integer rango) {
+    @RequestMapping("/module/{idModulo}")
+    public Modulo getModuleInfo(@PathVariable Long idModulo, 
+                                @CookieValue(value = "range", defaultValue = "0") Integer range) {
 
     	modulo = new Modulo();
 
@@ -90,7 +89,7 @@ public class ModuloController {
         modulo.setIdVersion(version.getIdVersion());
         modulo.setDesc(version.getDesc());
         
-        Timestamp inicio = Fechas.calculaInicio(rango);
+        Timestamp inicio = Fechas.calculaInicio(range);
 
         modulo.setSummary(calculaSummary(mod, version));
         modulo.setVersiones(calculaVersiones(mod, inicio));

@@ -3,11 +3,11 @@ package com.jgg.sdp.rules.test;
 import java.io.File;
 import java.net.URL;
 
-import com.jgg.sdp.LoadRules;
+import com.jgg.sdp.rules.RulesLoader;
 
 public class TestMain {
 
-	private LoadRules loader = new LoadRules();
+	private RulesLoader loader = new RulesLoader();
 	
 	public static void main(String[] args) throws Exception {
 		   int rc = 0;

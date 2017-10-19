@@ -3,46 +3,46 @@ package com.jgg.sdp.web.adm.json;
 import java.util.*;
 
 public class RuleGroup {
-	private Integer id;
-	private Integer idGroup;
-	private Integer idParent;
-	private Integer active;
-	private Integer idDesc;
+	private Long    id;
+	private Long    idGroup;
+	private Long    idParent;
+	private Long    active;
+	private Long    idDesc;
     private String  prefix;
     private String  desc;
 
     private ArrayList<RuleItem> items0 = new ArrayList<RuleItem>();
     private ArrayList<RuleItem> items1 = new ArrayList<RuleItem>();
     
-    public Integer getId() {
+    public Long getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
     
-    public Integer getIdGroup() {
+    public Long getIdGroup() {
 		return idGroup;
 	}
-	public void setIdGroup(Integer idGroup) {
+	public void setIdGroup(Long idGroup) {
 		this.idGroup = idGroup;
 	}
-	public Integer getIdParent() {
+	public Long getIdParent() {
 		return idParent;
 	}
-	public void setIdParent(Integer idParent) {
+	public void setIdParent(Long idParent) {
 		this.idParent = idParent;
 	}
-	public Integer getActive() {
+	public Long getActive() {
 		return active;
 	}
-	public void setActive(int active) {
+	public void setActive(long active) {
 		this.active = active;
 	}
-	public Integer getIdDesc() {
+	public Long getIdDesc() {
 		return idDesc;
 	}
-	public void setIdDesc(Integer idDesc) {
+	public void setIdDesc(Long idDesc) {
 		this.idDesc = idDesc;
 	}
 	public String getPrefix() {

@@ -1,11 +1,12 @@
 package com.jgg.sdp.rules.processor;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jgg.sdp.rules.xml.Group;
 import com.jgg.sdp.domain.rules.RULGroup;
 import com.jgg.sdp.domain.services.rules.*;
+import com.jgg.sdp.rules.xml.jaxb.Group;
 
 import static com.jgg.sdp.rules.CDGRules.*;
 
@@ -19,7 +20,7 @@ public class RulesGroup {
 	
 	public RULGroup createGroup(Group xmlGroup) {
 		RULGroup group =  null;
-		Long id = xmlGroup.getId();
+		Long id = xmlGroup.getIdGroup();
 		if (id == null || id == 0) {
 			group = groupService.getByTextKey(xmlGroup.getName());
 		}
@@ -31,11 +32,15 @@ public class RulesGroup {
 			if (id == null) id = groupService.getNextId();
 			group = new RULGroup();
 			group.setIdGroup(id);
+			group.setIdName(xmlGroup.getName());
 		}
-		group.setIdParent(xmlGroup.getParent() == null ? 0L : xmlGroup.getParent());
+		
+		group.setIdParent(xmlGroup.getIdParent() == null ? 0L : xmlGroup.getIdParent());
 		group.setPrefix(xmlGroup.getPrefix());
-		group.setActivo(xmlGroup.isActive() ? ACTIVE : INACTIVE);
+		group.setActive(xmlGroup.isActive() ? ACTIVE : INACTIVE);
 		group.setIdDesc(ruleDesc.createDescription(id, xmlGroup.getDescription()));
+		group.setUid(System.getProperty("user.name"));
+		group.setTms(new Timestamp(System.currentTimeMillis()));
 		groups.add(group);
 		return group;
 	}

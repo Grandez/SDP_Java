@@ -2,7 +2,7 @@ package com.jgg.sdp.analyzer.post;
 
 import java.util.*;
 
-import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.tables.*;

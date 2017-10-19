@@ -4,7 +4,7 @@ import java.util.*;
 
 import org.springframework.stereotype.Repository;
 
-import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.domain.core.SDPModulo;
 import com.jgg.sdp.domain.core.SDPStatus;
 import com.jgg.sdp.domain.services.AbstractService;

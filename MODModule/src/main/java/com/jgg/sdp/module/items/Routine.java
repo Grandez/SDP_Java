@@ -2,7 +2,7 @@ package com.jgg.sdp.module.items;
 
 import java.util.*;
 
-import com.jgg.sdp.core.ctes.CDG;
+import com.jgg.sdp.common.ctes.CDG;
 
 public class Routine {
 	private String  nombre;

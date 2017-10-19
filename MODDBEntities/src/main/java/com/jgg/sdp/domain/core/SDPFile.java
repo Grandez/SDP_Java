@@ -9,8 +9,9 @@ import javax.persistence.*;
 @Table(name="SDP_FILES")
 public class SDPFile implements Serializable {
 
-	public static final String findById =  "SELECT f FROM SDPFile f WHERE f.idFile = ?1 ORDER BY f.idVersion DESC";
-
+	public static final String findById           =  "SELECT f FROM SDPFile f WHERE f.idFile = ?1 ORDER BY f.idVersion DESC";
+	public static final String findByIdAndVersion =  "SELECT f FROM SDPFile f WHERE f.idFile = ?1 AND      f.idVersion = ?2";
+	
 	public static final String findByNameAndType = 
 		   "SELECT f  FROM SDPFile f WHERE f.archivo = ?1 AND f.tipo = ?2 ORDER BY f.tms DESC";
 
@@ -116,7 +117,7 @@ public class SDPFile implements Serializable {
 		return estado;
 	}
 
-	public void setEstado(Integer estado) {
+	public void setEstado(int estado) {
 		this.estado = estado;
 	}
 

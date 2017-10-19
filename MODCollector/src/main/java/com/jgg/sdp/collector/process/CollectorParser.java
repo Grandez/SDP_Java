@@ -25,10 +25,9 @@ import com.jgg.sdp.domain.services.log.LOGInputService;
 import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.domain.services.summary.SUMParrafoService;
 import com.jgg.sdp.domain.summary.SUMParrafo;
+import com.jgg.sdp.common.config.Messages;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.core.ctes.*;
-
-// import com.jgg.sdp.core.jms.*;
-import com.jgg.sdp.core.msg.Messages;
 import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
 import com.sun.org.apache.xml.internal.security.utils.Base64;
 

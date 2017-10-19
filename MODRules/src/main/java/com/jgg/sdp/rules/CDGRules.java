@@ -9,6 +9,7 @@ public class CDGRules {
 	public final static int GRP_MODULE     =   9;
 	public final static int GRP_ISSUES     =  91;
 	
+	public final static int TYPE_NONE    = 0;	
 	public final static int TYPE_VERB    = 1;
 	public final static int TYPE_OPTION  = 2;
 	public final static int TYPE_LVALUE  = 3;
@@ -38,9 +39,9 @@ public class CDGRules {
 	public final static int STAT_KO      =  1;
 	public final static int STAT_EXCEP   = -1;
 	
-	public final static int ACTIVE       =  0;
-	public final static int INACTIVE     = -1;
-	public final static int INHERIT      = -2;
+	public final static long ACTIVE      =  0;
+	public final static long INACTIVE    = -1;
+	public final static long INHERIT     = -2;
 	
 	public final static int DESC_NA      =  0;
 	

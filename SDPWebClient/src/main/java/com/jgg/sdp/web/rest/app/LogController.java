@@ -10,13 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+import com.jgg.sdp.common.config.*;
+
 import com.jgg.sdp.domain.log.*;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.log.*;
 import com.jgg.sdp.tools.Fechas;
 import com.jgg.sdp.web.core.*;
 import com.jgg.sdp.web.json.Log;
-import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.common.ctes.CFG;
+
 import com.jgg.sdp.core.ctes.*;
 
 @RestController

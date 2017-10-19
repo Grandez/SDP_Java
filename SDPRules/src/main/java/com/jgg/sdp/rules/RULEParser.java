@@ -10,16 +10,16 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import com.jgg.sdp.core.exceptions.XMLException;
-import com.jgg.sdp.rules.xml.RULES;
+import com.jgg.sdp.rules.xml.jaxb.SDPRules;
 
 public class RULEParser {
 
 	Document doc = null;
-	RULES rules = null;
+	SDPRules rules = null;
 	Unmarshaller um = null;
 	
 	public RULEParser() throws JAXBException, SAXException {
-		JAXBContext ctx = JAXBContext.newInstance(RULES.class);
+		JAXBContext ctx = JAXBContext.newInstance(SDPRules.class);
 		
 		SchemaFactory sf = SchemaFactory.newInstance( XMLConstants.W3C_XML_SCHEMA_NS_URI );
 		Schema schema = sf.newSchema(getClass().getResource("/SDPRULES.xsd"));
@@ -29,8 +29,8 @@ public class RULEParser {
         um.setEventHandler(new XMLException());
 	}
 	
-	public RULES parse(String xmlFileName) throws Exception {
-        return (RULES) um.unmarshal(new FileReader(xmlFileName));
+	public SDPRules parse(String xmlFileName) throws Exception {
+        return (SDPRules) um.unmarshal(new FileReader(xmlFileName));
 	}
 	
 /*	

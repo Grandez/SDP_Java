@@ -4,6 +4,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
+import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.tools.Propiedades;
 

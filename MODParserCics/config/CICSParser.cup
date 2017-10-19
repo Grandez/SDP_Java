@@ -2,8 +2,8 @@ package com.jgg.sdp.parser.lang;
 
 import java_cup.runtime.*;
 
-import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.config.*;
+import com.jgg.sdp.common.ctes.*;
+import com.jgg.sdp.common.config.*;
 
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.stmt.*;

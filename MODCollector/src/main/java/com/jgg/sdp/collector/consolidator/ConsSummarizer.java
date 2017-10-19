@@ -13,7 +13,8 @@ import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.summary.*;
 import com.jgg.sdp.domain.session.*;
 import com.jgg.sdp.domain.summary.*;
-import com.jgg.sdp.core.config.Configuration;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.core.ctes.*;
 
 public class ConsSummarizer {

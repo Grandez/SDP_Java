@@ -16,6 +16,6 @@ import com.jgg.sdp.domain.services.AbstractService;
 public class MODSeccionesService extends AbstractService<MODSecciones> {
 
 	public MODSecciones getSecciones(Long idVersion) {
-		return find("find", idVersion);
+		return findQuery(MODSecciones.find, idVersion);
 	}
 }

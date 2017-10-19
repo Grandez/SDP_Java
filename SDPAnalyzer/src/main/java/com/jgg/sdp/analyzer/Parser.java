@@ -12,14 +12,14 @@
  */
 package com.jgg.sdp.analyzer;
 
+import com.jgg.sdp.common.config.*;
+
 import com.jgg.sdp.analyzer.base.*;
 import com.jgg.sdp.analyzer.post.PostCall;
 import com.jgg.sdp.analyzer.post.PostVariables;
-import com.jgg.sdp.core.config.*;
-import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.*;
-import com.jgg.sdp.core.tools.Archivo;
-import com.jgg.sdp.core.unit.*;
+import com.jgg.sdp.common.ctes.MSG;
+import com.jgg.sdp.common.exceptions.SDPException;
+import com.jgg.sdp.common.files.Archive;
 import com.jgg.sdp.domain.core.SDPStatus;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.SDPStatusService;
@@ -31,12 +31,11 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.status.*;
 import com.jgg.sdp.module.tables.TBSumIssues;
 import com.jgg.sdp.module.unit.*;
-
-import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.parser.base.ParserInfo;
 
 public class Parser {
 
-	private SDPUnit unit   = null;
+	private Unit unit   = null;
     private Module  module = null;
 
    
@@ -46,7 +45,7 @@ public class Parser {
     public Parser() {
     	
     }
-    public Parser(SDPUnit unit) {
+    public Parser(Unit unit) {
        this.unit = unit;	
     }
     
@@ -236,8 +235,8 @@ public class Parser {
 		generator.generate();
 	}
 	*/
-	private Source loadFileIntoMemory(Archivo input) {
-		return SourcesFactory.getSource(input);
+	private Source loadFileIntoMemory(Archive input) {
+		return new Source(input, true);
 	}	
 	
 /*

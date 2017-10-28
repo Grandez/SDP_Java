@@ -11,7 +11,7 @@ public class RulesManager {
     private Configuration cfg = DBConfiguration.getInstance();
     
 	public static void main(String[] args) throws Exception {
-		int rc = RC.OK;
+       int rc = RC.OK;
 	   RulesManager launcher = new RulesManager();
 	   rc = launcher.start(args);
        System.exit(rc);

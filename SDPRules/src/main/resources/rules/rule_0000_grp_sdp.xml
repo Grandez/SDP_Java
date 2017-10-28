@@ -10,10 +10,11 @@
    
    <r:group name="SDP">
       <idGroup>0</idGroup>
+      <idParent>0</idParent>
       <prefix>SDP</prefix>
       <active>true</active>
       <r:description>
-          <r:text lang="xx">Raiz de las reglas</r:text>      
+          <text lang="xx">Raiz de las reglas</text>      
       </r:description>
    </r:group>
 

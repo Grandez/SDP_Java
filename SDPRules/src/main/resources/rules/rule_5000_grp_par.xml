@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas de parrafos</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="PAR">
+      <idGroup>50</idGroup>
+      <prefix>PAR</prefix>
+      <r:description>
+          <text lang="xx">Calidad de parrafos</text>      
+      </r:description>
+      
+      <r:item name="Inline">
+         <object>PARAGRAPH</object>        
+         <activateOnCondition>
+             <property>isInline()</property>
+         </activateOnCondition>            
+
+         <r:description>
+            <text lang="xx">Control de parrafos inline</text>
+         </r:description>
+
+         <r:rule>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Lineas del parrafo</text>
+            </r:description>
+            <condition>
+               <attribute>numLines</attribute>
+               <operator>gt</operator>
+               <rvalue>10</rvalue>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Lineas del parrafo</text>
+            </r:description>
+            <condition>
+               <attribute>numBlocks</attribute>
+               <operator>gt</operator>
+               <rvalue>3</rvalue>
+            </condition>            
+         </r:rule>
+         
+      </r:item>
+         
+      <r:item name="Outline">
+         <object>PARAGRAPH</object>        
+         <activateOnCondition>
+            <property>isOutline()</property>
+         </activateOnCondition>
+         <r:description>
+            <text lang="xx">Control parrafos outline</text>
+         </r:description>
+
+         <r:rule>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Parrafos de EXIT</text>
+            </r:description>
+            <condition>
+               <property>isExit()</property>
+            </condition>            
+         </r:rule>
+         
+         <r:rule>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Lineas del parrafo</text>
+            </r:description>
+            <condition>
+               <attribute>numLines</attribute>
+               <operator>gt</operator>
+               <rvalue>10</rvalue>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Sentencias del parrafo</text>
+            </r:description>
+            <condition>
+               <attribute>numStatements</attribute>
+               <operator>gt</operator>
+               <rvalue>5</rvalue>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Complejidad del parrafo</text>
+            </r:description>
+            <condition>
+               <attribute>currentCC</attribute>
+               <operator>gt</operator>
+               <rvalue>3</rvalue>
+            </condition>            
+         </r:rule>
+
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>

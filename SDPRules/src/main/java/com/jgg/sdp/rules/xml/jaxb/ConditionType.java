@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -11,7 +11,6 @@ package com.jgg.sdp.rules.xml.jaxb;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
@@ -25,16 +24,20 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="conditionType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;choice>
- *           &lt;element name="objectType" type="{http://www.sdp.com/SDPRules}objectType"/>
- *           &lt;element name="method" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *           &lt;element name="expression" type="{http://www.sdp.com/SDPRules}expressionType"/>
- *         &lt;/choice>
- *         &lt;element name="comparator" type="{http://www.sdp.com/SDPRules}comparatorType"/>
- *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *       &lt;/sequence>
- *       &lt;attribute name="negated" type="{http://www.w3.org/2001/XMLSchema}boolean" />
+ *       &lt;choice>
+ *         &lt;element name="property" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;sequence>
+ *           &lt;choice>
+ *             &lt;element name="type" type="{http://www.sdp.com/SDPRules}objectType"/>
+ *             &lt;element name="attribute" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *             &lt;element name="lvalue" type="{http://www.sdp.com/SDPRules}operandType"/>
+ *             &lt;element name="script" type="{http://www.sdp.com/SDPRules}scriptType"/>
+ *           &lt;/choice>
+ *           &lt;element name="operator" type="{http://www.sdp.com/SDPRules}operatorType"/>
+ *           &lt;element name="rvalue" type="{http://www.sdp.com/SDPRules}operandType"/>
+ *         &lt;/sequence>
+ *       &lt;/choice>
+ *       &lt;attribute name="negated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -44,144 +47,194 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "conditionType", propOrder = {
-    "objectType",
-    "method",
-    "expression",
-    "comparator",
-    "value"
+    "property",
+    "type",
+    "attribute",
+    "lvalue",
+    "script",
+    "operator",
+    "rvalue"
 })
 public class ConditionType {
 
+    protected String property;
     @XmlSchemaType(name = "string")
-    protected ObjectType objectType;
-    protected String method;
-    protected ExpressionType expression;
-    @XmlElement(required = true)
+    protected ObjectType type;
+    protected String attribute;
+    protected OperandType lvalue;
+    protected ScriptType script;
     @XmlSchemaType(name = "string")
-    protected ComparatorType comparator;
-    @XmlElement(required = true)
-    protected String value;
+    protected OperatorType operator;
+    protected OperandType rvalue;
     @XmlAttribute(name = "negated")
     protected Boolean negated;
 
     /**
-     * Obtiene el valor de la propiedad objectType.
+     * Obtiene el valor de la propiedad property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getProperty() {
+        return property;
+    }
+
+    /**
+     * Define el valor de la propiedad property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setProperty(String value) {
+        this.property = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad type.
      * 
      * @return
      *     possible object is
      *     {@link ObjectType }
      *     
      */
-    public ObjectType getObjectType() {
-        return objectType;
+    public ObjectType getType() {
+        return type;
     }
 
     /**
-     * Define el valor de la propiedad objectType.
+     * Define el valor de la propiedad type.
      * 
      * @param value
      *     allowed object is
      *     {@link ObjectType }
      *     
      */
-    public void setObjectType(ObjectType value) {
-        this.objectType = value;
+    public void setType(ObjectType value) {
+        this.type = value;
     }
 
     /**
-     * Obtiene el valor de la propiedad method.
+     * Obtiene el valor de la propiedad attribute.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getMethod() {
-        return method;
+    public String getAttribute() {
+        return attribute;
     }
 
     /**
-     * Define el valor de la propiedad method.
+     * Define el valor de la propiedad attribute.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setMethod(String value) {
-        this.method = value;
+    public void setAttribute(String value) {
+        this.attribute = value;
     }
 
     /**
-     * Obtiene el valor de la propiedad expression.
+     * Obtiene el valor de la propiedad lvalue.
      * 
      * @return
      *     possible object is
-     *     {@link ExpressionType }
+     *     {@link OperandType }
      *     
      */
-    public ExpressionType getExpression() {
-        return expression;
+    public OperandType getLvalue() {
+        return lvalue;
     }
 
     /**
-     * Define el valor de la propiedad expression.
+     * Define el valor de la propiedad lvalue.
      * 
      * @param value
      *     allowed object is
-     *     {@link ExpressionType }
+     *     {@link OperandType }
      *     
      */
-    public void setExpression(ExpressionType value) {
-        this.expression = value;
+    public void setLvalue(OperandType value) {
+        this.lvalue = value;
     }
 
     /**
-     * Obtiene el valor de la propiedad comparator.
+     * Obtiene el valor de la propiedad script.
      * 
      * @return
      *     possible object is
-     *     {@link ComparatorType }
+     *     {@link ScriptType }
      *     
      */
-    public ComparatorType getComparator() {
-        return comparator;
+    public ScriptType getScript() {
+        return script;
     }
 
     /**
-     * Define el valor de la propiedad comparator.
+     * Define el valor de la propiedad script.
      * 
      * @param value
      *     allowed object is
-     *     {@link ComparatorType }
+     *     {@link ScriptType }
      *     
      */
-    public void setComparator(ComparatorType value) {
-        this.comparator = value;
+    public void setScript(ScriptType value) {
+        this.script = value;
     }
 
     /**
-     * Obtiene el valor de la propiedad value.
+     * Obtiene el valor de la propiedad operator.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link OperatorType }
      *     
      */
-    public String getValue() {
-        return value;
+    public OperatorType getOperator() {
+        return operator;
     }
 
     /**
-     * Define el valor de la propiedad value.
+     * Define el valor de la propiedad operator.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link OperatorType }
      *     
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setOperator(OperatorType value) {
+        this.operator = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad rvalue.
+     * 
+     * @return
+     *     possible object is
+     *     {@link OperandType }
+     *     
+     */
+    public OperandType getRvalue() {
+        return rvalue;
+    }
+
+    /**
+     * Define el valor de la propiedad rvalue.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link OperandType }
+     *     
+     */
+    public void setRvalue(OperandType value) {
+        this.rvalue = value;
     }
 
     /**
@@ -192,8 +245,12 @@ public class ConditionType {
      *     {@link Boolean }
      *     
      */
-    public Boolean isNegated() {
-        return negated;
+    public boolean isNegated() {
+        if (negated == null) {
+            return false;
+        } else {
+            return negated;
+        }
     }
 
     /**

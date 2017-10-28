@@ -2,16 +2,17 @@ package com.jgg.sdp.module.items;
 
 public class Issue  {
 
-	private long id;
-	private long idGroup;
-	private long idItem;
-	private long idRule;
-	private int severity;
-	private int begLine;
-	private int begColumn;
-	private int endLine;
-	private int endColumn;
-	private long idException = 0;
+	private long   id;
+	private long   idGroup;
+	private long   idItem;
+	private long   idRule;
+	private int    severity;
+	private int    begLine;
+	private int    begColumn;
+	private int    endLine;
+	private int    endColumn;
+	private String prefix;
+	private long   idException = 0;
 	private String bloque;
 	private String firma;
 	
@@ -93,6 +94,14 @@ public class Issue  {
 		this.endColumn = endColumn;
 	}
 
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+	
 	public String getBloque() {
 		return bloque;
 	}

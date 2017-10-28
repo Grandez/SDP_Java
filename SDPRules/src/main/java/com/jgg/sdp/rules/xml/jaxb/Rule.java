@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -26,16 +26,16 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="idGroup" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
- *         &lt;element name="idItem" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="idRule" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
+ *         &lt;element name="idItem" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
+ *         &lt;element name="idGroup" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="priority" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="severity" type="{http://www.sdp.com/SDPRules}severityType"/>
- *         &lt;element ref="{http://www.sdp.com/SDPRules}description" minOccurs="0"/>
  *         &lt;choice minOccurs="0">
  *           &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *           &lt;element name="activateOnCondition" type="{http://www.sdp.com/SDPRules}conditionType"/>
  *         &lt;/choice>
+ *         &lt;element ref="{http://www.sdp.com/SDPRules}description" minOccurs="0"/>
  *         &lt;element name="condition" type="{http://www.sdp.com/SDPRules}conditionType" minOccurs="0"/>
  *         &lt;element name="sample" type="{http://www.sdp.com/SDPRules}sampleType" minOccurs="0"/>
  *       &lt;/sequence>
@@ -48,56 +48,57 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "idGroup",
-    "idItem",
     "idRule",
+    "idItem",
+    "idGroup",
     "priority",
     "severity",
-    "description",
     "active",
     "activateOnCondition",
+    "description",
     "condition",
     "sample"
 })
 @XmlRootElement(name = "rule")
 public class Rule {
 
-    protected Long idGroup;
-    protected Long idItem;
     protected Long idRule;
+    protected Long idItem;
+    protected Long idGroup;
     @XmlElement(defaultValue = "0")
     protected Integer priority;
     @XmlSchemaType(name = "integer")
     protected int severity;
-    @XmlElement(namespace = "http://www.sdp.com/SDPRules")
-    protected Description description;
+    @XmlElement(defaultValue = "true")
     protected Boolean active;
     protected ConditionType activateOnCondition;
+    @XmlElement(namespace = "http://www.sdp.com/SDPRules")
+    protected Description description;
     protected ConditionType condition;
     protected SampleType sample;
 
     /**
-     * Obtiene el valor de la propiedad idGroup.
+     * Obtiene el valor de la propiedad idRule.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getIdGroup() {
-        return idGroup;
+    public Long getIdRule() {
+        return idRule;
     }
 
     /**
-     * Define el valor de la propiedad idGroup.
+     * Define el valor de la propiedad idRule.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setIdGroup(Long value) {
-        this.idGroup = value;
+    public void setIdRule(Long value) {
+        this.idRule = value;
     }
 
     /**
@@ -125,27 +126,27 @@ public class Rule {
     }
 
     /**
-     * Obtiene el valor de la propiedad idRule.
+     * Obtiene el valor de la propiedad idGroup.
      * 
      * @return
      *     possible object is
      *     {@link Long }
      *     
      */
-    public Long getIdRule() {
-        return idRule;
+    public Long getIdGroup() {
+        return idGroup;
     }
 
     /**
-     * Define el valor de la propiedad idRule.
+     * Define el valor de la propiedad idGroup.
      * 
      * @param value
      *     allowed object is
      *     {@link Long }
      *     
      */
-    public void setIdRule(Long value) {
-        this.idRule = value;
+    public void setIdGroup(Long value) {
+        this.idGroup = value;
     }
 
     /**
@@ -186,30 +187,6 @@ public class Rule {
      */
     public void setSeverity(int value) {
         this.severity = value;
-    }
-
-    /**
-     * Obtiene el valor de la propiedad description.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
-     */
-    public Description getDescription() {
-        return description;
-    }
-
-    /**
-     * Define el valor de la propiedad description.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
-     */
-    public void setDescription(Description value) {
-        this.description = value;
     }
 
     /**
@@ -258,6 +235,30 @@ public class Rule {
      */
     public void setActivateOnCondition(ConditionType value) {
         this.activateOnCondition = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad description.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Description }
+     *     
+     */
+    public Description getDescription() {
+        return description;
+    }
+
+    /**
+     * Define el valor de la propiedad description.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Description }
+     *     
+     */
+    public void setDescription(Description value) {
+        this.description = value;
     }
 
     /**

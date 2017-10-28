@@ -20,6 +20,8 @@ import com.jgg.sdp.common.exceptions.FileException;
 import com.jgg.sdp.common.files.Archive;
 import com.jgg.sdp.tools.*;
 
+import static com.jgg.sdp.common.ctes.CDG.*;
+
 public class Source extends Reader {
 
 	private Archive   archivo    = null;
@@ -31,31 +33,38 @@ public class Source extends Reader {
 	private int      offset  = 0;
 	private int      length  = 0;
 
-	private int      tipo    = 0;
-	private long     idSource;
-	private long     idVersion;
+	private int      tipo    = SOURCE_CODE;
+	private long     idFile;
+	private long     idFileVersion;
 	
 	private Configuration cfg = ConfigurationBase.getInstance();
 
 	public Source(String fullName) {
 		archivo = new Archive(fullName);
 	}
+
+	public Source(Archive archivo) {
+		idFile = Fechas.serial();
+		this.archivo = archivo;
+		loadData(archivo, null);
+		idFileVersion = Fechas.serial();
+	}
+
+	public Source (Archive archivo, ArrayList<String> toks) {
+		idFile = Fechas.serial();
+		this.archivo = archivo;
+		loadData(archivo, toks);
+		idFileVersion = Fechas.serial();
+	}
 	
 	public Source (Archive archivo, boolean memory) {
+		idFile = Fechas.serial();
 		this.archivo = archivo;
-		idSource = Fechas.serial();
+		idFile = Fechas.serial();
 	}
-	
-	public Source (Archive archivo, ArrayList<String> toks) {
-		this.archivo = archivo;
-
-//		if (cfg.getBoolean(CFG.PARSER_LOCAL)) loadData(archivo, toks);
-		loadData(archivo, toks);
-	}
-	
+		
 	private void loadData(Archive archivo, ArrayList<String> toks) {
 		
-		idSource = Fechas.serial();
         checkFile();
         
 		size = ((Long)archivo.length()).intValue();
@@ -74,10 +83,10 @@ public class Source extends Reader {
 	}
     
 
-	public long getIdSource()         { return idSource;     }
-	public void setIdSource(long id)  { this.idSource = id;  }
-	public long getIdVersion()        { return idVersion;    }
-	public void setIdVersion(long id) { this.idVersion = id; }
+	public long getIdFile()               { return idFile;       }
+	public void setIdFile(long id)        { this.idFile = id;    }
+	public long getIdFileVersion()        { return idFileVersion;    }
+	public void setIdFileVersion(long id) { this.idFileVersion = id; }
 	
 	public Source prepareData(ArrayList<String> toks) {
 		prepararDatos();
@@ -96,15 +105,8 @@ public class Source extends Reader {
 		return rawData;
 	}
 
-	public void setRawData(String fileName, byte[] bytes, String encoded) {
-		if (encoded.compareTo("UTF_8") == 0) { 
-		    String str = new String(bytes, StandardCharsets.UTF_8);
-		    this.rawData = str.toCharArray();
-		}
-		
-		if (encoded.compareTo("ZIP") == 0) {
-			this.rawData = Zipper.unzip(fileName, bytes);
-		}
+	public void setRawData(String fileName, String encoded, byte[] bytes) {
+		loadRawData(fileName, encoded, bytes);
 		prepararDatos();
 	}
 
@@ -120,6 +122,17 @@ public class Source extends Reader {
 		rawData     = newData.toCharArray();
 		data        = newData.toCharArray();
 		offset      = 0;
+	}
+	
+	public void loadRawData(String fileName, String encoded, byte[] bytes) {
+		if (encoded.compareTo("UTF_8") == 0) { 
+		    String str = new String(bytes, StandardCharsets.UTF_8);
+		    this.rawData = str.toCharArray();
+		}
+		
+		if (encoded.compareTo("ZIP") == 0) {
+			this.rawData = Zipper.unzip(fileName, bytes);
+		}		
 	}
 	
 	public char[] getData() {

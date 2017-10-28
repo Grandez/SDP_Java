@@ -12,6 +12,10 @@ public class RULRulesService extends AbstractService<RULRule> {
 
 	private static Long lastId = 0L;
 
+	public static void setLastId(Long last) {
+		lastId = last;
+	}
+
 	public RULRule getById(Long idGroup, Long idItem, Long idRule) {
 		return findQuery (RULRule.findById, idGroup, idItem, idRule);
 	}

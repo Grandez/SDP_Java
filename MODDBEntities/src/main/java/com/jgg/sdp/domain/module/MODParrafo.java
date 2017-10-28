@@ -6,6 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="MOD_PARRAFOS")
+/*
 @NamedQueries({
 	 @NamedQuery(name="MODParrafo.listByKey",
 	             query="SELECT p FROM MODParrafo p WHERE p.idVersion = ?1 ORDER BY p.nombre ASC")
@@ -14,10 +15,13 @@ import javax.persistence.*;
     ,@NamedQuery(name="MODParrafo.listByName",
                  query="SELECT p FROM MODParrafo p WHERE p.idVersion = ?1 ORDER BY p.nombre ASC")
 })
+*/
 public class MODParrafo implements Serializable {
 
 	private static final long serialVersionUID = 7045773894247904704L;
 
+	public static final String findParagraphs = "SELECT p FROM MODParrafo p WHERE p.idVersion = ?1 ORDER BY linea ASC";
+	
 	@Id
 	@Column(name="idVersion")
 	Long idVersion;

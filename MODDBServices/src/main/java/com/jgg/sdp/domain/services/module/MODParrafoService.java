@@ -32,6 +32,10 @@ public class MODParrafoService extends AbstractService<MODParrafo> {
 		return aux;
    }
 
+	public List<MODParrafo> getParrafos(Long idVersion) {
+		return listQuery(MODParrafo.findParagraphs, idVersion);
+	}
+	
 	public List<MODParrafo> getParrafosByIndex(Long idVersion) {
 		return list("listByIndex", idVersion); 
 	}

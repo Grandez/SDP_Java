@@ -12,6 +12,10 @@ public class RULGroupsService extends AbstractService<RULGroup> {
 	
 	private static Long lastId = 0L;
 	
+	public static void setLastId(Long last) {
+		lastId = last;
+	}
+
 	public RULGroup getByTextKey(String key) {
 		return findQuery(RULGroup.findByTextKey, key);
 	}

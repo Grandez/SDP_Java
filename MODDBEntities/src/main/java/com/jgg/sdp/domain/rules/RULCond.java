@@ -9,32 +9,28 @@ import javax.persistence.*;
 @Table(name="RUL_CONDS")
 public class RULCond implements Serializable {
 	
-	private static final long serialVersionUID = -9159376801732479923L;
+	private static final long serialVersionUID = -2014036529693511435L;
 
+	public static final String findById = "SELECT c FROM RULCond c WHERE c.idCond  = ?1";
+	
 	@Id
 	@Column(name="idCond")
 	private Long idCond;
 	
-	@Column(name="idDesc")
-	private Long idDesc;
+	@Column(name="lvalueType")
+	private Integer lvalueType;
 
-	@Column(name="idName")
-	private Long idName;
+	@Column(name="lvalue")
+	private String lvalue;
 
-	@Column(name="idSample")
-	private Long idSample;
-	
-	@Column(name="tipo")
-	private Integer tipo;
-	
-	@Column(name="property")
-	private String property;
-	
-	@Column(name="comparator")
-	private Integer comparator;
+	@Column(name="rvalueType")
+	private Integer rvalueType;
 
-	@Column(name="valor")
-	private String valor;
+	@Column(name="rvalue")
+	private String rvalue;
+	
+	@Column(name="operator")
+	private Integer operator;
 
 	@Column(name="uid")
 	private String uid;
@@ -50,60 +46,44 @@ public class RULCond implements Serializable {
 		this.idCond = idCond;
 	}
 
-	public Long getIdDesc() {
-		return idDesc;
+	public Integer getLvalueType() {
+		return lvalueType;
 	}
 
-	public void setIdDesc(Long idDesc) {
-		this.idDesc = idDesc;
+	public void setLvalueType(Integer lvalueType) {
+		this.lvalueType = lvalueType;
 	}
 
-	public Long getIdName() {
-		return idName;
+	public String getLvalue() {
+		return lvalue;
 	}
 
-	public void setIdName(Long idName) {
-		this.idName = idName;
+	public void setLvalue(String lvalue) {
+		this.lvalue = lvalue;
 	}
 
-	public Long getIdSample() {
-		return idSample;
+	public Integer getRvalueType() {
+		return rvalueType;
 	}
 
-	public void setIdSample(Long idSample) {
-		this.idSample = idSample;
+	public void setRvalueType(Integer rvalueType) {
+		this.rvalueType = rvalueType;
 	}
 
-	public Integer getTipo() {
-		return tipo;
+	public String getRvalue() {
+		return rvalue;
 	}
 
-	public void setTipo(Integer tipo) {
-		this.tipo = tipo;
+	public void setRvalue(String rvalue) {
+		this.rvalue = rvalue;
 	}
 
-	public String getProperty() {
-		return property;
+	public Integer getOperator() {
+		return operator;
 	}
 
-	public void setProperty(String property) {
-		this.property = property;
-	}
-
-	public Integer getComparator() {
-		return comparator;
-	}
-
-	public void setComparator(Integer comparator) {
-		this.comparator = comparator;
-	}
-
-	public String getValor() {
-		return valor;
-	}
-
-	public void setValor(String valor) {
-		this.valor = valor;
+	public void setOperator(Integer operator) {
+		this.operator = operator;
 	}
 
 	public String getUid() {
@@ -126,16 +106,14 @@ public class RULCond implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((comparator == null) ? 0 : comparator.hashCode());
 		result = prime * result + ((idCond == null) ? 0 : idCond.hashCode());
-		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
-		result = prime * result + ((idName == null) ? 0 : idName.hashCode());
-		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
-		result = prime * result + ((property == null) ? 0 : property.hashCode());
-		result = prime * result + ((tipo == null) ? 0 : tipo.hashCode());
+		result = prime * result + ((lvalue == null) ? 0 : lvalue.hashCode());
+		result = prime * result + ((lvalueType == null) ? 0 : lvalueType.hashCode());
+		result = prime * result + ((operator == null) ? 0 : operator.hashCode());
+		result = prime * result + ((rvalue == null) ? 0 : rvalue.hashCode());
+		result = prime * result + ((rvalueType == null) ? 0 : rvalueType.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
-		result = prime * result + ((valor == null) ? 0 : valor.hashCode());
 		return result;
 	}
 
@@ -148,40 +126,35 @@ public class RULCond implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		RULCond other = (RULCond) obj;
-		if (comparator == null) {
-			if (other.comparator != null)
-				return false;
-		} else if (!comparator.equals(other.comparator))
-			return false;
 		if (idCond == null) {
 			if (other.idCond != null)
 				return false;
 		} else if (!idCond.equals(other.idCond))
 			return false;
-		if (idDesc == null) {
-			if (other.idDesc != null)
+		if (lvalue == null) {
+			if (other.lvalue != null)
 				return false;
-		} else if (!idDesc.equals(other.idDesc))
+		} else if (!lvalue.equals(other.lvalue))
 			return false;
-		if (idName == null) {
-			if (other.idName != null)
+		if (lvalueType == null) {
+			if (other.lvalueType != null)
 				return false;
-		} else if (!idName.equals(other.idName))
+		} else if (!lvalueType.equals(other.lvalueType))
 			return false;
-		if (idSample == null) {
-			if (other.idSample != null)
+		if (operator == null) {
+			if (other.operator != null)
 				return false;
-		} else if (!idSample.equals(other.idSample))
+		} else if (!operator.equals(other.operator))
 			return false;
-		if (property == null) {
-			if (other.property != null)
+		if (rvalue == null) {
+			if (other.rvalue != null)
 				return false;
-		} else if (!property.equals(other.property))
+		} else if (!rvalue.equals(other.rvalue))
 			return false;
-		if (tipo == null) {
-			if (other.tipo != null)
+		if (rvalueType == null) {
+			if (other.rvalueType != null)
 				return false;
-		} else if (!tipo.equals(other.tipo))
+		} else if (!rvalueType.equals(other.rvalueType))
 			return false;
 		if (tms == null) {
 			if (other.tms != null)
@@ -192,11 +165,6 @@ public class RULCond implements Serializable {
 			if (other.uid != null)
 				return false;
 		} else if (!uid.equals(other.uid))
-			return false;
-		if (valor == null) {
-			if (other.valor != null)
-				return false;
-		} else if (!valor.equals(other.valor))
 			return false;
 		return true;
 	}

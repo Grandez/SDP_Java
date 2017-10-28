@@ -12,7 +12,6 @@ import com.jgg.sdp.domain.services.*;
 
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.rules.processor.*;
-import com.jgg.sdp.rules.xml.NodeGroup;
 import com.jgg.sdp.rules.xml.jaxb.*;
 
 public class RulesLoader {
@@ -28,6 +27,11 @@ public class RulesLoader {
     private RulesItem    rulesItem;
     private RulesRule    rulesRule;
 
+	private RulesDescription rulesDesc   = RulesDescription.getInstance();
+	private RulesCondition   rulesCond   = RulesCondition.getInstance();
+	private RulesScript      rulesScript = RulesScript.getInstance();
+	private RulesSample      rulesSamp   = RulesSample.getInstance();
+    
     private CommonService dbCommon  = new CommonService();
     
     public RulesLoader() {
@@ -117,13 +121,12 @@ public class RulesLoader {
 	}
 	
     private void processGroup(Group xmlGroup) {
-    	NodeGroup g = new NodeGroup(xmlGroup);
-    	g.toString();
     	RULGroup group = rulesGroup.createGroup(xmlGroup);
         for (Item xmlItem : xmlGroup.getItem()) {
-            RULItem item = rulesItem.createItem(group.getIdGroup(), xmlItem);
+            RULItem item = rulesItem.createItem(group, xmlItem);
             for (Rule xmlRule : xmlItem.getRule()) {
-                rulesRule.createRule(item.getIdGroup(), item.getIdItem(), xmlRule);
+            	RULRule r = rulesRule.createRule(item.getIdGroup(), item.getIdItem(), xmlRule);
+//            	r.friendly();
             }
         }
     }
@@ -132,7 +135,8 @@ public class RulesLoader {
     	
    		RULItem item = rulesItem.createItem(xmlItem);
     	for (Rule xmlRule : xmlItem.getRule()) {
-    	     rulesRule.createRule(item.getIdGroup(), item.getIdItem(), xmlRule);
+    	     RULRule r = rulesRule.createRule(item.getIdGroup(), item.getIdItem(), xmlRule);
+//    	     r.friendly();
     	}
     }
 
@@ -151,6 +155,21 @@ public class RulesLoader {
     	for (RULRule rule : rulesRule.getRules()) {
     		dbCommon.update(rule);
     	}
+
+    	for (RULCond cond : rulesCond.getConditions()) {
+    		dbCommon.update(cond);
+    	}
+
+    	for (RULScript script : rulesScript.getScripts()) {
+    		dbCommon.update(script);
+    	}
+
+    	for (RULDesc desc : rulesDesc.getDescriptions()) {
+    		dbCommon.update(desc);
+    	}
+    	for (RULSample samp : rulesSamp.getSamples()) {
+    		dbCommon.update(samp);
+    	}
     	
     	dbCommon.commitTrans();
     	
@@ -168,5 +187,7 @@ public class RulesLoader {
 	    rulesRule  = new RulesRule();
 	    
 	    RulesDescription.getInstance().clear();
+	    RulesCondition.getInstance().clear();
+	    RulesSample.getInstance().clear();
 	}
 }

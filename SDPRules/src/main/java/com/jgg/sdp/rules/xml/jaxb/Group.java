@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -28,10 +28,13 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="idParent" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="idGroup" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
+ *         &lt;element name="idParent" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="prefix" type="{http://www.sdp.com/SDPRules}prefixType"/>
- *         &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;choice minOccurs="0">
+ *           &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *           &lt;element name="activateOnCondition" type="{http://www.sdp.com/SDPRules}conditionType"/>
+ *         &lt;/choice>
  *         &lt;element ref="{http://www.sdp.com/SDPRules}description" minOccurs="0"/>
  *         &lt;element ref="{http://www.sdp.com/SDPRules}item" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
@@ -45,52 +48,30 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "idParent",
     "idGroup",
+    "idParent",
     "prefix",
     "active",
+    "activateOnCondition",
     "description",
     "item"
 })
 @XmlRootElement(name = "group")
 public class Group {
 
-    protected Long idParent;
     protected Long idGroup;
+    protected Long idParent;
     @XmlElement(required = true)
     protected String prefix;
     @XmlElement(defaultValue = "true")
     protected Boolean active;
+    protected ConditionType activateOnCondition;
     @XmlElement(namespace = "http://www.sdp.com/SDPRules")
     protected Description description;
     @XmlElement(namespace = "http://www.sdp.com/SDPRules")
     protected List<Item> item;
     @XmlAttribute(name = "name", required = true)
     protected String name;
-
-    /**
-     * Obtiene el valor de la propiedad idParent.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getIdParent() {
-        return idParent;
-    }
-
-    /**
-     * Define el valor de la propiedad idParent.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setIdParent(Long value) {
-        this.idParent = value;
-    }
 
     /**
      * Obtiene el valor de la propiedad idGroup.
@@ -114,6 +95,30 @@ public class Group {
      */
     public void setIdGroup(Long value) {
         this.idGroup = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad idParent.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getIdParent() {
+        return idParent;
+    }
+
+    /**
+     * Define el valor de la propiedad idParent.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setIdParent(Long value) {
+        this.idParent = value;
     }
 
     /**
@@ -162,6 +167,30 @@ public class Group {
      */
     public void setActive(Boolean value) {
         this.active = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad activateOnCondition.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ConditionType }
+     *     
+     */
+    public ConditionType getActivateOnCondition() {
+        return activateOnCondition;
+    }
+
+    /**
+     * Define el valor de la propiedad activateOnCondition.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ConditionType }
+     *     
+     */
+    public void setActivateOnCondition(ConditionType value) {
+        this.activateOnCondition = value;
     }
 
     /**

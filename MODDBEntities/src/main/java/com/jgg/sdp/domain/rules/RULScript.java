@@ -5,20 +5,20 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name="RUL_FORMULAS")
-public class RULFormula implements Serializable {
+@Table(name="RUL_SCRIPTS")
+public class RULScript implements Serializable {
 
 	private static final long serialVersionUID = -5163793448697653463L;
 
-	public static final String getFormula = "SELECT f FROM RULFormula f " +
-	                                        "WHERE idFormula = ?1 AND idSeq > 0 " +
+	public static final String getFormula = "SELECT s FROM RULScript r " +
+	                                        "WHERE idScript = ?1 AND idSeq > 0 " +
 			                                "ORDER BY idSeq";
-	public static final String getFormulaName = "SELECT f FROM RULFormula f WHERE idFormula = ?1 AND idSeq = 0 ";
-	public static final String delFormula     = "DELETE   FROM RULFormula f WHERE idFormula = ?1";
+	public static final String getFormulaName = "SELECT s FROM RULScript s WHERE idScript = ?1 AND idSeq = 0 ";
+	public static final String delFormula     = "DELETE   FROM RULScript s WHERE idScript = ?1";
 	
 	@Id
-	@Column(name="idFormula")
-	Long idFormula;
+	@Column(name="idScript")
+	Long idScript;
 
 	@Id
 	@Column(name="idType")
@@ -28,15 +28,15 @@ public class RULFormula implements Serializable {
 	@Column(name="idSeq")
 	Integer idSeq;
 	
-	@Column(name="formula")
-	String formula;
+	@Column(name="code")
+	String code;
 
-	public Long getIdFormula() {
-		return idFormula;
+	public Long getIdScript() {
+		return idScript;
 	}
 
-	public void setIdFormula(Long idFormula) {
-		this.idFormula = idFormula;
+	public void setIdScript(Long idScript) {
+		this.idScript = idScript;
 	}
 
 	public Integer getIdType() {
@@ -55,20 +55,20 @@ public class RULFormula implements Serializable {
 		this.idSeq = idSeq;
 	}
 
-	public String getFormula() {
-		return formula;
+	public String getCode() {
+		return code;
 	}
 
-	public void setFormula(String formula) {
-		this.formula = formula;
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((formula == null) ? 0 : formula.hashCode());
-		result = prime * result + ((idFormula == null) ? 0 : idFormula.hashCode());
+		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + ((idScript == null) ? 0 : idScript.hashCode());
 		result = prime * result + ((idSeq == null) ? 0 : idSeq.hashCode());
 		result = prime * result + ((idType == null) ? 0 : idType.hashCode());
 		return result;
@@ -82,16 +82,16 @@ public class RULFormula implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RULFormula other = (RULFormula) obj;
-		if (formula == null) {
-			if (other.formula != null)
+		RULScript other = (RULScript) obj;
+		if (code == null) {
+			if (other.code != null)
 				return false;
-		} else if (!formula.equals(other.formula))
+		} else if (!code.equals(other.code))
 			return false;
-		if (idFormula == null) {
-			if (other.idFormula != null)
+		if (idScript == null) {
+			if (other.idScript != null)
 				return false;
-		} else if (!idFormula.equals(other.idFormula))
+		} else if (!idScript.equals(other.idScript))
 			return false;
 		if (idSeq == null) {
 			if (other.idSeq != null)
@@ -105,5 +105,6 @@ public class RULFormula implements Serializable {
 			return false;
 		return true;
 	}
+
 	
 }

@@ -19,6 +19,7 @@ public class SDPFileService extends AbstractService<SDPFile> {
 	public SDPFile findById(long idFile) {
 		return getFirst(listQuery(SDPFile.findById, idFile));
 	}
+	
 	public SDPFile findByIdAndVersion(Long idFile, Long idVersion) {
 		return getFirst(listQuery(SDPFile.findByIdAndVersion, idFile, idVersion));
 	}

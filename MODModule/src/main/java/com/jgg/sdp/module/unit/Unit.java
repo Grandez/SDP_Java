@@ -30,17 +30,7 @@ public class Unit {
     }
     
 	public Unit (Archive archivo) {
-		System.out.println("Parar Creacion");
-/*        
-        Source source = SourcesFactory.getSourceCode(archivo);
-        sources.add(source);
-        
-        members.push(source.getBaseName());
-
-        this.source = sources.get(0);
-        this.numModulos = 0;
-        this.estado = CDG.STATUS_UNDEF;
-*/        
+        addSource(new Source(archivo));        
 	}
 	
 	public Source getMainSource()    { return sources.get(0); }

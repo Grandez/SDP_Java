@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -34,8 +34,6 @@ public class ObjectFactory {
     private final static QName _HeaderReplace_QNAME = new QName("", "replace");
     private final static QName _HeaderComment_QNAME = new QName("", "comment");
     private final static QName _HeaderTitle_QNAME = new QName("", "title");
-    private final static QName _SampleTypeCorrect_QNAME = new QName("", "correct");
-    private final static QName _SampleTypeBad_QNAME = new QName("", "bad");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.jgg.sdp.rules.xml.jaxb
@@ -69,19 +67,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Text }
+     * Create an instance of {@link TextType }
      * 
      */
-    public Text createText() {
-        return new Text();
-    }
-
-    /**
-     * Create an instance of {@link Rule }
-     * 
-     */
-    public Rule createRule() {
-        return new Rule();
+    public TextType createTextType() {
+        return new TextType();
     }
 
     /**
@@ -93,19 +83,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Rule }
+     * 
+     */
+    public Rule createRule() {
+        return new Rule();
+    }
+
+    /**
      * Create an instance of {@link Header }
      * 
      */
     public Header createHeader() {
         return new Header();
-    }
-
-    /**
-     * Create an instance of {@link Formula }
-     * 
-     */
-    public Formula createFormula() {
-        return new Formula();
     }
 
     /**
@@ -122,6 +112,22 @@ public class ObjectFactory {
      */
     public Group createGroup() {
         return new Group();
+    }
+
+    /**
+     * Create an instance of {@link ScriptType }
+     * 
+     */
+    public ScriptType createScriptType() {
+        return new ScriptType();
+    }
+
+    /**
+     * Create an instance of {@link OperandType }
+     * 
+     */
+    public OperandType createOperandType() {
+        return new OperandType();
     }
 
     /**
@@ -157,24 +163,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "title", scope = Header.class)
     public JAXBElement<String> createHeaderTitle(String value) {
         return new JAXBElement<String>(_HeaderTitle_QNAME, String.class, Header.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "correct", scope = SampleType.class)
-    public JAXBElement<String> createSampleTypeCorrect(String value) {
-        return new JAXBElement<String>(_SampleTypeCorrect_QNAME, String.class, SampleType.class, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "bad", scope = SampleType.class)
-    public JAXBElement<String> createSampleTypeBad(String value) {
-        return new JAXBElement<String>(_SampleTypeBad_QNAME, String.class, SampleType.class, value);
     }
 
 }

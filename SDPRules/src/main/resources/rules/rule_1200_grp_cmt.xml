@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas lexicas / Comentarios</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="CMT">
+      <idGroup>12</idGroup>
+      <idParent>10</idParent>
+      <prefix>CMT</prefix>
+      <active>true</active>
+      <r:description>
+          <text lang="xx">Comentarios</text>      
+      </r:description>
+      
+      <r:item name="CMT">
+         <object>CMT</object>
+         <active>true</active>
+         <r:description>
+            <text lang="xx">Gestion de comentarios</text>
+         </r:description>
+         
+         <r:rule>
+            <severity>2</severity>
+            <r:description>
+               <text lang="xx">Los comentarios {comparator} {value}</text>
+            </r:description>
+            <condition negated="true">
+               <type>string</type>
+               <operator>start</operator>
+               <rvalue>*</rvalue>
+            </condition>        
+            <sample>
+               <description lang="xx">
+               Los comentarios pueden empezar con *,/ o D
+               
+               Estos dos ultimos afectan a como se imprime el codigo fuente durante la fase de compilacion.   
+               Dado que no esta permitido imprimir listados desde el Host, estos tipos de comentarios no deben
+               utilizarse
+               </description> 
+               <correct>
+      * ESTE ES UN COMENTARIO CORRECTO           
+               </correct>
+                            
+               <bad>
+      / ESTE ES UN COMENTARIO INCORRECTO
+      D ESTE ES OTRO COMENTARIO INCORRECTO          
+               </bad>
+
+            </sample>                
+         </r:rule>
+         
+         <r:rule>
+            <severity>2</severity>
+            <r:description>
+               <text lang="xx">No se deben crear lineas de comentarios aislados</text>
+            </r:description>
+            <condition>
+               <attribute>length</attribute>
+               <operator>equal</operator>
+               <rvalue>1</rvalue>
+            </condition>        
+                
+         </r:rule>
+         
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>
+

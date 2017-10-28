@@ -1,0 +1,68 @@
+package com.jgg.sdp.rules.ctes;
+
+public class CDGRules {
+	
+	public final static int TYPE_NONE     = 0;
+	public final static int TYPE_TYPE     = 1;
+	public final static int TYPE_PROPERTY = 2;
+	public final static int TYPE_LVALUE   = 5;
+	
+	public final static int TYPE_STRING   = 11;
+	public final static int TYPE_INTEGER  = 12;
+	public final static int TYPE_LONG     = 13;
+	public final static int TYPE_BOOLEAN  = 15;
+	public final static int TYPE_SCRIPT   = 16;
+	
+	public final static int TYPE_OPTION   = 4;
+
+	public final static int TYPE_RVALUE   = 6;
+	public final static int TYPE_FORMULA  = 7;
+	public final static int TYPE_SPECIAL  = 8;	
+	
+	
+	public final static int TYPE_VALUE     = 101;
+	public final static int TYPE_FUNCTION  = 102;
+	public final static int TYPE_ATTRIBUTE = 103;
+	public final static int TYPE_METHOD    = 104;
+	public final static int TYPE_VARIABLE  = 105;
+
+	
+	// Si es mayor de 10 incluye igual
+	// Si es mayor de 100 es la negacion
+
+	public final static int OP_NEGATED   =    -1;
+	public final static int OP_POSITIVE  =     1;
+
+	public final static int OP_GENERIC   =     0;
+	
+	public final static int OP_STRING    =  1000;
+	public final static int OP_NUMERIC   =  2000;
+	public final static int OP_BOOLEAN   =  3000;
+
+	public final static int MASK_EQ = 1;
+	public final static int MASK_LT = 2;
+	public final static int MASK_GT = 4;
+	
+	public final static int OP_EXIST     =  OP_BOOLEAN  + 1;
+	public final static int OP_EQ        =  OP_NUMERIC  + MASK_EQ;
+	public final static int OP_GT        =  OP_NUMERIC  + MASK_GT;
+	public final static int OP_LT        =  OP_NUMERIC  + MASK_LT;
+	public final static int OP_START     =  OP_STRING   + 1;
+	public final static int OP_END       =  OP_STRING   + 2;
+	public final static int OP_CONTAINS  =  OP_STRING   + 3;
+	public final static int OP_MATCH     =  OP_STRING   + 4;	
+	public final static int OP_NOT_MATCH =  OP_STRING   + 5;	
+	
+
+
+	public final static int STAT_OK      =  0;
+	public final static int STAT_KO      =  1;
+	public final static int STAT_EXCEP   = -1;
+	
+	public final static long ACTIVE      =  0;
+	public final static long INACTIVE    = -1;
+	public final static long INHERIT     = -2;
+	
+	public final static int DESC_NA      =  0;
+	
+}

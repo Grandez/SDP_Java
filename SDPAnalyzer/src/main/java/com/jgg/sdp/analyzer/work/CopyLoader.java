@@ -46,9 +46,9 @@ public class CopyLoader {
 		if (src == null) return null;
 		Source source = new Source(file.getFullName());
 		source.setTipo(file.getTipo());
-		source.setIdSource(src.getIdFile());
-		source.setIdVersion(src.getIdVersion());
-		source.setRawData(file.getFullName(), src.getSource(), src.getEncoded());
+		source.setIdFile(src.getIdFile());
+		source.setIdFileVersion(src.getIdVersion());
+		source.setRawData(file.getFullName(), src.getEncoded(), src.getSource());
 		source.setFirma(file.getFirma());
 		source.prepareData(toks);
 		return source;

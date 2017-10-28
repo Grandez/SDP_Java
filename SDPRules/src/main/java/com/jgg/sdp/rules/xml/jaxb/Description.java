@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
- *         &lt;element ref="{http://www.sdp.com/SDPRules}text" maxOccurs="unbounded"/>
+ *         &lt;element name="text" type="{http://www.sdp.com/SDPRules}textType" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -46,8 +46,8 @@ import javax.xml.bind.annotation.XmlType;
 public class Description {
 
     protected Long id;
-    @XmlElement(namespace = "http://www.sdp.com/SDPRules", required = true)
-    protected List<Text> text;
+    @XmlElement(required = true)
+    protected List<TextType> text;
 
     /**
      * Obtiene el valor de la propiedad id.
@@ -91,13 +91,13 @@ public class Description {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Text }
+     * {@link TextType }
      * 
      * 
      */
-    public List<Text> getText() {
+    public List<TextType> getText() {
         if (text == null) {
-            text = new ArrayList<Text>();
+            text = new ArrayList<TextType>();
         }
         return this.text;
     }

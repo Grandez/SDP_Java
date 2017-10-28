@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -28,14 +28,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="idGroup" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="idItem" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
+ *         &lt;element name="idGroup" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="object" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;choice minOccurs="0">
  *           &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *           &lt;element name="activateOnCondition" type="{http://www.sdp.com/SDPRules}conditionType"/>
  *         &lt;/choice>
  *         &lt;element ref="{http://www.sdp.com/SDPRules}description" minOccurs="0"/>
+ *         &lt;element name="sample" type="{http://www.sdp.com/SDPRules}sampleType" minOccurs="0"/>
  *         &lt;element ref="{http://www.sdp.com/SDPRules}rule" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -48,53 +49,32 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "idGroup",
     "idItem",
+    "idGroup",
     "object",
     "active",
     "activateOnCondition",
     "description",
+    "sample",
     "rule"
 })
 @XmlRootElement(name = "item")
 public class Item {
 
-    protected Long idGroup;
     protected Long idItem;
+    protected Long idGroup;
     @XmlElement(required = true)
     protected String object;
+    @XmlElement(defaultValue = "true")
     protected Boolean active;
     protected ConditionType activateOnCondition;
     @XmlElement(namespace = "http://www.sdp.com/SDPRules")
     protected Description description;
+    protected SampleType sample;
     @XmlElement(namespace = "http://www.sdp.com/SDPRules")
     protected List<Rule> rule;
     @XmlAttribute(name = "name", required = true)
     protected String name;
-
-    /**
-     * Obtiene el valor de la propiedad idGroup.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
-     */
-    public Long getIdGroup() {
-        return idGroup;
-    }
-
-    /**
-     * Define el valor de la propiedad idGroup.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
-     */
-    public void setIdGroup(Long value) {
-        this.idGroup = value;
-    }
 
     /**
      * Obtiene el valor de la propiedad idItem.
@@ -118,6 +98,30 @@ public class Item {
      */
     public void setIdItem(Long value) {
         this.idItem = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad idGroup.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Long }
+     *     
+     */
+    public Long getIdGroup() {
+        return idGroup;
+    }
+
+    /**
+     * Define el valor de la propiedad idGroup.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Long }
+     *     
+     */
+    public void setIdGroup(Long value) {
+        this.idGroup = value;
     }
 
     /**
@@ -214,6 +218,30 @@ public class Item {
      */
     public void setDescription(Description value) {
         this.description = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad sample.
+     * 
+     * @return
+     *     possible object is
+     *     {@link SampleType }
+     *     
+     */
+    public SampleType getSample() {
+        return sample;
+    }
+
+    /**
+     * Define el valor de la propiedad sample.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link SampleType }
+     *     
+     */
+    public void setSample(SampleType value) {
+        this.sample = value;
     }
 
     /**

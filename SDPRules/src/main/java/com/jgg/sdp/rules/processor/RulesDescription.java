@@ -3,6 +3,7 @@ package com.jgg.sdp.rules.processor;
 import com.jgg.sdp.domain.services.rules.RULDescService;
 import com.jgg.sdp.rules.xml.jaxb.Description;
 import com.jgg.sdp.rules.xml.jaxb.Text;
+import com.jgg.sdp.rules.xml.jaxb.TextType;
 
 import java.util.ArrayList;
 
@@ -26,10 +27,14 @@ public class RulesDescription {
     	return desc;
     }
     
+    public ArrayList<RULDesc> getDescriptions() {
+    	return descs;
+    }
+    
     public Long createDescription(Long key, Description desc) {
 		if (desc == null) return 0L;
 			
-		for (Text v : desc.getText()) {
+		for (TextType v : desc.getText()) {
 			String l = v.getLang() == null ? SYS.DEF_LANG : v.getLang();
 			String d = v.getDialect() == null ? l.toUpperCase() : v.getDialect();
 			RULDesc r = descService.getDescriptionObject(key, l, d);

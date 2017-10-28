@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas de control de issues</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="ISSUES">
+      <idGroup>90</idGroup>     
+      <prefix>ISS</prefix>
+      <r:description>
+          <text lang="xx">Reglas de control de los issues</text>      
+      </r:description>
+      
+      <r:item name="Issues">
+         <object>ISSUES</object>
+        
+         <r:description>
+            <text lang="xx">El numero maximo de incidencias de nivel {IdRule} {Comparador} {Valor}</text>
+         </r:description>
+         
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>getNumIssues(0)</attribute>
+               <operator>gt</operator>
+               <rvalue>5</rvalue>
+            </condition>            
+         </r:rule>
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>getNumIssues(1)</attribute>
+               <operator>gt</operator>
+               <rvalue>4</rvalue>
+            </condition>            
+         </r:rule>
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>getNumIssues(2)</attribute>
+               <operator>gt</operator>
+               <rvalue>3</rvalue>
+            </condition>            
+         </r:rule>
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>getNumIssues(3)</attribute>
+               <operator>gt</operator>
+               <rvalue>2</rvalue>
+            </condition>            
+         </r:rule>
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>getNumIssues(4)</attribute>
+               <operator>gt</operator>
+               <rvalue>1</rvalue>
+            </condition>            
+         </r:rule>
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>getNumIssues(5)</attribute>
+               <operator>gt</operator>
+               <rvalue>0</rvalue>
+            </condition>            
+         </r:rule>
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>getNumIssues(5)</attribute>
+               <operator>gt</operator>
+               <rvalue>0</rvalue>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <idRule>10</idRule>
+            <severity>5</severity>
+            <condition>
+               <script>
+                  <name>Agrupacion de Issues</name>
+                  <code>SUM({IssuesCounts} * ({IssuesLevels} + 1)) / (1 + SUM({IssuesCounts}))</code>
+               </script>
+               <operator>gt</operator>
+               <rvalue>3</rvalue>
+            </condition>            
+         </r:rule>
+
+      </r:item>
+      
+   </r:group>
+
+</r:SDPRules>

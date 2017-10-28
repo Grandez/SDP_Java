@@ -12,6 +12,10 @@ public class RULItemsService extends AbstractService<RULItem> {
 
 	private static Long lastId = 0L;
 	
+	public static void setLastId(Long last) {
+		lastId = last;
+	}
+	
 	public RULItem getByTextKey(String key) {
 		return findQuery(RULItem.findByTextKey, key);
 	}
@@ -30,6 +34,9 @@ public class RULItemsService extends AbstractService<RULItem> {
 	
 	public List<RULItem> listActiveItemsByGroup(Long group) {
 		return listQuery(RULItem.listActiveByGroup, group);
+	}
+	public List<RULItem> listActiveItemsByName(String name) {
+		return listQuery(RULItem.listActiveByName, name);
 	}
 	
 	public Long getNextId(Long idParent) {

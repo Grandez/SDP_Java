@@ -9,10 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.rules.*;
-import com.jgg.sdp.tools.JGGJava;
+import com.jgg.sdp.tools.SDPJava;
 import com.jgg.sdp.web.adm.json.*;
 
 import com.jgg.sdp.rules.*;
+import com.jgg.sdp.rules.ctes.CDGRules;
 
 @RestController
 public class RulesController {
@@ -27,7 +28,7 @@ public class RulesController {
     @Autowired
     private RULRulesService ruleService;    
     @Autowired
-    private RULFormulaService formulaService;    
+    private RULScriptService formulaService;    
 
     @Autowired
     private RULDescService descService;
@@ -118,7 +119,7 @@ public class RulesController {
     	while (start != -1) {
     		end = base.indexOf('}');
     		token = base.substring(start + 1, end);
-    		String value = JGGJava.executeMethod(o, "get" + token).toString();
+    		String value = SDPJava.executeMethod(o, "get" + token).toString();
     		value = checkReservedWords(value, token);
     		String from = base.substring(start, end + 1);
     		base = base.replaceAll(Pattern.quote(from),value);

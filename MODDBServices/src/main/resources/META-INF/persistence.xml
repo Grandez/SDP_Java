@@ -50,7 +50,7 @@
 
         <class>com.jgg.sdp.domain.rules.RULCond</class>        
         <class>com.jgg.sdp.domain.rules.RULDesc</class>
-        <class>com.jgg.sdp.domain.rules.RULFormula</class>        
+        <class>com.jgg.sdp.domain.rules.RULScript</class>        
         <class>com.jgg.sdp.domain.rules.RULGroup</class>
         <class>com.jgg.sdp.domain.rules.RULItem</class>        
         <class>com.jgg.sdp.domain.rules.RULRule</class>

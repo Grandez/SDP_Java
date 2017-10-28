@@ -38,6 +38,9 @@ public class MODIssue implements Serializable {
     
     @Column(name="idRule")
     Long idRule;
+
+    @Column(name="prefix")
+    String prefix;
     
     @Column(name="severity")
     Integer severity;
@@ -106,6 +109,14 @@ public class MODIssue implements Serializable {
 		this.idRule = idRule;
 	}
 
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
+	
 	public Integer getSeverity() {
 		return severity;
 	}

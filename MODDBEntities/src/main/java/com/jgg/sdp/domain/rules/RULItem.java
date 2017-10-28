@@ -18,9 +18,10 @@ public class RULItem implements Serializable {
 	public static final String findMaxId       = "SELECT MAX(i.idItem) FROM RULItem i WHERE idGroup = ?1";
 	
 	public static final String listAll           = "SELECT i FROM RULItem i ";
-	public static final String listActive        = "SELECT i FROM RULItem i WHERE i.active = 0";
+	public static final String listActive        = "SELECT i FROM RULItem i WHERE i.active >= 0";
 	public static final String listByGroup       = "SELECT i FROM RULItem i WHERE i.idGroup = ?1";
-	public static final String listActiveByGroup = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.active = 0";
+	public static final String listActiveByGroup = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.active >= 0";
+	public static final String listActiveByName  = "SELECT i FROM RULItem i WHERE i.object  = ?1 AND i.active >= 0";
 	
 	@Id
 	@Column(name="idGroup")
@@ -33,6 +34,9 @@ public class RULItem implements Serializable {
 	@Column(name="idDesc")
 	private Long idDesc;
 
+	@Column(name="idSample")
+	private Long idSample;
+	
 	@Column(name="active")
 	private Long active;
 	
@@ -63,6 +67,14 @@ public class RULItem implements Serializable {
 		this.idDesc = idDesc;
 	}
 
+	public Long getIdSample() {
+		return idSample;
+	}
+
+	public void setIdSample(Long idSample) {
+		this.idSample = idSample;
+	}
+	
 	public Long getActive() {
 		return active;
 	}

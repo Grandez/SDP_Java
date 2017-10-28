@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.23 a las 12:28:12 PM CEST 
 //
 
 
@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="mandatory"/>
  *     &lt;enumeration value="equal"/>
+ *     &lt;enumeration value="is"/>
  *     &lt;enumeration value="gt"/>
  *     &lt;enumeration value="lt"/>
  *     &lt;enumeration value="ge"/>
@@ -44,6 +45,8 @@ public enum ComparatorType {
     MANDATORY("mandatory"),
     @XmlEnumValue("equal")
     EQUAL("equal"),
+    @XmlEnumValue("is")
+    IS("is"),
     @XmlEnumValue("gt")
     GT("gt"),
     @XmlEnumValue("lt")

@@ -2,7 +2,7 @@ package com.jgg.sdp.rules.objects;
 
 import java.sql.Timestamp;
 
-public class RuleRule {
+public class RuleRule extends RuleItem {
 
 	private String    itemName;
 	private Long      idGroup;
@@ -14,8 +14,16 @@ public class RuleRule {
 	private int       comparator;
 	private String    property;
 	private String    valor;
+	private String    prefix;
 	private String    uid;
 	private Timestamp tms;
+	
+	private RuleCond  activation = null;
+	private RuleCond  condition  = null;
+	
+	public RuleRule(RuleItem item) {
+		super(item);
+	}
 	
 	public String getItemName() {
 		return itemName;
@@ -23,13 +31,13 @@ public class RuleRule {
 	public void setItemName(String itemName) {
 		this.itemName = itemName;
 	}
-	public Long getIdGroup() {
+	public long getIdGroup() {
 		return idGroup;
 	}
 	public void setIdGroup(Long idGroup) {
 		this.idGroup = idGroup;
 	}
-	public Long getIdItem() {
+	public long getIdItem() {
 		return idItem;
 	}
 	public void setIdItem(Long idItem) {
@@ -71,6 +79,12 @@ public class RuleRule {
 	public void setValor(String valor) {
 		this.valor = valor;
 	}
+	public String getPrefix() {
+		return prefix;
+	}
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 	public String getUid() {
 		return uid;
 	}
@@ -89,5 +103,18 @@ public class RuleRule {
 	public void setProperty(String property) {
 		this.property = property;
 	}
+	public RuleCond getActivation() {
+		return activation;
+	}
+	public void setActivation(RuleCond activation) {
+		this.activation = activation;
+	}
+	public RuleCond getCondition() {
+		return condition;
+	}
+	public void setCondition(RuleCond condition) {
+		this.condition = condition;
+	}
+	
 	
 }

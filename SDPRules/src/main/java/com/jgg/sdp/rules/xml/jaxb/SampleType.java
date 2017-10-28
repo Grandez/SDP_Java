@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -10,11 +10,8 @@ package com.jgg.sdp.rules.xml.jaxb;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -27,10 +24,11 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;complexType name="sampleType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;choice maxOccurs="unbounded">
+ *       &lt;sequence>
+ *         &lt;element name="description" type="{http://www.sdp.com/SDPRules}textType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="correct" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="bad" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/choice>
+ *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -40,44 +38,91 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sampleType", propOrder = {
-    "correctOrBad"
+    "description",
+    "correct",
+    "bad"
 })
 public class SampleType {
 
-    @XmlElementRefs({
-        @XmlElementRef(name = "correct", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "bad", type = JAXBElement.class, required = false)
-    })
-    protected List<JAXBElement<String>> correctOrBad;
+    protected List<TextType> description;
+    protected String correct;
+    protected String bad;
 
     /**
-     * Gets the value of the correctOrBad property.
+     * Gets the value of the description property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the correctOrBad property.
+     * This is why there is not a <CODE>set</CODE> method for the description property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getCorrectOrBad().add(newItem);
+     *    getDescription().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
+     * {@link TextType }
      * 
      * 
      */
-    public List<JAXBElement<String>> getCorrectOrBad() {
-        if (correctOrBad == null) {
-            correctOrBad = new ArrayList<JAXBElement<String>>();
+    public List<TextType> getDescription() {
+        if (description == null) {
+            description = new ArrayList<TextType>();
         }
-        return this.correctOrBad;
+        return this.description;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad correct.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCorrect() {
+        return correct;
+    }
+
+    /**
+     * Define el valor de la propiedad correct.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCorrect(String value) {
+        this.correct = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad bad.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBad() {
+        return bad;
+    }
+
+    /**
+     * Define el valor de la propiedad bad.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBad(String value) {
+        this.bad = value;
     }
 
 }

@@ -6,9 +6,8 @@ import java.util.List;
 
 import com.jgg.sdp.domain.rules.RULGroup;
 import com.jgg.sdp.domain.services.rules.*;
+import com.jgg.sdp.rules.xml.jaxb.ConditionType;
 import com.jgg.sdp.rules.xml.jaxb.Group;
-
-import static com.jgg.sdp.rules.CDGRules.*;
 
 public class RulesGroup {
 
@@ -17,8 +16,14 @@ public class RulesGroup {
 	private ArrayList<RULGroup> groups = new ArrayList<RULGroup>();
 
 	private RulesDescription ruleDesc = RulesDescription.getInstance();
+	private RulesCondition   ruleCond = RulesCondition.getInstance();
+	
+	public RulesGroup() {
+		RULGroupsService.setLastId(0L);
+	}
 	
 	public RULGroup createGroup(Group xmlGroup) {
+		long key = 0L;
 		RULGroup group =  null;
 		Long id = xmlGroup.getIdGroup();
 		if (id == null || id == 0) {
@@ -35,9 +40,14 @@ public class RulesGroup {
 			group.setIdName(xmlGroup.getName());
 		}
 		
+		key = group.getIdGroup();
+		
 		group.setIdParent(xmlGroup.getIdParent() == null ? 0L : xmlGroup.getIdParent());
 		group.setPrefix(xmlGroup.getPrefix());
-		group.setActive(xmlGroup.isActive() ? ACTIVE : INACTIVE);
+		
+		ConditionType cond = xmlGroup.getActivateOnCondition();
+		
+		group.setActive(ruleCond.createCondition( key * 10,      cond, xmlGroup.isActive()));
 		group.setIdDesc(ruleDesc.createDescription(id, xmlGroup.getDescription()));
 		group.setUid(System.getProperty("user.name"));
 		group.setTms(new Timestamp(System.currentTimeMillis()));

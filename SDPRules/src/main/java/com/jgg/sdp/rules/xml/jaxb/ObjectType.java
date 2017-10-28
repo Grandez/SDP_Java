@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -21,13 +21,12 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;simpleType name="objectType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="string"/>
  *     &lt;enumeration value="verb"/>
- *     &lt;enumeration value="word"/>
  *     &lt;enumeration value="option"/>
  *     &lt;enumeration value="lvalue"/>
  *     &lt;enumeration value="rvalue"/>
  *     &lt;enumeration value="value"/>
- *     &lt;enumeration value="special"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -37,10 +36,10 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ObjectType {
 
+    @XmlEnumValue("string")
+    STRING("string"),
     @XmlEnumValue("verb")
     VERB("verb"),
-    @XmlEnumValue("word")
-    WORD("word"),
     @XmlEnumValue("option")
     OPTION("option"),
     @XmlEnumValue("lvalue")
@@ -48,9 +47,7 @@ public enum ObjectType {
     @XmlEnumValue("rvalue")
     RVALUE("rvalue"),
     @XmlEnumValue("value")
-    VALUE("value"),
-    @XmlEnumValue("special")
-    SPECIAL("special");
+    VALUE("value");
     private final String value;
 
     ObjectType(String v) {

@@ -5,72 +5,60 @@
 
    <r:header>
       <title>Reglas lexicas</title>
-      <replace>false</replace>
+      <replace>true</replace>
    </r:header>
    
    <r:group name="LEX">
-      <idParent>0</idParent>
       <idGroup>10</idGroup>
       <prefix>LEX</prefix>
-      <active>true</active>
       <r:description>
-          <r:text lang="xx">Analisis lexico</r:text>      
+          <text lang="xx">Analisis lexico</text>      
       </r:description>
       
       <r:item name="TAB">
-         <idItem>1</idItem>
-         <active>true</active>
          <object>TAB</object>
+         <active>true</active>
          <r:description>
-            <r:text lang="xx">No usar caracteres de tabulacion</r:text>
+            <text lang="xx">No usar caracteres de tabulacion</text>
          </r:description>
          
          <r:rule>
-            <idRule>1</idRule>
-            <active>true</active>
-            <priority>0</priority>
             <severity>2</severity>
-            <r:description>
-               <r:text lang="xx">No usar caracteres de tabulacion</r:text>
-            </r:description>
-            <condition negated="true">
-               <objectType>word</objectType>
-               <comparator>mandatory</comparator>
-               <value>\t</value>
+            <condition>
+               <property>exist()</property>
             </condition>            
          </r:rule>
       </r:item>
 
       <r:item name="HEX">
-         <idItem>2</idItem>
-         <active>true</active>
          <object>HEX</object>
-            <r:description>
-               <r:text lang="xx">Usar la codificacion hexadecimal para los caracteres no imprimibles</r:text>
-            </r:description>
+         <r:description>
+            <text lang="xx">Usar la codificacion hexadecimal para los caracteres no imprimibles</text>
+         </r:description>
             
          <r:rule>
-            <idRule>2</idRule>
-            <active>true</active>
-            <priority>0</priority>
             <severity>2</severity>
-            <r:description>
-               <r:text lang="xx">Usar la codificacion hexadecimal para los caracteres no imprimibles</r:text>
-            </r:description>
-            <condition negated="true">
-               <objectType>word</objectType>
-               <comparator>mandatory</comparator>
-               <value>0x10</value>
+            <condition>
+               <property>exist()</property>
             </condition>            
             <sample>
-               <bad>
-        01  NON-PRINTABLE.
-            03 TAB-CODE    PIC X(01) VALUE '\t'.           
-               </bad>
+               <description lang="xx">
+                  El uso de caracteres no imprimibles:
+                 
+                  - Puede ocasionar problemas de conversion de caracteres entre maquinas
+                  - Impide ver el codigo exacto que se esta utilizando
+               
+                  De manera general, cuando sea necesario utilizar caracteres especiales se deben especificar 
+                  por sus valores hexadecimales
+               </description>
                <correct>
-        01  NON-PRINTABLE.
-            03 TAB-CODE    PIC X(01) VALUE X'05'.           
+                  01  NON-PRINTABLE.
+                      03 TAB-CODE    PIC X(01) VALUE X'05'.           
                </correct>
+               <bad>
+                  01  NON-PRINTABLE.
+                      03 TAB-CODE    PIC X(01) VALUE '\t'.           
+               </bad>
 
             </sample>
          </r:rule>         

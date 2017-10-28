@@ -5,11 +5,10 @@ import java.util.*;
 
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Issue;
-import com.jgg.sdp.rules.objects.RuleItem;
-import com.jgg.sdp.rules.objects.RuleObject;
-import com.jgg.sdp.rules.objects.RuleRule;
+import com.jgg.sdp.rules.objects.*;
 
-import static com.jgg.sdp.rules.CDGRules.*;
+import static com.jgg.sdp.rules.ctes.CDGRules.*;
+import static com.jgg.sdp.rules.ctes.CDGItems.*;
 
 public class RulesChecker {
 
@@ -93,19 +92,7 @@ public class RulesChecker {
         obj.setBegColumn(0);
         obj.setComponent(module.getSumIssues());
 
-        RuleItem item = processor.getRuleItemByName(GRP_ISSUES, "RULES");
-        
-        if (item == null) return;
-        
-		for (RuleRule rule : item.getRules()) {
-			long level = rule.getIdRule();
-			obj.setValue(module.getSumIssues().getCount(level));
-			module.getSumIssues().setMaximum(level, new Integer(rule.getValor()));
-			
-			boolean res = processor.processRule(rule, obj);
-			module.getSumIssues().setStatus(level, (res) ? STAT_KO : STAT_KO);
-			if (level == 99) module.getSumIssues().setCount(level, ((BigDecimal) obj.getValue()).intValue());
-		}		
+        processor.processItemByName(ITEM_RULES, obj);
         
 	}
 	
@@ -120,7 +107,7 @@ public class RulesChecker {
         obj.setBegColumn(column);
         obj.setComponent("\t");
 
-        processor.processRuleByName(GRP_LEXER, "TAB", obj);        
+        processor.processItemByName(ITEM_TAB, obj);        
 	}
 
 	public void checkComment(String text, int line) {
@@ -129,7 +116,7 @@ public class RulesChecker {
         obj.setBegLine(line);
         obj.setComponent(text);
 
-        processor.processRuleByName(GRP_COMMENT, "CMT", obj);
+        processor.processItemByName(ITEM_COMMENT, obj);
 	}
 	
 	public void checkNoPrintable(int line, int column) {

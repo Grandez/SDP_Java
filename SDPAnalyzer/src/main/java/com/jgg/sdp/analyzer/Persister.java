@@ -32,6 +32,7 @@ import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.status.StatusItem;
+import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.module.unit.Unit;
 import com.jgg.sdp.tools.*;
 
@@ -85,45 +86,48 @@ public class Persister {
        persistModuleData();   
     }
 
-    public void persistUnit(Unit unit) {
+    public SDPFile persistUnit(Unit unit) {
 // 	   this.idFile = unit.getId();
 // 	   this.idFileVersion = unit.getIdVersion();
 
-    	persistCompileUnit(unit);
+    	SDPFile f = persistCompileUnit(unit);
     	persistSource(unit);
+    	return f;
     }
 
     public void persistStatus(SDPFile file) {
     	generate(file);
     }
     
-    private void persistCompileUnit(Unit unit) {
-    	
+    private SDPFile persistCompileUnit(Unit unit) {
+
+        Source src = unit.getMainSource();
+        
     	SDPFile file = new SDPFile();
-/*
     	file.setIdFile(idFile);
     	file.setIdVersion(idFileVersion);
-        file.setArchivo(unit.getNombre());
-        file.setTipo(unit.getTipo());
+        file.setArchivo(src.getBaseName());
+        file.setFullName(src.getFullName());
+        file.setTipo(src.getTipo());
         file.setEstado(unit.getStatus());
-        file.setFirma(unit.getFirma());
+        file.setFirma(src.getFirma());
         file.setNumModulos(unit.getNumModulos());
         file.setUid(System.getProperty("user.name"));
         file.setTms(Fechas.getTimestamp());
         
         generate(file);
-*/        
+        
+        return file;        
     }    
 
     private void persistSource(Unit unit) {        
     	SDPSource fuente = new SDPSource();
-    	/*
+
     	fuente.setIdFile(idFile);
     	fuente.setIdVersion(idFileVersion);
     	fuente.setEncoded("ZIP");
-        fuente.setSource(Zipper.zip(unit.getNombre(), unit.getMainSource().getRawData()));
+        fuente.setSource(Zipper.zip(unit.getMainSource().getFullName(), unit.getMainSource().getRawData()));
         generate(fuente);
-*/        
     }
     
     private void persistModuleData() {
@@ -167,7 +171,7 @@ public class Persister {
         idVersion = Fechas.serial();
         
         mod.setIdVersion(idVersion);
-        mod.setIdFile(module.getSource().getIdSource());
+        mod.setIdFile(module.getSource().getIdFile());
        	mod.setUid(System.getProperty("user.name"));
        	mod.setTms(Fechas.getTimestamp());
        	mod.setTipo(module.getType());
@@ -182,7 +186,7 @@ public class Persister {
     private void updateVersion() {
     	MODVersion version = new MODVersion(idModule, idVersion);
 
-    	version.setIdVersionFile(module.getSource().getIdVersion());
+    	version.setIdVersionFile(module.getSource().getIdFileVersion());
         version.setNombre(module.getName());
     	version.setTipo(module.getType());
     	version.setDesc(module.getDescription());
@@ -389,6 +393,7 @@ public class Persister {
             i.setEndColumn(issue.getEndColumn());
             i.setBloque(issue.getBloque());
             i.setFirma(issue.getFirma());
+            i.setPrefix(issue.getPrefix());
             i.setIdException(0L);
             generate(i);
         }

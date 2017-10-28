@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas a nivel modulo</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="MOD">
+      <idGroup>90</idGroup>     
+      <prefix>MOD</prefix>
+      <r:description>
+          <text lang="xx">Reglas globales del modulo</text>      
+      </r:description>
+      
+      <r:item name="ModuleName">
+         <object>MODULE</object>
+         <active>true</active>         
+         <r:description>
+            <text lang="xx">El nombre del ejecutable debe coincidir con el del fichero fuente</text>
+         </r:description>
+         
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>moduleName</attribute>
+               <operator>equal</operator>
+               <rvalue type="method">fileName</rvalue>
+            </condition>            
+         </r:rule>
+      </r:item>
+      
+      <r:item name="ModuleCount">
+         <object>MODULE</object>
+         <active>true</active>         
+         <r:description>
+            <text lang="xx">Cada ejecutable se codifica en su propio fichero fuente</text>
+         </r:description>
+         
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <attribute>moduleCount</attribute>
+               <operator>equal</operator>
+               <rvalue>1</rvalue>
+            </condition>            
+         </r:rule>
+         
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>

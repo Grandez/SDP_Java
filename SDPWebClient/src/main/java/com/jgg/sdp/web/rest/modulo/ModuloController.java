@@ -14,8 +14,6 @@ import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.jgg.sdp.common.config.*;
-
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
 
@@ -26,10 +24,7 @@ import com.jgg.sdp.domain.services.rules.RULRulesService;
 import com.jgg.sdp.domain.services.session.*;
 import com.jgg.sdp.domain.services.traps.TRPSesionService;
 import com.jgg.sdp.tools.Fechas;
-import com.jgg.sdp.web.core.DBConfiguration;
 import com.jgg.sdp.web.json.modulo.*;
-
-import com.jgg.sdp.common.ctes.CFG;
 
 @RestController
 public class ModuloController {
@@ -64,13 +59,6 @@ public class ModuloController {
     
     @Autowired
     SESSesionService sesionService;
-
-    private Configuration cfg = DBConfiguration.getInstance();    
-    
-//    @RequestMapping("/module/{idModulo}")
-//    public Modulo getModuleInfo(@PathVariable Long idModulo) {
-//        return getModuleInfo(idModulo, cfg.getInteger(CFG.DATE_INTERVAL));
-//    }
 
     @RequestMapping("/module/{idModulo}")
     public Modulo getModuleInfo(@PathVariable Long idModulo, 

@@ -8,12 +8,14 @@ import com.jgg.sdp.domain.services.rules.*;
 public class RulesTree {
 
 	//private HashMap<String,  RuleGroup> namesTree = new HashMap<String, RuleGroup>();
-	private HashMap<Long, RuleGroup> keysTree  = new HashMap<Long, RuleGroup>();
-	
+	private HashMap<Long,   RuleGroup> groupsKeyMap   = new HashMap<Long,   RuleGroup>();
+	private HashMap<String, Long>      groupsNameMap  = new HashMap<String, Long>();
+	private HashMap<String, HashMap<String, RuleItem>> itemsMap  = new HashMap<String, HashMap<String, RuleItem>>();
 	
 	private RULGroupsService groupsService = new RULGroupsService();
 	private RULItemsService  itemsService  = new RULItemsService();
 	private RULRulesService  rulesService  = new RULRulesService();	
+	private RULCondsService  condsService  = new RULCondsService();
 	
 	private static RulesTree        tree = null;
 	
@@ -32,35 +34,57 @@ public class RulesTree {
 		return tree;		
 	}
 
+	public RuleItem getItemByName(String name) {
+		HashMap<String, RuleItem> itemMap = itemsMap.get(name);
+		if (itemMap == null) return null;
+		Object[] items = itemMap.values().toArray();
+		if (items.length == 0) return null;
+		return (RuleItem) items[0];
+	}
+
 	public RuleGroup getGroupById(int id) {
-		return keysTree.get(id);
+		return groupsKeyMap.get(id);
 	}
 	
 	public void reload() {
 //		namesTree = new HashMap<String, RuleGroup>();
-		keysTree  = new HashMap<Long, RuleGroup>();
+		groupsKeyMap   = new HashMap<Long, RuleGroup>();
+		groupsNameMap  = new HashMap<String, Long>();
 		
 		for (RULGroup grp : groupsService.listActiveGroups()) {
 			RuleGroup group = new RuleGroup();
 			group.setId(grp.getIdGroup());
 			group.setIdParent(grp.getIdParent());
 			group.setActivo(grp.getActive());
-			keysTree.put(group.getId(), group);
-			loadItems(group);
+			group.setName(grp.getIdName());
+			group.setPrefix(grp.getPrefix());
+			groupsKeyMap.put(group.getId(), group);
+			groupsNameMap.put(group.getName(), group.getId());
+			loadItemsByGroup(group);
 		}
 	}
 
-	private void loadItems(RuleGroup group) {
+	
+	private void loadItemsByGroup(RuleGroup group) {
 		for (RULItem itm : itemsService.listActiveItemsByGroup(group.getId())) {
 			RuleItem item = mountItem(itm);
-			group.addItem(item);
-			loadRules(item);
+			item.setPrefix(group.getPrefix());
+			HashMap<String, RuleItem> map = itemsMap.get(item.getObject());
+			if (map == null) {
+				map = new HashMap<String, RuleItem>();
+				map.put(group.getName(), item);
+				itemsMap.put(item.getObject(), map);
+			}
+			else {
+				map.put(group.getName(), item);
+			}
+			loadRulesByItem(item);
 		}
 	}
 	
-	private void loadRules(RuleItem item) {
+	private void loadRulesByItem(RuleItem item) {
 		for (RULRule rul : rulesService.listActiveRulesByItem(item.getIdGroup(), item.getIdItem())) {
-			RuleRule rule = mountRule(rul);
+			RuleRule rule = mountRule(item, rul);
 			item.addRule(rule);
 		}
 		
@@ -71,26 +95,45 @@ public class RulesTree {
 		item.setIdGroup(itm.getIdGroup());
 		item.setIdItem(itm.getIdItem());
 		item.setObject(itm.getObject());
+		item.setActivation(getCondition(itm.getActive()));
 		return item;
 	}
 
-	private RuleRule mountRule(RULRule rul) {
-		RuleRule rule = new RuleRule();
-        
-		rule.setComparator(rul.getComparator());
+	private RuleRule mountRule(RuleItem item, RULRule rul) {
+		RuleRule rule = new RuleRule(item);
 		rule.setIdGroup(rul.getIdGroup());
 		rule.setIdItem(rul.getIdItem());
 		rule.setIdRule(rul.getIdRule());
-		rule.setPriority(rul.getPriority());
 		rule.setSeverity(rul.getSeverity());
-		rule.setType(rul.getTipo());
-		rule.setProperty(rul.getProperty());
-		rule.setValor(rul.getValor());
+		rule.setPriority(rul.getPriority());
+		rule.setPrefix(item.getPrefix());
+		
+		if (rul.getActive() > 1) {
+			rule.setActivation(getCondition(rul.getActive()));
+		}
+		
+		rule.setCondition(getCondition(rul.getIdCond()));
 		return rule;
 	}
 	
+	private RuleCond getCondition(Long key) {
+		Long id = key;
+		if (id < 0) id *= -1;
+		RULCond cond = condsService.getById(key);
+		if (cond == null) return null;
+		RuleCond c = new RuleCond();
+		c.setIdCond(cond.getIdCond());
+		c.setLvalue(cond.getLvalue());
+		c.setLvalueType(cond.getLvalueType());
+		c.setOperator(cond.getOperator());
+		c.setRvalue(cond.getRvalue());
+		c.setRvalueType(cond.getRvalueType());
+		return c;
+	}
+	
+/*	
 	private void printTree() {
-		for (Long key : keysTree.keySet())   {
+		for (Long key : groupsKeysTree.keySet())   {
 			RuleGroup grp = keysTree.get(key);
 			System.out.println("Grupo: " + grp.getId());
 			for (RuleItem itm : grp.getItems()) {
@@ -101,4 +144,5 @@ public class RulesTree {
 			}
         }	
 	}
+*/	
 }

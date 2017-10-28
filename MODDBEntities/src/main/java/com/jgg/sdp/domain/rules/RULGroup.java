@@ -18,8 +18,8 @@ public class RULGroup implements Serializable {
 	public static final String findMaxId     = "SELECT MAX(r.idGroup) FROM RULGroup r";
 	
     public static final String listAll       = "SELECT r FROM RULGroup r";
-	public static final String listActive    = "SELECT r FROM RULGroup r WHERE r.active   = 0";
-	public static final String listChilds    = "SELECT r FROM RULGroup r WHERE r.idParent = ?1";
+	public static final String listActive    = "SELECT r FROM RULGroup r WHERE r.active   >= 0";
+	public static final String listChilds    = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1";
 
 	
 	@Id

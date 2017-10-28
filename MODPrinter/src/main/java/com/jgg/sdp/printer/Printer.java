@@ -11,15 +11,18 @@ public class Printer {
 
 	ColoredPrinter cp = new ColoredPrinter.Builder(9, false).build();
 
+	public static void print  (String txt) { System.out.print(txt);   }
+	public static void println(String txt) { System.out.println(txt); }
+	
 	public void nl()                { nl(1); }
 	public void boxBeg()            { boxDecorator(); }
 	public void boxEnd()            { boxDecorator(); }
 	public void boxLine(String txt) { boxLine(txt, false); }
 	
 	public void nl(int lines) {
-		for (int idx = 0; idx < lines; idx++) print("");
+		for (int idx = 0; idx < lines; idx++) write("");
 	}
-	
+  
 	public void box(String txt, String...strings) {
 		boxDecorator();
 		boxLine(txt);
@@ -30,25 +33,25 @@ public class Printer {
 	public void line(String txt) {
 		linea.setLength(0);
 		linea.append(txt);
-		println();
+		writeln();
 	}
 	
 	public void lineBeg(String txt) {
 		linea.setLength(0);
 		linea.append(txt);
-		print(txt);
+		write(txt);
 	}
 
 	public void lineCnt(String txt) {
 		linea.append(txt);
-		print(txt);
+		write(txt);
 	}
 
 	public void lineEnd(String txt) {
 		StringBuilder s = new StringBuilder();
 		for (int idx = linea.length() + txt.length(); idx < LEN; idx++) s.append(' ');
 		s.append(txt);
-		println(s.toString());
+		writeln(s.toString());
 	}
 	
 	public void boxLine(String txt, boolean centered) {
@@ -60,18 +63,18 @@ public class Printer {
 		linea.append(txt);
 		for (idx = linea.length(); idx < LEN - 1; idx++) linea.append(' ');
 		linea.append("|");
-		println();
+		writeln();
 	}
 	
 	
-	public void printAction(String msg) {
+	public void writeAction(String msg) {
 		StringBuilder aux = new StringBuilder();
-		print(msg);
+		write(msg);
 		for (int i = msg.length(); i < LEN; i++) aux.append(' ');
-		print(aux.toString());
+		write(aux.toString());
 	}
-	public void printRes(String res) {
-		println(res);
+	public void writeRes(String res) {
+		writeln(res);
 	}
 	
 	private void boxDecorator() {
@@ -79,19 +82,19 @@ public class Printer {
 		linea.append("+");
 		for (int idx = 0; idx < (LEN - 2); idx++) linea.append('-');
 		linea.append('+');
-		println(Attribute.BOLD);
+		writeln(Attribute.BOLD);
 		
 	}
 	
-	private void println()               { println(linea.toString(), Attribute.NONE); }	
-	private void println(Attribute attr) { println(linea.toString(), attr);           }
+	private void writeln()               { writeln(linea.toString(), Attribute.NONE); }	
+	private void writeln(Attribute attr) { writeln(linea.toString(), attr);           }
 	
-	private void print(String txt) { System.out.print(txt); }
+	private void write(String txt) { System.out.print(txt); }
 	
-	private void println(String txt) { println(txt, Attribute.NONE); }
-	private void println(String txt, Attribute attr) {
+	private void writeln(String txt) { writeln(txt, Attribute.NONE); }
+	private void writeln(String txt, Attribute attr) {
 		cp.println(txt, attr, FColor.NONE, BColor.NONE);
-//		System.out.println(txt);
+//		System.out.writeln(txt);
 	}
 	
 }

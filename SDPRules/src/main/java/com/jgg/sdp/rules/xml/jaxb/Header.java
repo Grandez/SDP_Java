@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.10.16 a las 01:07:34 PM CEST 
+// Generado el: 2017.10.28 a las 12:35:34 PM CEST 
 //
 
 
@@ -49,9 +49,9 @@ import javax.xml.bind.annotation.XmlType;
 public class Header {
 
     @XmlElementRefs({
+        @XmlElementRef(name = "replace", type = JAXBElement.class, required = false),
         @XmlElementRef(name = "title", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "comment", type = JAXBElement.class, required = false),
-        @XmlElementRef(name = "replace", type = JAXBElement.class, required = false)
+        @XmlElementRef(name = "comment", type = JAXBElement.class, required = false)
     })
     protected List<JAXBElement<? extends Serializable>> titleAndReplaceAndComment;
 
@@ -73,9 +73,9 @@ public class Header {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
-     * {@link JAXBElement }{@code <}{@link String }{@code >}
      * {@link JAXBElement }{@code <}{@link Boolean }{@code >}
+     * {@link JAXBElement }{@code <}{@link String }{@code >}
+     * {@link JAXBElement }{@code <}{@link String }{@code >}
      * 
      * 
      */

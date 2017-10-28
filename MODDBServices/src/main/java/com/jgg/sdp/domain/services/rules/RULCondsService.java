@@ -8,4 +8,7 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class RULCondsService extends AbstractService<RULCond> {
 
+	public RULCond getById(Long id) {
+		return findQuery(RULCond.findById, id);
+	}
 } 

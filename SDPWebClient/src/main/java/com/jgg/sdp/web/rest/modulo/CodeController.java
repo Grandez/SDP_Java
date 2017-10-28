@@ -13,6 +13,8 @@ import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
+import com.jgg.sdp.module.unit.Source;
+import com.jgg.sdp.web.core.DBSource;
 import com.jgg.sdp.web.json.Fuente;
 
 @RestController
@@ -44,24 +46,29 @@ public class CodeController {
     @Autowired
     MODIssueService    issueService;
     
+    @Autowired
+    DBSource dbs;
+    
     @RequestMapping("/source/{idModulo}")
     public List<Fuente> getSourceLastVersion(@PathVariable Long idModulo) {
-    	SDPModulo mod = modService.findById(idModulo);
-        return getSourceByVersion(idModulo, mod.getIdVersion());
+        return getSourceByVersion(idModulo, 0L);
     }
     
     @RequestMapping("/source/{idModulo}/{idVersion}")
     public List<Fuente> getSourceByVersion(@PathVariable Long idModulo, @PathVariable Long idVersion) {
     	SDPModulo mod = modService.findById(idModulo);
-    	MODVersion ver = verService.findById(idVersion);
+    	Long wrkVersion = (idVersion == 0L) ? mod.getIdVersion() : idVersion;
+    	MODVersion ver = verService.findById(wrkVersion);
         if (ver == null) return new ArrayList<Fuente>();
 
        return prepareSource(mod.getIdFile(), ver);
     }
     
     private List<Fuente> prepareSource(Long idFile, MODVersion ver) {
-       SDPSource source = srcService.getSource(idFile, ver.getIdVersionFile());
-       if (source == null) return new ArrayList<Fuente>();
+    	//DBSource dbs = new DBSource();
+    	Source source = dbs.getSourceMember(idFile);
+        if (source == null) return new ArrayList<Fuente>();
+        
        ArrayList<Fuente> fuente = mountSourceCode(source, ver);
        setLineType(fuente);
        applySecciones(fuente, ver.getIdVersion());
@@ -71,13 +78,9 @@ public class CodeController {
        return fuente;
     }
     
-    private ArrayList<Fuente> mountSourceCode(SDPSource source, MODVersion ver) {
+    private ArrayList<Fuente> mountSourceCode(Source source, MODVersion ver) {
     	ArrayList<Fuente> fuente = new ArrayList<Fuente>();
-    	// Zipper zipper = new Zipper();
-        
-    	//char[] raw = zipper.unzip("",source.getSource());
-        //String[] lineas = (new String(raw)).split("\\r\\n|\\n", -1);
-    	String[] lineas = (new String(source.getSource())).split("\\r\\n|\\n", -1);
+    	String[] lineas = (new String(source.getRawData())).split("\\r\\n|\\n", -1);
     	 
         int max = ver.getOffsetEnd();
         if (max == -1) max = lineas.length;

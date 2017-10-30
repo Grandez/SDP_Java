@@ -31,7 +31,7 @@
                <text lang="xx">Lineas del parrafo</text>
             </r:description>
             <condition>
-               <attribute>numLines</attribute>
+               <lvalue type="attribute">numLines</lvalue>
                <operator>gt</operator>
                <rvalue>10</rvalue>
             </condition>            
@@ -43,7 +43,7 @@
                <text lang="xx">Lineas del parrafo</text>
             </r:description>
             <condition>
-               <attribute>numBlocks</attribute>
+               <lvalue type="attribute">numBlocks</lvalue>
                <operator>gt</operator>
                <rvalue>3</rvalue>
             </condition>            
@@ -76,7 +76,7 @@
                <text lang="xx">Lineas del parrafo</text>
             </r:description>
             <condition>
-               <attribute>numLines</attribute>
+               <lvalue type="attribute">numLines</lvalue>
                <operator>gt</operator>
                <rvalue>10</rvalue>
             </condition>            
@@ -88,7 +88,7 @@
                <text lang="xx">Sentencias del parrafo</text>
             </r:description>
             <condition>
-               <attribute>numStatements</attribute>
+               <lvalue type="attribute">numStatements</lvalue>
                <operator>gt</operator>
                <rvalue>5</rvalue>
             </condition>            
@@ -100,7 +100,7 @@
                <text lang="xx">Complejidad del parrafo</text>
             </r:description>
             <condition>
-               <attribute>currentCC</attribute>
+               <lvalue type="attribute">currentCC</lvalue>
                <operator>gt</operator>
                <rvalue>3</rvalue>
             </condition>            

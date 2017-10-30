@@ -10,11 +10,12 @@ public class RULScript implements Serializable {
 
 	private static final long serialVersionUID = -5163793448697653463L;
 
-	public static final String getFormula = "SELECT s FROM RULScript r " +
-	                                        "WHERE idScript = ?1 AND idSeq > 0 " +
-			                                "ORDER BY idSeq";
-	public static final String getFormulaName = "SELECT s FROM RULScript s WHERE idScript = ?1 AND idSeq = 0 ";
-	public static final String delFormula     = "DELETE   FROM RULScript s WHERE idScript = ?1";
+	public static final String getScript  = "SELECT s FROM RULScript s " +
+	                                        "WHERE s.idScript = ?1 AND s.idSeq > 0 " +
+			                                "ORDER BY s.idSeq";
+	public static final String getScriptName  = "SELECT s FROM RULScript s WHERE s.idScript = ?1 AND s.idSeq = 0 ";
+	public static final String delScript      = "DELETE   FROM RULScript s WHERE s.idScript = ?1";
+	public static final String delScripts     = "DELETE   FROM RULScript s WHERE s.idScript BETWEEN ?1 AND ?2";
 	
 	@Id
 	@Column(name="idScript")

@@ -5,11 +5,13 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name="RUL_SAMPLE")
+@Table(name="RUL_SAMPLES")
 public class RULSample implements Serializable {
 
 	private static final long serialVersionUID = 1814047234974235293L;
 
+	public static final String delSample      = "DELETE FROM RULSample s WHERE s.idSample = ?1";
+	
 	@Id
 	@Column(name="idSample")
 	private Long idSample;

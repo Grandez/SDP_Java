@@ -106,16 +106,22 @@
 
    <xs:complexType name="conditionType">
           <xs:sequence>
+             <xs:choice minOccurs="0" maxOccurs="1">
+                 <xs:element name="lvalue"          type="operandType"/>
+                 <xs:element name="script"          type="scriptType"/>
+                 <xs:element name="type"            type="objectType"/>
+             </xs:choice>
+             <xs:element name="operator"        type="operatorType"  minOccurs="0" maxOccurs="1"/>      
              <xs:choice minOccurs="1" maxOccurs="1">
-                 <xs:element name="property"       type="xs:string"/>
-                 <xs:element name="type"          type="objectType"/>
+                 <xs:element name="property"      type="xs:string"/>
                  <xs:element name="attribute"     type="xs:string"/>
                  <xs:element name="method"        type="xs:string"/>
                  <xs:element name="expression"    type="xs:string"/>
-                 <xs:element name="script"        type="scriptType"/>
+                 <xs:element name="value"         type="xs:string"/>
+                 <xs:element name="rvalue"        type="xs:string"/>
+                 <xs:element name="rscript"       type="scriptType"/>                 
              </xs:choice>
-             <xs:element name="operator"        type="operatorType"  minOccurs="1" maxOccurs="1"/>      
-             <xs:element name="rvalue"          type="operandType"   minOccurs="1" maxOccurs="1"/>
+
          </xs:sequence>
 
       <xs:attribute name="negated" use="optional" type="xs:boolean"  default="false"/>   
@@ -124,6 +130,13 @@
    <xs:simpleType name="objectType">
        <xs:restriction base="xs:string">
           <xs:enumeration value="string"/>
+          <xs:enumeration value="integer"/>
+          <xs:enumeration value="long"/>
+          <xs:enumeration value="decimal"/>
+          <xs:enumeration value="boolean"/>
+          <xs:enumeration value="date"/>
+          <xs:enumeration value="time"/>
+          <xs:enumeration value="timestamp"/>          
           <xs:enumeration value="verb"/>
           <xs:enumeration value="option"/>
           <xs:enumeration value="lvalue"/>
@@ -139,9 +152,10 @@
             <xs:attribute name="type" use="optional" default="value">
                 <xs:simpleType>
                    <xs:restriction base="xs:string">
-                      <xs:enumeration value="value"/>
+                      <xs:enumeration value="attribute"/>                      
                       <xs:enumeration value="function"/>
                       <xs:enumeration value="method"/>
+                      <xs:enumeration value="value"/>
                       <xs:enumeration value="variable"/>
                   </xs:restriction>
                </xs:simpleType>
@@ -198,13 +212,6 @@
       </xs:sequence>   
    </xs:complexType>
 
-   <xs:complexType name="expressionType">
-      <xs:sequence>
-          <xs:element name="code"      type="xs:string"      minOccurs="1" maxOccurs="unbounded"/>
-      </xs:sequence>
-      <xs:attribute type="xs:string" name="name" use="required"/>   
-   </xs:complexType>
-   
    <xs:simpleType name="nameType">
       <xs:restriction base="xs:string">
          <xs:minLength value="3" />

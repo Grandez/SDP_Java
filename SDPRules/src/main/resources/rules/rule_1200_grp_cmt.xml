@@ -30,9 +30,8 @@
                <text lang="xx">Los comentarios {comparator} {value}</text>
             </r:description>
             <condition negated="true">
-               <type>string</type>
                <operator>start</operator>
-               <rvalue>*</rvalue>
+               <value>*</value>
             </condition>        
             <sample>
                <description lang="xx">
@@ -60,9 +59,9 @@
                <text lang="xx">No se deben crear lineas de comentarios aislados</text>
             </r:description>
             <condition>
-               <attribute>length</attribute>
+               <lvalue type="attribute">length</lvalue>
                <operator>equal</operator>
-               <rvalue>1</rvalue>
+               <value>1</value>
             </condition>        
                 
          </r:rule>

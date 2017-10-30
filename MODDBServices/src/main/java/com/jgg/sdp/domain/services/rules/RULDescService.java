@@ -29,8 +29,8 @@ public class RULDescService extends AbstractService<RULDesc> {
 		return (desc == null) ? "N/A" : desc.getTxt();
 	}
 	
-	public RULDesc getDescriptionObject(Long code, String lang, String dialect) {
-		return findQuery (RULDesc.getDescription, code, lang, dialect);
+	public List<RULDesc> getDescriptionObject(Long code, String lang, String dialect) {
+		return listQuery (RULDesc.getDescription, code, lang, dialect);
 	}
 	
 	public List<RULDesc> findDescription(Long code) {

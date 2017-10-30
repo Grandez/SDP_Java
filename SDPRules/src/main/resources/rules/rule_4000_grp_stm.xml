@@ -21,18 +21,14 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <type>string</type>
-               <operator>equal</operator>
-               <rvalue>GOTO</rvalue>
+               <value>GOTO</value>
             </condition>            
          </r:rule>
 
          <r:rule>
             <severity>5</severity>
             <condition>
-               <type>string</type>
-               <operator>equal</operator>
-               <rvalue>DISPLAY</rvalue>
+               <value>DISPLAY</value>
             </condition>            
          </r:rule>
          

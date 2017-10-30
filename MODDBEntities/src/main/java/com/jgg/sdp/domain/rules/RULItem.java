@@ -11,6 +11,7 @@ public class RULItem implements Serializable {
 
 	private static final long serialVersionUID = 8253785116217758949L;
 
+	public static final String delItem         = "DELETE FROM RULItem i where i.idGroup = ?1 AND i.idItem = ?2";
 	public static final String delItemsOfGroup = "DELETE FROM RULItem i where i.idGroup = ?1";
 	
     public static final String findByTextKey   = "SELECT i FROM RULItem i WHERE i.object  = ?1";

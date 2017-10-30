@@ -44,9 +44,14 @@ public class RULItemsService extends AbstractService<RULItem> {
 		return ++lastId;
 	}
 
-	public void deleteItemsOfRule(Long idGroup) {
+	public void deleteItemsOfGroup(Long idGroup) {
 		deleteQuery(RULItem.delItemsOfGroup, idGroup);
 	}
+
+	public void deleteItem(Long idGroup, Long idItem) {
+		deleteQuery(RULItem.delItem, idGroup, idItem);
+	}
+
 	private Long getLastId(Long idParent) {
 		Object o = getItemAbstract(RULItem.findMaxId, idParent);
 		if (o == null) return 0L;

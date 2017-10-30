@@ -24,7 +24,7 @@
          
          <r:rule>
             <severity>5</severity>
-            <condition negated="true">
+            <condition>
                <property>exist()</property>
             </condition>            
          </r:rule>
@@ -41,18 +41,14 @@
          <r:rule>
             <severity>3</severity>
             <condition>
-               <type>string</type>
-               <operator>equal</operator>
-               <rvalue>EJECT</rvalue>
+               <value>EJECT</value>
             </condition>            
          </r:rule>
 
          <r:rule>
             <severity>3</severity>
             <condition>
-               <type>string</type>
-               <operator>equal</operator>
-               <rvalue>SKIP</rvalue>
+               <value>SKIP</value>
             </condition>            
          </r:rule>
          

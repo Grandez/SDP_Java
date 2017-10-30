@@ -28,7 +28,7 @@ public class RulesController {
     @Autowired
     private RULRulesService ruleService;    
     @Autowired
-    private RULScriptService formulaService;    
+    private RULScriptsService formulaService;    
 
     @Autowired
     private RULDescService descService;

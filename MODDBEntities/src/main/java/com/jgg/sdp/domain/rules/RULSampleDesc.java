@@ -5,14 +5,12 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name="RUL_DESCS")
-public class RULDesc implements Serializable {
+@Table(name="RUL_SAMPLES_DESCS")
+public class RULSampleDesc implements Serializable {
 
-	private static final long serialVersionUID = 4499033244520521366L;
+	private static final long serialVersionUID = 5385921194323430279L;
 
-	public static final String getDescription   = "SELECT r FROM RULDesc r where r.idDesc = ?1 AND r.idLang = ?2 AND r.idDialect = ?3";
-	public static final String listDescriptions = "SELECT r FROM RULDesc r where r.idDesc = ?1";
-	public static final String delDescription   = "DELETE   FROM RULDesc r where r.idDesc = ?1";
+	public static final String delSampleDescription = "DELETE   FROM RULSampleDesc r where r.idDesc = ?1";
 	
 	@Id
 	@Column(name="idDesc")
@@ -26,6 +24,10 @@ public class RULDesc implements Serializable {
 	@Column(name="idDialect")
 	private String idDialect;
 
+	@Id
+	@Column(name="idSeq")
+	private Integer idSeq;
+	
 	@Column(name="txt")
 	private String txt;
 
@@ -53,6 +55,14 @@ public class RULDesc implements Serializable {
 		this.idDialect = idDialect;
 	}
 
+	public Integer getIdSeq() {
+		return idSeq;
+	}
+
+	public void setIdSeq(Integer idSeq) {
+		this.idSeq = idSeq;
+	}
+
 	public String getTxt() {
 		return txt;
 	}
@@ -61,7 +71,6 @@ public class RULDesc implements Serializable {
 		this.txt = txt;
 	}
 
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -69,6 +78,7 @@ public class RULDesc implements Serializable {
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idDialect == null) ? 0 : idDialect.hashCode());
 		result = prime * result + ((idLang == null) ? 0 : idLang.hashCode());
+		result = prime * result + ((idSeq == null) ? 0 : idSeq.hashCode());
 		result = prime * result + ((txt == null) ? 0 : txt.hashCode());
 		return result;
 	}
@@ -81,7 +91,7 @@ public class RULDesc implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		RULDesc other = (RULDesc) obj;
+		RULSampleDesc other = (RULSampleDesc) obj;
 		if (idDesc == null) {
 			if (other.idDesc != null)
 				return false;
@@ -97,6 +107,11 @@ public class RULDesc implements Serializable {
 				return false;
 		} else if (!idLang.equals(other.idLang))
 			return false;
+		if (idSeq == null) {
+			if (other.idSeq != null)
+				return false;
+		} else if (!idSeq.equals(other.idSeq))
+			return false;
 		if (txt == null) {
 			if (other.txt != null)
 				return false;
@@ -104,5 +119,5 @@ public class RULDesc implements Serializable {
 			return false;
 		return true;
 	}
-	
+
 }

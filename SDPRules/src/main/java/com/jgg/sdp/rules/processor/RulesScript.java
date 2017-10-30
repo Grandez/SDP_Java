@@ -5,9 +5,12 @@ import com.jgg.sdp.rules.xml.jaxb.ScriptType;
 import java.util.ArrayList;
 
 import com.jgg.sdp.domain.rules.RULScript;
+import com.jgg.sdp.domain.services.rules.RULScriptsService;
 
 public class RulesScript {
 
+	private RULScriptsService scriptService = new RULScriptsService();
+	
 	private ArrayList<RULScript> scripts = new ArrayList<RULScript>();
 	
     private static RulesScript script = null;
@@ -26,6 +29,7 @@ public class RulesScript {
     }
     
     public Long createScript(Long key, ScriptType script) {
+    	scriptService.deleteScript(key);
     	int count = 1;
 		if (script == null) return 0L;
 

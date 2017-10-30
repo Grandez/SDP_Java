@@ -25,7 +25,7 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <attribute>getNumIssues(0)</attribute>
+               <lvalue type="method">getNumIssues(0)</lvalue>
                <operator>gt</operator>
                <rvalue>5</rvalue>
             </condition>            
@@ -33,7 +33,7 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <attribute>getNumIssues(1)</attribute>
+               <lvalue type="method">getNumIssues(1)</lvalue>
                <operator>gt</operator>
                <rvalue>4</rvalue>
             </condition>            
@@ -41,7 +41,7 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <attribute>getNumIssues(2)</attribute>
+               <lvalue type="method">getNumIssues(2)</lvalue>
                <operator>gt</operator>
                <rvalue>3</rvalue>
             </condition>            
@@ -49,7 +49,7 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <attribute>getNumIssues(3)</attribute>
+               <lvalue type="method">getNumIssues(3)</lvalue>
                <operator>gt</operator>
                <rvalue>2</rvalue>
             </condition>            
@@ -57,7 +57,7 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <attribute>getNumIssues(4)</attribute>
+               <lvalue type="method">getNumIssues(4)</lvalue>
                <operator>gt</operator>
                <rvalue>1</rvalue>
             </condition>            
@@ -65,15 +65,7 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <attribute>getNumIssues(5)</attribute>
-               <operator>gt</operator>
-               <rvalue>0</rvalue>
-            </condition>            
-         </r:rule>
-         <r:rule>
-            <severity>5</severity>
-            <condition>
-               <attribute>getNumIssues(5)</attribute>
+               <lvalue type="method">getNumIssues(5)</lvalue>
                <operator>gt</operator>
                <rvalue>0</rvalue>
             </condition>            

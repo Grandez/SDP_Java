@@ -6,11 +6,16 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 
 import com.jgg.sdp.domain.rules.RULCond;
+import com.jgg.sdp.domain.services.rules.RULCondsService;
 import com.jgg.sdp.rules.xml.jaxb.*;
 
 public class RulesCondition {
 
+	private RULCondsService condService = new RULCondsService();
+	
 	private ArrayList<RULCond> conds = new ArrayList<RULCond>();
+	
+	private RulesScript scripts = RulesScript.getInstance();
 	
     private static RulesCondition cond = null;
     
@@ -35,18 +40,15 @@ public class RulesCondition {
     }
     
     public Long createCondition(long key, ConditionType c) {
-    	RULCond cond = new RULCond();
-    	cond.setIdCond(key);
-    	
-    	if (createProperty(cond, c)) {
-    		if (createType(cond, c)) {
-    			if (createScript(cond, c, key)) {
-    		        if (createAttribute(cond, c)) {
-    			        createLValue(cond,c);
-    		        }    
-    		   }
-    		}
+    	RULCond cond = condService.getById(key);
+    	if (cond == null) {
+    		cond = new RULCond();
+    		cond.setIdCond(key);
     	}
+    	
+    	createLValue(key, cond, c);
+    	createOperator(cond, c.getOperator(), c.isNegated());
+    	createRValue(key, cond, c);
     	
 		cond.setUid(System.getProperty("user.name"));
 		cond.setTms(new Timestamp(System.currentTimeMillis()));
@@ -55,80 +57,128 @@ public class RulesCondition {
 		
         return key;	
     }
-    
-    private boolean createProperty(RULCond cond, ConditionType c) {
-    	int neg = (c.isNegated()) ? OP_NEGATED : OP_POSITIVE;
-    	String p = c.getProperty();
-    	if (p == null) return true;
-		cond.setLvalueType(TYPE_PROPERTY);
-		cond.setLvalue(p);
-		cond.setRvalueType(TYPE_BOOLEAN);
-		cond.setRvalue("true");
-		cond.setOperator(OP_EQ * neg);
-		return false;
-    }
 
-    private boolean createType(RULCond cond, ConditionType c) {
+    private void createLValue(Long key, RULCond cond, ConditionType c) {
+    	OperandType o = c.getLvalue();
+    	if (o != null) {
+    		cond.setLvalueType(getLValueType(o.getType()));
+    		cond.setLvalue(o.getValue());
+    		return;
+    	}
+    	
+    	ScriptType s = c.getScript();
+    	if (s != null) {
+    	    cond.setLvalueType(TYPE_SCRIPT);
+            Long id = scripts.createScript((key * 10), c.getScript());      
+    	    cond.setLvalue(id.toString());
+    	    return;
+    	}
+    	
     	ObjectType t = c.getType();
-    	if (t == null) return true;
-
-		cond.setLvalueType(RulesTypes.parseObjectType(t));
-		cond.setLvalue(t.name());
-		createOperator(cond, c);
-		createRValue(cond, c);
-		return false;
+    	if (t != null) {
+    	   cond.setLvalueType(getLValueType(t.value()));
+    	   return;
+    	}
+    	
+    	// No hay nodo
+    	cond.setLvalueType(TYPE_VALUE);
     }
 
-    private boolean createScript(RULCond cond, ConditionType c, Long key) {
-    	ScriptType script = c.getScript();
-    	if (script == null) return true;
-
-		cond.setLvalueType(TYPE_SCRIPT);
-		cond.setLvalue(key.toString());
-		createOperator(cond, c);
-		createRValue(cond, c);
-		
-		RulesScript s = RulesScript.getInstance();
-		s.createScript(key, script);
-		return false;
-    }
-    
-    private boolean createAttribute(RULCond cond, ConditionType c) {
-        String a = c.getAttribute();
-    	if (a == null) return true;
-		cond.setLvalueType(TYPE_ATTRIBUTE);
-		cond.setLvalue(a);
-
-		createOperator(cond, c);
-		createRValue(cond, c);
-		return false;
+    private void createOperator(RULCond cond, OperatorType o, boolean negated) {
+    	int val = OP_EQ; 
+    	if (o != null) {
+            switch (o) {
+                case MANDATORY: val = OP_EXIST;            break;
+                case EQUAL:     val = OP_EQ;               break;
+                case EQ:        val = OP_EQ;               break;		   
+                case GT:        val = OP_GT;               break;
+                case LT:        val = OP_LT;               break;
+                case GE:        val = OP_GT + MASK_EQ;     break;	    
+                case LE:        val = OP_LT + MASK_EQ;     break;
+                case START:     val = OP_START;            break;
+                case CONTAINS:  val = OP_CONTAINS;         break;
+                case MATCH:     val = OP_MATCH;            break;
+                case END:       val = OP_END;              break;
+			default:
+				break;
+            }
+    	}
+    	cond.setOperator((negated) ? val * OP_NEGATED : val);
     }
 
-    private boolean createLValue(RULCond cond, ConditionType c) {
-    	OperandType rval = c.getLvalue();
-    	if (rval == null) return true;
-		cond.setLvalueType(RulesTypes.parseOperandType(rval.getType()));
-		cond.setLvalue(rval.getValue());
+    private void createRValue(Long key, RULCond cond, ConditionType c) {
+        int    type  = getRValueType(c);
 
-		createOperator(cond, c);
-		createRValue(cond, c);
-		return false;
-    }
-    
-    private void createOperator(RULCond cond, ConditionType c) {
-    	boolean negated = c.isNegated();
-		int operator = RulesTypes.parseOperator(c.getOperator(), negated);		
-		cond.setOperator(operator);
-    }
-    
-    private void createRValue(RULCond cond, ConditionType c) {
-		OperandType rval = c.getRvalue(); 
-		cond.setRvalueType(RulesTypes.parseOperandType(rval.getType()));
-		cond.setRvalue(rval.getValue());
+        cond.setRvalueType(type);
+    	
+    	switch (type) {
+            case TYPE_RSCRIPT:     
+ 		         Long id = scripts.createScript((key * 10) + 1, c.getScript());      
+ 		         cond.setRvalue(id.toString()); 
+ 	             break;
+ 	       default: 
+ 		        cond.setRvalue(getValue(c, type)); 
+ 	    }
     }
     
     public void clear() {
     	conds = new ArrayList<RULCond>();
     }
 
+	public static int getLValueType(String type) {
+		if (type.compareToIgnoreCase("attribute")  == 0) return TYPE_ATTRIBUTE;
+		if (type.compareToIgnoreCase("function")   == 0) return TYPE_FUNCTION;
+		if (type.compareToIgnoreCase("value")      == 0) return TYPE_VALUE;
+		if (type.compareToIgnoreCase("method")     == 0) return TYPE_METHOD;
+		if (type.compareToIgnoreCase("variable")   == 0) return TYPE_VARIABLE;
+
+		if (type.compareToIgnoreCase("string")     == 0) return TYPE_STRING;
+		if (type.compareToIgnoreCase("integer")    == 0) return TYPE_LONG;
+		if (type.compareToIgnoreCase("decimal")    == 0) return TYPE_DECIMAL;
+		if (type.compareToIgnoreCase("boolean")    == 0) return TYPE_BOOLEAN;
+		if (type.compareToIgnoreCase("date")       == 0) return TYPE_DATE;
+		if (type.compareToIgnoreCase("time")       == 0) return TYPE_TIME;
+		if (type.compareToIgnoreCase("timestmap")  == 0) return TYPE_TIMESTAMP;
+		
+		
+		if (type.compareToIgnoreCase("verb")       == 0) return TYPE_VERB;
+		if (type.compareToIgnoreCase("option")     == 0) return TYPE_OPTION;
+		if (type.compareToIgnoreCase("lvalue")     == 0) return TYPE_LVALUE;
+		if (type.compareToIgnoreCase("rvalue")     == 0) return TYPE_RVALUE;
+		
+//		if (type.compareToIgnoreCase("property")   == 0) return TYPE_PROPERTY;		
+//		if (type.compareToIgnoreCase("expression") == 0) return TYPE_EXPRESSION;
+//		if (type.compareToIgnoreCase("string")     == 0) return TYPE_STRING;
+			
+		return TYPE_VALUE;
+	}
+    
+	private int getRValueType(ConditionType cond) {
+		
+		if (cond.getAttribute()  != null) return TYPE_ATTRIBUTE;
+		if (cond.getProperty()   != null) return TYPE_PROPERTY;
+		if (cond.getMethod()     != null) return TYPE_METHOD;
+		if (cond.getExpression() != null) return TYPE_EXPRESSION;
+		if (cond.getValue()      != null) return TYPE_VALUE;
+		if (cond.getRvalue()     != null) return TYPE_RVALUE;
+		if (cond.getRscript()    != null) return TYPE_RSCRIPT;
+		
+		return TYPE_NONE;
+	}
+	
+	private String getValue(ConditionType cond, int type) {
+		
+		switch (type) {
+		    case TYPE_PROPERTY:   return cond.getProperty();
+		    case TYPE_ATTRIBUTE:  return cond.getAttribute();
+		    case TYPE_METHOD:     return cond.getMethod();
+		    case TYPE_EXPRESSION: return cond.getExpression();
+		    case TYPE_SCRIPT:     return cond.getScript().getName();
+		    case TYPE_RSCRIPT:    return cond.getRscript().getName();
+		    case TYPE_VALUE:      return cond.getValue();
+		    case TYPE_RVALUE:     return cond.getRvalue();
+		}
+		return null;
+	}
+	
 }

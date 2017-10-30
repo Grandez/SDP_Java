@@ -1,7 +1,5 @@
 package com.jgg.sdp.rules.processor;
 
-import static com.jgg.sdp.rules.ctes.CDGRules.*;
-
 import java.sql.Timestamp;
 import java.util.*;
 

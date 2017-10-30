@@ -11,7 +11,8 @@ public class RULCond implements Serializable {
 	
 	private static final long serialVersionUID = -2014036529693511435L;
 
-	public static final String findById = "SELECT c FROM RULCond c WHERE c.idCond  = ?1";
+	public static final String findById      = "SELECT c FROM RULCond c WHERE c.idCond  = ?1";
+	public static final String delConditions = "DELETE FROM RULCond c WHERE c.idCond BETWEEN ?1 AND ?2";
 	
 	@Id
 	@Column(name="idCond")

@@ -24,10 +24,10 @@
          
          <r:rule>
             <severity>5</severity>
-            <condition>
-               <attribute>moduleName</attribute>
+            <condition negated="true">
+               <lvalue type="attribute">moduleName</lvalue>
                <operator>equal</operator>
-               <rvalue type="method">fileName</rvalue>
+               <attribute>fileName</attribute>
             </condition>            
          </r:rule>
       </r:item>
@@ -42,7 +42,7 @@
          <r:rule>
             <severity>5</severity>
             <condition>
-               <attribute>moduleCount</attribute>
+               <lvalue type="attribute">moduleCount</lvalue>
                <operator>equal</operator>
                <rvalue>1</rvalue>
             </condition>            

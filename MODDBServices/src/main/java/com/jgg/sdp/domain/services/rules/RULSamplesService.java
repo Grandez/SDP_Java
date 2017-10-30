@@ -8,5 +8,8 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class RULSamplesService extends AbstractService<RULSample> {
 
+	public void deleteSample(Long key) {
+		deleteQuery(RULSample.delSample, key);
+	}
 
 }

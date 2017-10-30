@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.regex.*;
 
 import com.jgg.sdp.calc.Calculator;
-import com.jgg.sdp.domain.services.rules.RULScriptService;
+import com.jgg.sdp.domain.services.rules.RULScriptsService;
 import com.jgg.sdp.module.items.Issue;
 import com.jgg.sdp.rules.objects.*;
 import com.jgg.sdp.tools.*;
@@ -218,7 +218,7 @@ public class RulesProcessor {
 	private Object processScript(int type, String data, RuleObject obj) {
 		System.out.println("JGG processRuleFormula");
 		
-		RULScriptService service = new RULScriptService();
+		RULScriptsService service = new RULScriptsService();
 		String script = service.getScript(Long.parseLong(data));
         Calculator c = new Calculator(script);
 //		c.setObjectBase(obj.getComponent());

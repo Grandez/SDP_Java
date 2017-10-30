@@ -79,8 +79,10 @@ public class RulesLoader {
 	// Se invoca desde test
 	public  void processXMLRule(File file) {
 		System.out.print("Processing " + file.getName());
+    	dbCommon.beginTrans();
 	    parseXMLRule(file);
         storeXMLRule();
+    	dbCommon.commitTrans();
         System.out.println("\tOK");
 	}
 	
@@ -122,8 +124,10 @@ public class RulesLoader {
 	
     private void processGroup(Group xmlGroup) {
     	RULGroup group = rulesGroup.createGroup(xmlGroup);
+    	rulesItem = new RulesItem();
         for (Item xmlItem : xmlGroup.getItem()) {
             RULItem item = rulesItem.createItem(group, xmlItem);
+            rulesRule = new RulesRule();
             for (Rule xmlRule : xmlItem.getRule()) {
             	RULRule r = rulesRule.createRule(item.getIdGroup(), item.getIdItem(), xmlRule);
 //            	r.friendly();
@@ -141,7 +145,7 @@ public class RulesLoader {
     }
 
     private void storeXMLRule() {
-    	dbCommon.beginTrans();
+
     	for (RULGroup group : rulesGroup.getGroups()) {
     		if (replace) cleaner.deleteGroup(group.getIdGroup());
     		dbCommon.update(group);
@@ -170,8 +174,10 @@ public class RulesLoader {
     	for (RULSample samp : rulesSamp.getSamples()) {
     		dbCommon.update(samp);
     	}
-    	
-    	dbCommon.commitTrans();
+
+    	for (RULSampleDesc samp : rulesSamp.getSamplesDesc()) {
+    		dbCommon.update(samp);
+    	}
     	
     }
     
@@ -189,5 +195,6 @@ public class RulesLoader {
 	    RulesDescription.getInstance().clear();
 	    RulesCondition.getInstance().clear();
 	    RulesSample.getInstance().clear();
+	    RulesScript.getInstance().clear();
 	}
 }

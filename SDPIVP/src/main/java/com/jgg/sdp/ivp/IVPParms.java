@@ -16,7 +16,9 @@ public class IVPParms {
      */
 
     public static final String parms[][] = { 
-            {" ", "i" , "input"  , "IVP_CONFIG"        , CFG.IVP_CONFIG    , "1" , "250" , Args.FILE}                    
+            {""  , "log"       , ""       , CFG.IVP_LOG         , Args.NUMBER  ,  "229", "0", ""     , "0-5"}                    
+           ,{""  , "full"      , ""       , CFG.IVP_STOP_ON_ERR , "X0"         ,  "227", "1", "0101" , ""}            
+           ,{""  , "simple"    , ""       , CFG.IVP_STOP_ON_ERR , "X1"         ,  "228", "1", "0102" , ""}
     };
 
 }

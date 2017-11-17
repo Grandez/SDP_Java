@@ -10,7 +10,6 @@ import com.jgg.sdp.common.exceptions.*;
 
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.module.base.*;
-import com.jgg.sdp.module.factorias.ModulesFactory;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.domain.core.*;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
@@ -44,11 +43,11 @@ public class Analyzer {
 	public static void main(String[] args) throws Exception {
 	   int rc = RC.OK;
 	   Analyzer launcher = new Analyzer();
-	   rc = launcher.start(args);
+	   rc = launcher.process(args);
        System.exit(rc);
 	}
 
-	private int start(String[] args) {
+	public int process(String[] args) {
 		args = cfg.processCommandLine(AnalyzerParms.parms, args);
 		
 		// No es local
@@ -135,11 +134,9 @@ public class Analyzer {
 		}
 		finally {
 			if (res != MSG.SKIP) {
-				if (unit.getStatus() > CDG.STATUS_BAD) {
-					module.setParserStatus(unit.getStatus());
-			    }
-				storeModuleInfo(unit);
-				ModulesFactory.cleanModules();
+				if (unit.getStatus() > CDG.STATUS_BAD) module.setParserStatus(unit.getStatus());
+				if (!cfg.isIVPMode()) storeModuleInfo(unit);
+//				ModulesFactory.cleanModules();
 			}
 			if (cfg.getVerbose() > 0)    msg.progress(res);
 			if (txt.length() > 0)        msg.print(txt);
@@ -186,7 +183,7 @@ public class Analyzer {
 
 	    int mode = cfg.getInteger(PARSER_MODE);
 	    
-	    if (mode == PARSER_LOCAL) {
+	    if (mode == PARSER_LOCAL && !unit.existUnit()) {
 	    	file = pers.persistUnit(unit);
 	    }
 	    else {
@@ -214,19 +211,25 @@ public class Analyzer {
 	 * @return
 	 */
 	private int hasToProcess(Unit unit) {
+		SDPFile f = null;
 		
-		// Es local mode
+		// Es local mode?
 		if (file == null) {
-		   SDPFile f = fileService.findByNameAndType(unit.getMainSource().getBaseName(), CDG.SOURCE_CODE);
+		   f = fileService.findByNameAndType(unit.getMainSource().getBaseName(), CDG.SOURCE_CODE);
 		   if (f == null) return MSG.OK;
 		}
 		else {
 		   if (file.getEstado() == CDG.STATUS_UNPARSED) return MSG.OK;
 		}
 		
-		// if (f.getFirma().compareTo(unit.getFirma()) != 0) return RC.OK;
+		// Es el mismo?
+		Source src = unit.getMainSource();
+		if (f.getFirma().compareTo(src.getFirma()) != 0) return RC.OK;
 		
+		//Marcar como existente
 		unit.setExist();
+		src.setIdFile(f.getIdFile());
+		src.setIdFileVersion(f.getIdVersion());
 		
 		// Forzar a reprocesar
 		if (!cfg.getBoolean(CFG.PARSER_FORCE)) return MSG.SKIP;

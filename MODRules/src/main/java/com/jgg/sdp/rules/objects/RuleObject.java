@@ -89,7 +89,7 @@ public class RuleObject {
     }
     
 	public String getObjectAsString() {
-		return (String) component;
+		return component.toString();
 	}
 	
 

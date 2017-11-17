@@ -15,6 +15,7 @@ import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.Unit;
 import com.jgg.sdp.rules.RulesChecker;
 
+import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.Symbol;
 
 public class ParserInfo {
@@ -24,7 +25,9 @@ public class ParserInfo {
 	private Configuration cfg = ConfigurationBase.getInstance();
 	
 	public RulesChecker rules = new RulesChecker();   
-	
+
+	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+	   
     public Unit   unit   = null;
     public Module    module = null;
 
@@ -86,6 +89,11 @@ public class ParserInfo {
 		return moduleName;
 	}
 	
+	public Symbol cosa(String txt, int code, int line, int col) {
+		int l = line + getOffset() + 1;
+		//Symbol s = new Symbol(code, l, col, txt); 
+		return symbolFactory.newSymbol(txt, code, new Symbol(code, l, col, txt));
+	}
 	/*************************************************************/
 	/***      TRATAMIENTO DE SECCIONES                         ***/
 	/*** Se realiza aqui, por que se usa en diferentes parsers ***/

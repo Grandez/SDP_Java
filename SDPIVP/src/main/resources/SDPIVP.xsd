@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           targetNamespace="http://www.sdp.com/SDPIVP" 
+           xmlns="http://www.sdp.com/SDPIVP">
+
+    <xs:element name="SDPIVP">
+       <xs:complexType>
+           <xs:choice>
+               <xs:element ref="component" minOccurs="0" maxOccurs="unbounded" />
+               <xs:sequence>
+                  <xs:element name="module"      type="IVPModuleType" />
+                  <xs:element name="description" type="xs:string" />
+                  <xs:element name="config"      type="IVPConfigType"   minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="environment" type="IVPEnvType"     minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="group"       type="IVPGroupType"   minOccurs="1" maxOccurs="unbounded"/>
+               </xs:sequence>
+           </xs:choice>
+       </xs:complexType>
+    </xs:element>
+
+   <xs:element name="component">
+      <xs:complexType>
+        <xs:sequence>
+           <xs:element name="name"        type="IVPModuleType"  minOccurs="1" maxOccurs="1"/>      
+           <xs:element name="config"      type="IVPConfigType"  minOccurs="0" maxOccurs="1"/>
+           <xs:element name="cases"       type="IVPCasesType"   minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:complexType>
+    </xs:element>
+
+   <xs:simpleType name="IVPModuleType">
+       <xs:restriction base="xs:string">
+          <xs:enumeration value="SDPAnalyzer"/>
+       </xs:restriction>
+   </xs:simpleType>
+
+   <xs:complexType name="IVPConfigType">
+      <xs:annotation>
+         <xs:documentation>
+             Set the default information for COBOL modules
+             baseDir: Default directory for all
+             workingDir: Working directory
+             binDir: Directory for executables / scripts
+             scriptDir: 
+         </xs:documentation>
+      </xs:annotation>
+
+       <xs:sequence>
+          <xs:element name="baseDir"     type="xs:anyURI"   minOccurs="0"  maxOccurs="1"/>
+          <xs:choice>
+             <xs:element name="workingDir"  type="xs:anyURI"   minOccurs="0"  maxOccurs="1"/>
+             <xs:element name="binDir"      type="xs:anyURI"   minOccurs="0"  maxOccurs="1"/>
+             <xs:element name="cobolDir"    type="xs:anyURI"   minOccurs="0"  maxOccurs="1"/>          
+          </xs:choice>
+       </xs:sequence>   
+   </xs:complexType>
+
+   <xs:complexType name="IVPCasesType">
+      <xs:annotation>
+         <xs:documentation>
+             Indicates the set of XML cases to process
+         </xs:documentation>
+      </xs:annotation>
+
+       <xs:sequence                                             minOccurs="1"  maxOccurs="unbounded">
+              <xs:element name="case"        type="IVPCaseType"/>
+       </xs:sequence>
+   </xs:complexType>
+
+   <xs:complexType name="IVPCaseType">
+      <xs:simpleContent>
+         <xs:extension base="xs:string">
+            <xs:attribute name="type" type="IVPCaseLabel" default="directory"/>
+         </xs:extension>
+      </xs:simpleContent>
+  </xs:complexType>
+
+   <xs:simpleType name="IVPCaseLabel">
+       <xs:restriction base="xs:string">
+          <xs:enumeration value="directory"/>
+          <xs:enumeration value="resource"/>
+          <xs:enumeration value="case"/>
+          <xs:enumeration value="pattern"/>
+       </xs:restriction>
+   </xs:simpleType>
+
+   <xs:complexType name="IVPGroupType">
+       <xs:sequence>
+          <xs:element name="description" type="xs:string" />
+          <xs:element name="pattern"     type="xs:string"   minOccurs="1"  maxOccurs="unbounded"/>
+       </xs:sequence>
+       <xs:attribute name="name" type="xs:string" use="required" />
+   </xs:complexType>
+
+   <xs:complexType name="IVPEnvType">
+       <xs:sequence minOccurs="1" maxOccurs="unbounded">
+           <xs:element ref="block" />
+       </xs:sequence>
+   </xs:complexType>
+
+   <xs:element name="block">
+      <xs:complexType>
+          <xs:choice minOccurs="1" maxOccurs="unbounded">
+              <xs:element name="script"   type="xs:string"/>
+              <xs:element name="sql"      type="xs:string"/>
+          </xs:choice>
+          <xs:attribute name="id" type="xs:int" use="required"/>
+      </xs:complexType>
+   </xs:element>
+  
+</xs:schema>

@@ -37,28 +37,29 @@ public class ConfigurationBase implements Configuration {
     public String  getConfigDir()       { return setFullDirectory(getValue(CFG.DIR_CONFIG)); }
     public String  getDocDir()          { return setFullDirectory(getValue(CFG.DIR_DOCS));   }
     
-	public Integer getMarginLeft()      { return getInteger(CFG.MARGIN_LEFT); }
-	public String  getCobolDialect()    { return getString(CFG.COBOL_LANG);   }
-	public Integer getVerbose()         { return getInteger(CFG.VERBOSE, 0);  }
-	public String  getQueue()           { return getValue(CFG.JMS_QUEUE);     }
-	public String  getOutputQueue()     { return getValue(CFG.JMS_OUTPUT); 	  }
-	public String  getQueueParser()     { return getValue(CFG.JMS_PARSER);    }
-	public String  getQueueTrapper()    { return getValue(CFG.JMS_TRAPPER);   }
-	public String  getQueueCollector()  { return getValue(CFG.JMS_COLLECTOR); }
-	public String  getTempName()        { return getValue(CFG.TEMP_NAME);     }
-	public String  getJMSType()         { return getValue(CFG.JMS_TYPE);      }
-	public String  getJMSManager()      { return getValue(CFG.JMS_MANAGER);   }
-	public String  getJMSProvider()     { return getValue(CFG.JMS_TYPE);      }
-	public int     getJMSWaitInterval() { return getInteger(CFG.JMS_WAIT);    }
-	public String  getJMSQueue()        { return getValue(CFG.JMS_TRAPPER);   }
-	public String  getJMSOutputQueue()  { return getValue(CFG.JMS_OUTPUT);    }
+	public Integer getMarginLeft()      { return getInteger(CFG.MARGIN_LEFT);  }
+	public String  getCobolDialect()    { return getString(CFG.COBOL_LANG);    }
+	public Integer getVerbose()         { return getInteger(CFG.VERBOSE, 0);   }
+	public String  getQueue()           { return getValue(CFG.JMS_QUEUE);      }
+	public String  getOutputQueue()     { return getValue(CFG.JMS_OUTPUT); 	   }
+	public String  getQueueParser()     { return getValue(CFG.JMS_PARSER);     }
+	public String  getQueueTrapper()    { return getValue(CFG.JMS_TRAPPER);    }
+	public String  getQueueCollector()  { return getValue(CFG.JMS_COLLECTOR);  }
+	public String  getTempName()        { return getValue(CFG.TEMP_NAME);      }
+	public String  getJMSType()         { return getValue(CFG.JMS_TYPE);       }
+	public String  getJMSManager()      { return getValue(CFG.JMS_MANAGER);    }
+	public String  getJMSProvider()     { return getValue(CFG.JMS_TYPE);       }
+	public int     getJMSWaitInterval() { return getInteger(CFG.JMS_WAIT);     }
+	public String  getJMSQueue()        { return getValue(CFG.JMS_TRAPPER);    }
+	public String  getJMSOutputQueue()  { return getValue(CFG.JMS_OUTPUT);     }
 
-    public String  getMemberName()      { return getValue(CFG.CURR_MODULE);   }
-    public Integer getParserMode()      { return getInteger(CFG.PARSER_MODE); }
-    public Integer setParserMode()      { return getInteger(CFG.PARSER_MODE); }
+    public String  getMemberName()      { return getValue(CFG.CURR_MODULE);    }
+    public Integer getParserMode()      { return getInteger(CFG.PARSER_MODE);  }
+    public Integer setParserMode()      { return getInteger(CFG.PARSER_MODE);  }
     
-    public boolean isForcedMode()         { return getBoolean(CFG.PARSER_FORCE); }
-
+    public boolean isForcedMode()       { return getBoolean(CFG.PARSER_FORCE); }
+    public boolean isIVPMode()          { return getBoolean(CFG.IVP_PROCESS);  }
+    
 //	public boolean isIgnored(String name) { return ignore.contains(name);        }
 	
 

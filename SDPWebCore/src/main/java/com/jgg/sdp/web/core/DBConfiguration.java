@@ -8,7 +8,7 @@ import java.util.*;
 import com.jgg.sdp.common.config.*;
 
 import com.jgg.sdp.domain.cfg.*;
-import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
+import com.jgg.sdp.domain.services.cfg.CFGConfigService;
 
 public class DBConfiguration extends ConfigurationBase implements Configuration {
 
@@ -25,14 +25,14 @@ public class DBConfiguration extends ConfigurationBase implements Configuration 
     }
     
     private void loadConfFromDatabase() {
-        CFGConfigurationService confService = new CFGConfigurationService();
-        for (CFGConfiguracion cfg : confService.getAll()) {
+        CFGConfigService confService = new CFGConfigService();
+        for (CFGConfig cfg : confService.getAll()) {
             conf.put(cfg.getClave(),  cfg.getValor());
         }
     }
 
-    public static List<CFGConfiguracion> getRawConfiguration() {
-        CFGConfigurationService confService = new CFGConfigurationService();
+    public static List<CFGConfig> getRawConfiguration() {
+        CFGConfigService confService = new CFGConfigService();
         return  confService.getAll();
     }
 

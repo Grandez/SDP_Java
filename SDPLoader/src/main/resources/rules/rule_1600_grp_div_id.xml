@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>IDENTIFICATION DIVISION</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="DIV_ID">
+      <idGroup>16</idGroup>
+      <idParent>15</idParent>
+      <prefix>DIV</prefix>
+      <active>true</active>
+      <r:description>
+          <text lang="xx">Reglas de control de procedure division</text>      
+      </r:description>
+      
+      <r:item name="DIV_ID">
+         <object>IDENTIFICATION</object>
+         <active>true</active>
+         <r:description id="1601">
+             <text lang="xx">es necesario incluir la opcion {option}</text>      
+         </r:description>
+         
+         <r:rule>
+            <severity>2</severity>
+            <condition>
+               <lvalue type="option">INSTALLATION</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+         
+         <r:rule>
+            <severity>2</severity>
+            <condition>
+               <lvalue type="option">DATE-WRITTEN</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <severity>2</severity>
+            <condition>
+               <lvalue type="option">SECURITY</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <severity>2</severity>
+            <condition negated="true">
+               <lvalue type="option">DATE-COMPILED</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <severity>2</severity>
+            <condition negated="true">
+               <lvalue type="option">AUTHOR</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+         
+      </r:item>
+
+      <r:item name="DIV_AUTHOR">
+         <object>AUTHOR</object>
+         <onCondition>
+            <lvalue type="option">AUTHOR</lvalue>
+            <property>has</property>
+         </onCondition>        
+         <r:description>
+             <text lang="xx">El autor debe seguir el patron "usuario - empresa"</text>      
+         </r:description>
+         
+         <r:rule>
+            <severity>3</severity>
+            <condition>
+               <operator>match</operator>
+               <expression>[a-zA-Z0-9]{7} - [\w]+</expression>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <priority>3</priority>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Codificar la sentencia en la misma linea</text>      
+            </r:description>
+            <condition>
+               <lvalue type="attribute">lines</lvalue>
+               <operator>gt</operator>
+               <expression>1</expression>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <priority>4</priority>
+            <severity>2</severity>
+            <r:description>
+               <text lang="xx">Finalizar la sentencia con un punto</text>      
+            </r:description>
+            <condition negated="true">
+               <lvalue type="attribute">hasEndOfSentence</lvalue>
+            </condition>        
+         </r:rule>
+         
+      </r:item>
+
+      <r:item name="DIV_COMPILED">
+         <object>DATE-COMPILED</object>
+         <onCondition>
+            <lvalue type="option">DATE-COMPILED</lvalue>
+            <operator>has</operator>
+          </onCondition>        
+         
+         <r:rule>
+            <priority>1</priority>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">La fecha de compilacion debe estar en formato dd/mm/yyyy</text>      
+            </r:description>
+            <condition>
+               <operator>match</operator>
+               <expression>[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}</expression>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <priority>2</priority>
+            <severity>3</severity>
+            <onCondition>
+                <lvalue type="configuration">parser.force</lvalue>
+                <operator>is</operator>
+                <value>false</value>
+            </onCondition>
+            <r:description>
+               <text lang="xx">La fecha de compilacion debe estar actualizada</text>      
+            </r:description>
+            <condition>
+               <lvalue type="expression">now() - as.date({object})</lvalue>
+               <operator>lt</operator>
+               <expression>7</expression>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <priority>3</priority>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Codificar la sentencia en la misma linea</text>      
+            </r:description>
+            <condition>
+               <lvalue type="attribute">lines</lvalue>
+               <operator>gt</operator>
+               <expression>1</expression>
+            </condition>        
+         </r:rule>
+
+         <r:rule>
+            <priority>4</priority>
+            <severity>2</severity>
+            <r:description>
+               <text lang="xx">Finalizar la sentencia con un punto</text>      
+            </r:description>
+            <condition negated="true">
+               <lvalue type="attribute">hasEndOfSentence</lvalue>
+            </condition>        
+         </r:rule>
+         
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>
+

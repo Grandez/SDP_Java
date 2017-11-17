@@ -2,17 +2,19 @@ package com.jgg.sdp.rules.ctes;
 
 public class CDGRules {
 	
-	public final static int TYPE_NONE       =  0;
-	public final static int TYPE_TYPE       =  1;
-	public final static int TYPE_PROPERTY   =  2;
-	public final static int TYPE_ATTRIBUTE  =  3;
-	public final static int TYPE_METHOD     =  4;
-	public final static int TYPE_FUNCTION   =  5;
-	public final static int TYPE_EXPRESSION =  6;
-	public final static int TYPE_SCRIPT     =  7;
-	public final static int TYPE_EXIST      =  8;	
-	public final static int TYPE_RSCRIPT    =  9;
+	public final static int TYPE_NONE          =  0;
+	public final static int TYPE_TYPE          =  1;
+	public final static int TYPE_PROPERTY      =  2;
+	public final static int TYPE_ATTRIBUTE     =  3;
+	public final static int TYPE_METHOD        =  4;
+	public final static int TYPE_FUNCTION      =  5;
+	public final static int TYPE_EXPRESSION    =  6;
+	public final static int TYPE_SCRIPT        =  7;
+	public final static int TYPE_EXIST         =  8;	
+	public final static int TYPE_RSCRIPT       =  9;
+	public final static int TYPE_CONFIGURATION = 10;
 
+	
 	public final static int TYPE_VALUE      = 12;	
 	public final static int TYPE_VARIABLE   = 13;
 	
@@ -62,7 +64,7 @@ public class CDGRules {
 	public final static int STAT_KO      =  1;
 	public final static int STAT_EXCEP   = -1;
 	
-	public final static long ACTIVE      =  0;
+	public final static long ACTIVE      =  1;
 	public final static long INACTIVE    = -1;
 	public final static long INHERIT     = -2;
 	

@@ -33,8 +33,20 @@
 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODADT</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
                    <artifactId>MODPrinter</artifactId>
                    <version>${sdp.version}</version>      
+                </dependency>
+
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>1.7.25</version>
                 </dependency>
 
          </dependencies>
@@ -53,8 +65,20 @@
 
                 <dependency>
                    <groupId>com.jgg.sdp</groupId>
+                   <artifactId>MODADT</artifactId>
+                   <version>${sdp.version}</version>      
+                </dependency>
+
+                <dependency>
+                   <groupId>com.jgg.sdp</groupId>
                    <artifactId>MODPrinter</artifactId>
                    <version>${sdp.version}</version>      
+                </dependency>
+
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>1.7.25</version>
                 </dependency>
 
          </dependencies>

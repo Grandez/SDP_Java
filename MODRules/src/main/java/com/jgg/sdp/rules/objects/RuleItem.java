@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class RuleItem {
 
-	private long      idGroup;
-	private long      idItem;
+	private Long      idGroup;
+	private Long      idItem;
 	private String    object;
 	private String    uid;
 	private String    prefix;
@@ -27,13 +27,13 @@ public class RuleItem {
 		this.prefix     = item.getPrefix();
 	}
 	
-	public long getIdGroup() {
+	public Long getIdGroup() {
 		return idGroup;
 	}
 	public void setIdGroup(long idGroup) {
 		this.idGroup = idGroup;
 	}
-	public long getIdItem() {
+	public Long getIdItem() {
 		return idItem;
 	}
 	public void setIdItem(long idItem) {

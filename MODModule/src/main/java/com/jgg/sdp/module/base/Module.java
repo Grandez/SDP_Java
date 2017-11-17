@@ -84,7 +84,7 @@ public class Module {
 	private ArrayList<String> chgTokens = null;
 	
 	public Module() {
-		
+	
 	}
 
 	public Module (Unit unit) {
@@ -99,13 +99,12 @@ public class Module {
 		name = a.getBaseName();
 		this.fullName = source.getFullName();
 		this.source = source;
-
 	}
 	
 	public Module(String fullName) {
 		Archive a = new Archive(fullName);
 		name = a.getBaseName();
-		this.fullName = fullName; 
+		this.fullName = fullName; 	
 	}
 
 	public void setUnit(Unit unit) {
@@ -367,6 +366,7 @@ public class Module {
     
     public void addIssue(Issue issue)  { tbIssues.addIssue(issue);  }
 	public void addIssues(List<Issue> issues) {
+		// Es otro modulo
 		for (Issue issue : issues) {
 			tbIssues.addIssue(issue);
 			sumIssues.incCountIssues(issue.getSeverity());

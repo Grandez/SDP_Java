@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Issue;
+import com.jgg.sdp.module.work.CommentLine;
 import com.jgg.sdp.rules.objects.*;
 
 import static com.jgg.sdp.rules.ctes.CDGRules.*;
@@ -105,16 +106,16 @@ public class RulesChecker {
         
         obj.setBegLine(line);
         obj.setBegColumn(column);
-        obj.setComponent("\t");
+        obj.setComponent(true);
 
         processor.processItemByName(ITEM_TAB, obj);        
 	}
 
-	public void checkComment(String text, int line) {
+	public void checkComment(CommentLine comment) {
         RuleObject obj = new RuleObject();
         
-        obj.setBegLine(line);
-        obj.setComponent(text);
+        obj.setBegLine(comment.getLine());
+        obj.setComponent(comment);
 
         processor.processItemByName(ITEM_COMMENT, obj);
 	}
@@ -124,16 +125,16 @@ public class RulesChecker {
         
         obj.setBegLine(line);
         obj.setBegColumn(column);
-        obj.setComponent("");
-        processor.processRuleByName(GRP_LEXER, "HEX", obj);
+        obj.setComponent(true);
+        processor.processItemByName(ITEM_HEXDATA, obj);
 	}
 
 	public void checkCompileDirective(int line) {
         RuleObject obj = new RuleObject();
         
         obj.setBegLine(line);
-        obj.setComponent("CBL");
-        processor.processRuleByName(GRP_DIRECTIVES, "CBL", obj);		
+        obj.setComponent(true);
+        processor.processItemByName(ITEM_CBL_DIRECTIVE, obj);		
 	}
 	
 	public void checkPrintDirective(String directive, int line) {
@@ -141,7 +142,7 @@ public class RulesChecker {
         
         obj.setBegLine(line);
         obj.setComponent(directive);
-        processor.processRuleByName(GRP_DIRECTIVES, directive, obj);		
+        processor.processItemByName(ITEM_CBL_LIST_DIR, obj);		
 	}
 	
 }

@@ -36,7 +36,7 @@ public interface Configuration {
     public Integer getParserMode();
     
     public boolean isForcedMode();
-
+    public boolean isIVPMode();
 
 	public String getString(String key);
 	public String getString(String key, String defValue);

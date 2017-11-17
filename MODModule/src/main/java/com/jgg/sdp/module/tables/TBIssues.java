@@ -1,18 +1,18 @@
 package com.jgg.sdp.module.tables;
 
+/**
+ * Tabla de Issues. 
+ * Puede haber varios issues en la misma liena, columna 
+ */
 import java.util.*;
 
 import com.jgg.sdp.module.items.Issue;
 
 public class TBIssues {
 	
-	private HashSet<String> keys = new HashSet<String>();
     private ArrayList<Issue> issues = new ArrayList<Issue>();
     
     public void addIssue(Issue issue) {
-    	String key = String.format("%d%d%d", issue.getIdRule(), issue.getBegLine(), issue.getEndLine());
-        if (keys.contains(key)) return;
-        keys.add(key);
         issues.add(issue);
     }
 

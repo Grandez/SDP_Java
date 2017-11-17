@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.*;
 
-import com.jgg.sdp.domain.cfg.CFGConfiguracion;
+import com.jgg.sdp.domain.cfg.CFGConfig;
 import com.jgg.sdp.web.core.*;
 
 
@@ -13,12 +13,12 @@ public class ConfigController {
 
 	
     @RequestMapping(value="admin/configuration", method=RequestMethod.GET)
-    public List<CFGConfiguracion> getConfiguration1() {
+    public List<CFGConfig> getConfiguration1() {
         return DBConfiguration.getRawConfiguration();
     }
  
     @RequestMapping(value="/configuration", method=RequestMethod.GET)
-    public List<CFGConfiguracion> getConfiguration2() {
+    public List<CFGConfig> getConfiguration2() {
         return DBConfiguration.getRawConfiguration();
     }
     

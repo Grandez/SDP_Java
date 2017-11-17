@@ -11,11 +11,14 @@ package com.jgg.sdp.parser.base;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import com.jgg.sdp.common.config.*;
+import com.jgg.sdp.core.exceptions.NotSupportedException;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.unit.Unit;
-import com.jgg.sdp.parser.tools.Comments;
+import com.jgg.sdp.module.work.CommentBlock;
+import com.jgg.sdp.module.work.CommentLine;
 
 import java_cup.runtime.*;
 
@@ -65,19 +68,19 @@ public abstract class GenericLexer {
 
    protected ParserInfo  info = ParserInfo.getInstance();
    
-   protected       int offset;   
+   protected       int linOffset;   
    protected final int COLOFFSET = cfg.getMarginLeft();
 
    // ID del estado COMMENT para cambiar de estado en el codigo
    private int     commentState;    
    private boolean ignoreReserved = false;
 
-   private Comments cmt = new Comments();
-   
+   private CommentBlock cmt     = null;
+   private Pattern      pattern = Pattern.compile(" [a-zA-Z0-9.]+");   
    
    public void setModule(Module module) {
 //	   rules = new RulesChecker(info.module);
-	   cmt.setModule(module);
+//	   cmt.setModule(module);
    }
    
    public void setParseUnit (Unit unit) {
@@ -87,15 +90,15 @@ public abstract class GenericLexer {
    
    protected void initLexer() {
        initLexer(-1);
-       cmt.setModule(info.getModule());
+//       cmt.setModule(info.getModule());
    }
    
    protected void initLexer(int commentState) {
 	   data = false;
        stack.push(0);
-       offset = info.getOffset();
+       linOffset = info.getOffset();
        this.commentState = commentState; 
-       cmt.setModule(info.getModule());
+//       cmt.setModule(info.getModule());
    }
 
    
@@ -140,21 +143,61 @@ public abstract class GenericLexer {
    /*******************************************************/
    /*** GESTION DE SIMBOLOS                             ***/
    /*******************************************************/
-   
+
    protected Symbol symbol(int code, String txt, int yyline, int yycolumn) {
-      setLastSymbol(code);
-      data = true;
-      int col = yycolumn + COLOFFSET;
-      int line = yyline + offset;
-      print("Devuelve SYMBOL " + code + " (" + line + "," + col + ") " + txt);   
-      return symbolFactory.newSymbol(txt, code, new Symbol(code, line, col, txt));
+	      setLastSymbol(code);
+	      data = true;
+	      int col = yycolumn + COLOFFSET;
+	      int line = yyline + linOffset;
+	      print("Devuelve SYMBOL " + code + " (" + line + "," + col + ") " + txt);   
+	      return symbolFactory.newSymbol(txt, code, new Symbol(code, line, col, txt));
    }
+
+   protected Symbol literal(int code, boolean clean) { 
+       String txt = cadena.toString();
+       if (clean) cadena.setLength(0);
+       return literal(code, txt); 
+   }
+   
+   protected Symbol literal(int code, String txt) {
+	      setLastSymbol(code);
+	      print("Devuelve LITERAL - " + txt);
+	      Symbol s = new Symbol(code, litLine, litColumn, txt);
+	      Symbol x = symbolFactory.newSymbol(txt, code, s);
+	      
+	      // Espacio es el primer caracter no imprimible en ASCII
+	      // Character.codePointAt(new char[] {'a'},0)
+	      
+	      for (int idx = 0; idx < txt.length(); idx++) {
+	          if (txt.charAt(idx) < ' ') {
+	              ruleNoPrintable(litLine, litColumn);
+	              break;
+	          } 
+	      }
+	      return x;      
+	   }
+   
+   protected Symbol symbolDummy(int code) {
+	      data = true;
+	      lastSymbol = 0;
+	      return symbol(code, "EXEC", -1, -1);
+   }
+
+   private void setLastSymbol(int id) {
+	      prevSymbol = lastSymbol;
+	      lastSymbol = id;
+   }
+
+  protected void excepcion(int code, String txt, int line, int col) {
+      throw new NotSupportedException(code, info.module.getName(), line + info.getOffset() + 1, col + 1, txt);
+  }
+   
    
    protected Symbol makeSymbol(int code, int yyline, int yycolumn, String token) {
 	      data = true;
 	      lastID = code;
 	      
-	      int line = offset + 1 + yyline;
+	      int line = linOffset + 1 + yyline;
 	      int col = yycolumn + COLOFFSET;
 	      
 	      print ("Devuelve SYMBOL(" + code + ") - (" + line + "," + col + ") " + token);
@@ -186,29 +229,45 @@ public abstract class GenericLexer {
 //	   rules.checkSymbol(" ",  s.left, s.right);
    }
 
-   private void setLastSymbol(int id) {
-	      prevSymbol = lastSymbol;
-	      lastSymbol = id;
-   }
-   
    /********************************************************/
    /* Comentarios                                          */
    /********************************************************/
    
-   protected void commentInit(String txt , int yyline) {
-       cmt.init(txt,  yyline);
+   protected void commentInit(String txt , int line) {
+	   if (cmt != null) {
+		   if (line - cmt.getLastComment().getLine() > 1) {
+			   info.getModule().getComment().incBlocks();
+			   cmt = new CommentBlock();
+		   }
+	   }
+	   else {	   
+		  cmt = new CommentBlock();
+	   }
+	   
+	   cmt.addLine(txt, line);
        pushState(commentState);
    }
    
    protected void commentAppend(String txt) {
-       cmt.append(txt);
+       cmt.appendLine(txt);
    }
    
    protected void commentEnd(int line) {
-       cmt.process(line);
+       cmt.endLine(line);
+       processComment(cmt.getLastComment());
        popState();
    }
    
+   private void processComment(CommentLine comment) {
+       int pos = comment.getRawComment().indexOf('\t');
+	   if ( pos != -1) ruleTabs( comment.getLine(), COLOFFSET + pos);  
+	   
+	   info.getModule().getComment().incLines();
+	   if (comment.isDecorator()) info.getModule().getComment().incDecorators();
+       if (comment.isComment())   info.getModule().getComment().incDocs();
+       info.rules.checkComment(comment);
+   }
+	   
    public void setIgnoreReserved()   { ignoreReserved = true;  }
    public void unsetIgnoreReserved() { ignoreReserved = false; }
    public boolean isIgnoreReserved() { return ignoreReserved;  }
@@ -265,26 +324,26 @@ public abstract class GenericLexer {
    /*****************************************************************/
    
    protected void ruleTabs(int line, int column) {
-	   info.rules.checkTab(line + 1, column + COLOFFSET);
+	   info.rules.checkTab(line + linOffset + 1, column + COLOFFSET);
    }
 
    protected void ruleTabsInText(String txt, int line, int column) {
 	   int pos = txt.indexOf('\t');
 	   if (pos != -1) {
-	       info.rules.checkTab(line + 1, column + pos + COLOFFSET);
+	       info.rules.checkTab(line + linOffset + 1, column + pos + COLOFFSET);
 	   }    
    }
 
    protected void ruleNoPrintable(int line, int column) {
-	   info.rules.checkNoPrintable(line, column);
+	   info.rules.checkNoPrintable(line + linOffset, column);
    }
 
    protected void rulePrintDirective(String directive, int yyline) {
-	   info.rules.checkPrintDirective(directive, yyline);
+	   info.rules.checkPrintDirective(directive, yyline + linOffset);
    }
    
    protected void ruleCompileDirective(int yyline) {
-	   info.rules.checkCompileDirective(yyline);
+	   info.rules.checkCompileDirective(yyline + linOffset);
    }
 
 }

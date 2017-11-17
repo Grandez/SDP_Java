@@ -6,8 +6,8 @@ import com.jgg.sdp.common.config.*;
 import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.domain.services.CommonService;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
+import com.jgg.sdp.ivp.base.IVPConfig;
 import com.jgg.sdp.ivp.items.*;
-import com.jgg.sdp.ivp.loaders.XMLIVPLoader;
 import com.jgg.sdp.printer.Printer;
 
 import static com.jgg.sdp.ivp.items.IVPAction.*;
@@ -51,16 +51,18 @@ public class IVPLaunchers {
 	}
 	
 	private int processLoader(File loader) throws Exception {
-		XMLIVPLoader xmlLoader = new XMLIVPLoader(loader);
-		setBlockEnvironment(xmlLoader.getConfig());
+//		XMLIVPLoader xmlLoader = new XMLIVPLoader(loader);
+//		setBlockEnvironment(xmlLoader.getConfig());
 		
 		dbService.beginTrans();
+/*		
 		for (IVPAction action : xmlLoader.getActions()) {
 			switch (action.getType()) {
 			   case SQL_STMT:   executeSQL(action.getValue());       break;
 			   case SQL_SCRIPT:	processSQLScript(action.getValue()); break;
 			}
 		}
+*/		
 		dbService.commitTrans();
 		return 0;
 	}
@@ -128,9 +130,9 @@ public class IVPLaunchers {
 	private void setBlockEnvironment(IVPConfig config) {
 		envChanged = false;
 		if (config == null) return;
-		if (config.getWorkDir() == null) return;
+//		if (config.getWorkDir() == null) return;
 		oldWD = System.getProperty("user.dir");
-		System.setProperty("user.dir", config.getWorkDir());
+//		System.setProperty("user.dir", config.getWorkDir());
 		envChanged = true;
 	}
 	

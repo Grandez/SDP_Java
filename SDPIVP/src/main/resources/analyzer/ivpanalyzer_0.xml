@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<s:SDPIVP xmlns:s="http://www.sdp.com/SDPIVP" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.sdp.com/SDPIVP SDPIVP.xsd">
+
+    <module>SDPAnalyzer</module>
+    <description>Control de reglas de programacion</description>
+      
+<!--    <environment> -->
+<!--    </environment> -->
+   
+   <group name="Casos basicos">
+      <description>Descripcion 1</description>
+      <pattern>IVP00*.cbl</pattern>
+   </group>
+
+   <group name="Otros casos">
+      <description>Descripcion 2</description>
+      <pattern>IVP01*.cbl</pattern>
+   </group>
+
+   <group name="Control de Reglas">
+      <description>Control de reglas</description>
+      <pattern>IVP50*.cbl</pattern>
+   </group>
+</s:SDPIVP>
+

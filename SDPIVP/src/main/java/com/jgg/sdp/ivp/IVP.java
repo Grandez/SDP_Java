@@ -1,5 +1,7 @@
 package com.jgg.sdp.ivp;
 
+
+import java.io.File;
 /**
  * TODO Tiene que arrancar con cero
  * Carga el entorno para el caso cero
@@ -9,51 +11,33 @@ package com.jgg.sdp.ivp;
  *   Procesar por el conjunto de listas, buscando solo esos programas
  * 
  */
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.net.URL;
 
 import com.jgg.sdp.common.ctes.*;
 import com.jgg.sdp.common.config.*;
-import com.jgg.sdp.common.files.*;
 
-import com.jgg.sdp.Analyzer;
-import com.jgg.sdp.common.exceptions.*;
-
-import com.jgg.sdp.core.exceptions.*;
-import com.jgg.sdp.module.base.Module;
-import com.jgg.sdp.module.ivp.IVPCase;
-import com.jgg.sdp.module.unit.Unit;
-import com.jgg.sdp.parser.base.ParseException;
-import com.jgg.sdp.printer.Printer;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
-import com.jgg.sdp.ivp.items.BlockCases;
-import com.jgg.sdp.ivp.items.Case;
-import com.jgg.sdp.ivp.items.Groups;
+import com.jgg.sdp.ivp.base.Banners;
+import com.jgg.sdp.ivp.base.IVPConfig;
+import com.jgg.sdp.ivp.components.IVPAnalyzer;
+import com.jgg.sdp.ivp.jaxb.Component;
+import com.jgg.sdp.ivp.jaxb.IVPConfigType;
+import com.jgg.sdp.ivp.jaxb.SDPIVP;
+import com.jgg.sdp.printer.Printer;
 
 public class IVP {
 
-	private final int SDPANALYZER   =  1;
-	private final int ISSUES        = 50;
-	   
     private Configuration cfg = DBConfiguration.getInstance();
 
-    private XMLIVP xml = new XMLIVP();
+	private int count     = 0;
+	private int countErrs = 0;
+	private int modules   = 0;
+	
+    private IVPConfig cfgBase;
     
-    private IVPLaunchers launcher = new IVPLaunchers();
-	private Printer printer = new Printer();
-
-	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
-    private HashSet<String> modules = new HashSet<String>();
-	
-	private int count = 0;
-	private int numErrs = 0;
-	
-    private String msgErr;
-
-    private Case   currCase = null;
-    private int    currBloque = 0;
-    private String currArchivo = null;
+    private IVP() {
+    	initObject();
+    }
     
 	public static void main(String[] args) throws Exception {
 	   int rc = RC.OK;
@@ -66,19 +50,62 @@ public class IVP {
 		
 		int     maxRC   = RC.OK;
 			
-		cfg.setTitles(MSG.TITLE_SDP_IVP);
 		args = cfg.processCommandLine(IVPParms.parms, args);
 		
-		banner();
+		Banners.banner();
 		
-		xml.loadFile(cfg.getString(CFG.IVP_CONFIG));
-		process();
+//		if (args.length == 0) {
+			loadFromResources();
+//		}
+//		else {
+//			return loadFromFileSystem(args);
+//		}
+		
+//		xml.loadFile(cfg.getString(CFG.IVP_CONFIG));
+//		process();
 		
 		printResults();
 		
 		return maxRC;
 	}
-		
+	private int loadFromResources() {
+		URL root = Thread.currentThread().getContextClassLoader().getResource("SDPIVP.xml");
+		File base = new File(root.getPath());
+
+		try {
+			IVPParser parser = new IVPParser();
+			//RULES rule = parser.parse("P:/SDP/config/rule00.xml");
+			SDPIVP ivp = parser.parse(base.getAbsolutePath());
+			for (Component component : ivp.getComponent()) {
+				switch (component.getName()) {
+				   case SDP_ANALYZER:  processAnalyzer(component); break;
+				}
+				
+			}
+		} catch (Exception ex) {
+			if (ex instanceof javax.xml.bind.UnmarshalException) {
+	            javax.xml.bind.UnmarshalException unmarshalEx = (javax.xml.bind.UnmarshalException) ex;
+	            if (unmarshalEx.getLinkedException() != null) {
+	                System.out.println(unmarshalEx.getLinkedException().getMessage());
+	            } else {
+	                System.out.println(unmarshalEx.getMessage());
+	            }
+	        }
+			System.out.println(ex.getMessage());
+			ex.printStackTrace();
+		}
+		return 0;				
+	}
+
+	private  void processAnalyzer(Component component) throws Exception {
+		Banners.bannerComponent("SDPAnalyzer");
+		IVPAnalyzer analyzer = new IVPAnalyzer(component, cfgBase);
+		analyzer.process();
+		modules   += analyzer.getCountModules();
+		count     += analyzer.getCount();
+		countErrs += analyzer.getCountErrs();
+	}
+/*	
 	private void process() {
 
 		BlockCases block = null;
@@ -103,160 +130,14 @@ public class IVP {
 		}
 		
 	}
-	
-	private void processBloque(List<Case> cases) {
-		bannerBloque(currBloque);
-		
-		if (launcher.setEnvironment(currBloque) != 0) {
-			printer.lineBeg("ERROR Cargando entorno para el bloque " + currBloque);
-			printer.nl();
-			System.exit(RC.FATAL);
-		}
 
-		for (Case c : cases) {
-			currCase = c;
-			printer.line("IVP GRUPO: " + c.getName());
-			processModules(c.getModules());
-		}		
-	}
+*/	
 	
-	private void processModules(List<String> patterns) {
-		
-		Module module = null;
-		
-	   for (String pattern : patterns) {
-           for (Archive archivo : FileFinder.find(cfg.getString(CFG.IVP_INPUT), pattern)) { 
-        	   currArchivo = archivo.getFileName();
-        	   modules.add(currArchivo);
-        	   printer.lineBeg(String.format("%5d - %8s", ++count, archivo.getBaseName()));
-        	   module = analyze(archivo);
-        	   int rc = evaluate(module); 
-               if (rc == 0) printer.lineEnd("OK");
-               numErrs += rc;
-           } 	
-	   }
-	   
-	}
 	
-	private Module analyze(Archive archivo) {
-		int   rc = 0;
-		Module module = null;
-		Exception ex = null;
-  
-		Unit unit = new Unit(archivo);
-		
-		Analyzer analyzer = new Analyzer();
-		
-		try {
-			rc = analyzer.analyze(unit);
-        } catch (FileException f) {
-        	ex = f;
-        } catch (NotSupportedException s) {
-        	ex = s;
-        } catch (ParseException s) {
-        	ex = s;
-        } catch (SDPException s) {
-        	ex = s;
-        } catch (Exception e) {
-        	ex = e;
-        } finally {
-          module = analyzer.getModule();
-          module.setException(ex);
-          module.setRC(rc);
-        }
-        return module;
-	}
-	
-	private int evaluate(Module module) {
-		int ko = 0;
-		int rc = 0;
-		
-		Groups cases = new Groups();
-		cases.loadCases(module.getIVPCases());
-		for (IVPCase c : cases.getCases(currBloque)) {
-			rc = evaluateCase(module, c); 
-			if (rc == 1) {
-				if (ko == 0) printer.lineEnd("KO");
-				printer.line("        ERROR: " + msgErr);
-			}
-			ko += rc;
-		}
-		
-		if (currBloque == 0) loadOtherBlocks(cases);
-		return ko;
-	}
-	
-	private int evaluateCase(Module module, IVPCase c) {
-		if (c.getDescription().length() > 0) printer.lineCnt(" - " + c.getDescription());
-		int obj = selectObject(c.getObject()); 
-		switch(obj) {
-		   case SDPANALYZER: return evaluateAnalyzer(module, c);
-		   default: return evaluateComponent(obj, module, c);
-		}
-    }
-	
-	private int selectObject(String txt) {
-		if (txt.compareToIgnoreCase("SDPAnalyzer") == 0) return SDPANALYZER;
-		if (txt.compareToIgnoreCase("Issues")      == 0) return ISSUES;
-		
-		return 0;
-	}
-	
-	private int evaluateAnalyzer(Module module, IVPCase c) {
-		String objeto = "get" + c.getObject().toUpperCase();
-		
-		Object res = getResult(module, c.getMethod());
-//		System.out.println(res.toString());
-		if (res instanceof Integer) return matchInteger((Integer) res, c);
-		return 0;
-		
-	}
+/*	
 
-	private int evaluateComponent(int id, Module module, IVPCase c) {
-		
-		Object o = null;
-		switch (id) {
-		   case ISSUES: o = module.getTbIssues(); break; 
-		}
-		
-		Object res = getResult(o, c.getMethod());
-		//System.out.println(res.toString());
-		if (res instanceof Integer) return matchInteger((Integer) res, c);
-		return 0;
-		
-	}
+*/	
 	
-	private Object getResult(Object o, String method) {
-		
-		try {
-			Method m = o.getClass().getMethod(method);
-			m.setAccessible(true);
-			return m.invoke(o);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	private int matchInteger(Integer res, IVPCase c) {
-		int tgt = c.getValueInteger();
-		
-		if (tgt != res) msgErr = String.format("Expected: %d. Found: %d",  tgt, res);
-		return (tgt == res) ? 0 : 1;
-	}
 	
 /*
   	private void processNoGroup() {
@@ -305,48 +186,32 @@ public class IVP {
 	}
 	*/
 	
-	private void loadOtherBlocks(Groups cases) {
-		List<Integer> grupos = cases.getGroups();
-		for (Integer grupo : grupos) {
-			if (grupo != 0) {
-			   if (bloques.containsKey(grupo) == false) {
-				   bloques.put(grupo, new BlockCases());
-			   }
-			   BlockCases p = bloques.get(grupo);
-			   int pos = p.addCase(currCase);
-			   p.addModule(pos, currArchivo);
-			}   
-		}
-		
-//		bloques.
-		
-	}
-	private void banner() {
-		
-		printer.boxBeg();
-		printer.boxLine("SERENDIPITY", true);
-		printer.boxLine("PROCESO DE VERIFICACION", true);
-		printer.boxEnd();
-		printer.nl();
-	}
 
-	private void bannerBloque(int bloque) {
-		
-		printer.boxBeg();
-		printer.boxLine("PROCESO DE VERIFICACION", true);
-		printer.boxLine("BLOQUE DE PRUEBAS " +  bloque, true);		
-		printer.boxEnd();
-		printer.nl();
+	private void setDefaultEnvironment(IVPConfigType xmlCfg) {
+		cfgBase = new IVPConfig();
+		if (xmlCfg == null) return;
+		cfgBase.setBaseDir(xmlCfg.getBaseDir());
+		cfgBase.setBinDir(xmlCfg.getBinDir());
+		cfgBase.setWorkingDir(xmlCfg.getWorkingDir());
+		cfgBase.setCobolDir(xmlCfg.getCobolDir());
 	}
-
+	
+	private void initObject() {
+		cfg.addTitle(CDG.TXT_TITLE, MSG.TITLE_SDP_IVP);
+		cfg.addTitle(CDG.TXT_SKIP,  0);
+		cfg.addTitle(CDG.TXT_USE,   MSG.USE_SDP_IVP);
+	}
+	
 	private void printResults() {
+		Printer printer = new Printer();
 		printer.boxBeg();
 		printer.boxLine("SERENDIPITY - IVP", true);
-		printer.boxLine(String.format("%s %5d",  "Modulos analizados: ", modules.size()), false);
-		printer.boxLine(String.format("%s %5d",  "Casos realizados:   ", count), false);
-		printer.boxLine(String.format("%s %5d",  "Casos erroneos:     ", numErrs), false);		
+		printer.boxLine(String.format("%s %5d",  "Modulos analizados: ", modules)  , false);
+		printer.boxLine(String.format("%s %5d",  "Casos realizados:   ", count)    , false);
+		printer.boxLine(String.format("%s %5d",  "Casos erroneos:     ", countErrs), false);		
 		printer.boxEnd();
 		printer.nl();
 		
 	}
+
 }

@@ -10,7 +10,9 @@
         
 <!--         <class>com.jgg.sdp.domain.admin.ADMUsuario</class> -->
                                 
-        <class>com.jgg.sdp.domain.cfg.CFGConfiguracion</class>
+        <class>com.jgg.sdp.domain.cfg.CFGConfig</class>
+        <class>com.jgg.sdp.domain.cfg.CFGConfigDesc</class>
+        <class>com.jgg.sdp.domain.cfg.CFGConfigTooltip</class>
         <class>com.jgg.sdp.domain.cfg.CFGCodigo</class>
         <class>com.jgg.sdp.domain.cfg.CFGTranslate</class>
         

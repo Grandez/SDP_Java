@@ -18,7 +18,8 @@ public class MSG {
 	public static final int TITLE_SDP_IVP       =    15;	
 	public static final int TITLE_SDP_RULES     =    16;
 	public static final int TITLE_SDP_EXCEL     =    17;
-
+	public static final int TITLE_SDP_LOADER    =    18;
+	
 	
 //	public static final int TITLE_SDP_CICS      =    12;
 //
@@ -35,7 +36,9 @@ public class MSG {
 	public static final int USE_SDP_TRAPPER     =    20;	
 	public static final int USE_SDP_LITE        =    23;
 	public static final int USE_SDP_ANALYZER    =    23;	
+	public static final int USE_SDP_IVP         =    24;	
 	public static final int USE_SDP_CALL        =    27;	
+	public static final int USE_SDP_LOADER      =    28;
 	public static final int LANG                =    30;
 
 
@@ -43,7 +46,7 @@ public class MSG {
 	public static final int DESC_TRAPPER_41     =    41;
 	public static final int DESC_TRAPPER_42     =    42;
 	public static final int DESC_TRAPPER_43     =    43;	
-	
+
 	public static final int NO_DATA             =   100;
 
 	public static final int TITLE_SDP_PARSER    =   201;
@@ -77,6 +80,7 @@ public class MSG {
 	public static final int PARM_BAD_FILE       =  1003;
 	public static final int PARM_BAD_NUMBER     =  1004;
 	public static final int PARM_BAD_RESOURCE   =  1005;
+	public static final int PARM_DEFINED        =  1006;
 	
 	public static final int FILE_NOT_EXIST      =  2001;
 	public static final int FILE_NOT_READ       =  2002;

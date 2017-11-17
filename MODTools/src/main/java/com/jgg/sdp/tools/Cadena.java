@@ -8,8 +8,6 @@
  */
 package com.jgg.sdp.tools;
 
-import java.util.Arrays;
-
 public class Cadena {
 	
 	/**
@@ -41,6 +39,7 @@ public class Cadena {
 	}
 
 	public static String spaces(int length) {
+		if (length <= 0) return "";
 		String base = "          ";
 		StringBuilder tmp = new StringBuilder();
 		int pending = length;

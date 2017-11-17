@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<s:SDPIVP xmlns:s="http://www.sdp.com/SDPIVP" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.sdp.com/SDPIVP SDPIVP.xsd">
+
+   <!--  Define los componentes a testear -->
+   <s:component>
+      <name>SDPAnalyzer</name>
+      <config>
+         <baseDir>P:\SDP</baseDir>
+         <cobolDir>cobol\cbl</cobolDir>
+      </config>
+      <cases>
+         <case type="directory">analyzer</case>
+      </cases>   
+   </s:component>
+</s:SDPIVP>
+

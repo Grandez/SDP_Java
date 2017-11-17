@@ -45,6 +45,7 @@ public class CFG {
 	
 	// Especiales para IVP
 	
+	public static final String IVP_PROCESS  = "ivp.process";	
 	public static final String IVP_TEST     = "ivp.test";
 	public static final String IVP_GROUP    = "ivp.group";
 	
@@ -153,18 +154,23 @@ public class CFG {
 
 	public static final int DEF_MAX_VERSIONS = 1;
 
-	public static final String RULES_UNLOAD   = "rules.unload";
-	public static final String RULES_LOAD     = "rules.load";
-	public static final String RULES_SPLIT    = "rules.split";
+	public static final String LOADER_PROCESS = "loader.process";
+	public static final String LOADER_TYPE    = "loader.type";
+	public static final String LOADER_CLEAN   = "loader.clean";
+	public static final String LOADER_SPLIT   = "loader.split";
+	public static final String LOADER_DIR     = "loader.dir";
+	public static final String LOADER_FILE    = "loader.file";
 	
     ////////////////////////////////////////////////////////////////////////
 	// Listas de valores
 	////////////////////////////////////////////////////////////////////////
 	
-	public static final String IVP_CONFIG         = "ivp.config.file";
-	public static final String IVP_INPUT          = "ivp.input.dir";
-	public static final String IVP_LOADER         = "ivp.loader";
-
+	public static final String IVP_CONFIG      = "ivp.config.file";
+	public static final String IVP_INPUT       = "ivp.input.dir";
+	public static final String IVP_LOADER      = "ivp.loader";
+	public static final String IVP_LOG         = "ivp.log";
+	public static final String IVP_STOP_ON_ERR = "ivp.stop.error";
+	
     ////////////////////////////////////////////////////////////////////////
 	// Logger
 	////////////////////////////////////////////////////////////////////////

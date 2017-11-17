@@ -2,7 +2,7 @@ package com.jgg.sdp.parser.lang;
 
 import java_cup.runtime.Symbol;
 
-import com.jgg.sdp.core.ctes.*;
+import com.jgg.sdp.common.ctes.MSG;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.parser.base.*;
 
@@ -59,6 +59,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
    boolean beginPic  = true;   
    boolean prevSpace = false;
 
+/*
    public Symbol literal(boolean clean) { 
        String txt = cadena.toString();
        if (clean) cadena.setLength(0);
@@ -83,21 +84,17 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       return x;      
    }
 
-   public Symbol symbolDummy(int code) {
-      data = true;
-      lastSymbol = 0;
-      return symbol(code);
-   }
-
+*/
    public Symbol levelOrNum() {
        if (lastSymbol == NUMERO) return symbol(NUMERO);
        return symbol(LEVEL);
    }
-                              
-   public Symbol symbol(int code){
-      return symbol(code, yytext());
-   }
 
+                              
+   public Symbol symbol(int code)             { return symbol(code, yytext(), yyline, yycolumn); }
+   public Symbol symbol(int code, String txt) { return symbol(code, yytext(), yyline, yycolumn); }
+
+/*
    public Symbol symbol(int code, String txt) {
       setLastSymbol(code);
       data = true;
@@ -117,6 +114,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
   private void excepcion(int code) {
       throw new NotSupportedException(code, info.module.getName(), yyline + 1, yycolumn + 1, yytext());
   }
+*/
   
 %}
 
@@ -131,7 +129,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
         yypopStream();
     }
     else {
-         info.addOffset(yyline);
+         info.addOffset(yyline + 1);
          info.addOffset(yychar - pushBack);
          return new java_cup.runtime.Symbol(ZCDSym.EOF);
     }
@@ -144,9 +142,6 @@ BLANKS=[ \t]+
 
 // Generico para cargar buffer
 WORD=[a-zA-Z0-9\_\-]+
-ENDVERB=END-[a-zA-Z]+
-
-ALPHA=[a-zA-Z]+
 
 NUMERO=[+|-]?[0-9]+
 DECIMAL=[+|-]?[0-9]+[\.\,][0-9]+
@@ -155,8 +150,6 @@ HEXVALUE=[xX][\'\"][0-9aAbBcCdDeEfF]+[\'\"]
 
 ALPHANUM=[a-zA-Z0-9]
 ID = {ALPHANUM}({ALPHANUM}|\-|\_)*
-SP=[ ]{1}
-PARAGRAPH  = {SP}{ID} 
 
 SIZE=\({BLANKS}*{NUMERO}[kKmM]?{BLANKS}*\)
 PICLEN=[sS\+\-]?[aAxXzZ9]?{SIZE}
@@ -172,9 +165,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /******************************************************************************/
 
  ^[\*]>[ \t]+SDP     { tmp = new StringBuilder(); pushState(SDP); }
- ^[\*]               { commentInit(yytext(), yyline);  }
- ^[\/]               { commentInit(yytext(), yyline);  }  
- ^[dD]               { commentInit(yytext(), yyline);  }
+ ^[\*\/dD]           { commentInit(yytext(), yyline);  }
  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
@@ -198,7 +189,7 @@ EXEC         { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
 
   
 CBL                { ruleCompileDirective(yyline + 1); pushState(EATLINE);  }
-REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
+REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolumn); }
 {SPACES}           { /* nada */ }
 {TABS}             { ruleTabs(yyline, yycolumn); }
 {ID}               { ruleCompileDirective(yyline + 1);   pushState(EATLINE);    }
@@ -220,9 +211,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <ID_DIVISION> {
   ^[\*]>[ \t]+SDP     { tmp = new StringBuilder(); pushState(SDP);  }
-  ^[\*]               { commentInit(yytext(), yyline);  }
-  ^[\/]               { commentInit(yytext(), yyline);  }  
-  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
   ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
   ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
@@ -239,7 +228,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   PROGRAM          { data = true; }  
 
   RECURSIVE        { data = true; }
-  REMARKS          { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
+  REMARKS          { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolumn); }
   
   COPY         { initEmbedded(); 
                  pushState(COPYS); 
@@ -286,9 +275,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <ENV_DIVISION> {
 
-  ^[\*]               { commentInit(yytext(), yyline);  }
-  ^[\/]               { commentInit(yytext(), yyline);  }  
-  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
   ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
   ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
                                    
@@ -339,9 +326,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <CONF_SECT> {
-  ^[\*]               { commentInit(yytext(), yyline);  }
-  ^[\/]               { commentInit(yytext(), yyline);  }  
-  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
   ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
   ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
@@ -402,9 +387,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 /******************************************************************************/
 
 <IO_SECT> {
-  ^[\*]               { commentInit(yytext(), yyline);  }
-  ^[\/]               { commentInit(yytext(), yyline);  }  
-  ^[dD]               { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
   ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
   ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
 
@@ -480,9 +463,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 <DATA_DIVISION> {
 
-  ^[\*]                 { commentInit(yytext(), yyline);  }
-  ^[\/]                 { commentInit(yytext(), yyline);  }  
-  ^[dD]                 { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]             { commentInit(yytext(), yyline);  }
   ^[ \t]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
   ^[ \t]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
   ^\-                   { /* JGG, Pendiente de revisar */ }  
@@ -642,9 +623,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 
 /* PICTURE es PIC espacios formato [espacios|punto] con comentarios o sin ellos */
 <PIC> {
-  ^[\*]                   { commentInit(yytext(), yyline);    }
-  ^[\/]                   { commentInit(yytext(), yyline);    }  
-  ^[dD][dD][a-zA-Z0-9 ]*  { commentInit(yytext(), yyline);    }
+  ^[\*\/dD]     { commentInit(yytext(), yyline);    }
 
   {SPACES}      { if (beginPic == false) popState();  }
   {TABS}        { ruleTabs(yyline, yycolumn);   
@@ -682,7 +661,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 <QUOTE_STRING> {
   \'\'          { cadena.append(yytext());  }    
   \'            { popState();  
-                  return literal(true); 
+                  return literal(LITERAL, true); 
                 }  
                 // Tiene que haber continuacion
   \n            { popState(); } 
@@ -695,7 +674,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 <DQUOTE_STRING> {
   \"\"          { cadena.append(yytext());  }    
   \"            { popState(); 
-                  return literal(true); 
+                  return literal(LITERAL, true); 
                 }
                 // Tiene que haber continuacion
   \n            { popState(); }
@@ -741,7 +720,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
   
  
 <COPYS> {
-  ^[\*\/]            { pushState(COMMENT);           }
+  ^[\*\/dD]          { commentInit(yytext(), yyline);  }
   REPLACING          { appendEmbedded(yytext()); popState(ST_REPLACING); }
   \.                 { popState(); return symbol(ENDCOPY);  }
   \r                 { /* eat */ }
@@ -751,7 +730,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <ST_REPLACING> {
-  ^[\*\/]            { pushState(COMMENT);           }
+  ^[\*\/dD]          { commentInit(yytext(), yyline);  }
  "=="                { appendEmbedded(yytext()); pushState(REP_EQUALS); }
   \"                 { appendEmbedded(yytext()); pushState(REP_DQUOTE); } 
   \'                 { appendEmbedded(yytext()); pushState(REP_QUOTE); }  
@@ -788,7 +767,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <STEXEC> {
-  ^[\*\/dD]       { pushState(COMMENT);       }
+  ^[\*\/dD]       { commentInit(yytext(), yyline);  }
    SQL            { info.module.setSQL(); 
                     initEmbedded();  
                     pushState(EMBEDDED);
@@ -802,7 +781,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW); }
 }
 
 <EMBEDDED> {
-  ^[\*\/dD]          { pushState(COMMENT);       }
+  ^[\*\/dD]          { commentInit(yytext(), yyline);      }
   END-EXEC[ ]*[\.]?  { popState(2); return symbol(ENDSQL); }
 
   \r           { /* do nothing */ }

@@ -5,7 +5,8 @@ package com.jgg.sdp.common.config;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.Logger;
+
+import org.slf4j.*;
 
 import com.jgg.sdp.common.exceptions.SDPException;
 
@@ -22,9 +23,9 @@ public class Messages {
 	private SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 	
 	private Messages() {
-//	    if (LOGGER == null) {
-//	        LOGGER = LoggerFactory.getLogger("SDP");
-//	    }
+	    if (LOGGER == null) {
+	        LOGGER = LoggerFactory.getLogger("SDP");
+	    }
 	}
 	private Messages(String nombre) {
 	    //LOGGER = LoggerFactory.getLogger(nombre);
@@ -67,7 +68,7 @@ public class Messages {
 		}
 	    String[] lineas = e.getMessage().split("\\n");
 	    for (int index = 0; index < lineas.length; index++) {
-//           LOGGER.error(makeMsg("E%05d - %s", e.getErrorCode(), lineas[index]));
+           LOGGER.error(makeMsg("E%05d - %s", e.getErrorCode(), lineas[index]));
 	    }   
      }
 	public String getExceptionMessage(SDPException e) {

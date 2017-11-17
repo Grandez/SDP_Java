@@ -21,7 +21,7 @@ public class RulesProcessor {
 	// Los issues del lexer pueden que no sepan el modulo
 	private ArrayList<Issue> issues = new ArrayList<Issue>();
 
-	private RuleItem currItem = null;
+//	private RuleItem currItem = null;
 	
 	/***************************************************************/
 	/* Manejadores de reglas                                       */
@@ -47,7 +47,7 @@ public class RulesProcessor {
     }
     
 	private void processItem(RuleItem item, RuleObject obj) {
-		currItem = item;
+//		currItem = item;
 		
 		if (!processCondition(item.getActivation(), obj)) return;
 		
@@ -129,6 +129,7 @@ public class RulesProcessor {
 		   case OP_START:    res = l.startsWith(r); break;
 		   case OP_END:      res = l.endsWith(r);   break;
 		   case OP_CONTAINS: res = l.contains(r);   break;
+		   case OP_EQ:       res = (l.compareToIgnoreCase(r) == 0);   break;
 		   case OP_MATCH:    Pattern p = Pattern.compile(r);
 		                     Matcher m = p.matcher(l);
 		                     res = m.find();
@@ -192,7 +193,7 @@ public class RulesProcessor {
 		if (data.compareToIgnoreCase("exist()") != 0 &&
 			data.compareToIgnoreCase("exist")   != 0) {
             String m = mountMethodName(type, data);
-		    lval = (Boolean) SDPJava.executeMethod(obj, m);
+		    lval = (Boolean) SDPJava.executeMethod(obj.getComponent(), m);
 		}
 		
 		return lval;
@@ -243,7 +244,7 @@ public class RulesProcessor {
 	//	applyOperator(lval, rval, cond.getOperator());
 		return false;
 	}
-	
+/*	
 	private boolean processRuleVerb(RuleRule rule, RuleObject obj) {
 		boolean res = false;
 		
@@ -256,7 +257,7 @@ public class RulesProcessor {
 		}
 		return res;
 	}
-	
+*/	
 	private boolean processRuleMethod(RuleRule rule, RuleObject obj) {
 		System.out.println("JGG processRuleMethod");
 /*		
@@ -267,14 +268,14 @@ public class RulesProcessor {
 */		
 		return false;
 	}
-
+/*
 	private boolean processRuleValue(RuleRule rule, RuleObject obj) {
         Object o = obj.getValue();		
 		if (o instanceof Integer)    return  matchInteger((Integer) o, rule);
 		if (o instanceof BigDecimal) return  matchBigDecimal((BigDecimal) o, rule);
 		return false;
 	}
-
+*/
 	
 	private boolean processString(RuleCond cond, String lvalue) {
 		return false;
@@ -285,10 +286,11 @@ public class RulesProcessor {
 	 * @param obj
 	 * @return
 	 */
+/*	
 	private boolean checkExist(RuleRule rule, RuleObject obj) {
 		return (rule.getComparator() > 100);
 	}
-	
+*/	
 	/**
 	 * Chequea si el objeto como cadena empieza con una subcadena
 	 * @param rule La regla
@@ -296,6 +298,7 @@ public class RulesProcessor {
 	 * @return false si cierto
 	 *         true  error
 	 */
+/*	
 	private boolean checkTypeStart(RuleRule rule, RuleObject obj) {
 		String value = obj.getObjectAsString();
 		String target = rule.getValor();
@@ -338,8 +341,9 @@ public class RulesProcessor {
 		// Cuidado con el XOR
 		return !(((mask & (comp % 100)) > 0) ^ comp > 100);
 	}
-
+*/
 	private void applyIssue(RuleRule rule, RuleObject obj) {
+//		System.out.println("Aplica: " + rule.getIdGroup() + "-" + rule.getIdItem() + "-" + rule.getIdRule());
 		Issue issue = new Issue(rule.getIdGroup(), rule.getIdItem(), rule.getIdRule());
 		issue.setBegLine(obj.getBegLine());
 		issue.setBegColumn(obj.getBegColumn());

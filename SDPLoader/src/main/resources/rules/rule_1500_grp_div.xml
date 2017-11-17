@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas de control de las divisiones</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="DIV">
+      <idGroup>15</idGroup>
+      <prefix>DIV</prefix>
+      <active>true</active>
+      <r:description>
+          <text lang="xx">Reglas de control de las divisiones</text>      
+      </r:description>
+      
+   </r:group>
+
+</r:SDPRules>
+

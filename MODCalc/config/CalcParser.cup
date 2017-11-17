@@ -3,7 +3,7 @@ package com.jgg.sdp.calculator;
 import java.util.*;
 import com.jgg.parsers.runtime.*;
 
-import com.jgg.sdp.tools.JGGJava;
+import com.jgg.sdp.tools.SDPJava;
 
 parser code {:
 
@@ -64,11 +64,11 @@ action code {:
          obj = parser.root;
 
          do {
-           obj = JGGJava.executeMethod(obj, "get" + toks[idx++]);
+           obj = SDPJava.executeMethod(obj, "get" + toks[idx++]);
          } while (idx + 1 < toks.length);
       }
       
-      Object res = JGGJava.executeMethod(obj, "get" + toks[idx]);
+      Object res = SDPJava.executeMethod(obj, "get" + toks[idx]);
       
       if (res instanceof Integer)  item = new CalcItem((Integer) res);
       if (res instanceof Long)     item = new CalcItem((Long) res);

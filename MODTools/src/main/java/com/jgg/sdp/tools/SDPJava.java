@@ -20,19 +20,19 @@ public class SDPJava {
 			m.setAccessible(true);
 			if (parms == null) return m.invoke(o);
 		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
+			System.err.println(e.getLocalizedMessage());
 			e.printStackTrace();
 		} catch (SecurityException e) {
-			// TODO Auto-generated catch block
+			System.err.println(e.getLocalizedMessage());
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
+			System.err.println(e.getLocalizedMessage());
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
+			System.err.println(e.getLocalizedMessage());
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
+			System.err.println(e.getLocalizedMessage());
 			e.printStackTrace();
 		}
 		return null;

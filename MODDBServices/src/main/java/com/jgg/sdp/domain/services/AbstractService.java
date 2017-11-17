@@ -84,8 +84,6 @@ public abstract class AbstractService <T>  {
         
     	if (tx.isActive() == false) return;
 		tx.commit();
-		Session session = em.unwrap(org.hibernate.Session.class);
-		session.clear();
     }
 
     public void rollbackTrans() {
@@ -181,7 +179,7 @@ public abstract class AbstractService <T>  {
     }
 	
 	protected int updateQuery(String qryName, Object... keys) {
-		Query query = em.createNamedQuery(tableName + "." + qryName);
+		Query query = em.createQuery(qryName);
         for (int idx = 0; idx < keys.length; idx++) {
             query.setParameter(idx+1, keys[idx]);    
         }

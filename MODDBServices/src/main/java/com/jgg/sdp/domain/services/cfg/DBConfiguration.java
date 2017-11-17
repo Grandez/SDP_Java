@@ -4,7 +4,7 @@
 package com.jgg.sdp.domain.services.cfg;
 
 import com.jgg.sdp.domain.cfg.*;
-import com.jgg.sdp.domain.services.cfg.CFGConfigurationService;
+import com.jgg.sdp.domain.services.cfg.CFGConfigService;
 import com.jgg.sdp.common.config.*;
 
 public class DBConfiguration extends ConfigurationBase implements Configuration {
@@ -12,8 +12,8 @@ public class DBConfiguration extends ConfigurationBase implements Configuration 
 	private static boolean loading = false;
 	
     private DBConfiguration() {
-        CFGConfigurationService confService = new CFGConfigurationService();
-        for (CFGConfiguracion config : confService.getAll()) {
+        CFGConfigService confService = new CFGConfigService();
+        for (CFGConfig config : confService.getAll()) {
             conf.put(config.getClave(),  config.getValor());
         }    	
 

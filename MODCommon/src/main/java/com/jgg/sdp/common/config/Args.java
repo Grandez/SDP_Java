@@ -40,6 +40,7 @@ public class Args {
 	public final static String FILE     = "3";
 	public final static String RESOURCE = "4";	
 	public final static String BOOLEAN  = "5";
+	public final static String FLAG     = "6";
 	
 	// Lista de argumentos soportados
 	ArrayList<String[]> prms = new ArrayList<String[]>();
@@ -76,10 +77,10 @@ public class Args {
 		
 		for (int idx = 0; idx < args.length; idx++) {
 	        if (args[idx].startsWith("--")) {
-	        	idx = parseParm(args, idx, 2);		
+	        	idx = parseParm(args, idx, 1);		
 	        }
 	        else if (args[idx].startsWith("-")) {
-	        	idx = parseParm(args, idx, 1);
+	        	idx = parseParm(args, idx, 0);
 	        }
 	        else {
 	        	resto.add(args[idx]);
@@ -93,11 +94,11 @@ public class Args {
 	 */
 	private void loadDefaults() {
 		String def[][] = { 
-		         {"1", "v" , "verbose", ""           , CFG.VERBOSE    , BOOLEAN  , "209" }	   
-		        ,{"2", "V" , "VERBOSE", ""           , CFG.VERBOSE    , BOOLEAN  , "210" }	
-	            ,{"1", "h" , "help"   , ""           , CFG.HELP       , BOOLEAN  , "222" }		        
-				,{"" , ""  , "config" , "SDP_CONFIG" , CFG.DIR_CONFIG , DIR      , "216" }
-		        ,{"1", ""  , "def"    , ""           , CFG.DEF        , BOOLEAN  , "223" }
+		         {"v"  , "verbose", ""           , CFG.VERBOSE    , "X1"     , "209" }	   
+		        ,{"V"  , "VERBOSE", ""           , CFG.VERBOSE    , "X2"     , "210" }	
+	            ,{"h"  , "help"   , ""           , CFG.HELP       , BOOLEAN  , "222" }		        
+				,{ ""  , "config" , "SDP_CONFIG" , CFG.DIR_CONFIG , DIR      , "216" }
+		        ,{ ""  , "def"    , ""           , CFG.DEF        , BOOLEAN  , "223" }
 		      };
 		   
 	       for (int idx = 0; idx < def.length; idx++) {
@@ -106,15 +107,21 @@ public class Args {
 		}
 	
 	private int parseParm(String[] args, int idx, int len)  {
-		String p = args[idx].substring(len);
+		String p = args[idx].substring(len + 1);
 		
 		int pos = searchParm(p, len);
 		
 		String[] prm = prms.get(pos);
 
-		if (prm[5] != Args.BOOLEAN) return processParm(args, idx, pos);
-		
-		params.put(prm[4], prm[0]);
+		if (prm[4] == Args.BOOLEAN) {
+			params.put(prm[3], "1");
+		} else if (prm[4].charAt(0) == 'X') {
+			params.put(prm[3], prm[4].substring(1));
+		} else if (prm[4].charAt(0) < '0' ||  prm[4].charAt(0) > '9') {
+			params.put(prm[3], prm[4]);
+		} else {
+			return processParm(args, idx, pos);
+		}
 		return idx;
 	}
 	
@@ -128,6 +135,8 @@ public class Args {
 	}
 	
 	private int processParm(String[] args, int idx, int pos)   {
+		int group    = 0;
+		
 		int next = idx + 1;
 		String[] prm = prms.get(pos);
 		
@@ -139,12 +148,51 @@ public class Args {
 			throw new ParameterException(MSG.PARM_VALUE_MISSING, args[idx]);
 		}
 		
-		if (prm[5] != Args.STRING) {
-			validateParm(args[next], prm[5]);
+		// Valor por defecto
+		if (prm.length > 5 && prm[6] == "1") {
+			if (params.get(prm[3]) == null) {
+				params.put(prm[3],  prm[4]);
+			}
+		}
+
+		// Version vieja
+		if (prm.length < 8) {
+			if (prm[4] != Args.STRING) {
+				validateParm(args[next], prm[4]);
+			}
+			params.put(prm[4], args[next]);
+			return next;
 		}
 		
-		params.put(prm[4], args[next]);
+		group = getGroup(prm[7]);
+
+		if (group != 0) {
+			if (params.get(prm[3]) != null) {
+				throw new ParameterException(MSG.PARM_DEFINED, prm[1]);
+			}
+		}
+		
+		try {
+			Integer.parseInt(prm[4]);
+			if (prm[4] != Args.STRING) {
+				validateParm(args[next], prm[4]);
+			}
+			params.put(prm[4], args[next]);
+		}
+		catch (NumberFormatException e) {
+			if (prm[4].charAt(0) == 'X') {
+				params.put(prm[3], prm[4].substring(1));
+			}
+			else {
+				params.put(prm[3], prm[4]);
+			}
+		}
 		return next;
+	}
+	
+	private int getGroup(String data) {
+		if (data.length() > 1) return Integer.parseInt(data.substring(0, 2));
+        return 0;
 	}
 	
 	/*
@@ -157,8 +205,8 @@ public class Args {
 	private void loadFromEnvironment() {
 		String var;
 		for (int idx = 0; idx < prms.size(); idx++) {
-			var = System.getenv(prms.get(idx)[3]);
-			if (var != null) params.put(prms.get(idx)[4],var);
+			var = System.getenv(prms.get(idx)[2]);
+			if (var != null) params.put(prms.get(idx)[3],var);
 		}
 	}
 

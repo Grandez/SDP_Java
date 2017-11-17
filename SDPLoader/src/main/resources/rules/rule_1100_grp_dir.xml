@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Directivas de compilacion</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="CBL">
+      <idGroup>11</idGroup>
+      <idParent>10</idParent>
+      <prefix>CBL</prefix>
+      <r:description>
+          <text lang="xx">Directivas de compilacion</text>      
+      </r:description>
+      
+      <r:item name="CBL_DIRECTIVE">
+         <object>CBL</object>
+         <r:description>
+            <text lang="xx">No usar directivas de compilacion</text>
+         </r:description>
+         
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <property>exist()</property>
+            </condition>            
+         </r:rule>
+         
+      </r:item>
+
+      <r:item name="CBL_LIST_DIRECTIVE">
+         <object>WORD</object>
+         <active>true</active>
+         <r:description>
+            <text lang="xx">No usar sentencias de compilacion</text>
+         </r:description>
+         
+         <!--  Son logicamente excluyentes -->
+         <r:rule>
+            <priority>1</priority>
+            <severity>3</severity>
+            <condition>
+               <value>EJECT</value>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <priority>1</priority>         
+            <severity>3</severity>
+            <condition>
+               <value>SKIP</value>
+            </condition>            
+         </r:rule>
+         
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>

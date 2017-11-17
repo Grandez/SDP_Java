@@ -48,14 +48,18 @@ public class FileFinder {
 	}
 	
 	private static String mountFullPath(String dir, String name) {
+		// Full path
+		if (name.charAt(0) == '/' || name.charAt(0) == '\\') return name;
+		if (name.charAt(1) == ':')                           return name;
+		if (dir == null || dir.length() == 0)                return name;
+		
 		if (name.indexOf('/')  != -1) return name;
 		if (name.indexOf('\\') != -1) return name;
-		if (dir == null)        return name;
-		if (dir.length() == 0)  return name;
-		if (dir.endsWith("/"))  return dir + name;
-		if (dir.endsWith("\\")) return dir + name;
+		
+		if (dir.endsWith("/") || dir.endsWith("\\")) return dir + name;
 		return dir + File.separatorChar + name;
 	}
+	
 	/**
 	 * Busca los ficheros que cumplen el patron.
 	 * Si el fichero se ha pasado con directorio, solo busca ahi

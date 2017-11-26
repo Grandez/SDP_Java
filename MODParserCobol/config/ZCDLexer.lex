@@ -5,6 +5,7 @@ import java_cup.runtime.Symbol;
 import com.jgg.sdp.common.ctes.MSG;
 import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.rules.components.RulesData;
 
 import static com.jgg.sdp.parser.lang.ZCDSym.*;
 import static com.jgg.sdp.parser.lang.ZCZSym.*;
@@ -44,77 +45,21 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 
 %{
 
-   StringBuilder tmp;
+   StringBuilder sdpData;
+   RulesData rules = new RulesData();
    
-   String cpyName = null;
-   String cicsVerb = null;
    int    lastSymbol = -1;
-   int    prevSymbol = -1;
-   int    nPars = 0;
-   int    inIndex = 0;
-   Symbol begExec = null;
-
    int    pushBack = 0;
       
    boolean beginPic  = true;   
-   boolean prevSpace = false;
 
-/*
-   public Symbol literal(boolean clean) { 
-       String txt = cadena.toString();
-       if (clean) cadena.setLength(0);
-       return literal(txt); 
-   }
-   
-   public Symbol literal(String txt) {
-      setLastSymbol(LITERAL);
-      print("Devuelve LITERAL - " + txt);
-      Symbol s = new Symbol(LITERAL, litLine, litColumn, txt);
-      Symbol x = symbolFactory.newSymbol(txt, LITERAL, s);
-      
-      // Espacio es el primer caracter no imprimible en ASCII
-      // Character.codePointAt(new char[] {'a'},0)
-      
-      for (int idx = 0; idx < txt.length(); idx++) {
-          if (txt.charAt(idx) < ' ') {
-              ruleNoPrintable(litLine, litColumn);
-              break;
-          } 
-      }
-      return x;      
-   }
-
-*/
    public Symbol levelOrNum() {
        if (lastSymbol == NUMERO) return symbol(NUMERO);
        return symbol(LEVEL);
    }
-
                               
    public Symbol symbol(int code)             { return symbol(code, yytext(), yyline, yycolumn); }
    public Symbol symbol(int code, String txt) { return symbol(code, yytext(), yyline, yycolumn); }
-
-/*
-   public Symbol symbol(int code, String txt) {
-      setLastSymbol(code);
-      data = true;
-      int col = yycolumn + COLOFFSET;
-      
-      if (code != 0) {      
-          print("Devuelve SYMBOL " + code + " (" + (yyline + 1) + "," + col + ") " + txt);
-      }    
-      return symbolFactory.newSymbol(txt, code, new Symbol(code, yyline + 1, col, txt));
-   }
-
-   private void setLastSymbol(int id) {
-      prevSymbol = lastSymbol;
-      lastSymbol = id;
-   }
-
-  private void excepcion(int code) {
-      throw new NotSupportedException(code, info.module.getName(), yyline + 1, yycolumn + 1, yytext());
-  }
-*/
   
 %}
 
@@ -164,10 +109,12 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /******************************************************************************/
 /******************************************************************************/
 
- ^[\*]>[ \t]+SDP     { tmp = new StringBuilder(); pushState(SDP); }
- ^[\*\/dD]           { commentInit(yytext(), yyline);  }
- ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
- ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+ ^[\*]>[ \t]+SDP     { sdpData = new StringBuilder(); pushState(SDP); }
+ ^[\*\/dD]           { pushState(COMMENT); 
+                       commentInit(yytext(), yyline);  
+                     }
+ ^[ ]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }
+ ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
 
 IDENTIFICATION{BLANKS}DIVISION  { checkDivision(); 
                                   inDesc = false;
@@ -184,15 +131,15 @@ COPY         { initEmbedded();
                pushState(COPYS); 
                return symbol(COPY);     
              }
-EXECUTE      { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
-EXEC         { begExec = symbolDummy(EXEC);   pushState(STEXEC);    }
+EXECUTE      { pushState(STEXEC);    }
+EXEC         { pushState(STEXEC);    }
 
   
-CBL                { ruleCompileDirective(yyline + 1); pushState(EATLINE);  }
+CBL                { rules.checkCompileDirective(yyline + 1); pushState(EATLINE);  }
 REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolumn); }
 {SPACES}           { /* nada */ }
-{TABS}             { ruleTabs(yyline, yycolumn); }
-{ID}               { ruleCompileDirective(yyline + 1);   pushState(EATLINE);    }
+{TABS}             { rules.checkTab(yyline, yycolumn); }
+{ID}               { rules.checkCompileDirective(yyline + 1);   pushState(EATLINE);    }
 
 
 
@@ -210,10 +157,12 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 /******************************************************************************/
 
 <ID_DIVISION> {
-  ^[\*]>[ \t]+SDP     { tmp = new StringBuilder(); pushState(SDP);  }
-  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
-  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
-  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+  ^[\*]>[ \t]+SDP     { sdpData = new StringBuilder(); pushState(SDP);  }
+  ^[\*\/dD]           { pushState(COMMENT); 
+                        commentInit(yytext(), yyline);  
+                      }
+  ^[ ]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
 
   AUTHOR           { inDesc = false; return symbol(AUTHOR); }
   COMMON           { data = true; }
@@ -230,26 +179,28 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   RECURSIVE        { data = true; }
   REMARKS          { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolumn); }
   
-  COPY         { initEmbedded(); 
-                 pushState(COPYS); 
-                 return symbol(COPY);           
-               }
-  EXECUTE      { begExec = symbolDummy(EXEC);  pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(EXEC);     pushState(STEXEC);    }
+  SECURITY         { inDesc = false; return symbol(SECURITY);  }  
+  COPY             { initEmbedded(); 
+                     pushState(COPYS); 
+                     return symbol(COPY);           
+                   }
+                   
+  EXECUTE      { pushState(STEXEC);    }
+  EXEC         { pushState(STEXEC);    }
 
   ENVIRONMENT{BLANKS}DIVISION     { inDesc = false;
                                     resetState(ENV_DIVISION); 
-                                    ruleTabsInText(yytext(), yyline, yycolumn);
+                                    rules.checkTabsInText(yytext(), yyline, yycolumn);
                                     return symbol(DIV_ENV); 
                                   }
 
   DATA{BLANKS}DIVISION            { resetState(DATA_DIVISION);
                                     inDesc = false;   
-                                    ruleTabsInText(yytext(), yyline, yycolumn);
+                                    rules.checkTabsInText(yytext(), yyline, yycolumn);
                                     return symbol(DIV_DATA);
                                   }
 
-  PROCEDURE{BLANKS}DIVISION       { ruleTabsInText(yytext(), yyline, yycolumn); 
+  PROCEDURE{BLANKS}DIVISION       { rules.checkTabsInText(yytext(), yyline, yycolumn); 
                                     pushBack = yytext().length(); 
                                     yyclose(); 
                                   }
@@ -257,7 +208,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   {ID}             { return symbol(ZCDSym.ID);     }
   {NUMERO}         { return symbol(NUMERO); }
   {SPACES}         { /* nada */ }
-  {TABS}           { ruleTabs(yyline, yycolumn); }
+  {TABS}           { rules.checkTab(yyline, yycolumn); }
 
   \.               { return symbol(ENDP);   }
   "-"              { data = true;  }
@@ -275,27 +226,29 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 
 <ENV_DIVISION> {
 
-  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
-  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
-  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+  ^[\*\/dD]           { pushState(COMMENT); 
+                        commentInit(yytext(), yyline);  
+                      }
+  ^[ ]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
                                    
   CONFIGURATION{BLANKS}SECTION   { pushState(CONF_SECT);   
-                                   ruleTabsInText(yytext(), yyline, yycolumn);
+                                   rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    return symbol(CONF_SECTION); 
                                  }
                                  
   INPUT-OUTPUT{BLANKS}SECTION    { pushState(IO_SECT);
-                                   ruleTabsInText(yytext(), yyline, yycolumn);
+                                   rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    return symbol(IO_SECTION);   
                                  }
 
   DATA{BLANKS}DIVISION           { resetState(DATA_DIVISION);
                                    inDesc = false;
-                                   ruleTabsInText(yytext(), yyline, yycolumn);   
+                                   rules.checkTabsInText(yytext(), yyline, yycolumn);   
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { ruleTabsInText(yytext(), yyline, yycolumn);
+  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    pushBack = yytext().length(); 
                                    yyclose(); 
                                  }
@@ -304,13 +257,13 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
                  pushState(COPYS);   
                  return symbol(COPY);         
                }
-  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(EXEC);    pushState(STEXEC);    }
+  EXECUTE      { pushState(STEXEC);    }
+  EXEC         { pushState(STEXEC);    }
 
   \.               { return symbol(ENDP); }                                   
  
   {SPACES}         { /* nada */          }
-  {TABS}           { ruleTabs(yyline, yycolumn); }
+  {TABS}           { rules.checkTab(yyline, yycolumn); }
   \n               { info.module.incLines(data); data = false; }
   \r               { /* do nothing */ }
 
@@ -326,9 +279,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 /******************************************************************************/
 
 <CONF_SECT> {
-  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
-  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
-  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+  ^[\*\/dD]           { pushState(COMMENT); 
+                        commentInit(yytext(), yyline);  
+                      }
+  ^[ ]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
 
   \'               { pushState(QUOTE_STRING);  }  
   \"               { pushState(DQUOTE_STRING); }
@@ -349,22 +304,22 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
                  pushState(COPYS); 
                  return symbol(COPY);     
                }
-  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
+  EXECUTE      { pushState(STEXEC);    }
+  EXEC         { pushState(STEXEC);    }
 
   INPUT-OUTPUT{BLANKS}SECTION    { popState();
                                    pushState(IO_SECT);
-                                   ruleTabsInText(yytext(), yyline, yycolumn);
+                                   rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    return symbol(IO_SECTION);   
                                  }
 
   DATA{BLANKS}DIVISION           { resetState(DATA_DIVISION);
                                    inDesc = false;   
-                                   ruleTabsInText(yytext(), yyline, yycolumn);
+                                   rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { ruleTabsInText(yytext(), yyline, yycolumn);
+  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    pushBack = yytext().length(); 
                                    yyclose(); 
                                  }
@@ -372,7 +327,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   {NUMERO}         { return symbol(NUMERO); }   
   {ID}             { return symbol(ZCDSym.ID);     }
   {SPACES}         { /* nada */ }
-  {TABS}           { ruleTabs(yyline, yycolumn); }
+  {TABS}           { rules.checkTab(yyline, yycolumn); }
   \.               { return symbol(ENDP);   }
   \,               { data = true; }
 
@@ -387,9 +342,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 /******************************************************************************/
 
 <IO_SECT> {
-  ^[\*\/dD]           { commentInit(yytext(), yyline);  }
-  ^[ ]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
-  ^[ ]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+  ^[\*\/dD]           { pushState(COMMENT); 
+                        commentInit(yytext(), yyline);  
+                      }
+  ^[ ]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }
+  ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
 
   ACCESS         { return symbol(ACCESS);       }
   ALTERNATE      { return symbol(ALTERNATE);    }  
@@ -420,16 +377,16 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
                  pushState(COPYS);  
                  return symbol(COPY);          
                }
-  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
+  EXECUTE      { pushState(STEXEC);    }
+  EXEC         { pushState(STEXEC);    }
 
   DATA{BLANKS}DIVISION           { resetState(DATA_DIVISION);
                                    inDesc = false;   
-                                   ruleTabsInText(yytext(), yyline, yycolumn);
+                                   rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { ruleTabsInText(yytext(), yyline, yycolumn);
+  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    pushBack = yytext().length(); 
                                    yyclose(); 
                                  }
@@ -442,7 +399,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
                    }
 
   {SPACES}         { /* nada */ }
-  {TABS}           { ruleTabs(yyline, yycolumn); }
+  {TABS}           { rules.checkTab(yyline, yycolumn); }
   {NUMERO}         { return symbol(NUMERO); }   
   {ID}             { return symbol(ID);     }
   \.               { return symbol(ENDP);          }
@@ -463,17 +420,19 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 
 <DATA_DIVISION> {
 
-  ^[\*\/dD]             { commentInit(yytext(), yyline);  }
-  ^[ \t]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }
-  ^[ \t]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
+  ^[\*\/dD]             { pushState(COMMENT); 
+                          commentInit(yytext(), yyline);  
+                        }
+  ^[ \t]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }
+  ^[ \t]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
   ^\-                   { /* JGG, Pendiente de revisar */ }  
   ^[ \t]+[0-9]+         { return levelOrNum(); }
   
-  FILE{BLANKS}SECTION            { ruleTabsInText(yytext(), yyline, yycolumn); return symbol(FILE_SECTION);    }
-  WORKING-STORAGE{BLANKS}SECTION { ruleTabsInText(yytext(), yyline, yycolumn); return symbol(WORKING_SECTION); }
-  LOCAL-STORAGE{BLANKS}SECTION   { ruleTabsInText(yytext(), yyline, yycolumn); return symbol(LOCAL_SECTION);   }
-  LINKAGE{BLANKS}SECTION         { ruleTabsInText(yytext(), yyline, yycolumn); return symbol(LINKAGE_SECTION); }
-  PROCEDURE{BLANKS}DIVISION      { ruleTabsInText(yytext(), yyline, yycolumn);
+  FILE{BLANKS}SECTION            { rules.checkTabsInText(yytext(), yyline, yycolumn); return symbol(FILE_SECTION);    }
+  WORKING-STORAGE{BLANKS}SECTION { rules.checkTabsInText(yytext(), yyline, yycolumn); return symbol(WORKING_SECTION); }
+  LOCAL-STORAGE{BLANKS}SECTION   { rules.checkTabsInText(yytext(), yyline, yycolumn); return symbol(LOCAL_SECTION);   }
+  LINKAGE{BLANKS}SECTION         { rules.checkTabsInText(yytext(), yyline, yycolumn); return symbol(LINKAGE_SECTION); }
+  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(yytext(), yyline, yycolumn);
                                    pushBack = yytext().length(); 
                                    yyclose(); 
                                  }
@@ -513,8 +472,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   DATE                           { pushState(ENDLINE);       }
   DEPENDING                      { return symbol(DEPENDING); }
   DESCENDING                     { return symbol(ORDER);     }
-  DFHRESP                        { cicsVerb = "DFHRESP";  pushState(CICSSYM);       }  
-  DFHVALUE                       { cicsVerb = "DFHvalue"; pushState(CICSSYM);       }
+  DFHRESP                        { pushState(CICSSYM);       }  
+  DFHVALUE                       { pushState(CICSSYM);       }
   DISPLAY                        { return symbol(ZCDSym.DISPLAY);   }
            
   EXTERNAL                       { data = true;              }
@@ -597,8 +556,8 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
                  pushState(COPYS);         
                  return symbol(COPY);  
                }
-  EXECUTE      { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
-  EXEC         { begExec = symbolDummy(EXEC); pushState(STEXEC);    }
+  EXECUTE      { pushState(STEXEC);    }
+  EXEC         { pushState(STEXEC);    }
 
   {DECIMAL}        { return symbol(NUMERO);  }
   {DECIMAL2}       { return symbol(NUMERO);  }  
@@ -607,7 +566,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   {ID}             { return symbol(ID);      }
   
   {SPACES}         {  /* nada */ }
-  {TABS}           { ruleTabs(yyline, yycolumn); }
+  {TABS}           { rules.checkTab(yyline, yycolumn); }
   
   "("              { return symbol(LPAR);    }
   ")"              { return symbol(RPAR);    }
@@ -623,10 +582,12 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 
 /* PICTURE es PIC espacios formato [espacios|punto] con comentarios o sin ellos */
 <PIC> {
-  ^[\*\/dD]     { commentInit(yytext(), yyline);    }
+  ^[\*\/dD]     { pushState(COMMENT); 
+                  commentInit(yytext(), yyline);    
+                }
 
   {SPACES}      { if (beginPic == false) popState();  }
-  {TABS}        { ruleTabs(yyline, yycolumn);   
+  {TABS}        { rules.checkTab(yyline, yycolumn);   
                   if (beginPic == false) popState(); 
                 }  
   {PICLEN}      { beginPic = false; return symbol(PIC_LEN);      }
@@ -690,7 +651,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 */
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
-  {TABS}        { ruleTabs(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(yyline, yycolumn); }
   \n            { popState(); return symbol(ENDP); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -702,7 +663,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 <EATLINE> {
 
   {SPACES}      { /* Nada */  }
-  {TABS}        { ruleTabs(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(yyline, yycolumn); }
   \n            { popState(); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -710,7 +671,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 }
 
 <COMMENT> {
-  {BLANKS}      { ruleTabsInText(yytext(), yyline, yycolumn);
+  {BLANKS}      { rules.checkTabsInText(yytext(), yyline, yycolumn);
                   commentAppend(yytext()); 
                 }
   \n            { commentEnd(yyline);      }                 
@@ -720,7 +681,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   
  
 <COPYS> {
-  ^[\*\/dD]          { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]          { pushState(COMMENT); 
+                       commentInit(yytext(), yyline);  
+                     }
   REPLACING          { appendEmbedded(yytext()); popState(ST_REPLACING); }
   \.                 { popState(); return symbol(ENDCOPY);  }
   \r                 { /* eat */ }
@@ -730,7 +693,9 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 }
 
 <ST_REPLACING> {
-  ^[\*\/dD]          { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]          { pushState(COMMENT); 
+                       commentInit(yytext(), yyline);  
+                     }
  "=="                { appendEmbedded(yytext()); pushState(REP_EQUALS); }
   \"                 { appendEmbedded(yytext()); pushState(REP_DQUOTE); } 
   \'                 { appendEmbedded(yytext()); pushState(REP_QUOTE); }  
@@ -767,21 +732,25 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 }
 
 <STEXEC> {
-  ^[\*\/dD]       { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]       { pushState(COMMENT); 
+                    commentInit(yytext(), yyline);  
+                  }
    SQL            { info.module.setSQL(); 
                     initEmbedded();  
                     pushState(EMBEDDED);
                     return symbol(SQLDATA);
                   } 
    {SPACES}       { /* DO NOTHING */ }
-   {TABS}         { ruleTabs(yyline, yycolumn); }
+   {TABS}         { rules.checkTab(yyline, yycolumn); }
    \n             { info.module.incLines(data); data = false; }
    \r             { /* do nothing */ }
     
 }
 
 <EMBEDDED> {
-  ^[\*\/dD]          { commentInit(yytext(), yyline);      }
+  ^[\*\/dD]          { pushState(COMMENT); 
+                       commentInit(yytext(), yyline);      
+                     }
   END-EXEC[ ]*[\.]?  { popState(2); return symbol(ENDSQL); }
 
   \r           { /* do nothing */ }
@@ -825,26 +794,26 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 }
 
 <SDPIVP> {
-   {WORD}        { tmp.append(yytext());  }
-   " - "         { tmp.append(yytext());  }
-  {SPACES}       { tmp.append(yytext());  }
-    \.           { tmp.append(yytext());  }
-    .            { tmp.append(yytext());  }
+   {WORD}        { sdpData.append(yytext());  }
+   " - "         { sdpData.append(yytext());  }
+  {SPACES}       { sdpData.append(yytext());  }
+    \.           { sdpData.append(yytext());  }
+    .            { sdpData.append(yytext());  }
     \r           { /* Nada */ }
     \n           { info.module.incLines(data);  
-                   info.prepareCase(tmp.toString());
+                   info.prepareCase(sdpData.toString());
                    popState(2); 
                  }
 }
 
 <SDPDESC> {
-   {WORD}        { tmp.append(yytext());  }
-   {SPACES}      { tmp.append(yytext());  }
-    \.           { tmp.append(yytext());  }   
-    .            { tmp.append(yytext());  }
+   {WORD}        { sdpData.append(yytext());  }
+   {SPACES}      { sdpData.append(yytext());  }
+    \.           { sdpData.append(yytext());  }   
+    .            { sdpData.append(yytext());  }
     \r           { /* Nada */ }
     \n           { info.module.incLines(data);  
-                   info.module.setDescription(tmp.toString());
+                   info.module.setDescription(sdpData.toString());
                    popState(2); 
                  }
 }

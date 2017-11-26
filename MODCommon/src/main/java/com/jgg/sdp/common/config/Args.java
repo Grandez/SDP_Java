@@ -94,7 +94,8 @@ public class Args {
 	 */
 	private void loadDefaults() {
 		String def[][] = { 
-		         {"v"  , "verbose", ""           , CFG.VERBOSE    , "X1"     , "209" }	   
+		         {""   , "IVP"    , ""           , CFG.IVP_MODE   , BOOLEAN  , "000" }				
+		        ,{"v"  , "verbose", ""           , CFG.VERBOSE    , "X1"     , "209" }	   
 		        ,{"V"  , "VERBOSE", ""           , CFG.VERBOSE    , "X2"     , "210" }	
 	            ,{"h"  , "help"   , ""           , CFG.HELP       , BOOLEAN  , "222" }		        
 				,{ ""  , "config" , "SDP_CONFIG" , CFG.DIR_CONFIG , DIR      , "216" }

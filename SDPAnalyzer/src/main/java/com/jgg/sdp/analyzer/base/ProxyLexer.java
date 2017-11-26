@@ -16,15 +16,14 @@ import java_cup.runtime.*;
 
 import com.jgg.sdp.analyzer.post.PostSQL;
 import com.jgg.sdp.analyzer.work.CopyLoader;
+import com.jgg.sdp.blocks.stmt.*;
 import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.common.files.Archive;
-import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.db2.DB2Lexer;
 import com.jgg.sdp.parser.lang.*;
-import com.jgg.sdp.parser.stmt.*;
 
 import static com.jgg.sdp.analyzer.base.Parsers.*;
 

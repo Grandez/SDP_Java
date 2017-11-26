@@ -1,6 +1,6 @@
 package com.jgg.sdp.rules.processor;
 
-import com.jgg.sdp.adt.SDPBag;
+import com.jgg.sdp.adt.ADTBag;
 import com.jgg.sdp.domain.rules.RULScript;
 import com.jgg.sdp.domain.services.rules.RULScriptsService;
 import com.jgg.sdp.loader.jaxb.rules.ScriptType;
@@ -9,7 +9,7 @@ public class RulesScript {
 
 	private RULScriptsService scriptService = new RULScriptsService();
 	
-	private SDPBag<RULScript> scripts = new SDPBag<RULScript>();
+	private ADTBag<RULScript> scripts = new ADTBag<RULScript>();
 	
     private static RulesScript script = null;
     
@@ -22,7 +22,7 @@ public class RulesScript {
     	return script;
     }
     
-    public SDPBag<RULScript> getScripts() {
+    public ADTBag<RULScript> getScripts() {
     	return scripts;
     }
     
@@ -41,7 +41,7 @@ public class RulesScript {
     }
 
     public void clear() {
-    	scripts = new SDPBag<RULScript>();
+    	scripts = new ADTBag<RULScript>();
     }
     
     private RULScript createLine(Long id, Integer type, Integer line, String data) {

@@ -56,6 +56,12 @@
                 <artifactId>MODDBServices</artifactId>
                 <version>${sdp.version}</version>
              </dependency>
+
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODBlocks</artifactId>
+                <version>${sdp.version}</version>
+             </dependency>
              
            </dependencies>
            
@@ -83,6 +89,13 @@
              <dependency>
                 <groupId>com.jgg.sdp</groupId>
                 <artifactId>SDPDataBase</artifactId>
+                <version>${sdp.version}</version>
+                <scope>provided</scope>
+             </dependency>
+
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODBlocks</artifactId>
                 <version>${sdp.version}</version>
                 <scope>provided</scope>
              </dependency>

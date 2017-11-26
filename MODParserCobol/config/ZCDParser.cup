@@ -10,11 +10,12 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.factorias.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.stmt.*;
-import com.jgg.sdp.parser.symbol.*;
-
-import com.jgg.sdp.parser.blocks.*;
 import com.jgg.sdp.parser.code.*;
+
+import com.jgg.sdp.blocks.symbols.*;
+import com.jgg.sdp.blocks.stmt.*;
+
+import com.jgg.sdp.rules.components.RulesData;
 
 parser code {:
    GenericScanner scanner = null;
@@ -39,13 +40,12 @@ action code {:
    Persistence     fichero  = null;
    ZCDCode         code     = null;
    BlockCode       currBlock = null; 
-   IssuesChecker   issues    = null;
+   RulesData       rules     = new RulesData();
 
    ParserInfo      info     = ParserInfo.getInstance();
       
-   Variable    currVar  = null;
-   StmtCobol lastStmt = null;  // Ultima instruccion
-   StmtCobol currStmt = null;  // Instruccion en proceso
+   Variable  currVar  = null;
+   StmtGral  currStmt = null;  // Instruccion en proceso
    
    boolean   hasEndProgram = false; // Hay STOPRUN o GOBACK?
     
@@ -56,7 +56,6 @@ action code {:
       module  = ModulesFactory.getMainModule();
       summary = module.getSummary();
       code = new ZCDCode(module);
-      issues = new IssuesChecker(module);
    }
 
    public String getSymbolName(Symbol s)    { return (String) s.value; }
@@ -103,6 +102,7 @@ terminal Symbol AUTHOR       ;
 terminal Symbol DATEW        ;
 terminal Symbol DATEC        ;
 terminal Symbol INSTALLATION ;
+terminal Symbol SECURITY     ;
 
 /* Verbos de ENVIRONMENT */
 
@@ -210,26 +210,26 @@ non terminal data_division       ;
 // Identificacion division
 /////////////////////////////////////////////////////
 
-non terminal identification_division            ;
-non terminal ident_div_header , ident_bloque    ;
+non terminal           identification_division ;
+non terminal           ident_div_header        ;
+non terminal           ident_options_opt       ;
+non terminal           ident_options           ;
+non terminal Option    ident_option            ;
 
-non terminal StmtCobol ident_sentences  ;
-non terminal StmtCobol ident_sentence   ;
+non terminal Option programId       ;
+non terminal Option programId_verb  ;
+non terminal Option author          ;
 
-non terminal StmtCobol programId       ;
-non terminal StmtCobol programId_verb  ;
-non terminal StmtCobol author          ;
-non terminal StmtCobol author_verb     ;
+non terminal SymbolExt   author_opt       ;
+non terminal SymbolList  open_string      ;
+non terminal SymbolExt   open_string_opt  ;
+non terminal Symbol      open_string_word ;
 
-non terminal SymbolList  author_opt      ;
-non terminal SymbolList  open_string     ;
-non terminal SymbolList  open_string_opt ;
-
-non terminal Symbol nombre   ;
-non terminal StmtCobol date_written       ;
-non terminal StmtCobol date_compiled      ;
-non terminal StmtCobol installation       ;
-non terminal StmtCobol remarks            ;
+non terminal Option date_written       ;
+non terminal Option date_compiled      ;
+non terminal Option installation       ;
+non terminal Option security           ;
+non terminal Option remarks            ;
 
 non terminal env_div_header ;
 non terminal data_div_header;
@@ -396,14 +396,14 @@ non terminal Symbol        figurative  ;
 /**********************************************************************/
 /**********************************************************************/
 
-cobolData ::=  module {: issues.checkDivision(currBlock);  RESULT = null; :}
+cobolData ::=  module {: RESULT = null; :}
           ; 
 
 /*JGG Conceptualmente trataremos cada uno como si fuera un parrafo con instrucciones 
       para procesar sus issues
 */
                          
-module ::= identification_division 
+module ::= identification_division {: rules.checkIdentification(currStmt); :}
            environment_division    
            data_division         
        ;
@@ -412,76 +412,77 @@ module ::= identification_division
 /* Identification division                                           */
 /*********************************************************************/
 
-identification_division ::= ident_div_header ident_bloque {: issues.checkDivision(currBlock); :}
+identification_division ::= ident_div_header ident_options_opt 
                         |
                         ;
 
-ident_div_header ::= DIV_ID:s  ENDP:p  {: currBlock = new BlockCode(s, p); 
-                                          code.setDivision(CDG.SECT_ID, s.left); 
-                                       :}
+ident_div_header ::= DIV_ID:s  ENDP:p  {: currStmt = new StmtGral(s); :}
                  ;                      
 
-ident_bloque ::= ident_sentences
-             |   
+ident_options_opt ::= ident_options
+                  |   
+                  ;
+
+ident_options ::= ident_option:i                 {: currStmt.addOption(i); :}
+              |   ident_options ident_option:i   {: currStmt.addOption(i); :}
+              ;
+
+ident_option ::= programId:s     {: RESULT = s; :} 
+             |   author:s        {: RESULT = s; :}  
+             |   installation:s  {: RESULT = s; :}
+             |   security:s      {: RESULT = s; :}
+             |   date_written:s  {: RESULT = s; :}
+             |   date_compiled:s {: RESULT = s; :}
+             |   remarks:s       {: RESULT = s; :} 
              ;
-
-ident_sentences ::= ident_sentence:i                   {: currBlock.addStatement(i); :}
-                |   ident_sentences ident_sentence:i   {: currBlock.addStatement(i); :}
-                ;
-
-ident_sentence ::= programId:s     {: RESULT = s; :} 
-               |   author:s        {: RESULT = s; :}  
-               |   installation:s  {: RESULT = s; :}
-               |   date_written:s  {: RESULT = s; :}
-               |   date_compiled:s {: RESULT = s; :}
-               |   remarks:s       {: RESULT = s; :} 
-               ;
                              
-programId ::= programId_verb:p endp_opt ID:s endp_opt:e  {: RESULT = p.addRValue(s); :}
+programId ::= programId_verb:p endp_opt ID:s endp_opt:e  {: RESULT = p.addValue(s); :}
           ;
 
-programId_verb ::= PGMID:p {: RESULT = new StmtCobol(p); :}
+programId_verb ::= PGMID:p {: RESULT = new Option(p); :}
                ;
-               
-author    ::= author_verb:a author_opt:o {: RESULT = a.addRValue(o); :} 
-          ;
 
-author_verb ::= AUTHOR:s   {: RESULT = new StmtCobol(s); :}
-            ;
-            
-author_opt ::= open_string:s {: module.setAuthor(s.toString()); RESULT = s; :}
-           |                 {: RESULT = null; :}  
+// JGG el tema de los puntos se puede resolver con errores               
+author ::= AUTHOR:a  author_opt:o {: RESULT = new Option(a, o); :}
+       ;
+
+author_opt ::= open_string_opt:s {: // module.setAuthor(s.toString()); 
+                                    RESULT = s; 
+                                  :} 
            ;
                        
-date_written ::= DATEW:d open_string_opt:o         {: RESULT = new StmtCobol(d, o); :}
+date_written ::= DATEW:d open_string_opt:o         {: RESULT = new Option(d, o); :}
              ;
 
-date_compiled ::= DATEC:d open_string_opt:o        {: RESULT = new StmtCobol(d, o); :}
+date_compiled ::= DATEC:d open_string_opt:o        {: System.out.println("PARAR"); RESULT = new Option(d, o); :}
              ;
              
-installation ::= INSTALLATION:i open_string_opt:o  {: RESULT = new StmtCobol(i, o); :}
+installation ::= INSTALLATION:i open_string_opt:o  {: RESULT = new Option(i, o); :}
              ;
+
+security ::= SECURITY:i open_string_opt:o  {: RESULT = new Option(i, o); :}
+         ;
                    
-open_string_opt ::= open_string:o {: RESULT = o;    :}
-                |                 {: RESULT = null; :}
+open_string_opt ::= open_string:o {: RESULT = new SymbolExt(o);  :}
+                |                 {: RESULT = null;              :}
                 ;
                 
-open_string ::= nombre:s               {: RESULT = new SymbolList(s); :}
-            |   open_string:a nombre:s {: RESULT = a.add(s);          :}
+open_string ::= open_string_word:s               {: RESULT = new SymbolList(s); :}
+            |   open_string:a open_string_word:s {: RESULT = a.add(s);          :}
             ;
 
-nombre ::= ID:i      {: RESULT = i; :}
-       |   NUMERO:i  {: RESULT = i; :}
-       |   LITERAL:i {: RESULT = i; :}       
-       |   ENDP:p    {: RESULT = p; :}
-       ;
+open_string_word ::= ID:i      {: RESULT = i; :}
+                 |   NUMERO:i  {: RESULT = i; :}
+                 |   LITERAL:i {: RESULT = i; :}       
+                 |   ENDP:p    {: RESULT = p; :}
+                 ;
        
                                                                                
 /*********************************************************************/
 /* Environment division                                              */
 /*********************************************************************/
 
-environment_division  ::= env_div_header bloque_env  {: issues.checkDivision(currBlock); :}
+environment_division  ::= env_div_header bloque_env  {: /* rules.checkDivision(currBlock); */ :}
                       |
                       ;
                      
@@ -644,7 +645,7 @@ file_attr_alt ::= ALTERNATE ID
 /* Data division                                                     */
 /*********************************************************************/
 
-data_division   ::= data_div_header bloque_data {: issues.checkDivision(currBlock); :}
+data_division   ::= data_div_header bloque_data  {: /* rules.checkDivision(currBlock); */ :}
                 |
                 ;
 

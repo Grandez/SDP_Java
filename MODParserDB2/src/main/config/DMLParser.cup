@@ -6,7 +6,9 @@ import com.jgg.sdp.core.config.*;
 import com.jgg.sdp.core.ctes.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.stmt.*;
+
+import com.jgg.sdp.blocks.symbols.*;
+import com.jgg.sdp.blocks.stmt.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();

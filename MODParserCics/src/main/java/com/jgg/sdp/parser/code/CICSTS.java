@@ -13,8 +13,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 
+import com.jgg.sdp.blocks.stmt.StmtCICS;
 import com.jgg.sdp.common.ctes.CFG;
-import com.jgg.sdp.parser.stmt.StmtCICS;
 
 public class CICSTS {
 	

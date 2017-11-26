@@ -1,6 +1,7 @@
 package com.jgg.sdp.rules.objects;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 
 public class RuleRule extends RuleItem {
 
@@ -14,8 +15,8 @@ public class RuleRule extends RuleItem {
 	private String    uid;
 	private Timestamp tms;
 	
-	private RuleCond  activation = null;
-	private RuleCond  condition  = null;
+	private ArrayList<RuleCond>  activations = new ArrayList<RuleCond>();
+	private RuleCond             condition  = null;
 	
 	public RuleRule(RuleItem item) {
 		super(item);
@@ -75,11 +76,11 @@ public class RuleRule extends RuleItem {
 	public void setTms(Timestamp tms) {
 		this.tms = tms;
 	}
-	public RuleCond getActivation() {
-		return activation;
+	public ArrayList<RuleCond> getActivation() {
+		return activations;
 	}
-	public void setActivation(RuleCond activation) {
-		this.activation = activation;
+	public void setActivations(ArrayList<RuleCond> activations) {
+		this.activations.addAll(activations);
 	}
 	public RuleCond getCondition() {
 		return condition;

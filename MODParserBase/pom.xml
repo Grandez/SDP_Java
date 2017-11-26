@@ -26,7 +26,19 @@
            </activation>
 
            <dependencies>
-           
+
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODCore</artifactId>
+                <version>${sdp.version}</version>      
+             </dependency>
+
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODModule</artifactId>
+                <version>${sdp.version}</version>      
+             </dependency>
+
              <dependency>
                 <groupId>com.jgg.sdp</groupId>
                 <artifactId>MODRules</artifactId>
@@ -53,6 +65,12 @@
                 <artifactId>SDPModule</artifactId>
                 <version>${sdp.version}</version>
                 <scope>provided</scope>       
+             </dependency>
+
+             <dependency>
+                <groupId>com.jgg.sdp</groupId>
+                <artifactId>MODRules</artifactId>
+                <version>${sdp.version}</version>      
              </dependency>
            
              <dependency>

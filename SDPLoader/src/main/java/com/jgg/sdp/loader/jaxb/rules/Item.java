@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.17 a las 12:17:43 PM CET 
+// Generado el: 2017.11.25 a las 01:38:17 PM CET 
 //
 
 
@@ -31,9 +31,10 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="idItem" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="idGroup" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="object" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;choice minOccurs="0">
- *           &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *           &lt;element name="onCondition" type="{http://www.sdp.com/SDPRules}conditionType"/>
+ *           &lt;element name="onConditions" type="{http://www.sdp.com/SDPRules}conditionTypeList"/>
  *         &lt;/choice>
  *         &lt;element ref="{http://www.sdp.com/SDPRules}description" minOccurs="0"/>
  *         &lt;element name="sample" type="{http://www.sdp.com/SDPRules}sampleType" minOccurs="0"/>
@@ -54,11 +55,12 @@ import javax.xml.bind.annotation.XmlType;
     "object",
     "active",
     "onCondition",
+    "onConditions",
     "description",
     "sample",
     "rule"
 })
-@XmlRootElement(name = "item", namespace = "http://www.sdp.com/SDPRules")
+@XmlRootElement(name = "item")
 public class Item {
 
     protected Long idItem;
@@ -68,6 +70,7 @@ public class Item {
     @XmlElement(defaultValue = "true")
     protected Boolean active;
     protected ConditionType onCondition;
+    protected ConditionTypeList onConditions;
     @XmlElement(namespace = "http://www.sdp.com/SDPRules")
     protected Description description;
     protected SampleType sample;
@@ -194,6 +197,30 @@ public class Item {
      */
     public void setOnCondition(ConditionType value) {
         this.onCondition = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad onConditions.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ConditionTypeList }
+     *     
+     */
+    public ConditionTypeList getOnConditions() {
+        return onConditions;
+    }
+
+    /**
+     * Define el valor de la propiedad onConditions.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ConditionTypeList }
+     *     
+     */
+    public void setOnConditions(ConditionTypeList value) {
+        this.onConditions = value;
     }
 
     /**

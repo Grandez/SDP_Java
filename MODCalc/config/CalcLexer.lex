@@ -53,7 +53,6 @@ import static com.jgg.sdp.calculator.CalcSym.*;
    }
 %}
 
-
 SPACES=[\ \t]+
 
 ALPHA=[a-zA-Z]+

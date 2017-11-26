@@ -14,14 +14,16 @@ public class RulesCleaner {
 	private RULSamplesService  sampService    = new RULSamplesService();
 	private RULScriptsService  scriptService  = new RULScriptsService();
 	
-	public void deleteGroup(Long idGroup) {
+	public RULGroup deleteGroup(Long idGroup) {
 		for (RULItem i : itemService.listByGroup(idGroup)) {
 			Long key = Long.parseLong(String.format("%02d%02d", i.getIdGroup(), i.getIdItem()));
 			deleteItemDetail(i.getIdGroup(), i.getIdItem());
 			deleteDetail(key);
 		}
 		itemService.deleteItemsOfGroup(idGroup);
+		RULGroup g = groupService.getById(idGroup);
 		groupService.deleteGroup(idGroup);
+		return g;
 	}
 
 	public void deleteItem(Long idGroup, Long idItem) {

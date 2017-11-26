@@ -13,10 +13,10 @@
   </parent>
 
   <groupId>com.jgg.sdp</groupId>
-  <artifactId>SDPRules</artifactId>
+  <artifactId>SDPLoader</artifactId>
   <packaging>jar</packaging>
 
-  <name>Serendipity Rules loader</name>
+  <name>Serendipity Configuration Loader</name>
   <profiles>
        <profile>
            <id>Development</id>
@@ -112,7 +112,7 @@
                                       <artifactId>${project.artifactId}</artifactId>
                                       <version>${project.version}</version>
                                       <type>${project.packaging}</type>
-                                      <destFileName>SDPRules.jar</destFileName>
+                                      <destFileName>SDPLoader.jar</destFileName>
                                    </artifactItem>
                                </artifactItems>
                        

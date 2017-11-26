@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:SDPIVP xmlns:p="http://www.sdp.com/SDPIVP" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://www.sdp.com/SDPIVP SDPIVP.xsd ">
+
+    <module>SDPAnalyzer</module>
+    <description>Control de reglas de programacion</description>
+      
+   <preProcess>
+      <comment>
+         Establece las reglas por defecto
+      </comment>
+      <module>
+         <name>SDPLoader</name>
+         <parameters>
+            <parameter>--rules</parameter>
+            <parameter>--load</parameter>
+            <parameter>--clean</parameter>
+         </parameters>
+      </module>
+   </preProcess>
+   
+   <group name="Control de Reglas">
+      <description>Control de reglas</description>
+      <pattern>IVP50*.cbl</pattern>
+   </group>
+</p:SDPIVP>
+

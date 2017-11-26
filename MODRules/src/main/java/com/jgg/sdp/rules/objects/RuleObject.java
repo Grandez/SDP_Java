@@ -11,7 +11,10 @@ public class RuleObject {
 	private Object root      = null;
 	private Object component = null;
 	
-    	
+    private Object lval;
+    private Object rval;
+    private Integer oper;
+    
 	public int getBegLine() {
 		return begLine;
 	}
@@ -41,31 +44,25 @@ public class RuleObject {
 		this.endLine = endLine;
 	}
 
-
 	public int getEndColumn() {
 		return endColumn;
 	}
-
 
 	public void setEndColumn(int endColumn) {
 		this.endColumn = endColumn;
 	}
 
-
 	public String getBloque() {
 		return bloque;
 	}
-
 
 	public void setBloque(String bloque) {
 		this.bloque = bloque;
 	}
 
-
 	public Object getComponent() {
 		return component;
 	}
-
 
 	public void setRoot(Object root) {
 		this.root = root;
@@ -74,7 +71,6 @@ public class RuleObject {
 	public Object getRoot() {
 		return root;
 	}
-
 
 	public void setComponent(Object component) {
 		this.component = component;
@@ -92,7 +88,30 @@ public class RuleObject {
 		return component.toString();
 	}
 	
+	public Object getLVal() {
+		return lval;
+	}
 
+	public void setLVal(Object lval) {
+		this.lval = lval;
+	}
+
+	public Object getRVal() {
+		return rval;
+	}
+
+	public void setRVal(Object rval) {
+		this.rval = rval;
+	}
+
+	public Integer getOperator() {
+		return oper;
+	}
+
+	public void setOperator(Integer oper) {
+		this.oper = oper;
+	}
+	
 	// Metodos dinamicos
 	
 	public int getLength() {

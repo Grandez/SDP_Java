@@ -4,15 +4,23 @@
            xmlns="http://www.sdp.com/SDPIVP">
 
     <xs:element name="SDPIVP">
+      <xs:annotation>
+         <xs:documentation>
+             Component se aplica al XML maestro
+             El otro bloque es para cada XML de IVP
+         </xs:documentation>
+      </xs:annotation>
+    
        <xs:complexType>
            <xs:choice>
                <xs:element ref="component" minOccurs="0" maxOccurs="unbounded" />
                <xs:sequence>
                   <xs:element name="module"      type="IVPModuleType" />
                   <xs:element name="description" type="xs:string" />
-                  <xs:element name="config"      type="IVPConfigType"   minOccurs="0" maxOccurs="1"/>
-                  <xs:element name="environment" type="IVPEnvType"     minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="config"      type="IVPConfigType"  minOccurs="0" maxOccurs="1"/>
+                  <xs:element name="preProcess"  type="IVPCommands"    minOccurs="0" maxOccurs="1"/>
                   <xs:element name="group"       type="IVPGroupType"   minOccurs="1" maxOccurs="unbounded"/>
+                  <xs:element name="postProcess" type="IVPCommands"    minOccurs="0" maxOccurs="1"/>
                </xs:sequence>
            </xs:choice>
        </xs:complexType>
@@ -86,26 +94,66 @@
 
    <xs:complexType name="IVPGroupType">
        <xs:sequence>
-          <xs:element name="description" type="xs:string" />
-          <xs:element name="pattern"     type="xs:string"   minOccurs="1"  maxOccurs="unbounded"/>
+          <xs:element name="description"  type="xs:string" />
+          <xs:element name="pattern"      type="xs:string"     minOccurs="1"  maxOccurs="unbounded"/>
+          <xs:element name="block"        type="IVPBlock"      minOccurs="0"  maxOccurs="unbounded"/>
        </xs:sequence>
        <xs:attribute name="name" type="xs:string" use="required" />
    </xs:complexType>
 
-   <xs:complexType name="IVPEnvType">
-       <xs:sequence minOccurs="1" maxOccurs="unbounded">
-           <xs:element ref="block" />
-       </xs:sequence>
+   <xs:complexType name="IVPCommands">
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+         <xs:element name="comment"   type="xs:string"/>
+         <xs:element name="module"    type="IVPModule"/>
+         <xs:element name="component" type="IVPComponent"/>
+         <xs:element name="object"    type="IVPObject"/>
+         <xs:element name="script"    type="xs:string"/>
+         <xs:element name="sql"       type="xs:string"/>
+     </xs:choice>
    </xs:complexType>
 
-   <xs:element name="block">
-      <xs:complexType>
-          <xs:choice minOccurs="1" maxOccurs="unbounded">
-              <xs:element name="script"   type="xs:string"/>
-              <xs:element name="sql"      type="xs:string"/>
-          </xs:choice>
-          <xs:attribute name="id" type="xs:int" use="required"/>
-      </xs:complexType>
-   </xs:element>
+
+     <xs:complexType name="IVPBlock">
+       <xs:sequence>
+          <xs:element name="preProcess"   type="IVPCommands"   minOccurs="0"  maxOccurs="1"/>
+          <xs:element name="postProcess"  type="IVPCommands"   minOccurs="0"  maxOccurs="1"/>
+       </xs:sequence>
+       <xs:attribute name="id" type="xs:int" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="IVPModule">
+     <xs:sequence>
+         <xs:element name="name"         type="xs:string" />
+         <xs:element name="parameters"   type="IVPParameters" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IVPComponent">
+     <xs:sequence>
+         <xs:element name="object"       type="IVPObjectName" />
+         <xs:element name="method"       type="xs:string" />
+         <xs:element name="parameters"   type="IVPParameters" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IVPObject">
+     <xs:sequence>
+         <xs:element name="name"         type="xs:string" />
+         <xs:element name="method"       type="xs:string" />
+         <xs:element name="parameters"   type="IVPParameters" minOccurs="0" maxOccurs="1" />
+      </xs:sequence>
+  </xs:complexType>
+  
+     <xs:simpleType name="IVPObjectName">
+       <xs:restriction base="xs:string">
+          <xs:enumeration value="Rules"/>
+       </xs:restriction>
+   </xs:simpleType>
+
+  <xs:complexType name="IVPParameters">
+     <xs:sequence>
+         <xs:element name="parameter"   type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+      </xs:sequence>
+  </xs:complexType>
   
 </xs:schema>

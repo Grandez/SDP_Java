@@ -45,13 +45,7 @@
 
     <dependency>
        <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODParserBase</artifactId>
-       <version>${sdp.version}</version>
-    </dependency>
-
-    <dependency>
-       <groupId>com.jgg.sdp</groupId>
-       <artifactId>MODParserCobol</artifactId>
+       <artifactId>MODBlocks</artifactId>
        <version>${sdp.version}</version>
     </dependency>
 
@@ -61,11 +55,16 @@
        <version>${sdp.version}</version>
     </dependency>
 
-
-
     <dependency>
        <groupId>com.jgg.sdp</groupId>
        <artifactId>MODRules</artifactId>
+       <version>${sdp.version}</version>
+    </dependency>
+
+    <!--  Necesario para Reflection  -->
+    <dependency>
+       <groupId>com.jgg.sdp</groupId>
+       <artifactId>SDPLoader</artifactId>
        <version>${sdp.version}</version>
     </dependency>
     

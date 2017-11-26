@@ -104,7 +104,7 @@
                <text lang="xx">Finalizar la sentencia con un punto</text>      
             </r:description>
             <condition negated="true">
-               <lvalue type="attribute">hasEndOfSentence</lvalue>
+               <lvalue type="property">hasEndPoint</lvalue>
             </condition>        
          </r:rule>
          
@@ -112,10 +112,18 @@
 
       <r:item name="DIV_COMPILED">
          <object>DATE-COMPILED</object>
-         <onCondition>
-            <lvalue type="option">DATE-COMPILED</lvalue>
-            <operator>has</operator>
-          </onCondition>        
+         <onConditions>
+            <condition>
+               <lvalue type="configuration">parser.process.equals</lvalue>
+               <operator>eq</operator>
+               <rvalue>true</rvalue>
+            </condition>
+            <condition>
+               <lvalue type="option">DATE-COMPILED</lvalue>
+               <operator>has</operator>
+            </condition>        
+            
+          </onConditions>        
          
          <r:rule>
             <priority>1</priority>

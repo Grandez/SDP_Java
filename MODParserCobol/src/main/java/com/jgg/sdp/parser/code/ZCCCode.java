@@ -20,6 +20,9 @@ import java.util.*;
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.Symbol;
 
+import com.jgg.sdp.blocks.stmt.*;
+import com.jgg.sdp.blocks.symbols.SymbolExt;
+import com.jgg.sdp.blocks.symbols.SymbolExtList;
 import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.common.ctes.MSG;
@@ -29,8 +32,6 @@ import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.parser.lang.ZCZSym;
-import com.jgg.sdp.parser.stmt.*;
-import com.jgg.sdp.parser.symbol.*;
 import com.jgg.sdp.parser.tools.*;
 
 public class ZCCCode extends ZCZCode {
@@ -274,7 +275,7 @@ public class ZCCCode extends ZCZCode {
 		injector.loadTraps(perform.left, perform.right);
         injector.setNextTrap(new Trap(TRAP.END_PERFORM, makeLiteral(from)));
         
-        Option thru = stmt.getOption(THRU);
+        Option thru = stmt.getOption(THRU).getOption();
         if (thru != null) {
         	to = thru.getVar(0).getName();
         }
@@ -289,8 +290,8 @@ public class ZCCCode extends ZCZCode {
 	
 	private void addToGraph(StmtCobol stmt, String from) {
 		boolean loop = false;
-        if (stmt.getOptionByName("UNTIL") != null   ||
-            stmt.getOptionByName("VARYING") != null) {
+        if (stmt.getOption("UNTIL") != null   ||
+            stmt.getOption("VARYING") != null) {
         	loop = true;
         }
         grafo.addBlock(Nodes.PERFORM, from, loop);
@@ -345,7 +346,7 @@ public class ZCCCode extends ZCZCode {
     public StmtCobol processWhen(StmtCobol stmt) {
     	//jgg Si no es OTHER
     	boolean close = false;
-    	if (stmt.getOptionByName("OTHER") != null) close = true;
+    	if (stmt.getOption("OTHER") != null) close = true;
     	grafo.addChoice(Nodes.WHEN, close);
     	
     	stackFlujo.peek().addOption(stmt.asOption());

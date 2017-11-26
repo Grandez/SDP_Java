@@ -1,12 +1,11 @@
 package com.jgg.sdp.ivp.base;
 
-import com.jgg.sdp.ivp.jaxb.Block;
-import com.jgg.sdp.ivp.jaxb.IVPEnvType;
+import com.jgg.sdp.ivp.jaxb.IVPBlock;
 
 public class IVPEnvironment {
 
 	private IVPConfig cfg;
-	
+/*	
 	public void setEnvironment(int block, IVPConfig cfg, IVPEnvType envs) {
 		this.cfg = cfg;
 		
@@ -19,8 +18,8 @@ public class IVPEnvironment {
 			}
 		}
 	}
-	
-	private void setEnv(Block block) {
+	*/
+	private void setEnv(IVPBlock block) {
 		
 	}
 }

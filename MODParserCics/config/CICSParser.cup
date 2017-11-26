@@ -6,8 +6,11 @@ import com.jgg.sdp.common.ctes.*;
 import com.jgg.sdp.common.config.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.stmt.*;
-import com.jgg.sdp.parser.code.*;
+
+import com.jgg.sdp.blocks.symbols.*;
+import com.jgg.sdp.blocks.stmt.*;
+
+import com.jgg.sdp.parser.code.CICSCode;
 
 parser code {:
       Configuration cfg  = ConfigurationBase.getInstance();

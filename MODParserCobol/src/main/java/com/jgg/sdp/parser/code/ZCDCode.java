@@ -17,12 +17,18 @@ import java_cup.runtime.Symbol;
 
 import static com.jgg.sdp.parser.lang.ZCDSym.*;
 
+import com.jgg.sdp.blocks.stmt.Statement;
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.rules.components.RulesData;
+import com.jgg.sdp.rules.components.RulesProcessor;
 
 public class ZCDCode extends ZCZCode{
 
+	private RulesData rules = new RulesData();
+	
     public ZCDCode(Module module) {
     	super(module);
 	}
@@ -126,4 +132,8 @@ public class ZCDCode extends ZCZCode{
 		return var;
 	}
 
+	private void processIdentification(Statement stmt) {
+		info.addDivision(CDG.SECT_ID, stmt.getVerb().left);
+		rules.checkIdentification(stmt);
+	}
 }

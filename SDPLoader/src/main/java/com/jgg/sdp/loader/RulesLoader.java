@@ -2,14 +2,18 @@ package com.jgg.sdp.loader;
 
 import java.io.File;
 
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.*;
-
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.loader.jaxb.rules.*;
 import com.jgg.sdp.rules.processor.*;
 
 public class RulesLoader {
     
+    private Configuration cfg = DBConfiguration.getInstance();
+	
 	private boolean replace = false;
 	
 	private RulesCleaner cleaner = null;  
@@ -25,13 +29,18 @@ public class RulesLoader {
     private CommonService dbCommon  = new CommonService();
 
 	public int load(String[] files) {
+    	dbCommon.beginTrans();
+    	if (cfg.getBoolean(CFG.LOADER_CLEAN)) deleteData();
+    		
 		if (files.length == 0) {
-			return loadFromResources();
+			loadFromResources();
 		}
 		for (int idx = 0; idx < files.length; idx++) {
 			loadGeneric(files[idx]);
 		}
+		dbCommon.commitTrans();
 		return 0;
+
 	}
 	
 	private int loadFromResources() {
@@ -53,10 +62,8 @@ public class RulesLoader {
     
 	// Se invoca desde test
 	public  void loadXMLFile(SDPRules rule) {
-    	dbCommon.beginTrans();
 	    parseXMLRule(rule);
         storeXMLRule();
-    	dbCommon.commitTrans();
 	}
 	
 	private void parseXMLRule(SDPRules rule) {
@@ -73,13 +80,14 @@ public class RulesLoader {
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
 			ex.printStackTrace();
+			System.exit(16);
 		}
 	}
 
 	private void processHeader(SDPRules rule) {
 		Header header = rule.getHeader();
 		if (header == null) {
-			replace = false;
+			replace = true;
 			return;
 		}
 		replace = header.isReplace();
@@ -151,4 +159,17 @@ public class RulesLoader {
 	    samples.clear();
 	    scripts.clear();
 	}
+
+	public void deleteData() {
+		CommonService common = new CommonService();
+		common.deleteQuery("DELETE FROM RULGroup      g");
+		common.deleteQuery("DELETE FROM RULItem       i");
+		common.deleteQuery("DELETE FROM RULRule       r");
+		common.deleteQuery("DELETE FROM RULCond       c");
+		common.deleteQuery("DELETE FROM RULSample     s");
+		common.deleteQuery("DELETE FROM RULSampleDesc d");
+		common.deleteQuery("DELETE FROM RULDesc       d");
+		common.deleteQuery("DELETE FROM RULScript     S");
+	}
+
 }

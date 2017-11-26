@@ -5,7 +5,7 @@ import com.jgg.sdp.adt.*;
 public class CUPRHSTerminal extends CUPComponent {
 
 	// Conjunto de producciones
-	private SDPList<CUPRHS> productions = new SDPList<CUPRHS>();
+	private ADTList<CUPRHS> productions = new ADTList<CUPRHS>();
 
 	public CUPRHSTerminal(CUPNonTerminal nt) {
 		super(RHS_TERMINAL);
@@ -17,7 +17,7 @@ public class CUPRHSTerminal extends CUPComponent {
 	}
 		
 
-	public SDPList<CUPRHS> getProductions() {
+	public ADTList<CUPRHS> getProductions() {
 		return this.productions;
 	}	
 }

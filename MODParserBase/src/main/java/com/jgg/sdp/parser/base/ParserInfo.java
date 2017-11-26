@@ -13,7 +13,6 @@ import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.Unit;
-import com.jgg.sdp.rules.RulesChecker;
 
 import java_cup.runtime.ComplexSymbolFactory;
 import java_cup.runtime.Symbol;
@@ -24,12 +23,10 @@ public class ParserInfo {
 
 	private Configuration cfg = ConfigurationBase.getInstance();
 	
-	public RulesChecker rules = new RulesChecker();   
-
 	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
 	   
     public Unit   unit   = null;
-    public Module    module = null;
+    public Module module = null;
 
     private IVPCase  c = null;
     
@@ -251,13 +248,6 @@ public class ParserInfo {
                                (String) s.value); 
    }
 
-	/***********************************************************/
-	/***  Gestion de Reglas                                  ***/
-	/***********************************************************/
-   
-   public void ruleTabs(int line, int column) {
-	   
-   }
 	/***********************************************************/
 	/***  Gestion de IVP                                     ***/
 	/***********************************************************/

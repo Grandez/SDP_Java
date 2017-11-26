@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.07 a las 07:59:34 PM CET 
+// Generado el: 2017.11.25 a las 11:37:27 AM CET 
 //
 
 
@@ -31,8 +31,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private final static QName _BlockScript_QNAME = new QName("", "script");
-    private final static QName _BlockSql_QNAME = new QName("", "sql");
+    private final static QName _IVPCommandsComponent_QNAME = new QName("", "component");
+    private final static QName _IVPCommandsModule_QNAME = new QName("", "module");
+    private final static QName _IVPCommandsComment_QNAME = new QName("", "comment");
+    private final static QName _IVPCommandsScript_QNAME = new QName("", "script");
+    private final static QName _IVPCommandsObject_QNAME = new QName("", "object");
+    private final static QName _IVPCommandsSql_QNAME = new QName("", "sql");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: com.jgg.sdp.ivp.jaxb
@@ -74,11 +78,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IVPEnvType }
+     * Create an instance of {@link IVPCommands }
      * 
      */
-    public IVPEnvType createIVPEnvType() {
-        return new IVPEnvType();
+    public IVPCommands createIVPCommands() {
+        return new IVPCommands();
     }
 
     /**
@@ -90,11 +94,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Block }
+     * Create an instance of {@link IVPObject }
      * 
      */
-    public Block createBlock() {
-        return new Block();
+    public IVPObject createIVPObject() {
+        return new IVPObject();
+    }
+
+    /**
+     * Create an instance of {@link IVPModule }
+     * 
+     */
+    public IVPModule createIVPModule() {
+        return new IVPModule();
+    }
+
+    /**
+     * Create an instance of {@link IVPParameters }
+     * 
+     */
+    public IVPParameters createIVPParameters() {
+        return new IVPParameters();
     }
 
     /**
@@ -106,29 +126,73 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IVPGeneralType }
+     * Create an instance of {@link IVPComponent }
      * 
      */
-    public IVPGeneralType createIVPGeneralType() {
-        return new IVPGeneralType();
+    public IVPComponent createIVPComponent() {
+        return new IVPComponent();
+    }
+
+    /**
+     * Create an instance of {@link IVPBlock }
+     * 
+     */
+    public IVPBlock createIVPBlock() {
+        return new IVPBlock();
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IVPComponent }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "component", scope = IVPCommands.class)
+    public JAXBElement<IVPComponent> createIVPCommandsComponent(IVPComponent value) {
+        return new JAXBElement<IVPComponent>(_IVPCommandsComponent_QNAME, IVPComponent.class, IVPCommands.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IVPModule }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "module", scope = IVPCommands.class)
+    public JAXBElement<IVPModule> createIVPCommandsModule(IVPModule value) {
+        return new JAXBElement<IVPModule>(_IVPCommandsModule_QNAME, IVPModule.class, IVPCommands.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "script", scope = Block.class)
-    public JAXBElement<String> createBlockScript(String value) {
-        return new JAXBElement<String>(_BlockScript_QNAME, String.class, Block.class, value);
+    @XmlElementDecl(namespace = "", name = "comment", scope = IVPCommands.class)
+    public JAXBElement<String> createIVPCommandsComment(String value) {
+        return new JAXBElement<String>(_IVPCommandsComment_QNAME, String.class, IVPCommands.class, value);
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "sql", scope = Block.class)
-    public JAXBElement<String> createBlockSql(String value) {
-        return new JAXBElement<String>(_BlockSql_QNAME, String.class, Block.class, value);
+    @XmlElementDecl(namespace = "", name = "script", scope = IVPCommands.class)
+    public JAXBElement<String> createIVPCommandsScript(String value) {
+        return new JAXBElement<String>(_IVPCommandsScript_QNAME, String.class, IVPCommands.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link IVPObject }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "object", scope = IVPCommands.class)
+    public JAXBElement<IVPObject> createIVPCommandsObject(IVPObject value) {
+        return new JAXBElement<IVPObject>(_IVPCommandsObject_QNAME, IVPObject.class, IVPCommands.class, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link String }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "sql", scope = IVPCommands.class)
+    public JAXBElement<String> createIVPCommandsSql(String value) {
+        return new JAXBElement<String>(_IVPCommandsSql_QNAME, String.class, IVPCommands.class, value);
     }
 
 }

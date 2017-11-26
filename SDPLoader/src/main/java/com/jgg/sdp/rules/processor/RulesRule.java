@@ -2,15 +2,17 @@ package com.jgg.sdp.rules.processor;
 
 import java.sql.Timestamp;
 
-import com.jgg.sdp.adt.SDPBag;
+import com.jgg.sdp.adt.ADTBag;
 import com.jgg.sdp.domain.rules.RULRule;
 import com.jgg.sdp.domain.services.rules.RULRulesService;
 import com.jgg.sdp.loader.jaxb.rules.*;
 
+import static com.jgg.sdp.rules.ctes.CDGRules.*;
+
 public class RulesRule {
 
 	private RULRulesService  rulesService = new RULRulesService();	
-	private SDPBag<RULRule>  rules        = new SDPBag<RULRule>();
+	private ADTBag<RULRule>  rules        = new ADTBag<RULRule>();
 
 	private RulesDescription descs = RulesDescription.getInstance();
 	private RulesCondition   conds = RulesCondition.getInstance();
@@ -50,10 +52,8 @@ public class RulesRule {
 				                                           rule.getIdItem(), 
 				                                           rule.getIdRule()));
 		
-		ConditionType cond = xmlRule.getOnCondition();
-
-		rule.setActive(conds.createCondition( key * 10,      cond, xmlRule.isActive()));
-		rule.setIdCond(conds.createCondition((key * 10) + 1, xmlRule.getCondition()));		
+		rule.setActive(processActivateConditions(key * 10, xmlRule));
+		rule.setIdCond(conds.createCondition((key * 10) + 1, xmlRule.getCondition(), 0));		
 		rule.setIdDesc(descs.createDescription(key, xmlRule.getDescription()));
 		rule.setIdSample(samps.createSample(key, xmlRule.getSample()));
 		rule.setUid(System.getProperty("user.name"));
@@ -61,9 +61,25 @@ public class RulesRule {
 		rules.add(rule);
 		return rule;
 	}
+
+	private Long processActivateConditions(Long key, Rule xmlRule) {
+		Long active = processActive(xmlRule.isActive());
+		if (xmlRule.getOnConditions() != null) {
+			return conds.processConditions(key, xmlRule.getOnConditions().getCondition(), active);
+		}
+		if (xmlRule.getOnCondition() != null) {
+			return conds.processCondition(key, xmlRule.getOnCondition(), active);
+		}
+		return active;
+	}
 	
-	public SDPBag<RULRule> getRules() {
-		if (rule == null) return new SDPBag<RULRule>(); 
+	private Long processActive(Boolean bActive) {
+		if (bActive == null) return ACTIVE;
+		return (bActive) ? ACTIVE : INACTIVE;
+	}
+	
+	public ADTBag<RULRule> getRules() {
+		if (rule == null) return new ADTBag<RULRule>(); 
 		return rules;
 	}
 

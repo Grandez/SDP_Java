@@ -58,9 +58,9 @@ public class ConfigurationBase implements Configuration {
     public Integer setParserMode()      { return getInteger(CFG.PARSER_MODE);  }
     
     public boolean isForcedMode()       { return getBoolean(CFG.PARSER_FORCE); }
-    public boolean isIVPMode()          { return getBoolean(CFG.IVP_PROCESS);  }
+    public boolean isIVPMode()          { return getBoolean(CFG.IVP_MODE);     }
     
-//	public boolean isIgnored(String name) { return ignore.contains(name);        }
+//	public boolean isIgnored(String name) { return ignore.contains(name);      }
 	
 
 	public String  getJMSHostName()         { return getValue(CFG.JMS_HOST);      }	

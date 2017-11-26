@@ -2,6 +2,8 @@ package com.jgg.sdp.rules.ctes;
 
 public class CDGItems {
 
+	public final static String GROUP_ID           = "DIV_ID";
+	
 	public final static String ITEM_TAB           = "TAB";
 	public final static String ITEM_COMMENT       = "CMT";
 	public final static String ITEM_CBL_DIRECTIVE = "CBL_DIRECTIVE";

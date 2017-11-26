@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.rules.*;
-import com.jgg.sdp.tools.SDPJava;
+import com.jgg.sdp.tools.Reflect;
 import com.jgg.sdp.web.adm.json.*;
 
 import com.jgg.sdp.rules.*;
@@ -119,7 +119,7 @@ public class RulesController {
     	while (start != -1) {
     		end = base.indexOf('}');
     		token = base.substring(start + 1, end);
-    		String value = SDPJava.executeMethod(o, "get" + token).toString();
+    		String value = Reflect.executeMethod(o, "get" + token).toString();
     		value = checkReservedWords(value, token);
     		String from = base.substring(start, end + 1);
     		base = base.replaceAll(Pattern.quote(from),value);

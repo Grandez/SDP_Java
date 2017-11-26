@@ -3,7 +3,7 @@ package com.jgg.sdp.rules.processor;
 import com.jgg.sdp.domain.services.rules.RULDescService;
 import com.jgg.sdp.loader.jaxb.rules.Description;
 import com.jgg.sdp.loader.jaxb.rules.TextType;
-import com.jgg.sdp.adt.SDPBag;
+import com.jgg.sdp.adt.ADTBag;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.domain.rules.RULDesc;
 
@@ -11,7 +11,7 @@ public class RulesDescription {
 
 	private RULDescService descService = new RULDescService();
 	
-	private SDPBag<RULDesc> descs = new SDPBag<RULDesc>();
+	private ADTBag<RULDesc> descs = new ADTBag<RULDesc>();
 	
     private static RulesDescription desc = null;
     
@@ -24,7 +24,7 @@ public class RulesDescription {
     	return desc;
     }
     
-    public SDPBag<RULDesc> getDescriptions() {
+    public ADTBag<RULDesc> getDescriptions() {
     	return descs;
     }
     
@@ -53,6 +53,6 @@ public class RulesDescription {
     }
     
     public void clear() {
-    	descs = new SDPBag<RULDesc>();
+    	descs = new ADTBag<RULDesc>();
     }
 }

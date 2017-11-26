@@ -3,6 +3,7 @@ package com.jgg.sdp.parser.lang;
 import java_cup.runtime.Symbol;
 
 import com.jgg.sdp.parser.base.*;
+import com.jgg.sdp.rules.components.RulesCode;
 
 import static com.jgg.sdp.parser.lang.ZCCSym.*;
 import static com.jgg.sdp.parser.lang.ZCZSym.*;
@@ -34,6 +35,9 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 
 %{
 
+   
+   RulesCode rules = new RulesCode();
+      
    String cicsVerb = null;
    
    int    lastSymbol = -1;
@@ -58,7 +62,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       
       for (int idx = 0; idx < txt.length(); idx++) {
           if (txt.charAt(idx) < ' ') {
-              ruleNoPrintable(litLine, litColumn);
+//              ruleNoPrintable(litLine, litColumn);
               break;
           } 
       }
@@ -120,8 +124,6 @@ BLANKS=[ \t]+
 WORD=[a-zA-Z0-9\_\-]+
 ENDVERB=END-[a-zA-Z]+
 
-ALPHA=[a-zA-Z]+
-
 NUMERO=[+|-]?[0-9]+
 DECIMAL=[+|-]?[0-9]+[\.\,][0-9]+
 DECIMAL2=[\.\,][0-9]+
@@ -132,13 +134,7 @@ ID = {ALPHANUM}({ALPHANUM}|\-|\_)*
 SP=[ ]{1}
 PARAGRAPH  = {SP}{ID} 
 
-SIZE=\({BLANKS}*{NUMERO}[kKmM]?{BLANKS}*\)
-PICLEN=[sS\+\-]?[aAxXzZ9]?{SIZE}
-
-SDPD=DESC  | DESCRIPTION
-SDPDESC=[>]?[\ \t]+SDP[\ \t]+{SDPD}
-SDPEND=[>]?[\ \t]+SDP[\ \t]+END
-SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
+// SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 
 %% 
 
@@ -148,13 +144,13 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /******************************************************************************/
 /******************************************************************************/
 
-  ^[\*]         { commentInit(yytext(), yyline);  }
-  ^[\/]         { commentInit(yytext(), yyline);  }  
-  ^[dD]         { commentInit(yytext(), yyline);  }
+  ^[\*\/dD]     { pushState(COMMENT); 
+                  commentInit(yytext(), yyline);    
+                }
   ^\-           { /* JGG, Pendiente de revisar */ }    
 
-  ^[ \t]+EJECT[ ]*[\.]? { rulePrintDirective("EJECT", yyline); }
-  ^[ \t]+SKIP[1-9]?     { rulePrintDirective("SKIP" , yyline); }  
+  ^[ \t]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
+  ^[ \t]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }  
   
   ^[ ]+EXECUTE { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   ^[ ]+EXEC    { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
@@ -261,8 +257,6 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
   CURRENCY                    { return symbol(CURRENCY                ); } 
   DATA                        { return symbol(DATA                    ); } 
   DATE                        { return symbol(DATE                    ); } 
-  DATE-COMPILED               { return symbol(DATE_COMPILED           ); } 
-  DATE-WRITTEN                { return symbol(DATE_WRITTEN            ); } 
   DAY                         { return symbol(DAY                     ); } 
   DAY-OF-WEEK                 { return symbol(DAY_OF_WEEK             ); } 
   DBCS                        { return symbol(DBCS                    ); } 
@@ -719,7 +713,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 /*******************************************************/
 
   {SPACES}      { /* nada */ }
-  {TABS}        { ruleTabs(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(yyline, yycolumn); }
 
   // Capturar  al inicio de linea
   ^[ ]+COPY{BLANKS}              { initEmbedded(); 
@@ -764,7 +758,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 
 <ST_FUNCTION> {
   {SPACES}           { /* EAT */ }
-  {TABS}             { ruleTabs(yyline, yycolumn); }
+  {TABS}             { rules.checkTab(yyline, yycolumn); }
   ^[\*\/]            { commentInit(yytext(), yyline);   }
   {ID}               { popState(); return symbol(INTRINSIC);  }
   \r                 { /* EAT */ }
@@ -810,7 +804,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 */
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
-  {TABS}        { ruleTabs(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(yyline, yycolumn); }
   \n            { popState(); return symbol(ENDP); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -822,7 +816,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 <EATLINE> {
 
   {SPACES}      { /* Nada */  }
-  {TABS}        { ruleTabs(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(yyline, yycolumn); }
   \n            { popState(); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -830,7 +824,7 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 }
 
 <COMMENT> {
-  {BLANKS}      { ruleTabsInText(yytext(), yyline, yycolumn);
+  {BLANKS}      { rules.checkTabsInText(yytext(), yyline, yycolumn);
                   commentAppend(yytext()); 
                 }
   \n            { commentEnd(yyline);      }                 
@@ -887,26 +881,30 @@ SDPMASTER=[>]?[\ \t]+SDP[\ \t]+MASTER
 }
 
 <STEXEC> {
-  ^[\*\/dD]       { pushState(COMMENT);       }
-   CICS           { info.module.setCICS();
-                    initEmbedded();  
-                    pushState(EMBEDDED);
-                    return symbol(CICSCODE);
-                  } 
+  ^[\*\/dD]     { pushState(COMMENT); 
+                  commentInit(yytext(), yyline);    
+                }
+   CICS         { info.module.setCICS();
+                  initEmbedded();  
+                  pushState(EMBEDDED);
+                  return symbol(CICSCODE);
+                } 
                       
-   SQL            { initEmbedded();  
-                    pushState(EMBEDDED);
-                    return symbol(SQLCODE);
-                  } 
-   {SPACES}       { /* DO NOTHING */ }
-   {TABS}         { ruleTabs(yyline, yycolumn); }
-   \n             { info.module.incLines(data); data = false; }
-   \r             { /* do nothing */ }
+   SQL          { initEmbedded();  
+                  pushState(EMBEDDED);
+                  return symbol(SQLCODE);
+                } 
+   {SPACES}     { /* DO NOTHING */ }
+   {TABS}       { rules.checkTab(yyline, yycolumn); }
+   \n           { info.module.incLines(data); data = false; }
+   \r           { /* do nothing */ }
     
 }
 
 <EMBEDDED> {
-  ^[\*\/dD]          { pushState(COMMENT);       }
+  ^[\*\/dD]     { pushState(COMMENT); 
+                  commentInit(yytext(), yyline);    
+                }
   END-EXEC[ ]*[\.]?  { popState(2); return symbol(ENDEXEC); }
 
   \r           { /* do nothing */ }

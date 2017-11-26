@@ -3,8 +3,9 @@ package com.jgg.sdp.rules.processor;
 import static com.jgg.sdp.rules.ctes.CDGRules.*;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-import com.jgg.sdp.adt.SDPBag;
+import com.jgg.sdp.adt.ADTBag;
 import com.jgg.sdp.domain.rules.RULCond;
 import com.jgg.sdp.domain.services.rules.RULCondsService;
 import com.jgg.sdp.loader.jaxb.rules.*;
@@ -13,7 +14,7 @@ public class RulesCondition {
 
 	private RULCondsService condService = new RULCondsService();
 	
-	private SDPBag<RULCond> conds = new SDPBag<RULCond>();
+	private ADTBag<RULCond> conds = new ADTBag<RULCond>();
 	
 	private RulesScript scripts = RulesScript.getInstance();
 	
@@ -28,22 +29,29 @@ public class RulesCondition {
     	return cond;
     }
 
-    public SDPBag<RULCond> getConditions() {
+    public Long processConditions(Long key, List<ConditionType> list, long active) {
+    	int seq = 1;
+    	for (ConditionType c : list) {
+    		createCondition(key, c, seq++);
+    	}
+    	return key * active;
+    }
+    
+    public Long processCondition(Long key, ConditionType cond, long active) {
+    	createCondition(key, cond, 0);
+		return key * active;
+    }
+    
+    public ADTBag<RULCond> getConditions() {
     	return conds;
     }
     
-    public Long createCondition(long key, ConditionType c, Boolean active) {
-    	Long idCond = ACTIVE;
-    	if (active != null) idCond = (active) ? ACTIVE : INACTIVE;
-    	if (c != null) return createCondition(key, c);
-    	return idCond;
-    }
-    
-    public Long createCondition(long key, ConditionType c) {
-    	RULCond cond = condService.getById(key);
+    public Long createCondition(long key, ConditionType c, int seq) {
+    	RULCond cond = condService.getCondition(key,  seq);
     	if (cond == null) {
     		cond = new RULCond();
     		cond.setIdCond(key);
+    		cond.setIdSeq(seq);
     	}
     	
     	createLValue(key, cond, c);
@@ -122,7 +130,7 @@ public class RulesCondition {
     }
     
     public void clear() {
-    	conds = new SDPBag<RULCond>();
+    	conds = new ADTBag<RULCond>();
     }
 
 	public static int getLValueType(String type) {

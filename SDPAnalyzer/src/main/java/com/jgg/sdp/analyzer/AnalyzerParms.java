@@ -25,9 +25,7 @@ public class AnalyzerParms {
 		   ,{"n" , "no"        , "SDP_NO_SEND"      , CFG.SEND_NONE     , Args.BOOLEAN,  "261"}		   
 		   ,{"c" , "nocopy"    , "SDP_NO_COPY"      , CFG.SEND_COPY     , Args.BOOLEAN,  "262"}		   
 		   ,{"d" , "noinclude" , "SDP_NO_INCLUDE"   , CFG.SEND_INCLUDE  , Args.BOOLEAN,  "263"}		   
-		   ,{"x" , "exclude"   , "SDP_EXCLUDE"      , CFG.FILE_IGNORE   , Args.FILE,     "265"}		       		    		
-		   ,{""  , "ivp"       , ""                 , CFG.IVP_PROCESS   , Args.BOOLEAN,    "0"}		   
-                             
+		   ,{"x" , "exclude"   , "SDP_EXCLUDE"      , CFG.FILE_IGNORE   , Args.FILE,     "265"}		       		    				   
     };
 
 }

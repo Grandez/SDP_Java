@@ -26,8 +26,8 @@ public class DBSource {
 		if (src == null) return null;
 		Source source = new Source(file.getArchivo());
 		source.setFirma(file.getFirma());
-		source.setIdSource(file.getIdFile());
-		source.setIdVersion(src.getIdVersion());
+		source.setIdFile(file.getIdFile());
+		source.setIdFileVersion(src.getIdVersion());
 		source.loadRawData(file.getFullName(), src.getEncoded(), src.getSource());
 		return source;
 	}

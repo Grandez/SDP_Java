@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.17 a las 12:17:43 PM CET 
+// Generado el: 2017.11.25 a las 01:38:17 PM CET 
 //
 
 
@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *           &lt;element name="lvalue" type="{http://www.sdp.com/SDPRules}operandType"/>
  *           &lt;element name="script" type="{http://www.sdp.com/SDPRules}scriptType"/>
  *           &lt;element name="type" type="{http://www.sdp.com/SDPRules}objectType"/>
+ *           &lt;element name="configuration" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;/choice>
  *         &lt;element name="operator" type="{http://www.sdp.com/SDPRules}operatorType" minOccurs="0"/>
  *         &lt;choice minOccurs="0">
@@ -50,10 +51,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "conditionType", namespace = "http://www.sdp.com/SDPRules", propOrder = {
+@XmlType(name = "conditionType", propOrder = {
     "lvalue",
     "script",
     "type",
+    "configuration",
     "operator",
     "property",
     "attribute",
@@ -69,6 +71,7 @@ public class ConditionType {
     protected ScriptType script;
     @XmlSchemaType(name = "string")
     protected ObjectType type;
+    protected String configuration;
     @XmlSchemaType(name = "string")
     protected OperatorType operator;
     protected String property;
@@ -151,6 +154,30 @@ public class ConditionType {
      */
     public void setType(ObjectType value) {
         this.type = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad configuration.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Define el valor de la propiedad configuration.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setConfiguration(String value) {
+        this.configuration = value;
     }
 
     /**

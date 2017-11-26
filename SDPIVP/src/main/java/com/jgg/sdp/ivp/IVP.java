@@ -74,7 +74,6 @@ public class IVP {
 
 		try {
 			IVPParser parser = new IVPParser();
-			//RULES rule = parser.parse("P:/SDP/config/rule00.xml");
 			SDPIVP ivp = parser.parse(base.getAbsolutePath());
 			for (Component component : ivp.getComponent()) {
 				switch (component.getName()) {

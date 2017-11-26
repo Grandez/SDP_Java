@@ -11,16 +11,18 @@ public class RULGroup implements Serializable {
 
 	private static final long serialVersionUID = 2429660515271690865L;
 
-	public static final String delGroup      = "DELETE FROM RULGroup g where g.idGroup = ?1";
+	public static final String delGroup       = "DELETE FROM RULGroup g where g.idGroup = ?1";
     
-    public static final String findByTextKey = "SELECT r FROM RULGroup r WHERE r.prefix  = ?1";
-    public static final String findById      = "SELECT r FROM RULGroup r WHERE r.idGroup = ?1";    
-	public static final String findMaxId     = "SELECT MAX(r.idGroup) FROM RULGroup r";
+    public static final String findByTextKey  = "SELECT r FROM RULGroup r WHERE r.prefix  = ?1";
+    public static final String findById       = "SELECT r FROM RULGroup r WHERE r.idGroup = ?1";    
+    public static final String findActiveById = "SELECT r FROM RULGroup r WHERE r.idGroup = ?1 AND r.active > 0";    
+    public static final String findByName     = "SELECT r FROM RULGroup r WHERE r.idName  = ?1";    
+	public static final String findMaxId      = "SELECT MAX(r.idGroup) FROM RULGroup r";
 	
-    public static final String listAll       = "SELECT r FROM RULGroup r";
-	public static final String listActive    = "SELECT r FROM RULGroup r WHERE r.active   >= 0";
-	public static final String listChilds    = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1";
-
+    public static final String listAll             = "SELECT r FROM RULGroup r";
+	public static final String listActive          = "SELECT r FROM RULGroup r WHERE r.active   >= 0";
+	public static final String listChildren        = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1";
+	public static final String listChildrenActive  = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1 AND r.active > 0";
 	
 	@Id
 	@Column(name="idGroup")

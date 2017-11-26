@@ -1,6 +1,6 @@
 package com.jgg.sdp.ivp.generator.cobol;
 
-import com.jgg.sdp.adt.SDPList;
+import com.jgg.sdp.adt.ADTList;
 
 public abstract class CUPComponent {
 
@@ -15,7 +15,7 @@ public abstract class CUPComponent {
 
 	protected boolean terminal = true;
 	
-	protected SDPList<CUPComponent> lhs = new SDPList<CUPComponent>();	
+	protected ADTList<CUPComponent> lhs = new ADTList<CUPComponent>();	
 	
 	public CUPComponent(int type) {
 		this.type = type;

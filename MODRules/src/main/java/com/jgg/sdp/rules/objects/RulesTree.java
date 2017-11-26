@@ -1,16 +1,15 @@
 package com.jgg.sdp.rules.objects;
 
-import java.util.HashMap;
+import java.util.*;
 
 import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.rules.*;
 
 public class RulesTree {
 
-	//private HashMap<String,  RuleGroup> namesTree = new HashMap<String, RuleGroup>();
 	private HashMap<Long,   RuleGroup> groupsKeyMap   = new HashMap<Long,   RuleGroup>();
 	private HashMap<String, Long>      groupsNameMap  = new HashMap<String, Long>();
-	private HashMap<String, HashMap<String, RuleItem>> itemsMap  = new HashMap<String, HashMap<String, RuleItem>>();
+	private HashMap<String, HashMap<String, RuleItem>>  itemsMap  = new HashMap<String, HashMap<String, RuleItem>>();
 	
 	private RULGroupsService groupsService = new RULGroupsService();
 	private RULItemsService  itemsService  = new RULItemsService();
@@ -34,6 +33,20 @@ public class RulesTree {
 		return tree;		
 	}
 
+	public RuleGroup getGroupById(long id) {
+		return groupsKeyMap.get(id);
+	}
+
+	public RuleGroup getGroupByName(String name) {
+		Long id = groupsNameMap.get(name);
+		if (id == null) return null;
+		
+//		if (id == null) {
+//			throw new SystemException(MSG.EXCEPTION_RULE_GROUP, name);
+//		}
+		return getGroupById(id);
+	}
+	
 	public RuleItem getItemByName(String name) {
 		HashMap<String, RuleItem> itemMap = itemsMap.get(name);
 		if (itemMap == null) return null;
@@ -42,12 +55,8 @@ public class RulesTree {
 		return (RuleItem) items[0];
 	}
 
-	public RuleGroup getGroupById(int id) {
-		return groupsKeyMap.get(id);
-	}
 	
 	public void reload() {
-//		namesTree = new HashMap<String, RuleGroup>();
 		groupsKeyMap   = new HashMap<Long, RuleGroup>();
 		groupsNameMap  = new HashMap<String, Long>();
 		
@@ -60,6 +69,7 @@ public class RulesTree {
 			group.setPrefix(grp.getPrefix());
 			groupsKeyMap.put(group.getId(), group);
 			groupsNameMap.put(group.getName(), group.getId());
+
 			loadItemsByGroup(group);
 		}
 	}
@@ -69,6 +79,7 @@ public class RulesTree {
 		for (RULItem itm : itemsService.listActiveItemsByGroup(group.getId())) {
 			RuleItem item = mountItem(itm);
 			item.setPrefix(group.getPrefix());
+			group.addItem(item);
 			HashMap<String, RuleItem> map = itemsMap.get(item.getObject());
 			if (map == null) {
 				map = new HashMap<String, RuleItem>();
@@ -95,7 +106,7 @@ public class RulesTree {
 		item.setIdGroup(itm.getIdGroup());
 		item.setIdItem(itm.getIdItem());
 		item.setObject(itm.getObject());
-		item.setActivation(getCondition(itm.getActive()));
+		item.setActivations(getConditions(itm.getActive()));
 		return item;
 	}
 
@@ -108,8 +119,8 @@ public class RulesTree {
 		rule.setPriority(rul.getPriority());
 		rule.setPrefix(item.getPrefix());
 		
-		if (rul.getActive() > 1) {
-			rule.setActivation(getCondition(rul.getActive()));
+		if (rul.getActive() > 1 || rul.getActive() < -1) {
+			rule.setActivations(getConditions(rul.getActive()));
 		}
 		
 		rule.setCondition(getCondition(rul.getIdCond()));
@@ -117,18 +128,25 @@ public class RulesTree {
 	}
 	
 	private RuleCond getCondition(Long key) {
+		ArrayList<RuleCond> c = getConditions(key);
+		return c.get(0);
+	}
+	
+	private ArrayList<RuleCond> getConditions(Long key) {
 		Long id = key;
+		ArrayList<RuleCond> conds = new ArrayList<RuleCond>();
 		if (id < 0) id *= -1;
-		RULCond cond = condsService.getById(key);
-		if (cond == null) return null;
-		RuleCond c = new RuleCond();
-		c.setIdCond(cond.getIdCond());
-		c.setLvalue(cond.getLvalue());
-		c.setLvalueType(cond.getLvalueType());
-		c.setOperator(cond.getOperator());
-		c.setRvalue(cond.getRvalue());
-		c.setRvalueType(cond.getRvalueType());
-		return c;
+		for (RULCond cond : condsService.getById(key)) {
+			RuleCond c = new RuleCond();
+			c.setIdCond(cond.getIdCond());
+			c.setLvalue(cond.getLvalue());
+			c.setLvalueType(cond.getLvalueType());
+			c.setOperator(cond.getOperator());
+			c.setRvalue(cond.getRvalue());
+			c.setRvalueType(cond.getRvalueType());
+			conds.add(c);			
+		}
+		return conds;
 	}
 	
 /*	

@@ -3,7 +3,9 @@ package com.jgg.sdp.parser.lang;
 import java_cup.runtime.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.stmt.*;
+
+import com.jgg.sdp.blocks.symbols.*;
+import com.jgg.sdp.blocks.stmt.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();

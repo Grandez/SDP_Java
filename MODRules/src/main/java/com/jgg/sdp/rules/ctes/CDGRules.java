@@ -40,15 +40,18 @@ public class CDGRules {
 
 	public final static int OP_GENERIC   =     0;
 	
-	public final static int OP_STRING    =  1000;
-	public final static int OP_NUMERIC   =  2000;
-	public final static int OP_BOOLEAN   =  3000;
-
+	public final static int OP_TYPES     =  1000;
+	public final static int OP_STRING    =  OP_TYPES * 1;
+	public final static int OP_NUMERIC   =  OP_TYPES * 2;
+	public final static int OP_BOOLEAN   =  OP_TYPES * 3;
+	public final static int OP_OBJECT    =  OP_TYPES * 4;
+	
 	public final static int MASK_EQ = 1;
 	public final static int MASK_LT = 2;
 	public final static int MASK_GT = 4;
 	
-	public final static int OP_EXIST     =  OP_BOOLEAN  + 1;
+	public final static int OP_EXIST     =  OP_OBJECT   + 1;
+	public final static int OP_HAS       =  OP_OBJECT   + 1;
 	public final static int OP_EQ        =  OP_NUMERIC  + MASK_EQ;
 	public final static int OP_GT        =  OP_NUMERIC  + MASK_GT;
 	public final static int OP_LT        =  OP_NUMERIC  + MASK_LT;

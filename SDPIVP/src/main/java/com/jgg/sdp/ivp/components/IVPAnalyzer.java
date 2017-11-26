@@ -3,12 +3,14 @@ package com.jgg.sdp.ivp.components;
 import java.io.File;
 import java.util.*;
 
-import com.jgg.sdp.Analyzer;
+import com.jgg.sdp.SDPAnalyzer;
 import com.jgg.sdp.common.exceptions.*;
 import com.jgg.sdp.common.files.*;
 import com.jgg.sdp.core.exceptions.*;
+import com.jgg.sdp.domain.services.CommonService;
 import com.jgg.sdp.ivp.IVPParser;
 import com.jgg.sdp.ivp.base.*;
+import com.jgg.sdp.ivp.commands.CommandLauncher;
 import com.jgg.sdp.ivp.evaluators.AnalyzerEval;
 import com.jgg.sdp.ivp.items.*;
 import com.jgg.sdp.ivp.jaxb.*;
@@ -21,6 +23,7 @@ public class IVPAnalyzer {
     private HashSet<String>              modules = new HashSet<String>();
 	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
 
+	private CommonService dbService = new CommonService();
 	
     private String currArchivo = null;
     
@@ -30,7 +33,7 @@ public class IVPAnalyzer {
 	
 	private IVPPatterns patterns = new IVPPatterns();
 	
-	private HashMap<Integer, Block> blocks;
+	private HashMap<Integer, IVPBlock> blocks;
 	
 	private int    currBlock = 0;
 	private int    count     = 0;
@@ -39,6 +42,8 @@ public class IVPAnalyzer {
 	private Stack<IVPConfig> cfgs = new Stack<IVPConfig>();
 	
 	private IVPEnvironment env = new IVPEnvironment();
+
+	private CommandLauncher launcher = new CommandLauncher();
 	
 	public IVPAnalyzer(Component component, IVPConfig cfgBase) {
 		this.component = component;
@@ -55,36 +60,44 @@ public class IVPAnalyzer {
 		
 		for (IVPCaseType c: component.getCases().getCase() ) {
 			switch (c.getType()) {
-			    case DIRECTORY: processCasesDirectory(c.getValue());
+			    case DIRECTORY: processXMLDirectory(c.getValue());
 			    default: 
 			}
         }
 	}
 	
-	private void processCasesDirectory(String dir) throws Exception {
+	private void processXMLDirectory(String dir) throws Exception {
 		Banners.bannerGroup(dir);
 		List<File> caseFiles = patterns.getFiles(dir, ".xml");
-		processCasesFiles(caseFiles);
+		processXMLFiles(caseFiles);
 	}
 	
-	private void processCasesFiles(List<File> caseFiles) throws Exception {
+	private void processXMLFiles(List<File> caseFiles) throws Exception {
 		
 		for (File f : caseFiles) {
-			IVPParser parser = new IVPParser();
-			SDPIVP ivp = parser.parse(f.getAbsolutePath());
-			IVPConfig cfg = new IVPConfig(cfgs.peek());
-			cfg.update(ivp.getConfig());
-			cfgs.push(cfg);
-			env.setEnvironment(currBlock, cfgs.peek(), ivp.getEnvironment());
-			Banners.bannerXML(ivp.getDescription());
-
-			for (IVPGroupType group: ivp.getGroup()) {
-				processCasesGroup(group);
-			}
-			cfgs.pop();
+			processXMLFile(f);
 		}
 	}
 	
+	private void processXMLFile(File file) throws Exception {
+		// Cositas del JPA. Limpiar las caches o intentarlo al menos
+		dbService.clearCache();
+		
+		IVPParser parser = new IVPParser();
+		SDPIVP ivp = parser.parse(file.getAbsolutePath());
+		IVPConfig cfg = new IVPConfig(cfgs.peek());
+		cfg.update(ivp.getConfig());
+		cfgs.push(cfg);
+		
+//		env.setEnvironment(currBlock, cfgs.peek(), ivp.getEnvironment());
+		Banners.bannerXML(ivp.getDescription());
+		launcher.process(ivp.getPreProcess());
+		for (IVPGroupType group: ivp.getGroup()) {
+			processCasesGroup(group);
+		}
+		launcher.process(ivp.getPostProcess());
+		cfgs.pop();		
+	}
 	private void processCasesGroup(IVPGroupType group) {
 
 		Banners.bannerGroup(group.getName());
@@ -139,10 +152,10 @@ public class IVPAnalyzer {
 		Module module = null;
 		Exception ex = null;
   
-		Analyzer analyzer = new Analyzer();
+		SDPAnalyzer analyzer = new SDPAnalyzer();
 		
 		try {
-            String[] parms = new String[] {"--local", "--force", "--ivp", archivo.getAbsolutePath()};
+            String[] parms = new String[] {"--IVP", "--local", "--force", archivo.getAbsolutePath()};
 			rc = analyzer.process(parms);
         } catch (FileException f) {
         	ex = f;
@@ -243,11 +256,13 @@ public class IVPAnalyzer {
 /*	
 
 */	
+/*	
 	private void loadEnvironments(IVPEnvType env) {
 		for (Block block : env.getBlock()) {
 			blocks.put(block.getId(),  block);
 		}
 	}
+*/	
 /*	
 	private void createConfig(IVPConfigType xmlCfg) {
 		cfg = new IVPConfig(cfgBase);

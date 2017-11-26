@@ -90,6 +90,10 @@ public class MSG {
 
 	public static final int YES                 = 60001;
 	public static final int NO                  = 60002;
+
+	////////////////////////////////////////////////////////////
+	// Excepciones
+    //////////////////////////////////////////////////////////
 	
 	public static final int JMS_BASE            = 90000;
 	public static final int NO_JMS_PROVIDER     = 90001;
@@ -98,22 +102,6 @@ public class MSG {
 	public static final int JMS_GET             = 90011;
 	public static final int JMS_PUT             = 90012;
 
-	
-	public static final int BAD_JMS_PROVIDER    = 92100;
-
-	// Situaciones no permitidas
-	public static final int SUPPORT_SECTION     = 98010;
-	public static final int SUPPORT_NAME        = 98020;
-	public static final int SUPPORT_COPY        = 98021;
-	
-	// Excepciones
-	public static final int EXCEPTION_PARSER    = 99001;
-	public static final int EXCEPTION_SYNTAX    = 99002;
-	public static final int EXCEPTION_TOKEN     = 99003;
-	public static final int EXCEPTION_CUP       = 99005;
-	public static final int EXCEPTION_NOT_ALLOW = 99006;
-	public static final int EXCEPTION_LEXER     = 99007;	
-
 	public static final int EXCEP_NO_LANG       = 91000;
 	public static final int EXCEP_NO_LANG_DEF   = 91001;
 	public static final int EXCEP_NO_PARSER     = 91002;
@@ -121,11 +109,29 @@ public class MSG {
 	public static final int EXCEP_NO_DIR        = 92001;
 	public static final int EXCEP_NO_FILE       = 92002;
 	
-	public static final int EXCEPTION_DBCONFIG  = 99500;	
-	public static final int EXCEPTION_CONFIG    = 99501;
-	public static final int EXCEPTION_FORMAT    = 99504;
-	public static final int EXCEPTION_LOCK      = 99505;	
+	public static final int BAD_JMS_PROVIDER    = 92100;
+	
+	public static final int EXCEP_JAVA_REFLECT  = 95000;
+	public static final int EXCEP_JAVA_METHOD   = 95001;
+	
+	public static final int EXCEPTION_PARSER    = 99001;
+	public static final int EXCEPTION_SYNTAX    = 99002;
+	public static final int EXCEPTION_TOKEN     = 99003;
+	public static final int EXCEPTION_CUP       = 99005;
+	public static final int EXCEPTION_NOT_ALLOW = 99006;
+	public static final int EXCEPTION_LEXER     = 99007;	
+	
+	public static final int EXCEPTION_DBCONFIG   = 99500;	
+	public static final int EXCEPTION_CONFIG     = 99501;
+	public static final int EXCEPTION_FORMAT     = 99504;
+	public static final int EXCEPTION_LOCK       = 99505;	
+	public static final int EXCEPTION_RULE_GROUP = 99510;
 
+	// Situaciones no permitidas
+	public static final int SUPPORT_SECTION     = 98010;
+	public static final int SUPPORT_NAME        = 98020;
+	public static final int SUPPORT_COPY        = 98021;
+	
 	public static final int EXCEPTION_KEY        = 99600;
 	public static final int EXCEPTION_KEY_SERVER = 99601;
 	

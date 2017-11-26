@@ -13,9 +13,10 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.factorias.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.parser.stmt.*;
-import com.jgg.sdp.parser.symbol.*;
 import com.jgg.sdp.parser.code.*;
+
+import com.jgg.sdp.blocks.symbols.*;
+import com.jgg.sdp.blocks.stmt.*;
 
 parser code {:
    GenericScanner scanner = null;
@@ -187,8 +188,6 @@ terminal Symbol COUNT               ;
 terminal Symbol CURRENCY            ;
 terminal Symbol DATA                ;
 terminal Symbol DATE                ;
-terminal Symbol DATE_COMPILED       ;
-terminal Symbol DATE_WRITTEN        ;
 terminal Symbol DAY                 ;
 terminal Symbol DAY_OF_WEEK         ;
 terminal Symbol DBCS                ;

@@ -6,7 +6,7 @@ import java.util.Iterator;
 /**
  * Implementa una produccion para un determinado no terminal
  */
-import com.jgg.sdp.adt.SDPList;
+import com.jgg.sdp.adt.ADTList;
 
 public class CUPRHS {
 
@@ -15,7 +15,7 @@ public class CUPRHS {
 	// Tiene no terminales?
 	private int nonTerminals = 0;
 	
-	private SDPList<CUPComponent> rhs = new SDPList<CUPComponent>(); 
+	private ADTList<CUPComponent> rhs = new ADTList<CUPComponent>(); 
 	
 	public void add(CUPComponent c) { 
 		rhs.add(c);
@@ -28,7 +28,7 @@ public class CUPRHS {
 
 	public void replace(CUPComponent[] c) {
 		nonTerminals = 0;
-		rhs = new SDPList<CUPComponent>();
+		rhs = new ADTList<CUPComponent>();
 		for (int idx = 0; idx < c.length; idx++) rhs.add(c[idx]);
 	}
 	
@@ -53,7 +53,7 @@ public class CUPRHS {
 		return (nonTerminals > 0);
 	}
 	
-	public SDPList<CUPComponent> getRhs() {
+	public ADTList<CUPComponent> getRhs() {
 		return rhs;
 	}
 

@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.07 a las 07:59:34 PM CET 
+// Generado el: 2017.11.25 a las 11:37:27 AM CET 
 //
 
 
@@ -33,8 +33,9 @@ import javax.xml.bind.annotation.XmlType;
  *           &lt;element name="module" type="{http://www.sdp.com/SDPIVP}IVPModuleType"/>
  *           &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *           &lt;element name="config" type="{http://www.sdp.com/SDPIVP}IVPConfigType" minOccurs="0"/>
- *           &lt;element name="environment" type="{http://www.sdp.com/SDPIVP}IVPEnvType" minOccurs="0"/>
+ *           &lt;element name="preProcess" type="{http://www.sdp.com/SDPIVP}IVPCommands" minOccurs="0"/>
  *           &lt;element name="group" type="{http://www.sdp.com/SDPIVP}IVPGroupType" maxOccurs="unbounded"/>
+ *           &lt;element name="postProcess" type="{http://www.sdp.com/SDPIVP}IVPCommands" minOccurs="0"/>
  *         &lt;/sequence>
  *       &lt;/choice>
  *     &lt;/restriction>
@@ -50,10 +51,11 @@ import javax.xml.bind.annotation.XmlType;
     "module",
     "description",
     "config",
-    "environment",
-    "group"
+    "preProcess",
+    "group",
+    "postProcess"
 })
-@XmlRootElement(name = "SDPIVP")
+@XmlRootElement(name = "SDPIVP", namespace = "http://www.sdp.com/SDPIVP")
 public class SDPIVP {
 
     @XmlElement(namespace = "http://www.sdp.com/SDPIVP")
@@ -62,8 +64,9 @@ public class SDPIVP {
     protected IVPModuleType module;
     protected String description;
     protected IVPConfigType config;
-    protected IVPEnvType environment;
+    protected IVPCommands preProcess;
     protected List<IVPGroupType> group;
+    protected IVPCommands postProcess;
 
     /**
      * Gets the value of the component property.
@@ -167,27 +170,27 @@ public class SDPIVP {
     }
 
     /**
-     * Obtiene el valor de la propiedad environment.
+     * Obtiene el valor de la propiedad preProcess.
      * 
      * @return
      *     possible object is
-     *     {@link IVPEnvType }
+     *     {@link IVPCommands }
      *     
      */
-    public IVPEnvType getEnvironment() {
-        return environment;
+    public IVPCommands getPreProcess() {
+        return preProcess;
     }
 
     /**
-     * Define el valor de la propiedad environment.
+     * Define el valor de la propiedad preProcess.
      * 
      * @param value
      *     allowed object is
-     *     {@link IVPEnvType }
+     *     {@link IVPCommands }
      *     
      */
-    public void setEnvironment(IVPEnvType value) {
-        this.environment = value;
+    public void setPreProcess(IVPCommands value) {
+        this.preProcess = value;
     }
 
     /**
@@ -217,6 +220,30 @@ public class SDPIVP {
             group = new ArrayList<IVPGroupType>();
         }
         return this.group;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad postProcess.
+     * 
+     * @return
+     *     possible object is
+     *     {@link IVPCommands }
+     *     
+     */
+    public IVPCommands getPostProcess() {
+        return postProcess;
+    }
+
+    /**
+     * Define el valor de la propiedad postProcess.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link IVPCommands }
+     *     
+     */
+    public void setPostProcess(IVPCommands value) {
+        this.postProcess = value;
     }
 
 }

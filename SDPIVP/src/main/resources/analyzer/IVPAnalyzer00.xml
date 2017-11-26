@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<s:SDPIVP xmlns:s="http://www.sdp.com/SDPIVP" 
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+        xsi:schemaLocation="http://www.sdp.com/SDPIVP SDPIVP.xsd">
+
+    <module>SDPAnalyzer</module>
+    <description>Control de reglas de programacion</description>
+      
+   <preProcess>
+         <comment>
+            Desactivar la gestion de reglas
+         </comment>
+         <component>
+            <object>Rules</object>
+            <method>deactivateGroupByName</method>
+            <parameters>
+               <parameter>ROOT</parameter>
+            </parameters>
+         </component>
+   </preProcess>
+   
+   <group name="Casos basicos">
+      <description>Descripcion 1</description>
+      <pattern>IVP00*.cbl</pattern>
+   </group>
+
+   <group name="Otros casos">
+      <description>Descripcion 2</description>
+      <pattern>IVP01*.cbl</pattern>
+   </group>
+
+</s:SDPIVP>
+

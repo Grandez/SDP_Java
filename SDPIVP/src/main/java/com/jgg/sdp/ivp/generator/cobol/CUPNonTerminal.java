@@ -11,7 +11,7 @@ public class CUPNonTerminal extends CUPComponent {
 	protected boolean reduced = false;
 	
 	// Conjunto de producciones
-	protected SDPList<CUPRHS> productions = new SDPList<CUPRHS>();
+	protected ADTList<CUPRHS> productions = new ADTList<CUPRHS>();
 
 	public CUPNonTerminal() {
 		super(2);
@@ -23,7 +23,7 @@ public class CUPNonTerminal extends CUPComponent {
 		terminal = false;
 	}
 	
-	public SDPList<CUPRHS> getProductions() {
+	public ADTList<CUPRHS> getProductions() {
 		return productions;
 	}
 

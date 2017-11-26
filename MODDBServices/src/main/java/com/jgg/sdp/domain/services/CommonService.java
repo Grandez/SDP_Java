@@ -8,7 +8,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class CommonService extends AbstractService<Object> {
-	public void execute(String sqlStmt) {
+	public void executeSQL(String sqlStmt) {
+		sqlExecute(sqlStmt);
+	}
+	public void executeJPA(String sqlStmt) {
 		sqlExecute(sqlStmt);
 	}
 

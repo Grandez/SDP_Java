@@ -2,7 +2,7 @@ package com.jgg.sdp.rules.processor;
 
 import java.util.List;
 
-import com.jgg.sdp.adt.SDPBag;
+import com.jgg.sdp.adt.ADTBag;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.domain.rules.RULSample;
 import com.jgg.sdp.domain.rules.RULSampleDesc;
@@ -17,8 +17,8 @@ public class RulesSample {
 	private RULSamplesService    sampService = new RULSamplesService();
 	private RULSampleDescService descService = new RULSampleDescService();
 	
-	private SDPBag<RULSample>     samples = new SDPBag<RULSample>();
-	private SDPBag<RULSampleDesc> descs   = new SDPBag<RULSampleDesc>();
+	private ADTBag<RULSample>     samples = new ADTBag<RULSample>();
+	private ADTBag<RULSampleDesc> descs   = new ADTBag<RULSampleDesc>();
 	
     private static RulesSample samp = null;
     
@@ -31,11 +31,11 @@ public class RulesSample {
     	return samp;
     }
 
-    public SDPBag<RULSample> getSamples() {
+    public ADTBag<RULSample> getSamples() {
     	return samples;
     }
 
-    public SDPBag<RULSampleDesc> getSamplesDesc() {
+    public ADTBag<RULSampleDesc> getSamplesDesc() {
     	return descs;
     }
     
@@ -80,8 +80,8 @@ public class RulesSample {
     }
     
     public void clear() {
-    	samples = new SDPBag<RULSample>();
-    	descs   = new SDPBag<RULSampleDesc>();
+    	samples = new ADTBag<RULSample>();
+    	descs   = new ADTBag<RULSampleDesc>();
     }
 
 

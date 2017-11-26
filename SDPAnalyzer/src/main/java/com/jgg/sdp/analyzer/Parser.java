@@ -32,6 +32,8 @@ import com.jgg.sdp.module.status.*;
 import com.jgg.sdp.module.tables.TBSumIssues;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.parser.base.ParserInfo;
+import com.jgg.sdp.rules.components.RulesModule;
+import com.jgg.sdp.rules.components.RulesProcessor;
 
 public class Parser {
 
@@ -65,13 +67,14 @@ public class Parser {
 	   
 	   // Chequea si hay MQSeries
 	   checkMQAndCalls(module);
-	   
-	   module.addIssues(info.rules.getIssues());
+	  
+	   RulesModule rulesModule = new RulesModule();
+	   rulesModule.checkModule(module);
+
+	   module.addIssues(RulesProcessor.getInstance().getIssues());
 	   
 	   //Procesa el grafo
 	   //module.makeGraph();
-	   
-	   info.rules.checkModule(module);
 	   
 	   mountStatus(module);
 

@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.07 a las 07:59:34 PM CET 
+// Generado el: 2017.11.25 a las 11:37:27 AM CET 
 //
 
 
@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element name="block" type="{http://www.sdp.com/SDPIVP}IVPBlock" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -39,9 +40,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "IVPGroupType", propOrder = {
+@XmlType(name = "IVPGroupType", namespace = "http://www.sdp.com/SDPIVP", propOrder = {
     "description",
-    "pattern"
+    "pattern",
+    "block"
 })
 public class IVPGroupType {
 
@@ -49,6 +51,7 @@ public class IVPGroupType {
     protected String description;
     @XmlElement(required = true)
     protected List<String> pattern;
+    protected List<IVPBlock> block;
     @XmlAttribute(name = "name", required = true)
     protected String name;
 
@@ -103,6 +106,35 @@ public class IVPGroupType {
             pattern = new ArrayList<String>();
         }
         return this.pattern;
+    }
+
+    /**
+     * Gets the value of the block property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the block property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getBlock().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link IVPBlock }
+     * 
+     * 
+     */
+    public List<IVPBlock> getBlock() {
+        if (block == null) {
+            block = new ArrayList<IVPBlock>();
+        }
+        return this.block;
     }
 
     /**

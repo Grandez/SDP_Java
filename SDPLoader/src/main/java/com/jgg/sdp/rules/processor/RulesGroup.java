@@ -2,17 +2,18 @@ package com.jgg.sdp.rules.processor;
 
 import java.sql.Timestamp;
 
-import com.jgg.sdp.adt.SDPBag;
+import com.jgg.sdp.adt.ADTBag;
 import com.jgg.sdp.domain.rules.RULGroup;
 import com.jgg.sdp.domain.services.rules.*;
-import com.jgg.sdp.loader.jaxb.rules.ConditionType;
 import com.jgg.sdp.loader.jaxb.rules.Group;
+
+import static com.jgg.sdp.rules.ctes.CDGRules.*;
 
 public class RulesGroup {
 
 	private RULGroupsService groupService = new RULGroupsService();
 	
-	private SDPBag<RULGroup> groups = new SDPBag<RULGroup>();
+	private ADTBag<RULGroup> groups = new ADTBag<RULGroup>();
 
 	private RulesDescription descs = RulesDescription.getInstance();
 	private RulesCondition   conds = RulesCondition.getInstance();
@@ -48,13 +49,10 @@ public class RulesGroup {
 		}
 		
 		key = group.getIdGroup();
-		
+
 		group.setIdParent(xmlGroup.getIdParent() == null ? 0L : xmlGroup.getIdParent());
 		group.setPrefix(xmlGroup.getPrefix());
-		
-		ConditionType cond = xmlGroup.getOnCondition();
-		
-		group.setActive(conds.createCondition( key * 10,      cond, xmlGroup.isActive()));
+		group.setActive(processActivateConditions(key * 10, xmlGroup));
 		group.setIdDesc(descs.createDescription(id, xmlGroup.getDescription()));
 		group.setUid(System.getProperty("user.name"));
 		group.setTms(new Timestamp(System.currentTimeMillis()));
@@ -62,8 +60,24 @@ public class RulesGroup {
 		return group;
 	}
 	
-	public SDPBag<RULGroup> getGroups() {
-		if (group == null) return new SDPBag<RULGroup>();
+	private Long processActivateConditions(Long key, Group group) {
+		Long active = processActive(group.isActive());
+		if (group.getOnConditions() != null) {
+			return conds.processConditions(key, group.getOnConditions().getCondition(), active);
+		}
+		if (group.getOnCondition() != null) {
+			return conds.processCondition(key, group.getOnCondition(), active);
+		}
+		return active;
+	}
+
+	private Long processActive(Boolean bActive) {
+		if (bActive == null) return ACTIVE;
+		return (bActive) ? ACTIVE : INACTIVE;
+	}
+	
+	public ADTBag<RULGroup> getGroups() {
+		if (group == null) return new ADTBag<RULGroup>();
 		return groups;
 	}
 	

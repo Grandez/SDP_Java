@@ -26,7 +26,7 @@
     <mq.dir>E:\Program Files\IBM\WebSphere MQ\java\lib</mq.dir>
     
     <junit.version>[3.8.2,)</junit.version>
-    <spring.version>[4.3.7.RELEASE,)</spring.version>
+    <spring.version>[5.0.0.RELEASE,)</spring.version>
     <spring.security.version>[4.0.2.RELEASE,)</spring.security.version>
     <hibernate.version>4.3.5.Final</hibernate.version>
     <javassist.version>3.19.0-GA</javassist.version>
@@ -47,6 +47,7 @@
            
                <!--  Base -->
                <module>../MODADT</module>
+               <module>../MODCommon</module>               
                <module>../MODTools</module>
                <module>../MODCore</module>
                <module>../MODCalc</module>
@@ -63,7 +64,8 @@
                <module>../MODDBServices</module>
            
                <!--  Other Modules  -->
-               <module>../MODModule</module>           
+               <module>../MODModule</module>
+               <module>../MODBlocks</module>
                <module>../MODRules</module>
                <module>../MODCollector</module>
                               
@@ -90,7 +92,8 @@
                <module>../SDPClientHTTP</module>
                <module>../SDPClientWMQS</module>
                <module>../SDPClientJMS</module>               
-               <module>../SDPRules</module>               
+               <module>../SDPLoader</module>               
+               <module>../SDPIVP</module>               
            </modules>                                
            
        </profile>
@@ -102,7 +105,8 @@
            <modules>
            
                <!--  Base -->
-               <module>../MODADT</module>               
+               <module>../MODADT</module>
+               <module>../MODCommon</module>                  
                <module>../MODTools</module>
                <module>../MODCore</module>
                <module>../MODCalc</module>
@@ -120,7 +124,8 @@
                <module>../MODDBServices</module>
            
                <!--  Other Modules  -->
-               <module>../MODModule</module>           
+               <module>../MODModule</module>
+               <module>../MODBlocks</module>           
                <module>../MODRules</module>
                <module>../MODCollector</module>
                
@@ -159,8 +164,9 @@
                <module>../SDPTrapper</module>
                <module>../SDPCollector</module>
 <!--                <module>../SDPLogger</module> -->
-               <module>../SDPRules</module>
-                                             
+               <module>../SDPLoader</module>
+               <module>../SDPIVP</module>
+               
                <!-- Distribution WARs  -->
 <!--                <module>../SDPWebAdmin</module> -->
                <module>../SDPWebClient</module>    

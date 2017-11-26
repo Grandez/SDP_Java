@@ -8,7 +8,7 @@
       <replace>false</replace>
    </r:header>
    
-   <r:group name="SDP">
+   <r:group name="ROOT">
       <idGroup>0</idGroup>
       <idParent>0</idParent>
       <prefix>SDP</prefix>

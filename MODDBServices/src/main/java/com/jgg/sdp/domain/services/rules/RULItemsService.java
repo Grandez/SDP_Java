@@ -23,6 +23,10 @@ public class RULItemsService extends AbstractService<RULItem> {
 	public RULItem getById(Long idParent, Long id) {
 		return findQuery(RULItem.findById, idParent, id);
 	}
+
+	public RULItem getByObject(String name) {
+		return findQuery(RULItem.findByObject, name);
+	}
 	
 	public List<RULItem> listAll() {
 		return listQuery(RULItem.listAll);

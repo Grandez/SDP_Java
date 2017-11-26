@@ -17,7 +17,9 @@
       
       <r:item name="TAB">
          <object>TAB</object>
+<!--          <active>true</active> -->
          <active>true</active>
+         
          <r:description>
             <text lang="xx">No usar caracteres de tabulacion</text>
          </r:description>

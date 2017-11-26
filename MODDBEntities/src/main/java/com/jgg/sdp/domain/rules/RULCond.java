@@ -9,14 +9,19 @@ import javax.persistence.*;
 @Table(name="RUL_CONDS")
 public class RULCond implements Serializable {
 	
-	private static final long serialVersionUID = -2014036529693511435L;
+	private static final long serialVersionUID = 3018741658351505177L;
 
-	public static final String findById      = "SELECT c FROM RULCond c WHERE c.idCond  = ?1";
+	public static final String findCond      = "SELECT c FROM RULCond c WHERE c.idCond  = ?1 AND c.idSeq = ?2";	
+	public static final String findById      = "SELECT c FROM RULCond c WHERE c.idCond  = ?1 ORDER BY c.idSeq ASC";
 	public static final String delConditions = "DELETE FROM RULCond c WHERE c.idCond BETWEEN ?1 AND ?2";
 	
 	@Id
 	@Column(name="idCond")
 	private Long idCond;
+
+	@Id
+	@Column(name="idSeq")
+	private Integer idSeq;
 	
 	@Column(name="lvalueType")
 	private Integer lvalueType;
@@ -47,6 +52,14 @@ public class RULCond implements Serializable {
 		this.idCond = idCond;
 	}
 
+	public Integer getIdSeq() {
+		return idSeq;
+	}
+
+	public void setIdSeq(Integer idSeq) {
+		this. idSeq =  idSeq;
+	}
+	
 	public Integer getLvalueType() {
 		return lvalueType;
 	}
@@ -108,6 +121,7 @@ public class RULCond implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((idCond == null) ? 0 : idCond.hashCode());
+		result = prime * result + ((idSeq == null) ? 0 : idSeq.hashCode());
 		result = prime * result + ((lvalue == null) ? 0 : lvalue.hashCode());
 		result = prime * result + ((lvalueType == null) ? 0 : lvalueType.hashCode());
 		result = prime * result + ((operator == null) ? 0 : operator.hashCode());
@@ -131,6 +145,11 @@ public class RULCond implements Serializable {
 			if (other.idCond != null)
 				return false;
 		} else if (!idCond.equals(other.idCond))
+			return false;
+		if (idSeq == null) {
+			if (other.idSeq != null)
+				return false;
+		} else if (!idSeq.equals(other.idSeq))
 			return false;
 		if (lvalue == null) {
 			if (other.lvalue != null)
@@ -169,5 +188,5 @@ public class RULCond implements Serializable {
 			return false;
 		return true;
 	}
-
+	
 }

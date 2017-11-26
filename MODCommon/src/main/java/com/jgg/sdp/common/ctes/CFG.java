@@ -45,7 +45,7 @@ public class CFG {
 	
 	// Especiales para IVP
 	
-	public static final String IVP_PROCESS  = "ivp.process";	
+	public static final String IVP_MODE     = "ivp.mode";	
 	public static final String IVP_TEST     = "ivp.test";
 	public static final String IVP_GROUP    = "ivp.group";
 	

@@ -16,6 +16,7 @@ public class RULItem implements Serializable {
 	
     public static final String findByTextKey   = "SELECT i FROM RULItem i WHERE i.object  = ?1";
     public static final String findById        = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.idItem = ?2";    
+    public static final String findByObject    = "SELECT i FROM RULItem i WHERE i.object = ?1";    
 	public static final String findMaxId       = "SELECT MAX(i.idItem) FROM RULItem i WHERE idGroup = ?1";
 	
 	public static final String listAll           = "SELECT i FROM RULItem i ";

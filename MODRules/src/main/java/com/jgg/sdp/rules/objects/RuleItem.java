@@ -12,7 +12,7 @@ public class RuleItem {
 	private String    prefix;
 	private Timestamp tms;
 	
-	private RuleCond  activation = null;
+	private ArrayList<RuleCond>  activations = new ArrayList<RuleCond>();
 	
 	private ArrayList<RuleRule> rules = new ArrayList<RuleRule>();
 	
@@ -20,11 +20,11 @@ public class RuleItem {
 		
 	}
 	public RuleItem(RuleItem item) {
-		this.idGroup    = item.getIdGroup();
-		this.idItem     = item.getIdItem();
-		this.object     = item.getObject();
-		this.activation = item.getActivation();
-		this.prefix     = item.getPrefix();
+		this.idGroup     = item.getIdGroup();
+		this.idItem      = item.getIdItem();
+		this.object      = item.getObject();
+		this.activations.addAll(item.getActivations());
+		this.prefix      = item.getPrefix();
 	}
 	
 	public Long getIdGroup() {
@@ -55,11 +55,11 @@ public class RuleItem {
 	public String getUid() {
 		return uid;
 	}
-	public RuleCond getActivation() {
-		return activation;
+	public ArrayList<RuleCond> getActivations() {
+		return activations;
 	}
-	public void setActivation(RuleCond cond) {
-		this.activation = cond;
+	public void setActivations(ArrayList<RuleCond> conds) {
+		this.activations.addAll(conds);
 	}
 	public void setUid(String uid) {
 		this.uid = uid;

@@ -34,6 +34,7 @@ public class SymbolExt extends Symbol implements IReflect {
       }
       
       public SymbolExt add(Symbol p) {
+    	  if (((String) p.value).trim().length() == 0) return this;
     	  parents.add(p);
     	  last(p);
     	  return this;

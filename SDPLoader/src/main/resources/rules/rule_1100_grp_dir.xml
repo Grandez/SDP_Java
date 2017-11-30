@@ -39,7 +39,7 @@
          </r:description>
          
          <!--  Son logicamente excluyentes -->
-         <r:rule>
+         <r:rule name="eject">
             <priority>1</priority>
             <severity>3</severity>
             <condition>
@@ -47,7 +47,7 @@
             </condition>            
          </r:rule>
 
-         <r:rule>
+         <r:rule name="skip">
             <priority>1</priority>         
             <severity>3</severity>
             <condition>

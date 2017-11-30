@@ -493,6 +493,7 @@ ident_option ::= ident_opt:s  {: RESULT = s; :}
 
 ident_opt ::= ident_opt_word:w  ident_endp:p comment_entry_opt:o {: RESULT = new Option(w, o); :}
           ;
+          
 ident_opt_word ::= AUTHOR:w         {: RESULT = new SymbolExt(w); :}
                |   INSTALLATION:w   {: RESULT = new SymbolExt(w); :}
                |   SECURITY:w       {: RESULT = new SymbolExt(w); :}

@@ -1,7 +1,7 @@
 package com.jgg.sdp.calculator;
 
 import java.util.*;
-import com.jgg.parsers.runtime.*;
+import java_cup.runtime.Symbol;
 
 import com.jgg.sdp.tools.Reflect;
 

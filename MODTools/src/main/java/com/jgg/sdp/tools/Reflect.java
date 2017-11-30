@@ -59,10 +59,8 @@ public class Reflect {
 		if (m == null) {
 			throw new JavaException(1, method, o.getClass().getSimpleName());
 		}
-		for (Class<?> c : m.getParameterTypes()) {
-		   System.out.println(c.getTypeName());	
-		}
 		try {
+			if (parms == null || parms[0] == null) return m.invoke(o);
 			return m.invoke(o, (Object[]) parms);
 	    } catch (Exception e) {
 			throw new JavaException(e.getLocalizedMessage());

@@ -47,10 +47,10 @@ public class RulesLoader {
 		XMLParser<SDPRules> loader = new XMLParser<SDPRules>();
 		
 		for (File f : loader.loadFromResource("rules")) {
-			System.out.print("Processing " + f.getName());
+//			System.out.print("Processing " + f.getName());
 			SDPRules cfg = loader.readXML(f, "/SDPRules.xsd", SDPRules.class);
 			loadXMLFile(cfg);
-	        System.out.println("\tOK");
+//	        System.out.println("\tOK");
 		}
 
 		return 0;

@@ -47,7 +47,7 @@ public class RulesRule {
 		rule.setIdRule(idRule);
 		rule.setPriority(xmlRule.getPriority() == null ? 0 : xmlRule.getPriority());
 		rule.setSeverity(xmlRule.getSeverity());
-
+        rule.setName(xmlRule.getName());
 		key = Long.parseLong(String.format("%02d%02d%02d", rule.getIdGroup(), 
 				                                           rule.getIdItem(), 
 				                                           rule.getIdRule()));

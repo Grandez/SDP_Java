@@ -1,7 +1,7 @@
 package com.jgg.sdp.domain.services.rules;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -34,24 +34,28 @@ public class RULGroupsService extends AbstractService<RULGroup> {
 		return listQuery(RULGroup.listAll);
 	}
 	public List<RULGroup> listActiveGroups() {
+		ArrayList<RULGroup> groups = new ArrayList<RULGroup>();
+		
 		RULGroup root = findQuery(RULGroup.findActiveById, 0L);
 		// Todo anulado
-		if (root == null) return new ArrayList<RULGroup>();
+		if (root == null) return groups;
 		
-		HashMap<String,RULGroup> groups = new HashMap<String,RULGroup>();
-		groups.put(root.getIdName(), root);
+		HashSet<String> set = new HashSet<String>();
+		groups.add(root);
+		set.add(root.getName());
 		
 		ArrayList<RULGroup> sig = new ArrayList<RULGroup>();
 		sig.addAll(listQuery(RULGroup.listChildrenActive, root.getIdGroup()));
 		
 		while (!sig.isEmpty()) {
 			RULGroup g = sig.remove(0);
-			if (groups.get(g.getIdName()) == null) {
-				groups.put(g.getIdName(), g);
+			if (!set.contains(g.getName())) {
+				groups.add(g);
+				set.add(g.getName());
 				sig.addAll(listQuery(RULGroup.listChildrenActive, g.getIdGroup()));
 			}
 		}
-		return new ArrayList<RULGroup>(groups.values());
+		return groups;
 	}
 
 	public List<RULGroup> listChildren(Long idParent) {

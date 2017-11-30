@@ -18,7 +18,7 @@ public class RulesModule extends RulesBase {
         obj.setBegColumn(0);
         obj.setComponent(module.getSumIssues());
 
-        rulesProcessor.processItemByName(ITEM_RULES, obj);
+        rulesProcessor.processGroupByName(GROUP_ISSUES, obj);
         
 	}
 	

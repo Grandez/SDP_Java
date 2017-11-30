@@ -41,7 +41,7 @@
          <r:rule>
             <severity>2</severity>
             <condition>
-               <property>exist()</property>
+               <property>exist</property>
             </condition>            
             <sample>
                <description lang="xx">

@@ -55,8 +55,8 @@ public class RulesCondition {
     	}
     	
     	createLValue(key, cond, c);
-    	createOperator(cond, c.getOperator(), c.isNegated());
     	createRValue(key, cond, c);
+    	createOperator(cond, c.getOperator(), c.isNegated());
     	
 		cond.setUid(System.getProperty("user.name"));
 		cond.setTms(new Timestamp(System.currentTimeMillis()));
@@ -82,7 +82,7 @@ public class RulesCondition {
     	    return;
     	}
     	
-    	ObjectType t = c.getType();
+    	LvalueType t = c.getType();
     	if (t != null) {
     	   cond.setLvalueType(getLValueType(t.value()));
     	   return;
@@ -92,26 +92,37 @@ public class RulesCondition {
     	cond.setLvalueType(TYPE_VALUE);
     }
 
-    private void createOperator(RULCond cond, OperatorType o, boolean negated) {
-    	int val = OP_EQ; 
+    private void createOperator(RULCond cond, String o, boolean negated) {
+    	int val = (cond.getOperator() == null) ? OP_EQ : cond.getOperator(); 
     	if (o != null) {
-            switch (o) {
-                case MANDATORY: val = OP_EXIST;            break;
-                case EQUAL:     val = OP_EQ;               break;
-                case EQ:        val = OP_EQ;               break;		   
-                case GT:        val = OP_GT;               break;
-                case LT:        val = OP_LT;               break;
-                case GE:        val = OP_GT + MASK_EQ;     break;	    
-                case LE:        val = OP_LT + MASK_EQ;     break;
-                case START:     val = OP_START;            break;
-                case CONTAINS:  val = OP_CONTAINS;         break;
-                case MATCH:     val = OP_MATCH;            break;
-                case END:       val = OP_END;              break;
-			default:
-				break;
-            }
-    	}
-    	cond.setOperator((negated) ? val * OP_NEGATED : val);
+    		String O = o.toUpperCase();
+    		if (O.compareTo("MANDATORY") == 0) {
+    			val = OP_EXIST;
+    		} else if (O.compareTo("EQUAL") == 0) {
+    			val = OP_EQ;
+    		} else if (O.compareTo("EQ") == 0) {
+    			val = OP_EQ;
+    		} else if (O.compareTo("GT") == 0) {
+    			val = OP_GT;
+    		} else if (O.compareTo("LT") == 0) {
+    			val = OP_LT;
+    		} else if (O.compareTo("GE") == 0) {
+    			val = OP_GT + MASK_EQ;
+    		} else if (O.compareTo("LE") == 0) {
+    			val = OP_LT + MASK_EQ;
+    		} else if (O.compareTo("START") == 0) {
+    			val = OP_START;
+    		} else if (O.compareTo("CONTAINS") == 0) {
+    			val = OP_CONTAINS;
+    		} else if (O.compareTo("MATCH") == 0) {
+    			val = OP_MATCH;
+    		} else if (O.compareTo("END") == 0) {
+    			val = OP_END;
+    		} else {
+    			val = OP_EQ;
+    		} 
+       }		
+       cond.setOperator((negated) ? val * OP_NEGATED : val);
     }
 
     private void createRValue(Long key, RULCond cond, ConditionType c) {
@@ -124,6 +135,8 @@ public class RulesCondition {
  		         Long id = scripts.createScript((key * 10) + 1, c.getScript());      
  		         cond.setRvalue(id.toString()); 
  	             break;
+            case TYPE_PROPERTY:
+            	cond.setOperator(OP_BOOLEAN);
  	       default: 
  		        cond.setRvalue(getValue(c, type)); 
  	    }
@@ -136,7 +149,7 @@ public class RulesCondition {
 	public static int getLValueType(String type) {
         
         if (type.compareToIgnoreCase("attribute")     == 0) return TYPE_ATTRIBUTE;
-		if (type.compareToIgnoreCase("configuration") == 0) return TYPE_CONFIGURATION;
+		if (type.compareToIgnoreCase("configuration") == 0) return TYPE_CONFIG;
 		if (type.compareToIgnoreCase("expression")    == 0) return TYPE_EXPRESSION;
 		if (type.compareToIgnoreCase("function")      == 0) return TYPE_FUNCTION;
 		if (type.compareToIgnoreCase("property")      == 0) return TYPE_PROPERTY;

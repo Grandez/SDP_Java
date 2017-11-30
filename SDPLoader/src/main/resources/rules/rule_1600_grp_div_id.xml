@@ -65,9 +65,26 @@
          </r:rule>
          
       </r:item>
+      
+      <r:item name="DIV_LINES">
+         <object type="list">Option</object>
 
+         <r:rule name="lines">
+            <priority>3</priority>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Codificar las opciones en la misma linea</text>      
+            </r:description>
+            <condition>
+               <lvalue type="attribute">lines</lvalue>
+               <operator>gt</operator>
+               <rvalue>1</rvalue>
+            </condition>        
+         </r:rule>
+      </r:item>
+      
       <r:item name="DIV_AUTHOR">
-         <object>AUTHOR</object>
+         <object type="option">AUTHOR</object>
          <onCondition>
             <lvalue type="option">AUTHOR</lvalue>
             <property>has</property>
@@ -76,68 +93,44 @@
              <text lang="xx">El autor debe seguir el patron "usuario - empresa"</text>      
          </r:description>
          
-         <r:rule>
+         <r:rule name="name format">
             <severity>3</severity>
-            <condition>
-               <operator>match</operator>
-               <expression>[a-zA-Z0-9]{7} - [\w]+</expression>
-            </condition>        
-         </r:rule>
-
-         <r:rule>
-            <priority>3</priority>
-            <severity>3</severity>
-            <r:description>
-               <text lang="xx">Codificar la sentencia en la misma linea</text>      
-            </r:description>
-            <condition>
-               <lvalue type="attribute">lines</lvalue>
-               <operator>gt</operator>
-               <expression>1</expression>
-            </condition>        
-         </r:rule>
-
-         <r:rule>
-            <priority>4</priority>
-            <severity>2</severity>
-            <r:description>
-               <text lang="xx">Finalizar la sentencia con un punto</text>      
-            </r:description>
             <condition negated="true">
-               <lvalue type="property">hasEndPoint</lvalue>
+               <operator>match</operator>
+               <value>[a-zA-Z0-9]{7} - [\w]+</value>
             </condition>        
          </r:rule>
-         
+
       </r:item>
 
       <r:item name="DIV_COMPILED">
-         <object>DATE-COMPILED</object>
+         <object type="option">DATE-COMPILED</object>
          <onConditions>
             <condition>
-               <lvalue type="configuration">parser.process.equals</lvalue>
+               <lvalue type="configuration">parser.force</lvalue>
                <operator>eq</operator>
                <rvalue>true</rvalue>
             </condition>
             <condition>
                <lvalue type="option">DATE-COMPILED</lvalue>
-               <operator>has</operator>
+               <property>has</property>
             </condition>        
             
           </onConditions>        
          
-         <r:rule>
+         <r:rule name="date format">
             <priority>1</priority>
             <severity>3</severity>
             <r:description>
                <text lang="xx">La fecha de compilacion debe estar en formato dd/mm/yyyy</text>      
             </r:description>
-            <condition>
+            <condition negated="true">
                <operator>match</operator>
-               <expression>[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}</expression>
+               <expression>[0-9]{1,2}/[0-9]{1,2}/[0-9]{2}</expression>
             </condition>        
          </r:rule>
 
-         <r:rule>
+         <r:rule name="date updated">
             <priority>2</priority>
             <severity>3</severity>
             <onCondition>
@@ -154,28 +147,28 @@
                <expression>7</expression>
             </condition>        
          </r:rule>
+         
+      </r:item>
 
+      <r:item name="ENDPOINT">
+         <object>ENDPOINT</object>
+         <r:description>
+             <text lang="xx">Gestion de puntos"</text>      
+         </r:description>
+         
          <r:rule>
-            <priority>3</priority>
-            <severity>3</severity>
-            <r:description>
-               <text lang="xx">Codificar la sentencia en la misma linea</text>      
-            </r:description>
+            <severity>2</severity>
+            <active>false</active>
             <condition>
-               <lvalue type="attribute">lines</lvalue>
-               <operator>gt</operator>
-               <expression>1</expression>
+               <property>exist</property>
             </condition>        
          </r:rule>
 
          <r:rule>
-            <priority>4</priority>
             <severity>2</severity>
-            <r:description>
-               <text lang="xx">Finalizar la sentencia con un punto</text>      
-            </r:description>
+            <active>true</active>
             <condition negated="true">
-               <lvalue type="attribute">hasEndOfSentence</lvalue>
+               <property>exist</property>
             </condition>        
          </r:rule>
          

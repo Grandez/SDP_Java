@@ -37,7 +37,7 @@ public class RulesItem {
 		RULItem item =  null;
 		Long id = xmlItem.getIdItem();
 		if (id == null || id == 0) {
-			item = itemsService.getByTextKey(xmlItem.getName());
+			item = itemsService.getByName(xmlItem.getName());
 		}
 		else {
 			item = itemsService.getById(group.getIdGroup(), id);
@@ -48,8 +48,11 @@ public class RulesItem {
 			item = new RULItem();
 			item.setIdGroup(group.getIdGroup());
 			item.setIdItem(id);
-			item.setObject(xmlItem.getName());
+			item.setName(xmlItem.getName());
+			item.setObject(xmlItem.getObject().getValue());
 		}
+		
+		item.setType(processType(xmlItem.getObject().getType()));
 		
 		key = Long.parseLong(String.format("%02d%02d", item.getIdGroup(), item.getIdItem()));
 		
@@ -63,6 +66,18 @@ public class RulesItem {
 		return item;
 	}
 
+	private Integer processType(SubObject type) {
+		if (type == null) return null;
+		switch (type) {
+		   case VERB:   return TYPE_VERB;
+		   case OPTION: return TYPE_OPTION;
+		   case LVALUE: return TYPE_LVALUE;
+		   case RVALUE: return TYPE_RVALUE;
+		   case LIST:   return TYPE_LIST;
+           default:     return TYPE_NONE;		   
+		}   
+	}
+	
 	private Long processActivateConditions(Long key, Item xmlItem) {
 		Long active = processActive(xmlItem.isActive());
 		if (xmlItem.getOnConditions() != null) {

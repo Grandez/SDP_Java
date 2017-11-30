@@ -72,4 +72,9 @@ public class RuleGroup {
 	public ArrayList<RuleItem> getItems() {
 		return items;
 	}
+	
+	@Override
+	public String toString() {
+		return name;
+	}
 }

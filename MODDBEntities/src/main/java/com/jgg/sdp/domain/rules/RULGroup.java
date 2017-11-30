@@ -16,7 +16,7 @@ public class RULGroup implements Serializable {
     public static final String findByTextKey  = "SELECT r FROM RULGroup r WHERE r.prefix  = ?1";
     public static final String findById       = "SELECT r FROM RULGroup r WHERE r.idGroup = ?1";    
     public static final String findActiveById = "SELECT r FROM RULGroup r WHERE r.idGroup = ?1 AND r.active > 0";    
-    public static final String findByName     = "SELECT r FROM RULGroup r WHERE r.idName  = ?1";    
+    public static final String findByName     = "SELECT r FROM RULGroup r WHERE r.name  = ?1";    
 	public static final String findMaxId      = "SELECT MAX(r.idGroup) FROM RULGroup r";
 	
     public static final String listAll             = "SELECT r FROM RULGroup r";
@@ -37,8 +37,8 @@ public class RULGroup implements Serializable {
 	@Column(name="idDesc")
 	private Long idDesc;
 
-	@Column(name="idName")
-	private String idName;
+	@Column(name="name")
+	private String name;
 	
     @Column(name="prefix")
     private String prefix;
@@ -81,12 +81,12 @@ public class RULGroup implements Serializable {
 		this.idDesc = idDesc;
 	}
 
-	public String getIdName() {
-		return idName;
+	public String getName() {
+		return name;
 	}
 
-	public void setIdName(String idName) {
-		this.idName = idName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPrefix() {
@@ -120,7 +120,7 @@ public class RULGroup implements Serializable {
 		result = prime * result + ((active == null) ? 0 : active.hashCode());
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
-		result = prime * result + ((idName == null) ? 0 : idName.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((idParent == null) ? 0 : idParent.hashCode());
 		result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
@@ -152,10 +152,10 @@ public class RULGroup implements Serializable {
 				return false;
 		} else if (!idGroup.equals(other.idGroup))
 			return false;
-		if (idName == null) {
-			if (other.idName != null)
+		if (name == null) {
+			if (other.name != null)
 				return false;
-		} else if (!idName.equals(other.idName))
+		} else if (!name.equals(other.name))
 			return false;
 		if (idParent == null) {
 			if (other.idParent != null)

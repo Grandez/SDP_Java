@@ -12,7 +12,7 @@ public class CDGRules {
 	public final static int TYPE_SCRIPT        =  7;
 	public final static int TYPE_EXIST         =  8;	
 	public final static int TYPE_RSCRIPT       =  9;
-	public final static int TYPE_CONFIGURATION = 10;
+	public final static int TYPE_CONFIG        = 10;
 
 	
 	public final static int TYPE_VALUE      = 12;	
@@ -31,6 +31,7 @@ public class CDGRules {
 	public final static int TYPE_LVALUE   = 202;
 	public final static int TYPE_RVALUE   = 203;
 	public final static int TYPE_OPTION   = 204;
+	public final static int TYPE_LIST     = 205;
 	
 	// Si es mayor de 10 incluye igual
 	// Si es mayor de 100 es la negacion
@@ -45,6 +46,7 @@ public class CDGRules {
 	public final static int OP_NUMERIC   =  OP_TYPES * 2;
 	public final static int OP_BOOLEAN   =  OP_TYPES * 3;
 	public final static int OP_OBJECT    =  OP_TYPES * 4;
+	public final static int OP_DECIMAL   =  OP_TYPES * 5;
 	
 	public final static int MASK_EQ = 1;
 	public final static int MASK_LT = 2;

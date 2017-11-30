@@ -45,7 +45,7 @@ public class RulesGroup {
 			if (id == null) id = groupService.getNextId();
 			group = new RULGroup();
 			group.setIdGroup(id);
-			group.setIdName(xmlGroup.getName());
+			group.setName(xmlGroup.getName());
 		}
 		
 		key = group.getIdGroup();

@@ -2,7 +2,7 @@ package com.jgg.sdp.calculator;
 
 import java.math.BigDecimal;
 
-import com.jgg.parsers.runtime.Symbol;
+import java_cup.runtime.Symbol;
 
 public class CalcItem {
 

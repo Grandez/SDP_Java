@@ -9,12 +9,12 @@ import javax.persistence.*;
 @Table(name="RUL_ITEMS")
 public class RULItem implements Serializable {
 
-	private static final long serialVersionUID = 8253785116217758949L;
+	private static final long serialVersionUID = 4024986362040980384L;
 
 	public static final String delItem         = "DELETE FROM RULItem i where i.idGroup = ?1 AND i.idItem = ?2";
 	public static final String delItemsOfGroup = "DELETE FROM RULItem i where i.idGroup = ?1";
 	
-    public static final String findByTextKey   = "SELECT i FROM RULItem i WHERE i.object  = ?1";
+    public static final String findByName      = "SELECT i FROM RULItem i WHERE i.name  = ?1";
     public static final String findById        = "SELECT i FROM RULItem i WHERE i.idGroup = ?1 AND i.idItem = ?2";    
     public static final String findByObject    = "SELECT i FROM RULItem i WHERE i.object = ?1";    
 	public static final String findMaxId       = "SELECT MAX(i.idItem) FROM RULItem i WHERE idGroup = ?1";
@@ -36,15 +36,21 @@ public class RULItem implements Serializable {
 	@Column(name="idDesc")
 	private Long idDesc;
 
+	@Column(name="object")
+	private String object;
+
+	@Column(name="name")
+	private String name;
+
 	@Column(name="idSample")
 	private Long idSample;
 	
 	@Column(name="active")
 	private Long active;
 	
-	@Column(name="object")
-	private String object;
-
+	@Column(name="type")
+	private Integer type;
+	
 	public Long getIdGroup() {
 		return idGroup;
 	}
@@ -93,6 +99,22 @@ public class RULItem implements Serializable {
 		this.object = object;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	
 	public String getUid() {
 		return uid;
 	}
@@ -123,8 +145,11 @@ public class RULItem implements Serializable {
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
+		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((object == null) ? 0 : object.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
 		return result;
 	}
@@ -158,6 +183,16 @@ public class RULItem implements Serializable {
 				return false;
 		} else if (!idItem.equals(other.idItem))
 			return false;
+		if (idSample == null) {
+			if (other.idSample != null)
+				return false;
+		} else if (!idSample.equals(other.idSample))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
 		if (object == null) {
 			if (other.object != null)
 				return false;
@@ -167,6 +202,11 @@ public class RULItem implements Serializable {
 			if (other.tms != null)
 				return false;
 		} else if (!tms.equals(other.tms))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
 			return false;
 		if (uid == null) {
 			if (other.uid != null)

@@ -29,7 +29,6 @@ public class RulesTree {
 	public static RulesTree getInstance(boolean reload) {
 		if (reload) tree = null;
 		if (tree == null) tree = new RulesTree();
-//		tree.printTree();
 		return tree;		
 	}
 
@@ -65,13 +64,16 @@ public class RulesTree {
 			group.setId(grp.getIdGroup());
 			group.setIdParent(grp.getIdParent());
 			group.setActivo(grp.getActive());
-			group.setName(grp.getIdName());
+			group.setName(grp.getName());
 			group.setPrefix(grp.getPrefix());
 			groupsKeyMap.put(group.getId(), group);
 			groupsNameMap.put(group.getName(), group.getId());
-
+              if (grp.getIdGroup() == 16) {
+//            	System.out.println("Nada");
+            }
 			loadItemsByGroup(group);
 		}
+//        printTree();
 	}
 
 	
@@ -80,11 +82,11 @@ public class RulesTree {
 			RuleItem item = mountItem(itm);
 			item.setPrefix(group.getPrefix());
 			group.addItem(item);
-			HashMap<String, RuleItem> map = itemsMap.get(item.getObject());
+			HashMap<String, RuleItem> map = itemsMap.get(item.getName());
 			if (map == null) {
 				map = new HashMap<String, RuleItem>();
 				map.put(group.getName(), item);
-				itemsMap.put(item.getObject(), map);
+				itemsMap.put(item.getName(), map);
 			}
 			else {
 				map.put(group.getName(), item);
@@ -105,24 +107,23 @@ public class RulesTree {
 		RuleItem item = new RuleItem();
 		item.setIdGroup(itm.getIdGroup());
 		item.setIdItem(itm.getIdItem());
+		item.setName(itm.getName());
 		item.setObject(itm.getObject());
+		item.setType(itm.getType());
 		item.setActivations(getConditions(itm.getActive()));
 		return item;
 	}
 
 	private RuleRule mountRule(RuleItem item, RULRule rul) {
-		RuleRule rule = new RuleRule(item);
+		RuleRule rule = new RuleRule();
 		rule.setIdGroup(rul.getIdGroup());
 		rule.setIdItem(rul.getIdItem());
 		rule.setIdRule(rul.getIdRule());
+		rule.setName(rul.getName());
 		rule.setSeverity(rul.getSeverity());
 		rule.setPriority(rul.getPriority());
 		rule.setPrefix(item.getPrefix());
-		
-		if (rul.getActive() > 1 || rul.getActive() < -1) {
-			rule.setActivations(getConditions(rul.getActive()));
-		}
-		
+		rule.setActivations(getConditions(rul.getActive()));
 		rule.setCondition(getCondition(rul.getIdCond()));
 		return rule;
 	}
@@ -149,18 +150,25 @@ public class RulesTree {
 		return conds;
 	}
 	
-/*	
+	
 	private void printTree() {
-		for (Long key : groupsKeysTree.keySet())   {
-			RuleGroup grp = keysTree.get(key);
-			System.out.println("Grupo: " + grp.getId());
-			for (RuleItem itm : grp.getItems()) {
-				System.out.println("\tItem: " + itm.getIdItem());
-				for (RuleRule rul : itm.getRules()) {
-					System.out.println("\t\tRule: " + rul.getIdRule());
-				}
-			}
-        }	
+		printGroups();
+		printItems();
 	}
-*/	
+	
+	private void printGroups() {
+		Iterator<String> it = groupsNameMap.keySet().iterator();
+		System.out.println("GRUPOS");
+		while (it.hasNext()) {
+			System.out.println("\t" + it.next());
+		}
+	}
+	private void printItems() {
+		Iterator<String> it = itemsMap.keySet().iterator();
+		System.out.println("ITEMS");
+		while (it.hasNext()) {
+			System.out.println("\t" + it.next());
+		}
+	}
+	
 }

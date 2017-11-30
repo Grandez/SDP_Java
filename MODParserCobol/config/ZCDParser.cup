@@ -66,6 +66,19 @@ action code {:
       System.out.println(txt); 
    }
 
+   void notSupportedException(int idMsg) {
+        throw new NotSupportedException(idMsg);
+   }
+
+   private SymbolExt removePoint(Symbol s) {
+       String aux = ((String) s.value).trim();
+       if (aux.endsWith(".")) {
+           aux = aux.substring(0, aux.length() - 1);
+           aux = aux.trim();
+       }
+       s.value = aux;
+      return new SymbolExt(s);
+   }
 :}
 
 init with {: action_obj.initActionClass();    :}
@@ -79,6 +92,7 @@ terminal Symbol DIV_ENV  ;
 terminal Symbol DIV_DATA ;
 
 terminal Symbol ID        ;
+terminal Symbol IDTOKEN   ;
 terminal Symbol NUMERO    ;
 terminal Symbol LEVEL     ;
 terminal Symbol HEX_VAL   ;
@@ -98,6 +112,14 @@ terminal Symbol OBJECT_COMPUTER ;
 /* Verbos de IDENTIFICATION */
 
 terminal Symbol PGMID        ;
+terminal Symbol CLASSID      ;
+terminal Symbol FACTORYID    ;
+terminal Symbol OBJECTID     ;
+terminal Symbol METHODID     ;
+terminal Symbol RECURSIVE    ;
+terminal Symbol COMMON       ;
+terminal Symbol INITIAL      ;
+
 terminal Symbol AUTHOR       ;
 terminal Symbol DATEW        ;
 terminal Symbol DATEC        ;
@@ -211,25 +233,31 @@ non terminal data_division       ;
 /////////////////////////////////////////////////////
 
 non terminal           identification_division ;
-non terminal           ident_div_header        ;
+non terminal           ident_header        ;
 non terminal           ident_options_opt       ;
 non terminal           ident_options           ;
 non terminal Option    ident_option            ;
+non terminal Option    ident_opt               ;
+non terminal SymbolExt ident_opt_word          ;
+non terminal SymbolExt ident_endp              ;
+non terminal           pgmid_endp              ;
 
-non terminal Option programId       ;
-non terminal Option programId_verb  ;
-non terminal Option author          ;
+non terminal           ident_type              ;
+non terminal           ident_type_program      ;
+non terminal           ident_type_class        ;
+non terminal           ident_type_factory      ;
+non terminal           ident_type_object       ;
+non terminal           ident_type_method       ;
 
-non terminal SymbolExt   author_opt       ;
-non terminal SymbolList  open_string      ;
-non terminal SymbolExt   open_string_opt  ;
-non terminal Symbol      open_string_word ;
+non terminal Option     programId          ;
+non terminal SymbolExt  programId_verb     ;
+non terminal SymbolExt  programId_name     ;
+non terminal SymbolExt  programId_type_opt ;
+non terminal SymbolExt  programId_type     ;
 
-non terminal Option date_written       ;
-non terminal Option date_compiled      ;
-non terminal Option installation       ;
-non terminal Option security           ;
-non terminal Option remarks            ;
+non terminal SymbolExt   comment_entry_opt  ;
+non terminal SymbolExt   comment_entry      ;
+non terminal SymbolExt   comment_entry_line ;
 
 non terminal env_div_header ;
 non terminal data_div_header;
@@ -353,11 +381,11 @@ non terminal             fd                ;
 non terminal             fd_list           ;
 non terminal             fd_fields         ;
 non terminal             fd_attr_label     ;
-non terminal OptionList  fd_attrs_opt ;
-non terminal OptionList  fd_attrs     ;
+non terminal Option  fd_attrs_opt ;
+non terminal Option  fd_attrs     ;
 non terminal Option      fd_attr      ;
 non terminal Option      fd_attr_names     ;
-non terminal SymbolList  fd_attr_name      ;
+non terminal SymbolExt   fd_attr_name      ;
 non terminal fd_attr_record    ;
 non terminal fd_attr_record_detail ;
 non terminal fd_attr_record_size   ;
@@ -412,72 +440,86 @@ module ::= identification_division {: rules.checkIdentification(currStmt); :}
 /* Identification division                                           */
 /*********************************************************************/
 
-identification_division ::= ident_div_header ident_options_opt 
-                        |
+identification_division ::= ident_header ident_type ident_options_opt 
                         ;
 
-ident_div_header ::= DIV_ID:s  ENDP:p  {: currStmt = new StmtGral(s); :}
-                 ;                      
+ident_header ::= DIV_ID:s  ENDP:p  {: currStmt = new StmtGral(s); :}
+             ;                      
+
+ident_type ::= ident_type_program
+           |   ident_type_class
+           |   ident_type_factory
+           |   ident_type_object
+           |   ident_type_method
+           ;
+
+ident_type_program ::= programId                                                   ;
+ident_type_class   ::= CLASSID   {: notSupportedException(MSG.SUPPORT_CLASS);   :} ;
+ident_type_factory ::= FACTORYID {: notSupportedException(MSG.SUPPORT_FACTORY); :} ;
+ident_type_object  ::= OBJECTID  {: notSupportedException(MSG.SUPPORT_OBJECT);  :} ;
+ident_type_method  ::= METHODID  {: notSupportedException(MSG.SUPPORT_METHOD);  :} ;
+
+programId ::= programId_verb:v ident_endp:p programId_name:n programId_type_opt pgmid_endp:i  
+              {: currStmt.addOption(new Option(v, n)); 
+                 rules.checkIdentificationVerbEndP(v,p);
+                 rules.checkProgramIDEndP(n,i);  
+              :}
+          ;
+
+programId_verb ::= PGMID:p {: RESULT = new SymbolExt(p); :}
+               ;
+
+programId_name ::= IDTOKEN:i {: RESULT = new SymbolExt(i); :}
+               ;
+               
+programId_type_opt ::= programId_type:t {: rules.checkProgramType(t); :}
+                   |
+                   ;
+
+programId_type ::= RECURSIVE:t  {: RESULT = new SymbolExt(t); :}
+               |   COMMON:t     {: RESULT = new SymbolExt(t); :}
+               |   INITIAL:t    {: RESULT = new SymbolExt(t); :}
+               ;
 
 ident_options_opt ::= ident_options
                   |   
                   ;
 
-ident_options ::= ident_option:i                 {: currStmt.addOption(i); :}
-              |   ident_options ident_option:i   {: currStmt.addOption(i); :}
+ident_options ::= ident_option:s                 {: currStmt.addOption(s); :}
+              |   ident_options ident_option:s   {: currStmt.addOption(s); :}
+              ;
+ident_option ::= ident_opt:s  {: RESULT = s; :}
+             ;
+
+ident_opt ::= ident_opt_word:w  ident_endp:p comment_entry_opt:o {: RESULT = new Option(w, o); :}
+          ;
+ident_opt_word ::= AUTHOR:w         {: RESULT = new SymbolExt(w); :}
+               |   INSTALLATION:w   {: RESULT = new SymbolExt(w); :}
+               |   SECURITY:w       {: RESULT = new SymbolExt(w); :}
+               |   DATEW:w          {: RESULT = new SymbolExt(w); :} 
+               |   DATEC:w          {: RESULT = new SymbolExt(w); :}
+               ;
+                           
+ident_endp ::= ENDP:e {: RESULT = new SymbolExt(e); :}
+           |          {: RESULT = null;             :} 
+           ;
+
+pgmid_endp ::= ENDP:e {: RESULT = new SymbolExt(e);  :}
+           |          {: RESULT = null;  :}
+           ;
+              
+comment_entry_opt ::= comment_entry:o {: RESULT = o;    :}
+                  |                   {: RESULT = null; :}
+                  ;
+                
+comment_entry ::= IDTOKEN:l                            {: RESULT = removePoint(l); :}
+              |   comment_entry:a comment_entry_line:l {: RESULT = a.add(l);         :}
               ;
 
-ident_option ::= programId:s     {: RESULT = s; :} 
-             |   author:s        {: RESULT = s; :}  
-             |   installation:s  {: RESULT = s; :}
-             |   security:s      {: RESULT = s; :}
-             |   date_written:s  {: RESULT = s; :}
-             |   date_compiled:s {: RESULT = s; :}
-             |   remarks:s       {: RESULT = s; :} 
-             ;
-                             
-programId ::= programId_verb:p endp_opt ID:s endp_opt:e  {: RESULT = p.addValue(s); :}
-          ;
-
-programId_verb ::= PGMID:p {: RESULT = new Option(p); :}
-               ;
-
-// JGG el tema de los puntos se puede resolver con errores               
-author ::= AUTHOR:a  author_opt:o {: RESULT = new Option(a, o); :}
-       ;
-
-author_opt ::= open_string_opt:s {: // module.setAuthor(s.toString()); 
-                                    RESULT = s; 
-                                  :} 
-           ;
-                       
-date_written ::= DATEW:d open_string_opt:o         {: RESULT = new Option(d, o); :}
-             ;
-
-date_compiled ::= DATEC:d open_string_opt:o        {: System.out.println("PARAR"); RESULT = new Option(d, o); :}
-             ;
-             
-installation ::= INSTALLATION:i open_string_opt:o  {: RESULT = new Option(i, o); :}
-             ;
-
-security ::= SECURITY:i open_string_opt:o  {: RESULT = new Option(i, o); :}
-         ;
+comment_entry_line ::= IDTOKEN:s            {: RESULT = removePoint(s); :}
+                   |   ENDP:p               {: RESULT = removePoint(p); :}
+                   ;
                    
-open_string_opt ::= open_string:o {: RESULT = new SymbolExt(o);  :}
-                |                 {: RESULT = null;              :}
-                ;
-                
-open_string ::= open_string_word:s               {: RESULT = new SymbolList(s); :}
-            |   open_string:a open_string_word:s {: RESULT = a.add(s);          :}
-            ;
-
-open_string_word ::= ID:i      {: RESULT = i; :}
-                 |   NUMERO:i  {: RESULT = i; :}
-                 |   LITERAL:i {: RESULT = i; :}       
-                 |   ENDP:p    {: RESULT = p; :}
-                 ;
-       
-                                                                               
 /*********************************************************************/
 /* Environment division                                              */
 /*********************************************************************/
@@ -684,7 +726,7 @@ fd        ::= fd_def:d fd_fields
           ;
 
 fd_def ::= fd_desc ID:s fd_attrs_opt:a ENDP  
-                   {: module.setRecordName(s.value, a.getOptionValues(ZCDSym.DATA)); :}  
+//JGG                   {: module.setRecordName(s.value, a.getOptionValues(ZCDSym.DATA)); :}  
        ;
 
 fd_desc ::= FD:i    {: RESULT = i; :}
@@ -692,13 +734,17 @@ fd_desc ::= FD:i    {: RESULT = i; :}
         ;
         
 fd_attrs_opt ::= fd_attrs:f {: RESULT = f;                :}
-             |              {: RESULT = new OptionList(); :}
+//             |              {: RESULT = new OptionList(); :}
              ;
-             
-fd_attrs ::= fd_attr:f             {: RESULT = new OptionList(f); :}
-         |   fd_attrs:t fd_attr:f  {: RESULT = t.add(f);          :} 
+fd_attrs ::= fd_attr:f             
+         |   fd_attrs:t fd_attr:f   
          ;
 
+/*             
+fd_attrs ::= fd_attr:f             {: RESULT = new OptionList(f); :}
+         |   fd_attrs:t fd_attr:f  {: RESULT = t; :} //JGG t.add(f);          :} 
+         ;
+*/
 fd_attr ::= fd_attr_names:f        {: RESULT = f; :}
         |   fd_attr_mode:f         {: RESULT = f; :} 
         |   fd_attr_label          {: RESULT = new Option(); :}
@@ -708,17 +754,14 @@ fd_attr ::= fd_attr_names:f        {: RESULT = f; :}
         |   fd_attr_depending      {: RESULT = new Option(); :}  
         ;
 
-fd_attr_names ::= DATA:d fd_attr_records fd_attr_name:f  {: Option o = new Option(d.sym, d.value);
-                                                            RESULT = o.add(f); 
-                                                         :} 
+fd_attr_names ::= DATA:d fd_attr_records fd_attr_name:f  {: RESULT = new Option(d, f); :}
               ;
                                       
-fd_attr_name ::= ID:i                  {: RESULT = new SymbolList(i); :}
+fd_attr_name ::= ID:i                  {: RESULT = new SymbolExt(i); :}
              |   fd_attr_name:l ID:i   {: RESULT = l.add(i);          :}
              ;
 
-fd_attr_mode ::= RECORDING:i fd_attr_mode_type:a  
-                            {: RESULT = new Option(i.sym , (String) i.value, a); :}
+fd_attr_mode ::= RECORDING:i fd_attr_mode_type:a  {: RESULT = new Option(i, a); :}
              ;
 
 fd_attr_mode_type ::= ID:i        {: RESULT = i; :}

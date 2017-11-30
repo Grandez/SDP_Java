@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.25 a las 01:38:17 PM CET 
+// Generado el: 2017.11.30 a las 12:26:40 PM CET 
 //
 
 
@@ -14,12 +14,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Clase Java para operatorType.
+ * <p>Clase Java para operatorTypeL.
  * 
  * <p>El siguiente fragmento de esquema especifica el contenido que se espera que haya en esta clase.
  * <p>
  * <pre>
- * &lt;simpleType name="operatorType">
+ * &lt;simpleType name="operatorTypeL">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
  *     &lt;enumeration value="mandatory"/>
  *     &lt;enumeration value="equal"/>
@@ -39,9 +39,9 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  */
-@XmlType(name = "operatorType")
+@XmlType(name = "operatorTypeL")
 @XmlEnum
-public enum OperatorType {
+public enum OperatorTypeL {
 
     @XmlEnumValue("mandatory")
     MANDATORY("mandatory"),
@@ -71,7 +71,7 @@ public enum OperatorType {
     HAS("has");
     private final String value;
 
-    OperatorType(String v) {
+    OperatorTypeL(String v) {
         value = v;
     }
 
@@ -79,8 +79,8 @@ public enum OperatorType {
         return value;
     }
 
-    public static OperatorType fromValue(String v) {
-        for (OperatorType c: OperatorType.values()) {
+    public static OperatorTypeL fromValue(String v) {
+        for (OperatorTypeL c: OperatorTypeL.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

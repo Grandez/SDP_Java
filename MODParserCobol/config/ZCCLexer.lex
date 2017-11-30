@@ -5,6 +5,8 @@ import java_cup.runtime.Symbol;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.rules.components.RulesCode;
 
+import com.jgg.sdp.blocks.symbols.SymbolExt;
+
 import static com.jgg.sdp.parser.lang.ZCCSym.*;
 import static com.jgg.sdp.parser.lang.ZCZSym.*;
 
@@ -75,13 +77,10 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       return symbol(code);
    }
                   
-   public Symbol symbol(int code){
-      return symbol(code, yytext());
-   }
-
-   public Symbol symbol(int code, String txt) {
-      return symbol(code, txt, yyline, yycolumn);
-   }
+   public SymbolExt symbolExt(int code)             { return new SymbolExt(symbol(code));              }     
+   public Symbol    symbol   (int code)             { return symbol(code, yytext(), yyline, yycolumn); }
+   public Symbol    symbol   (int code, String txt) { return symbol(code, txt,      yyline, yycolumn); }
+   public SymbolExt symbolExt(int code, String txt) { return new SymbolExt(symbol(code), txt);         }   
 
    public Symbol reservedStd() {
       return symbol(ID, yytext(), yyline, yycolumn);
@@ -149,8 +148,8 @@ PARAGRAPH  = {SP}{ID}
                 }
   ^\-           { /* JGG, Pendiente de revisar */ }    
 
-  ^[ \t]+EJECT[ ]*[\.]? { rules.checkPrintDirective("EJECT", yyline); }
-  ^[ \t]+SKIP[1-9]?     { rules.checkPrintDirective("SKIP" , yyline); }  
+  ^[ \t]+EJECT[ ]*[\.]? { rules.checkPrintDirective(symbolExt(EJECT, "EJECT")); }
+  ^[ \t]+SKIP[1-9]?     { rules.checkPrintDirective(symbolExt(SKIP, "SKIP"));  }  
   
   ^[ ]+EXECUTE { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   ^[ ]+EXEC    { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
@@ -713,7 +712,7 @@ PARAGRAPH  = {SP}{ID}
 /*******************************************************/
 
   {SPACES}      { /* nada */ }
-  {TABS}        { rules.checkTab(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(symbolExt(TAB)); }
 
   // Capturar  al inicio de linea
   ^[ ]+COPY{BLANKS}              { initEmbedded(); 
@@ -758,7 +757,7 @@ PARAGRAPH  = {SP}{ID}
 
 <ST_FUNCTION> {
   {SPACES}           { /* EAT */ }
-  {TABS}             { rules.checkTab(yyline, yycolumn); }
+  {TABS}             { rules.checkTab(symbolExt(TAB)); }
   ^[\*\/]            { commentInit(yytext(), yyline);   }
   {ID}               { popState(); return symbol(INTRINSIC);  }
   \r                 { /* EAT */ }
@@ -804,7 +803,7 @@ PARAGRAPH  = {SP}{ID}
 */
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
-  {TABS}        { rules.checkTab(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(symbolExt(TAB)); }
   \n            { popState(); return symbol(ENDP); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -816,7 +815,7 @@ PARAGRAPH  = {SP}{ID}
 <EATLINE> {
 
   {SPACES}      { /* Nada */  }
-  {TABS}        { rules.checkTab(yyline, yycolumn); }
+  {TABS}        { rules.checkTab(symbolExt(TAB)); }
   \n            { popState(); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -824,7 +823,7 @@ PARAGRAPH  = {SP}{ID}
 }
 
 <COMMENT> {
-  {BLANKS}      { rules.checkTabsInText(yytext(), yyline, yycolumn);
+  {BLANKS}      { rules.checkTabsInText(symbolExt(WORDSLINE));
                   commentAppend(yytext()); 
                 }
   \n            { commentEnd(yyline);      }                 
@@ -895,7 +894,7 @@ PARAGRAPH  = {SP}{ID}
                   return symbol(SQLCODE);
                 } 
    {SPACES}     { /* DO NOTHING */ }
-   {TABS}       { rules.checkTab(yyline, yycolumn); }
+   {TABS}       { rules.checkTab(symbolExt(TAB)); }
    \n           { info.module.incLines(data); data = false; }
    \r           { /* do nothing */ }
     

@@ -7,14 +7,21 @@ package com.jgg.sdp.blocks.stmt;
 
 import java.util.*;
 
+import com.jgg.sdp.blocks.reflect.*;
 import com.jgg.sdp.blocks.symbols.*;
 
 import java_cup.runtime.Symbol;
 
-public class Option {
+public class Option implements IReflect {
      private int id;
      private String name;
-     private SymbolExt sym;
+     private Symbol sym;
+     
+     private int begLine;
+     private int endLine;
+     private int begColumn;
+     private int endColumn;
+     
      private ArrayList<SymbolExt> vars = new ArrayList<SymbolExt>();
 
      public Option() {
@@ -28,22 +35,19 @@ public class Option {
      }
      
      public Option(Symbol s) {
-    	 this.id = s.sym;
-    	 this.name = (String) s.value;
-    	 sym = new SymbolExt(s);
-//    	 vars.add(new SymbolExt(s));
+    	 first(s);
      }
 
-     public Option(Symbol s, Symbol t) {
-    	 this.id = s.sym;
-    	 this.name = (String) s.value;
- 		 if (t != null) {
- 	    	 vars.add(new SymbolExt(t));
- 	 		 this.id = t.sym;
- 		}   
-    	 
+     public Option(Symbol s, SymbolExt t) {
+    	 first(s);
+    	 last(t);
      }
      
+     public Option(Symbol s, Symbol t) {
+    	 first(s);
+    	 last(t);
+     }
+/*     
      public Option(Symbol s, Tokens t) {
     	 this.id = s.sym;
     	 this.name = (String) s.value;
@@ -76,7 +80,7 @@ public class Option {
     	 this.name = name;
     	 this.vars.add(new SymbolExt(var));
      }
-     
+*/     
      public Option addValue(SymbolExt v) {
     	 vars.add(v);
     	 return this;
@@ -92,6 +96,10 @@ public class Option {
 //    	 for (Symbol s : l.getSymbols()) sb.append((String)((Symbol)s.value).value + " "); 
     	 vars.add(e);
      }
+
+ 	public Symbol getSymbol() {
+		return sym;
+	}
      
 	public int getId() {
 		return id;
@@ -109,9 +117,9 @@ public class Option {
 		this.name = name;
 	}
 
-	public SymbolExt getAsSymbolExt() {
-		return sym;
-	}
+//	public SymbolExt getAsSymbolExt() {
+//		return sym;
+//	}
 	
 	public SymbolExt getVar(int pos) {
 		if (vars.size() == 0) return null;
@@ -146,4 +154,49 @@ public class Option {
     	}
     	return this;
     }
+
+    private void first(Symbol s) {
+   	   this.id = s.sym;
+   	   this.name = (String) s.value;
+   	   sym = s;
+   	   begLine = s.left;
+   	   begColumn = s.right;
+   	   endLine = s.left;
+   	   endColumn = s.right;
+    }
+    
+    private void last(Symbol s) {
+    	last(new SymbolExt(s));
+    }
+    
+    private void last(SymbolExt s) {
+		if (s == null) return;
+	    vars.add(s);
+	    endLine = s.getEndLine();
+	    endColumn = s.getEndColumn();
+    }
+    
+    /***************************************************************/
+	/***   INTERFAZ PARA LLAMADAS INTROSPECTION                  ***/
+	/***************************************************************/
+
+    public String toString() {
+    	return name;
+    }
+    
+    public String toValue() {
+    	StringBuilder sb = new StringBuilder();
+    	for (SymbolExt s : vars) {
+    		sb.append(s.getValue());
+    		sb.append(" ");
+    	}
+    	return sb.toString().trim();    	
+    }
+
+    public int getBegLine()   { return begLine;     }
+    public int getEndLine()   { return endLine;     }
+    public int getBegColumn() { return begColumn;   }
+    public int getEndColumn() { return endColumn;   }    
+    public int lines()        { return endLine - begLine + 1; }
+
 }

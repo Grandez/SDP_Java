@@ -22,7 +22,7 @@ import java.util.*;
 
 import com.jgg.sdp.tools.Firma;
 import com.jgg.sdp.adt.ADTHashDup;
-import com.jgg.sdp.blocks.reflect.IStatement;
+import com.jgg.sdp.blocks.reflect.*;
 import com.jgg.sdp.blocks.symbols.*;
 
 import java_cup.runtime.Symbol;
@@ -197,7 +197,7 @@ public class Statement<T> implements IStatement {
     }
     
     public void appendVerb(Symbol s) {
-    	verbo.addParent(s);
+    	verbo.add(s);
     }
     
 	public SymbolExt getVerb() {
@@ -223,34 +223,15 @@ public class Statement<T> implements IStatement {
 		return verbo.sym;
 	}
 	
-	public int getBegLine() {
-		return begLine;
-	}
-
 	public void setBegLine(int begLine) {
 		this.begLine = begLine;
 	}
-
-	public int getBegColumn() {
-		return begColumn;
-	}
-
 	public void setBegColumn(int begColumn) {
 		this.begColumn = begColumn;
 	}
-
-	public int getEndLine() {
-		return endLine;
-	}
-
 	public void setEndLine(int endLine) {
 		this.endLine = endLine;
 	}
-
-	public int getEndColumn() {
-		return endColumn;
-	}
-
 	public void setEndColumn(int endColumn) {
 		this.endColumn = endColumn;
 	}
@@ -306,25 +287,6 @@ public class Statement<T> implements IStatement {
  		return addOption(opt);
 	}
 */
-    public OptionGroup getOption(int idOption) {
-    	List<Integer> l = mapOptId.getItemList(idOption);
-    	if (l == null) return null;
-    	OptionGroup opt = new OptionGroup();
-    	for (Integer i : l) {
-    	   opt.addOption(lstOptions.get(i));	
-    	}
-    	return opt;
-    }
-
-    public OptionGroup getOption(String name) {
-    	List<Integer> l = mapOptName.getItemList(name);
-    	if (l == null) return null;
-    	OptionGroup opt = new OptionGroup();
-    	for (Integer i : l) {
-    	   opt.addOption(lstOptions.get(i));	
-    	}
-    	return opt;
-    }
     
     public Option getOptionByPos(int pos) {
     	return lstOptions.get(pos);
@@ -351,6 +313,14 @@ public class Statement<T> implements IStatement {
 	/***   INTERFAZ PARA LLAMADAS INTROSPECTION                  ***/
 	/***************************************************************/
 
+    public String toString() {
+    	return verbo.toString();
+    }
+    
+	public String toValue() {
+		return toString();
+	}
+    
     public boolean hasEndPoint() {
     	return endPoint;
     }
@@ -362,7 +332,59 @@ public class Statement<T> implements IStatement {
     	return false;
     }
     
-    public int lines() {
-    	return endLine - begLine + 1;
+	public List<Option> getOptionList() {
+		return (List<Option>) lstOptions;
+	}
+
+	private List<Option> getOptionListByName(String name) {
+    	List<Integer> l = mapOptName.getItemList(name);
+    	if (l == null) return null;
+    	ArrayList<Option> opts = new ArrayList<Option>();
+    	for (Integer i : l) {
+    	   opts.add(lstOptions.get(i));	
+    	}
+    	return opts;
+	}
+	public Option getOptionByName(String name) {
+		List<Option> l = getOptionListByName(name);
+    	return (l == null) ? null : l.get(0);
+	}
+
+	public Option getOption(int id) {
+		List<Option> l = getOptionListById(id);
+    	return (l == null) ? null : l.get(0);
+	}
+	
+    public List<Option> getOptionListById(int idOption) {
+    	List<Integer> l = mapOptId.getItemList(idOption);
+    	if (l == null) return null;
+    	ArrayList<Option> opts = new ArrayList<Option>();
+    	for (Integer i : l) {
+    	   opts.add(lstOptions.get(i));	
+    	}
+    	return opts;
     }
+
+    public ArrayList<SymbolExt> getLValueList() {
+    	return lvalues; 
+    }
+    
+    public SymbolExt getLValue() {
+    	return (lvalues.size() > 0) ? lvalues.get(0) : null; 
+    }
+
+    public ArrayList<SymbolExt> getRValueList() {
+    	return rvalues; 
+    }
+    
+    public SymbolExt getRValue() {
+    	return (rvalues.size() > 0) ? rvalues.get(0) : null; 
+    }
+
+    public int getBegLine()   { return begLine;     }
+    public int getEndLine()   { return endLine;     }
+    public int getBegColumn() { return begColumn;   }
+    public int getEndColumn() { return endColumn;   }    
+    public int lines()        { return endLine - begLine + 1; }
+    
 }

@@ -3,9 +3,10 @@ package com.jgg.sdp.rules.objects;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-public class RuleRule extends RuleItem {
+public class RuleRule  {
 
 	private String    itemName;
+	private String    name;	
 	private Long      idGroup;
 	private Long      idItem;
 	private Long      idRule;
@@ -17,10 +18,6 @@ public class RuleRule extends RuleItem {
 	
 	private ArrayList<RuleCond>  activations = new ArrayList<RuleCond>();
 	private RuleCond             condition  = null;
-	
-	public RuleRule(RuleItem item) {
-		super(item);
-	}
 	
 	public String getItemName() {
 		return itemName;
@@ -45,6 +42,12 @@ public class RuleRule extends RuleItem {
 	}
 	public void setIdRule(Long idRule) {
 		this.idRule = idRule;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	public int getSeverity() {
 		return severity;
@@ -76,7 +79,7 @@ public class RuleRule extends RuleItem {
 	public void setTms(Timestamp tms) {
 		this.tms = tms;
 	}
-	public ArrayList<RuleCond> getActivation() {
+	public ArrayList<RuleCond> getActivations() {
 		return activations;
 	}
 	public void setActivations(ArrayList<RuleCond> activations) {
@@ -89,5 +92,8 @@ public class RuleRule extends RuleItem {
 		this.condition = condition;
 	}
 	
-	
+    public String toString() {
+    	if (name != null) return name;
+    	return String.format("%d-%d-%d", idGroup, idItem, idRule);
+    }
 }

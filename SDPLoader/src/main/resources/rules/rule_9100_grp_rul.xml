@@ -9,7 +9,8 @@
    </r:header>
    
    <r:group name="ISSUES">
-      <idGroup>91</idGroup>     
+      <idGroup>91</idGroup>    
+      <idParent>90</idParent> 
       <prefix>ISS</prefix>
       <r:description>
           <text lang="xx">Reglas de control de los issues</text>      

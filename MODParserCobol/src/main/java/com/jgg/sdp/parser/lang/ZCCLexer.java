@@ -7,6 +7,8 @@ import java_cup.runtime.Symbol;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.rules.components.RulesCode;
 
+import com.jgg.sdp.blocks.symbols.SymbolExt;
+
 import static com.jgg.sdp.parser.lang.ZCCSym.*;
 import static com.jgg.sdp.parser.lang.ZCZSym.*;
 
@@ -5414,13 +5416,10 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
       return symbol(code);
    }
                   
-   public Symbol symbol(int code){
-      return symbol(code, yytext());
-   }
-
-   public Symbol symbol(int code, String txt) {
-      return symbol(code, txt, yyline, yycolumn);
-   }
+   public SymbolExt symbolExt(int code)             { return new SymbolExt(symbol(code));              }     
+   public Symbol    symbol   (int code)             { return symbol(code, yytext(), yyline, yycolumn); }
+   public Symbol    symbol   (int code, String txt) { return symbol(code, txt,      yyline, yycolumn); }
+   public SymbolExt symbolExt(int code, String txt) { return new SymbolExt(symbol(code), txt);         }   
 
    public Symbol reservedStd() {
       return symbol(ID, yytext(), yyline, yycolumn);
@@ -5946,7 +5945,7 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
             }
           case 421: break;
           case 3: 
-            { rules.checkTab(yyline, yycolumn);
+            { rules.checkTab(symbolExt(TAB));
             }
           case 422: break;
           case 4: 
@@ -6100,7 +6099,7 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
             }
           case 456: break;
           case 38: 
-            { rules.checkTabsInText(yytext(), yyline, yycolumn);
+            { rules.checkTabsInText(symbolExt(WORDSLINE));
                   commentAppend(yytext());
             }
           case 457: break;
@@ -6714,7 +6713,7 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
             }
           case 607: break;
           case 189: 
-            { rules.checkPrintDirective("SKIP" , yyline);
+            { rules.checkPrintDirective(symbolExt(SKIP, "SKIP"));
             }
           case 608: break;
           case 190: 
@@ -6894,7 +6893,7 @@ public class ZCCLexer extends GenericLexer implements java_cup.runtime.Scanner {
             }
           case 652: break;
           case 234: 
-            { rules.checkPrintDirective("EJECT", yyline);
+            { rules.checkPrintDirective(symbolExt(EJECT, "EJECT"));
             }
           case 653: break;
           case 235: 

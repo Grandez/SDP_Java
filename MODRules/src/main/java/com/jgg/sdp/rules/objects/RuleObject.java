@@ -1,20 +1,57 @@
 package com.jgg.sdp.rules.objects;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.jgg.sdp.blocks.reflect.IReflect;
+
 public class RuleObject {
-	private int begLine = 0;
+	private int begLine   = 0;
 	private int begColumn = 0;
-	private int endLine = 0;
+	private int endLine   = 0;
 	private int endColumn = 0;
 
-	private Object value = 0;
+	private Object value  = 0;
 	private String bloque = "";
-	private Object root      = null;
-	private Object component = null;
+	private Object root   = null;
 	
-    private Object lval;
-    private Object rval;
+	private List<Object> lstComponents = new ArrayList<Object>();
+	private int          idxComponents;
+	private List<Object> lstParents    = null;
+	private int          idxParents;	
+	private Object       component     = null;
+	
+    private Object  lval;
+    private Object  rval;
     private Integer oper;
     
+    public RuleObject() {	
+    }
+    
+    public RuleObject(Object o) {
+    	setComponent(o);
+    	IReflect i = (IReflect) o;
+    	begLine    = i.getBegLine();
+    	begColumn  = i.getBegColumn();
+    	endLine    = i.getEndLine();
+    	endColumn  = i.getEndColumn();
+    }
+    
+    public boolean getFirstComponent() {
+    	idxComponents = 0;
+    	return setComponent(idxComponents);
+    }
+    public boolean getNextComponent() {
+    	if (lstComponents.size() <= (idxComponents + 1)) 
+    		return false;
+    	return setComponent(++idxComponents);
+    }
+    private boolean setComponent(int index) {
+    	if (lstComponents.size() <= index) return false;
+    	component = lstComponents.get(index);
+    	return true;
+    }
+        
 	public int getBegLine() {
 		return begLine;
 	}
@@ -72,8 +109,19 @@ public class RuleObject {
 		return root;
 	}
 
+	@SuppressWarnings("unchecked")
 	public void setComponent(Object component) {
-		this.component = component;
+		if (component instanceof List) {
+			lstComponents = (List<Object>) component;
+		}
+		else {
+			if (lstComponents.size() == 0) {
+				lstComponents.add(component);
+			} else {
+			    lstComponents.set(0, component);
+			}
+			this.component = component;
+		}
 	}
 	
     public void setValue(Object value) {
@@ -85,7 +133,13 @@ public class RuleObject {
     }
     
 	public String getObjectAsString() {
+		if (component == null) return null;
 		return component.toString();
+	}
+
+	public String getObjectValue() {
+		if (component == null) return null;
+		return ((IReflect) component).toValue();
 	}
 	
 	public Object getLVal() {
@@ -118,4 +172,19 @@ public class RuleObject {
 		if (component == null) return 0;
 		return ((String) component).length();
 	}
+	
+	public void saveComponent() {
+		lstParents = copyArray(lstComponents);
+		idxParents = idxComponents;
+	}
+	public void restoreComponent() {
+		lstComponents = copyArray(lstParents);
+		idxComponents = idxParents;
+		component = lstComponents.get(idxComponents);
+	}
+	private List<Object> copyArray(List<Object> from) {
+		List<Object> to = new ArrayList<Object>();
+		while (from.size() > 0) to.add(from.remove(0));
+		return to;
+	}	
 }

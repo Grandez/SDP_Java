@@ -3,7 +3,7 @@ package com.jgg.sdp.parser.lang;
 public interface ZCZSym {
 
   public static final int COPY     = 30000;
-  public static final int EXEC       = 60000;
+  public static final int EXEC     = 60000;
 	  
   public static final int EOF     =     0;	
   
@@ -30,6 +30,7 @@ public interface ZCZSym {
   public static final int CMT_DBG   = 50006;
   public static final int CMT_SLASH = 50007;
   public static final int MULTILINE = 50008;
+  public static final int WORDSLINE = 50009;
 
 }
 

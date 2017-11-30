@@ -131,6 +131,10 @@ public class MSG {
 	public static final int SUPPORT_SECTION     = 98010;
 	public static final int SUPPORT_NAME        = 98020;
 	public static final int SUPPORT_COPY        = 98021;
+	public static final int SUPPORT_CLASS       = 98022;
+	public static final int SUPPORT_FACTORY     = 98023;
+	public static final int SUPPORT_OBJECT      = 98024;
+	public static final int SUPPORT_METHOD      = 98025;
 	
 	public static final int EXCEPTION_KEY        = 99600;
 	public static final int EXCEPTION_KEY_SERVER = 99601;

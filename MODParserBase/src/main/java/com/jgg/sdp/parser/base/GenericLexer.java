@@ -11,10 +11,9 @@ package com.jgg.sdp.parser.base;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 
+import com.jgg.sdp.blocks.symbols.SymbolExt;
 import com.jgg.sdp.common.config.*;
-import com.jgg.sdp.core.exceptions.NotSupportedException;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.unit.Unit;
 import com.jgg.sdp.module.work.CommentBlock;
@@ -105,6 +104,10 @@ public abstract class GenericLexer {
 	   cadCol =  yycol;
    }
 
+   public void print(String txt) {
+//     System.out.println(txt);
+   }   
+   
    /*******************************************************/
    /*** GESTION DE ESTADOS                              ***/
    /*******************************************************/
@@ -145,7 +148,7 @@ public abstract class GenericLexer {
 	      setLastSymbol(code);
 	      data = true;
 	      int col = yycolumn + COLOFFSET;
-	      int line = yyline + linOffset;
+	      int line = yyline + linOffset + 1;
 	      print("Devuelve SYMBOL " + code + " (" + line + "," + col + ") " + txt);   
 	      return symbolFactory.newSymbol(txt, code, new Symbol(code, line, col, txt));
    }
@@ -256,7 +259,10 @@ public abstract class GenericLexer {
    
    private void processComment(CommentLine comment) {
        int pos = comment.getRawComment().indexOf('\t');
-	   if ( pos != -1) rules.checkTab(comment.getLine(), COLOFFSET + pos);  
+	   if ( pos != -1) {
+		   SymbolExt s = new SymbolExt(new Symbol(-2, comment.getLine(), pos, "\t"));
+		   rules.checkTab(s);  
+	   }
 	   
 	   info.getModule().getComment().incLines();
 	   if (comment.isDecorator()) info.getModule().getComment().incDecorators();
@@ -268,9 +274,6 @@ public abstract class GenericLexer {
    public void unsetIgnoreReserved() { ignoreReserved = false; }
    public boolean isIgnoreReserved() { return ignoreReserved;  }
    
-   public void print(String txt) {
-//        System.out.println(txt);
-   }   
    public void debug(String txt) {
      System.out.println(txt);
    }   
@@ -296,12 +299,13 @@ public abstract class GenericLexer {
    /********************************************************/
    /* Issues en el analizador lexico                       */
    /********************************************************/
+/*   
    protected void checkDivision() {
 //   	   if (info.module.getNumSources() != 1) {
 //	       issues.addIssue(ISSUE.DIV_IN_COPY, begCopy + 1, 0);
 //	   } 
    }
-   
+  */ 
 }
 
 

@@ -7,7 +7,7 @@
  * @date    SEP - 2015
  * 
  */
-package com.jgg.sdp.core.exceptions;
+package com.jgg.sdp.parser.base;
 
 import com.jgg.sdp.common.ctes.RC;
 import com.jgg.sdp.common.exceptions.SDPException;

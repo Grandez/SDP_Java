@@ -65,7 +65,7 @@ public class CFG {
     
     public static final String PARSER_PENDING = "parser.all.pending";    
     public static final String PARSER_SKIP    = "parser.skip.equals";    
-    public static final String PARSER_FORCE   = "parser.process.equals";
+    public static final String PARSER_FORCE   = "parser.force";
 	
 	public static final String MARGIN_LEFT  = "parser.margin.left";
 	public static final String MARGIN_RIGHT = "parser.margin.right";

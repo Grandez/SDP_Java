@@ -2,8 +2,6 @@ package com.jgg.sdp.blocks.stmt;
 
 import java.util.*;
 
-import com.jgg.sdp.blocks.stmt.*;
-
 import java_cup.runtime.Symbol;
 
 public class BlockCode {

@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name="RUL_RULES")
 public class RULRule implements Serializable {
 	
-	private static final long serialVersionUID = 7785713905709660911L;
+	private static final long serialVersionUID = -4826510797182229787L;
 
 	public final static String delRulesOfItem   = "DELETE FROM RULRule r where r.idGroup = ?1 AND r.idItem = ?2";
 	public final static String findMaxId        = "SELECT MAX(r.idRule) FROM RULRule r WHERE idGroup = ?1 AND idItem = ?2";
@@ -32,6 +32,9 @@ public class RULRule implements Serializable {
 	@Column(name="idRule")
 	private Long idRule;
 
+	@Column(name="name")
+	private String name;
+	
 	@Column(name="idDesc")
 	private Long idDesc;
 
@@ -80,6 +83,14 @@ public class RULRule implements Serializable {
 		this.idRule = idRule;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public Long getIdDesc() {
 		return idDesc;
 	}
@@ -155,6 +166,7 @@ public class RULRule implements Serializable {
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
 		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
 		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result + ((severity == null) ? 0 : severity.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
@@ -205,6 +217,11 @@ public class RULRule implements Serializable {
 			if (other.idSample != null)
 				return false;
 		} else if (!idSample.equals(other.idSample))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		if (priority == null) {
 			if (other.priority != null)

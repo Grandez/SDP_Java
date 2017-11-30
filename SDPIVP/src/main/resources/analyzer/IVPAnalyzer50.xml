@@ -20,9 +20,19 @@
       </module>
    </preProcess>
    
-   <group name="Control de Reglas">
-      <description>Control de reglas</description>
-      <pattern>IVP50*.cbl</pattern>
+   <group name="Reglas Lexicas">
+      <description>Control de reglas lexicas</description>
+      <pattern>IVP5000*.cbl</pattern>
+      <pattern>IVP5001*.cbl</pattern>
    </group>
+   <group name="Reglas Compilacion">
+      <description>Control de directivas</description>
+      <pattern>IVP5002*.cbl</pattern>
+   </group>
+   <group name="Reglas IDENTIFICATION">
+      <description>Control de IDENTIFICATION DIVISION</description>
+      <pattern>IVP5003*.cbl</pattern>
+   </group>
+
 </p:SDPIVP>
 

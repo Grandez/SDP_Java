@@ -4,6 +4,8 @@ import com.jgg.sdp.rules.objects.RuleObject;
 
 import static com.jgg.sdp.rules.ctes.CDGItems.*;
 
+import com.jgg.sdp.blocks.symbols.SymbolExt;
+
 public class RulesLexer extends RulesBase {
 
 	/***************************************************************/
@@ -11,28 +13,20 @@ public class RulesLexer extends RulesBase {
 	/***************************************************************/
 	
 		
-	public void checkNoPrintable(int line, int column) {
+	public void checkNoPrintable(SymbolExt s) {
         RuleObject obj = new RuleObject();
         
-        obj.setBegLine(line);
-        obj.setBegColumn(column);
-        obj.setComponent(true);
+        obj.setBegLine(s.left);
+        obj.setBegColumn(s.right);
+        obj.setComponent(s);
         rulesProcessor.processItemByName(ITEM_HEXDATA, obj);
 	}
-
-	public void checkCompileDirective(int line) {
-        RuleObject obj = new RuleObject();
-        
-        obj.setBegLine(line);
-        obj.setComponent(true);
-        rulesProcessor.processItemByName(ITEM_CBL_DIRECTIVE, obj);		
-	}
 	
-	public void checkPrintDirective(String directive, int line) {
+	public void checkPrintDirective(SymbolExt s) {
         RuleObject obj = new RuleObject();
         
-        obj.setBegLine(line);
-        obj.setComponent(directive);
+        obj.setBegLine(s.left);
+        obj.setComponent(s);
         rulesProcessor.processItemByName(ITEM_CBL_LIST_DIR, obj);		
 	}
 		

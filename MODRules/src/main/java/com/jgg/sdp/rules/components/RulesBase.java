@@ -2,9 +2,12 @@ package com.jgg.sdp.rules.components;
 
 import java.util.*;
 
+import com.jgg.sdp.blocks.symbols.SymbolExt;
 import com.jgg.sdp.module.items.Issue;
 import com.jgg.sdp.module.work.CommentLine;
 import com.jgg.sdp.rules.objects.*;
+
+import java_cup.runtime.Symbol;
 
 import static com.jgg.sdp.rules.ctes.CDGItems.*;
 
@@ -33,18 +36,22 @@ public class RulesBase {
         rulesProcessor.processItemByName(ITEM_COMMENT, obj);
 	}
 	
-	public void checkTab(int line, int column) {
+	public void checkTab(SymbolExt s) {
         RuleObject obj = new RuleObject();
         
-        obj.setBegLine(line);
-        obj.setBegColumn(column);
-        obj.setComponent(true);
+        obj.setBegLine(s.left);
+        obj.setBegColumn(s.right);
+        obj.setComponent(s);
 
         rulesProcessor.processItemByName(ITEM_TAB, obj);        
 	}
 
-	public void checkTabsInText(String txt, int line, int column) {
-		if (txt.indexOf('\t') != -1) checkTab(line, column);
+	public void checkTabsInText(SymbolExt s) {
+		String txt = (String) ((Symbol) s.value).value;
+		if (txt.indexOf('\t') != -1) {
+			SymbolExt e = new SymbolExt(new Symbol(-2, s.left, s.right + txt.indexOf('\t'), "\t"));
+			checkTab(e);
+		}
 	}
 	
 /*	

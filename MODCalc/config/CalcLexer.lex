@@ -55,7 +55,6 @@ import static com.jgg.sdp.calculator.CalcSym.*;
 
 SPACES=[\ \t]+
 
-ALPHA=[a-zA-Z]+
 ALPHANUM=[a-zA-Z0-9\_]
 SIGNED=[+|-]?[0-9]+
 EXP=[eE]{SIGNED}

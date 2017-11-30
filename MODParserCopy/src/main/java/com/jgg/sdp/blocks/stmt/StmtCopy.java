@@ -19,12 +19,12 @@ public class StmtCopy extends Statement<StmtCopy> {
 	}
 	
 	public ArrayList<String> getReplacingTokens() {
-		OptionGroup opt = getOption("REPLACING");
+		Option opt = getOptionByName("REPLACING");
 		if (opt == null) return null;
 		
 		ArrayList<String> toks = new ArrayList<String>();
 		
-		for (SymbolExt s : opt.getOption().getVars()) {
+		for (SymbolExt s : opt.getVars()) {
 			toks.add(s.getName());
 		}
 		return toks;

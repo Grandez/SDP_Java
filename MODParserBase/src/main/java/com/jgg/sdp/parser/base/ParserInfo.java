@@ -229,12 +229,13 @@ public class ParserInfo {
 	public void syntax_error (Symbol token) {
         
        Symbol s = (Symbol) token.value;
-       int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+//       int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
+       int col = 0;
        col = col + s.right + 1;
 
        throw new ParseException(MSG.EXCEPTION_SYNTAX, 
                                 info.getMemberName(), 
-                                s.left,  
+                                s.left + 1,  
                                 col, 
                                 (String) s.value);
    }

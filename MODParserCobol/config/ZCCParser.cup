@@ -212,7 +212,6 @@ terminal Symbol DOWN                ;
 terminal Symbol DUPLICATES          ;
 terminal Symbol DYNAMIC             ;
 terminal Symbol EGCS                ;
-terminal Symbol EJECT               ;
 terminal Symbol ELSE                ;
 terminal Symbol END                 ;
 terminal Symbol END_ADD             ;

@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.25 a las 01:38:17 PM CET 
+// Generado el: 2017.11.30 a las 12:26:40 PM CET 
 //
 
 
@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;choice minOccurs="0">
  *           &lt;element name="lvalue" type="{http://www.sdp.com/SDPRules}operandType"/>
  *           &lt;element name="script" type="{http://www.sdp.com/SDPRules}scriptType"/>
- *           &lt;element name="type" type="{http://www.sdp.com/SDPRules}objectType"/>
+ *           &lt;element name="type" type="{http://www.sdp.com/SDPRules}lvalueType"/>
  *           &lt;element name="configuration" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;/choice>
  *         &lt;element name="operator" type="{http://www.sdp.com/SDPRules}operatorType" minOccurs="0"/>
@@ -70,10 +70,10 @@ public class ConditionType {
     protected OperandType lvalue;
     protected ScriptType script;
     @XmlSchemaType(name = "string")
-    protected ObjectType type;
+    protected LvalueType type;
     protected String configuration;
-    @XmlSchemaType(name = "string")
-    protected OperatorType operator;
+    @XmlSchemaType(name = "anySimpleType")
+    protected String operator;
     protected String property;
     protected String attribute;
     protected String method;
@@ -137,10 +137,10 @@ public class ConditionType {
      * 
      * @return
      *     possible object is
-     *     {@link ObjectType }
+     *     {@link LvalueType }
      *     
      */
-    public ObjectType getType() {
+    public LvalueType getType() {
         return type;
     }
 
@@ -149,10 +149,10 @@ public class ConditionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link ObjectType }
+     *     {@link LvalueType }
      *     
      */
-    public void setType(ObjectType value) {
+    public void setType(LvalueType value) {
         this.type = value;
     }
 
@@ -185,10 +185,10 @@ public class ConditionType {
      * 
      * @return
      *     possible object is
-     *     {@link OperatorType }
+     *     {@link String }
      *     
      */
-    public OperatorType getOperator() {
+    public String getOperator() {
         return operator;
     }
 
@@ -197,10 +197,10 @@ public class ConditionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link OperatorType }
+     *     {@link String }
      *     
      */
-    public void setOperator(OperatorType value) {
+    public void setOperator(String value) {
         this.operator = value;
     }
 

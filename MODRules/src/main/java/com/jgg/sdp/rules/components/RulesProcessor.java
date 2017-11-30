@@ -5,12 +5,13 @@ package com.jgg.sdp.rules.components;
  */
 import static com.jgg.sdp.rules.ctes.CDGRules.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.regex.*;
 
-import com.jgg.sdp.blocks.stmt.Statement;
-import com.jgg.sdp.blocks.stmt.StmtGral;
 import com.jgg.sdp.calc.Calculator;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.rules.RULScriptsService;
 import com.jgg.sdp.module.items.Issue;
 import com.jgg.sdp.rules.objects.*;
@@ -18,7 +19,7 @@ import com.jgg.sdp.tools.*;
 
 public class RulesProcessor {
 
-	
+    private        Configuration    cfg    = DBConfiguration.getInstance();	
 	private        RulesTree        tree   = RulesTree.getInstance(true);
 	private        ArrayList<Issue> issues = new ArrayList<Issue>();
     private static RulesProcessor   rules  = null;
@@ -51,7 +52,6 @@ public class RulesProcessor {
     void processGroupByName(String name, RuleObject obj) {
     	RuleGroup group = tree.getGroupByName(name);
     	if (group == null) return;
-    	System.out.println("Procesando grupo: " + group.getName());
     	for (RuleItem item : group.getItems()) {
     		processItem(item, obj);
     	}
@@ -63,23 +63,58 @@ public class RulesProcessor {
     }
 	
 	private void processItem(RuleItem item, RuleObject obj) {
-    	System.out.println("Procesando Item: " + item.getObject());
-		if (!processCondition(item.getActivations(), obj)) return;
-		
-		for (RuleRule rule : item.getRules()) {
-			if (processRule(rule, obj)) {
-				applyIssue(rule, obj);
-				if (rule.getPriority() > 0) return;
-			}
-		}		
+    	if (!processCondition(item.getActivations(), obj)) return;
+
+    	if (item.getType() != null) changeComponent(item, obj);
+    	
+    	boolean hasComponent =  obj.getFirstComponent();
+    	
+    	while (hasComponent) {
+		   for (RuleRule rule : item.getRules()) {
+			   if (processRule(rule, obj)) {
+				   applyIssue(rule, obj);
+				   if (rule.getPriority() > 0) break;
+			   }
+		   }		
+		   hasComponent =  obj.getNextComponent();
+    	}   
+		if (item.getType() != null) 
+			obj.restoreComponent();
 	}
 	
-	boolean processRule(RuleRule rule, RuleObject obj) {
-		System.out.println("Procesando Rule: " + rule.getIdRule());
+	private boolean processRule(RuleRule rule, RuleObject obj) {
+//		if (rule.getName() != null && rule.getName().compareTo("date format") == 0) {
+//			rule.getName();
+//		}
 		if (!isRuleActive(rule.getActivations(), obj)) return false;
 	    return processCondition(rule.getCondition(), obj);	
 	}
 	
+	private void changeComponent(RuleItem item, RuleObject obj) {
+		StringBuilder sb;
+		String method = null;
+		String parm = item.getObject();
+		obj.saveComponent();
+		
+		switch (item.getType()) {
+		   case TYPE_OPTION:  method = "getOptionByName";     break;
+		   case TYPE_LVALUE:  method = "getLValue";     break;
+		   case TYPE_RVALUE:  method = "getRValue";     break;
+		   case TYPE_LIST:    
+			    parm = null;
+			    sb = new StringBuilder("get");
+			    sb.append(item.getObject());
+			    sb.append("List");
+			    method = sb.toString();
+			    break;
+		   default: 
+//			   System.out.println("PARAR");
+		}
+		
+		Object o = Reflect.executeMethod(obj.getComponent(), method, new String[] {parm});
+		obj.setComponent(o);
+	}
+		
 	private boolean isRuleActive(ArrayList<RuleCond> conds, RuleObject obj) {
 		return processCondition(conds, obj);
 	}
@@ -105,10 +140,18 @@ public class RulesProcessor {
 	private Object calculateOperandL(Integer type, String data, RuleObject obj) {
 		switch (type) {
 	        case TYPE_PROPERTY:  return processProperty (type, data, obj); 
-	        case TYPE_ATTRIBUTE: return processAttribute(type, data, obj);
+	        case TYPE_ATTRIBUTE: 
+	             String m = mountMethodName(type, data);
+	             return Reflect.executeMethod(obj.getComponent(), m);
 	        case TYPE_SCRIPT:    return processScript(type, data, obj);
-	        case TYPE_OPTION:    return processOption(type, data, obj);
+	        case TYPE_OPTION:    
+	        	 String[] parms = {data};
+	        	 String   method = "getOptionByName";
+	        	 return Reflect.executeMethod(obj.getComponent(), method, parms);
+	        case TYPE_CONFIG:    
+	        	 return cfg.getString(data); 
 	        case TYPE_VALUE:    
+	        	return processValue(type, obj.getObjectValue(), obj); 
 	        case TYPE_BOOLEAN:  
 	        case TYPE_STRING:   return processValue(type, obj.getObjectAsString(), obj);
 //    case TYPE_VERB:    return processRuleVerb(rule, obj);
@@ -118,11 +161,13 @@ public class RulesProcessor {
 		return null;
 	}
 
-	private Object calculateOperandR(int type, String data, RuleObject obj) {
+	private Object calculateOperandR(Integer type, String data, RuleObject obj) {
 		switch (type) {
 	        case TYPE_PROPERTY: return processProperty(type, data, obj);
-	        case TYPE_VALUE:    
+	        case TYPE_VALUE:
+	        case TYPE_RVALUE:    
 	        case TYPE_BOOLEAN:  
+	        case TYPE_EXPRESSION:
 	        case TYPE_STRING:   return processValue(type, data, obj);
 //    case TYPE_VERB:    return processRuleVerb(rule, obj);
 //    case TYPE_METHOD:  return processRuleMethod(rule, obj);
@@ -137,6 +182,7 @@ public class RulesProcessor {
 		  case OP_NUMERIC:  return applyNumericOperator(obj);
 		  case OP_BOOLEAN:  return applyBooleanOperator(obj);
 		  case OP_OBJECT:   return applyObjectOperator (obj);		  
+		  case OP_DECIMAL:  return applyDecimalOperator(obj);		  
  		  default:          return applyDefaultOperator(obj); 
 		}
 	}
@@ -150,7 +196,9 @@ public class RulesProcessor {
 		String r = (String) obj.getRVal();
 	
 		if (l == null || r == null) return isNegated(operator) ? true : false;
-
+        l = l.trim();
+        r = r.trim();
+        
 		switch (Math.abs(operator)) {
 		   case OP_START:    res = l.startsWith(r); break;
 		   case OP_END:      res = l.endsWith(r);   break;
@@ -188,15 +236,56 @@ public class RulesProcessor {
 		return (negated) ? !res : res;
 	}
 
+	private boolean applyDecimalOperator(RuleObject obj) {
+		int operator = obj.getOperator();
+		boolean negated = isNegated(operator);
+		boolean res = false;
+		
+		Object lv = obj.getLVal();
+		Object rv = obj.getRVal();
+	
+		if (lv == null || rv == null) return isNegated(operator) ? true : false;
+		
+		BigDecimal l = getBigDecimal(lv);
+		BigDecimal r = getBigDecimal(rv);
+	    BigDecimal x = l.subtract(r);
+	    
+	    Long       n = (x.compareTo(new BigDecimal(0)) == 0) ? 0L : x.divide(x.abs()).longValue(); 
+	    
+		switch (n.intValue()) {
+		   case  0:   res = ((operator & MASK_EQ) != 0) ? true : false;  break;
+		   case -1:   res = ((operator & MASK_LT) != 0) ? true : false;  break;
+		   case  1:   res = ((operator & MASK_GT) != 0) ? true : false;  break;
+		}
+		return (negated) ? !res : res;
+	}
 
+	private BigDecimal getBigDecimal(Object o) {
+		if (o instanceof BigDecimal) return (BigDecimal) o;
+		if (o instanceof Long)       return new BigDecimal((Long) o);
+		if (o instanceof Integer)    return new BigDecimal((Integer) o);
+		return new BigDecimal(o.toString());
+	}
+	
 	private boolean applyBooleanOperator(RuleObject obj) {
 		int operator = obj.getOperator();
 		boolean negated = isNegated(operator);
 
-		Boolean res = (Boolean) obj.getLVal() ^ (Boolean) obj.getRVal();
+		Boolean lval = makeBoolean(obj.getLVal());
+		Boolean rval = makeBoolean(obj.getRVal());	
+		Boolean res  = lval ^ rval;
 		return (negated) ? res : !res;
 	}
 
+	private Boolean makeBoolean(Object val) {
+		if (val == null) return new Boolean(false);
+		if (val instanceof Boolean) return (Boolean) val;
+		
+		char c = val.toString().charAt(0); 
+		if (c == '0' || c == 'N' || c == 'n') return new Boolean(false);
+        return  new Boolean(true);
+	}
+	
 	/**
 	 * Se aplica a propiedad EXIST o HAS
 	 * El objeto no es nulo si existe
@@ -241,7 +330,7 @@ public class RulesProcessor {
 		// Exist and hasXXX son propiedades
 		// Son true or false
 		
-		if (pat.compareTo("EXIST") != 0 && pat.compareTo("HAS") != 0) {
+		if (!pat.startsWith("EXIST") && pat.compareTo("HAS") != 0) {
             String m = mountMethodName(type, data);
 		    res = (Boolean) Reflect.executeMethod(obj.getComponent(), m);
 		}
@@ -266,13 +355,13 @@ public class RulesProcessor {
 	}
 
 	private Object processScript(int type, String data, RuleObject obj) {
-		System.out.println("JGG processRuleFormula");
+//		System.out.println("JGG processRuleFormula");
 		
 		RULScriptsService service = new RULScriptsService();
 		String script = service.getScript(Long.parseLong(data));
         Calculator c = new Calculator(script);
-//		c.setObjectBase(obj.getComponent());
-//		c.setObjectRoot(obj.getRoot());
+		c.setObjectBase(obj.getComponent());
+		c.setObjectRoot(obj.getRoot());
 		
 		try {
 			return c.evaluateExpression();
@@ -283,13 +372,6 @@ public class RulesProcessor {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	private Object processOption(int type, String data, RuleObject obj) {
-		System.out.println("Procesando opcion: " + data);
-		Statement<StmtGral> stmt = (Statement<StmtGral>) obj.getComponent();
-		return stmt.getOption(data);
-	}
-	
 	private boolean processType(RuleCond cond, RuleObject obj) {
 //		Object lval = parseType(cond.getLvalueType(), (String) obj.getComponent());
 	    Object lval;	
@@ -315,7 +397,7 @@ public class RulesProcessor {
 	}
 */	
 	private boolean processRuleMethod(RuleRule rule, RuleObject obj) {
-		System.out.println("JGG processRuleMethod");
+//		System.out.println("JGG processRuleMethod");
 /*		
 		String method = rule.getProperty();
 		method = "get" + method.substring(0,1).toUpperCase() + method.substring(1);
@@ -451,10 +533,27 @@ public class RulesProcessor {
 		Object l = obj.getLVal();
 		Object r = obj.getRVal();
 
+		if (r instanceof Boolean)    return OP_BOOLEAN;
+		if (l instanceof BigDecimal) return OP_DECIMAL;
+		if (r instanceof BigDecimal) return OP_DECIMAL;
+		
 		if (l instanceof String) {
-			if (Numero.isANumber((String) l) && Numero.isANumber((String) r)) return OP_NUMERIC;
+			// 1 y 0 se utilizan para booleans
+			if (Numero.isANumber((String) l) && Numero.isANumber((String) r)) {
+				return (isBoolean(r)) ? OP_BOOLEAN : OP_NUMERIC;
+			}
 			return OP_STRING;
 		}		
 		return OP_NUMERIC;
+	}
+	
+	private boolean isBoolean(Object r) {
+		if (r instanceof String) {
+			String v = (String) r;
+			if (v.compareToIgnoreCase("TRUE")  == 0) return true;
+			if (v.compareToIgnoreCase("FALSE") == 0) return true;
+			return false;
+		}
+		return false;
 	}
 }

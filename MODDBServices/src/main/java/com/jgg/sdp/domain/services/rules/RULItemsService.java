@@ -16,8 +16,8 @@ public class RULItemsService extends AbstractService<RULItem> {
 		lastId = last;
 	}
 	
-	public RULItem getByTextKey(String key) {
-		return findQuery(RULItem.findByTextKey, key);
+	public RULItem getByName(String key) {
+		return findQuery(RULItem.findByName, key);
 	}
 	
 	public RULItem getById(Long idParent, Long id) {

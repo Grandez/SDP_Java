@@ -31,6 +31,7 @@ import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.parser.base.NotSupportedException;
 import com.jgg.sdp.parser.lang.ZCZSym;
 import com.jgg.sdp.parser.tools.*;
 
@@ -275,7 +276,7 @@ public class ZCCCode extends ZCZCode {
 		injector.loadTraps(perform.left, perform.right);
         injector.setNextTrap(new Trap(TRAP.END_PERFORM, makeLiteral(from)));
         
-        Option thru = stmt.getOption(THRU).getOption();
+        Option thru = stmt.getOption(THRU);
         if (thru != null) {
         	to = thru.getVar(0).getName();
         }
@@ -290,8 +291,8 @@ public class ZCCCode extends ZCZCode {
 	
 	private void addToGraph(StmtCobol stmt, String from) {
 		boolean loop = false;
-        if (stmt.getOption("UNTIL") != null   ||
-            stmt.getOption("VARYING") != null) {
+        if (stmt.getOptionByName("UNTIL") != null   ||
+            stmt.getOptionByName("VARYING") != null) {
         	loop = true;
         }
         grafo.addBlock(Nodes.PERFORM, from, loop);
@@ -346,7 +347,7 @@ public class ZCCCode extends ZCZCode {
     public StmtCobol processWhen(StmtCobol stmt) {
     	//jgg Si no es OTHER
     	boolean close = false;
-    	if (stmt.getOption("OTHER") != null) close = true;
+    	if (stmt.getOptionByName("OTHER") != null) close = true;
     	grafo.addChoice(Nodes.WHEN, close);
     	
     	stackFlujo.peek().addOption(stmt.asOption());

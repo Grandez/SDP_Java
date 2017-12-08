@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.11.30 a las 12:26:40 PM CET 
+// Generado el: 2017.12.02 a las 09:47:50 PM CET 
 //
 
 
@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element ref="{http://www.sdp.com/SDPRules}rule" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.sdp.com/SDPRules}nameType" />
+ *       &lt;attribute name="title" type="{http://www.sdp.com/SDPRules}titleType" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -78,6 +79,8 @@ public class Item {
     protected List<Rule> rule;
     @XmlAttribute(name = "name", required = true)
     protected String name;
+    @XmlAttribute(name = "title")
+    protected String title;
 
     /**
      * Obtiene el valor de la propiedad idItem.
@@ -322,6 +325,30 @@ public class Item {
      */
     public void setName(String value) {
         this.name = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad title.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTitle() {
+        return title;
+    }
+
+    /**
+     * Define el valor de la propiedad title.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTitle(String value) {
+        this.title = value;
     }
 
 }

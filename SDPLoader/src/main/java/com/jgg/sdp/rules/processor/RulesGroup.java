@@ -53,6 +53,7 @@ public class RulesGroup {
 		group.setIdParent(xmlGroup.getIdParent() == null ? 0L : xmlGroup.getIdParent());
 		group.setPrefix(xmlGroup.getPrefix());
 		group.setActive(processActivateConditions(key * 10, xmlGroup));
+		group.setIdTitle(descs.createTitle(id, xmlGroup.getTitle()));
 		group.setIdDesc(descs.createDescription(id, xmlGroup.getDescription()));
 		group.setUid(System.getProperty("user.name"));
 		group.setTms(new Timestamp(System.currentTimeMillis()));

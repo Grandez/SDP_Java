@@ -27,7 +27,7 @@ public class DependenciasController {
 //    @Autowired
 //    MODDependenciaService depService;
     @Autowired
-    CFGCodigoService      cdgService;
+    CFGCodeService      cdgService;
     
     @RequestMapping("/deps/{idModule}")
     public List<Dependencia> getCopys(@PathVariable  Long idModule,

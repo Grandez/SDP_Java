@@ -45,7 +45,7 @@ public class RulesCleaner {
 	private void deleteDetail(Long key) {
 		sampService.deleteSample(key);
 		condService.deleteConditions(key);
-		descService.deleteDescription(key);
+		descService.deleteDescriptions(key);
 		scriptService.deleteScripts(key);
 	}
 }

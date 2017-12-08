@@ -68,6 +68,7 @@ public class RulesUnloader {
 	}
 	
 	private void processDescription(int level, Long id) {
+/*		
 		List<RULDesc> desc = descService.findDescription(id);
 		// Caso que faltan desripciones
 		if (desc.isEmpty()) return;
@@ -80,6 +81,7 @@ public class RulesUnloader {
 			writeLine(level + 1, aux1 + d.getTxt() + "</value>");
 		}
 		writeLine(level, "</description>");
+*/		
 	}
 
 	private String replace(String from, String cad, Long value) {

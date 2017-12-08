@@ -137,7 +137,7 @@ public class RulesTree {
 		Long id = key;
 		ArrayList<RuleCond> conds = new ArrayList<RuleCond>();
 		if (id < 0) id *= -1;
-		for (RULCond cond : condsService.getById(key)) {
+		for (RULCond cond : condsService.getConditions(key)) {
 			RuleCond c = new RuleCond();
 			c.setIdCond(cond.getIdCond());
 			c.setLvalue(cond.getLvalue());

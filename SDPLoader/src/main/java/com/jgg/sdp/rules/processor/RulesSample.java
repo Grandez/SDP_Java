@@ -1,24 +1,17 @@
 package com.jgg.sdp.rules.processor;
 
-import java.util.List;
-
 import com.jgg.sdp.adt.ADTBag;
-import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.domain.rules.RULSample;
-import com.jgg.sdp.domain.rules.RULSampleDesc;
-import com.jgg.sdp.domain.services.rules.RULSampleDescService;
 import com.jgg.sdp.domain.services.rules.RULSamplesService;
 import com.jgg.sdp.loader.jaxb.rules.SampleType;
-import com.jgg.sdp.loader.jaxb.rules.TextType;
+
 import com.jgg.sdp.tools.Cadena;
 
 public class RulesSample {
 	
 	private RULSamplesService    sampService = new RULSamplesService();
-	private RULSampleDescService descService = new RULSampleDescService();
 	
 	private ADTBag<RULSample>     samples = new ADTBag<RULSample>();
-	private ADTBag<RULSampleDesc> descs   = new ADTBag<RULSampleDesc>();
 	
     private static RulesSample samp = null;
     
@@ -35,27 +28,24 @@ public class RulesSample {
     	return samples;
     }
 
-    public ADTBag<RULSampleDesc> getSamplesDesc() {
-    	return descs;
-    }
-    
     public Long createSample(long key, SampleType s) {
     	if (s == null) return 0L;
     	deleteSample(key);
-    	processDescription(key, s.getDescription());
+//    	processDescription(key, s.getDescription());
     	processSample(key, 0, s.getCorrect());
     	processSample(key, 1, s.getBad());
 		
         return key;	
     }
-    
+  
+/*    
     private void processDescription(Long key, List<TextType> data) {
 		for (TextType t : data) {
 			String l = t.getLang() == null ? SYS.DEF_LANG : t.getLang();
 			String d = t.getDialect() == null ? l.toUpperCase() : t.getDialect();
 			String[] lines = adjustLines(t.getValue());
 			for (int idx = 0; idx < lines.length; idx++) {
-			    RULSampleDesc r = new RULSampleDesc();
+			    RULDesc r = new RULDesc();
 			    r.setIdDesc(key);
 			    r.setIdLang(l);
 			    r.setIdDialect(d);
@@ -66,7 +56,7 @@ public class RulesSample {
 		}
     	
     }
-    
+*/
     private void processSample(long key, int type, String data) {
     	String[] lines = adjustLines(data);
     	for (int idx = 0; idx < lines.length; idx++) {
@@ -81,7 +71,6 @@ public class RulesSample {
     
     public void clear() {
     	samples = new ADTBag<RULSample>();
-    	descs   = new ADTBag<RULSampleDesc>();
     }
 
 
@@ -110,6 +99,6 @@ public class RulesSample {
     
     private void deleteSample(Long key) {
     	sampService.deleteSample(key);
-    	descService.deleteSampleDesc(key);
+//    	descService.deleteSampleDesc(key);
     }
 }

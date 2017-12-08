@@ -7,9 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="RUL_ITEMS")
-public class RULItem implements Serializable {
+public class RULItem implements Serializable, IRules {
 
-	private static final long serialVersionUID = 4024986362040980384L;
+	private static final long serialVersionUID = 2858405970471686505L;
 
 	public static final String delItem         = "DELETE FROM RULItem i where i.idGroup = ?1 AND i.idItem = ?2";
 	public static final String delItemsOfGroup = "DELETE FROM RULItem i where i.idGroup = ?1";
@@ -36,6 +36,9 @@ public class RULItem implements Serializable {
 	@Column(name="idDesc")
 	private Long idDesc;
 
+	@Column(name="idTitle")
+	private Long idTitle;
+	
 	@Column(name="object")
 	private String object;
 
@@ -50,6 +53,12 @@ public class RULItem implements Serializable {
 	
 	@Column(name="type")
 	private Integer type;
+
+	@Column(name="uid")
+	private String uid;
+	
+	@Column(name="tms")
+	private Timestamp tms;
 	
 	public Long getIdGroup() {
 		return idGroup;
@@ -65,6 +74,14 @@ public class RULItem implements Serializable {
 
 	public void setIdItem(Long idItem) {
 		this.idItem = idItem;
+	}
+	
+	public Long getIdTitle() {
+		return idTitle;
+	}
+
+	public void setIdTitle(Long idTitle) {
+		this.idTitle = idTitle;
 	}
 
 	public Long getIdDesc() {
@@ -131,12 +148,6 @@ public class RULItem implements Serializable {
 		this.tms = tms;
 	}
 
-	@Column(name="uid")
-	private String uid;
-	
-	@Column(name="tms")
-	private Timestamp tms;
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -146,6 +157,7 @@ public class RULItem implements Serializable {
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
 		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
+		result = prime * result + ((idTitle == null) ? 0 : idTitle.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((object == null) ? 0 : object.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
@@ -187,6 +199,11 @@ public class RULItem implements Serializable {
 			if (other.idSample != null)
 				return false;
 		} else if (!idSample.equals(other.idSample))
+			return false;
+		if (idTitle == null) {
+			if (other.idTitle != null)
+				return false;
+		} else if (!idTitle.equals(other.idTitle))
 			return false;
 		if (name == null) {
 			if (other.name != null)

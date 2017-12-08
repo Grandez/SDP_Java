@@ -56,7 +56,8 @@ public class RulesItem {
 		
 		key = Long.parseLong(String.format("%02d%02d", item.getIdGroup(), item.getIdItem()));
 		
-		item.setActive(processActivateConditions(key * 10, xmlItem));			
+		item.setActive(processActivateConditions(key * 10, xmlItem));		
+		item.setIdTitle(descs.createTitle(id, xmlItem.getTitle()));
 		item.setIdDesc(descs.createDescription(key, xmlItem.getDescription()));
 		item.setIdSample(samps.createSample(key, xmlItem.getSample()));
 		item.setUid(System.getProperty("user.name"));

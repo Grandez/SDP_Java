@@ -10,7 +10,7 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class RULCondsService extends AbstractService<RULCond> {
 
-	public List<RULCond> getById(Long id) {
+	public List<RULCond> getConditions(Long id) {
 		return listQuery(RULCond.findById, id);
 	}
 

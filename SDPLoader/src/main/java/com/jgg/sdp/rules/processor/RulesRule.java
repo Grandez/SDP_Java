@@ -53,7 +53,8 @@ public class RulesRule {
 				                                           rule.getIdRule()));
 		
 		rule.setActive(processActivateConditions(key * 10, xmlRule));
-		rule.setIdCond(conds.createCondition((key * 10) + 1, xmlRule.getCondition(), 0));		
+		rule.setIdCond(conds.createCondition((key * 10) + 1, xmlRule.getCondition(), 0));	
+		rule.setIdTitle(descs.createTitle(key, xmlRule.getTitle()));
 		rule.setIdDesc(descs.createDescription(key, xmlRule.getDescription()));
 		rule.setIdSample(samps.createSample(key, xmlRule.getSample()));
 		rule.setUid(System.getProperty("user.name"));

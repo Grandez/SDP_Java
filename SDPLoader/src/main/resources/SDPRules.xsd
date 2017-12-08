@@ -34,10 +34,12 @@
                   <xs:element name="onCondition"  type="conditionType"/>
                   <xs:element name="onConditions" type="conditionTypeList" />
                </xs:choice>
+               
                <xs:element ref="description"                  minOccurs="0" maxOccurs="1"/>
                <xs:element ref="item"                         minOccurs="0" maxOccurs="unbounded"  />
            </xs:sequence>
-    	   <xs:attribute name="name" type="nameType" use="required"/>
+    	   <xs:attribute name="name"  type="nameType" use="required"/>
+    	   <xs:attribute name="title" type="titleType"/>
         </xs:complexType>
     </xs:element>
 
@@ -56,7 +58,8 @@
                <xs:element name="sample"  type="sampleType"  minOccurs="0" maxOccurs="1"/>
                <xs:element ref="rule"                        minOccurs="0" maxOccurs="unbounded" />
            </xs:sequence>
-           <xs:attribute name="name" type="nameType" use="required"/>
+           <xs:attribute name="name"  type="nameType" use="required"/>
+           <xs:attribute name="title" type="titleType"/>           
        </xs:complexType>
        
     </xs:element>
@@ -78,7 +81,8 @@
                <xs:element name="condition"      type="conditionType" minOccurs="0" maxOccurs="1"/>
                <xs:element name="sample"         type="sampleType"    minOccurs="0" maxOccurs="1"/>
            </xs:sequence>
-           <xs:attribute name="name" type="nameType"/>
+           <xs:attribute name="name"  type="nameType"/>
+           <xs:attribute name="title" type="titleType"/>           
        </xs:complexType>
    </xs:element>         
 
@@ -117,6 +121,12 @@
       </xs:simpleContent>
   </xs:complexType>
   
+   <xs:simpleType name="titleType">
+       <xs:restriction base="xs:string">
+          <xs:minLength value="3"/>
+          <xs:maxLength value="48"/>
+       </xs:restriction>
+  </xs:simpleType>
   
    <xs:simpleType name="severityType">
        <xs:restriction base="xs:integer">

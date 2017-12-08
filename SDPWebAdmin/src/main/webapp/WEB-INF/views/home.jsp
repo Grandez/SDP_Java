@@ -2,11 +2,11 @@
 <%@ page session="false" %>
 <html>
 <head>
-	<title>SDP Web Admin</title>
+	<title>SDP Admin Check</title>
 </head>
 <body>
 <h1>
-	El servidor REST esta activo
+	SDPWebAdmin activo
 </h1>
 
 </body>

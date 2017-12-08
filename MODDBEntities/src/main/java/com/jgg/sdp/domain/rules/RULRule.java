@@ -7,9 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="RUL_RULES")
-public class RULRule implements Serializable {
+public class RULRule implements Serializable, IRules {
 	
-	private static final long serialVersionUID = -4826510797182229787L;
+	private static final long serialVersionUID = 7269245642444970460L;
 
 	public final static String delRulesOfItem   = "DELETE FROM RULRule r where r.idGroup = ?1 AND r.idItem = ?2";
 	public final static String findMaxId        = "SELECT MAX(r.idRule) FROM RULRule r WHERE idGroup = ?1 AND idItem = ?2";
@@ -38,6 +38,9 @@ public class RULRule implements Serializable {
 	@Column(name="idDesc")
 	private Long idDesc;
 
+	@Column(name="idTitle")
+	private Long idTitle;
+	
 	@Column(name="idCond")
 	private Long idCond;
 	
@@ -90,7 +93,15 @@ public class RULRule implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+		
+	public Long getIdTitle() {
+		return idTitle;
+	}
+
+	public void setIdTitle(Long idTitle) {
+		this.idTitle = idTitle;
+	}
+
 	public Long getIdDesc() {
 		return idDesc;
 	}
@@ -166,6 +177,7 @@ public class RULRule implements Serializable {
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
 		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
 		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
+		result = prime * result + ((idTitle == null) ? 0 : idTitle.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result + ((severity == null) ? 0 : severity.hashCode());
@@ -218,6 +230,11 @@ public class RULRule implements Serializable {
 				return false;
 		} else if (!idSample.equals(other.idSample))
 			return false;
+		if (idTitle == null) {
+			if (other.idTitle != null)
+				return false;
+		} else if (!idTitle.equals(other.idTitle))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -245,5 +262,6 @@ public class RULRule implements Serializable {
 			return false;
 		return true;
 	}
-
+	
+	
 }

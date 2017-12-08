@@ -7,9 +7,9 @@ import java.util.HashMap;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 
-import com.jgg.sdp.domain.cfg.CFGCodigo;
+import com.jgg.sdp.domain.cfg.CFGCode;
 
-public class JDBCService extends AbstractService<CFGCodigo> {
+public class JDBCService extends AbstractService<CFGCode> {
 
 	protected Connection cnn = null;
 	

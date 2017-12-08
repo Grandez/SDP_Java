@@ -28,28 +28,44 @@ public class RulesDescription {
     	return descs;
     }
     
+    public Long createTitle(Long key, String title) {
+    	if (title == null) return 0L;
+    	descService.deleteDescription(key, 0);
+    	createDescription(key, 0, null, null, title);
+    	return key;
+    }
+    
     public Long createDescription(Long key, Description desc) {
     	Long id = key;
     	
-		if (desc == null) return 0L;
-		
+		if (desc == null) return 0L;		
 		if (desc.getRef() != null) return desc.getRef();
-		
 		if (desc.getId() != null) id = desc.getId();
-		
-		descService.deleteDescription(id);
+
+		descService.deleteDescription(id, 1);
 		
 		for (TextType v : desc.getText()) {
-			String l = v.getLang() == null ? SYS.DEF_LANG : v.getLang();
-			String d = v.getDialect() == null ? l.toUpperCase() : v.getDialect();
-			RULDesc r = new RULDesc();
-			r.setIdDesc(id);
-			r.setIdLang(l);
-			r.setIdDialect(d);
-			r.setTxt(v.getValue());
-			descs.add(r);			
+			createDescription(id, 1, v.getLang(), v.getDialect(), v.getValue());
 		}
 		return key;
+    }
+
+    public void createDescription(Long key, int type, String lang, String dialect, String text) {
+		
+		String l = lang    == null ? SYS.DEF_LANG    : lang;
+		String d = dialect == null ? SYS.DEF_DIALECT : dialect;
+		String[] toks = text.split("(?<=\\G.{255})");
+		
+		for (int idx = 0; idx < toks.length; idx++) {
+			RULDesc r = new RULDesc();
+			r.setIdDesc(key);
+			r.setIdType(type);
+			r.setIdSeq(idx);
+			r.setIdLang(l);
+			r.setIdDialect(d);
+			r.setTxt(toks[idx]);
+			descs.add(r);			
+		}
     }
     
     public void clear() {

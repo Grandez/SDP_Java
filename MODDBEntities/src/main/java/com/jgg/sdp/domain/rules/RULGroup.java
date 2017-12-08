@@ -7,9 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="RUL_GROUPS")
-public class RULGroup implements Serializable {
+public class RULGroup implements Serializable, IRules {
 
-	private static final long serialVersionUID = 2429660515271690865L;
+	private static final long serialVersionUID = -1942203409007224362L;
 
 	public static final String delGroup       = "DELETE FROM RULGroup g where g.idGroup = ?1";
     
@@ -21,7 +21,7 @@ public class RULGroup implements Serializable {
 	
     public static final String listAll             = "SELECT r FROM RULGroup r";
 	public static final String listActive          = "SELECT r FROM RULGroup r WHERE r.active   >= 0";
-	public static final String listChildren        = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1";
+	public static final String listChildren        = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1 AND r.idGroup <> ?1";
 	public static final String listChildrenActive  = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1 AND r.active > 0";
 	
 	@Id
@@ -37,6 +37,9 @@ public class RULGroup implements Serializable {
 	@Column(name="idDesc")
 	private Long idDesc;
 
+	@Column(name="idTitle")
+	private Long idTitle;
+	
 	@Column(name="name")
 	private String name;
 	
@@ -97,6 +100,14 @@ public class RULGroup implements Serializable {
 		this.prefix = prefix;
 	}
 
+	public void setIdTitle(Long idTitle) {
+		this.idTitle = idTitle;
+	}
+	
+	public Long getIdTitle() {
+		return idTitle;
+	}
+
 	public String getUid() {
 		return uid;
 	}
@@ -120,8 +131,9 @@ public class RULGroup implements Serializable {
 		result = prime * result + ((active == null) ? 0 : active.hashCode());
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((idParent == null) ? 0 : idParent.hashCode());
+		result = prime * result + ((idTitle == null) ? 0 : idTitle.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
 		result = prime * result + ((uid == null) ? 0 : uid.hashCode());
@@ -152,15 +164,20 @@ public class RULGroup implements Serializable {
 				return false;
 		} else if (!idGroup.equals(other.idGroup))
 			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
 		if (idParent == null) {
 			if (other.idParent != null)
 				return false;
 		} else if (!idParent.equals(other.idParent))
+			return false;
+		if (idTitle == null) {
+			if (other.idTitle != null)
+				return false;
+		} else if (!idTitle.equals(other.idTitle))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
 			return false;
 		if (prefix == null) {
 			if (other.prefix != null)

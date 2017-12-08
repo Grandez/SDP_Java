@@ -144,7 +144,6 @@ public class RulesLoader {
     	}
         if (samples != null) {
       	   for (RULSample     samp  : samples.getSamples()) dbCommon.update(samp);
-      	   for (RULSampleDesc sampd : samples.getSamplesDesc()) dbCommon.update(sampd);
     	}    	
     }
     
@@ -167,7 +166,6 @@ public class RulesLoader {
 		common.deleteQuery("DELETE FROM RULRule       r");
 		common.deleteQuery("DELETE FROM RULCond       c");
 		common.deleteQuery("DELETE FROM RULSample     s");
-		common.deleteQuery("DELETE FROM RULSampleDesc d");
 		common.deleteQuery("DELETE FROM RULDesc       d");
 		common.deleteQuery("DELETE FROM RULScript     S");
 	}

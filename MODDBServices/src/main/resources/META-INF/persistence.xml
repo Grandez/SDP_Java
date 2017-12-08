@@ -13,7 +13,7 @@
         <class>com.jgg.sdp.domain.cfg.CFGConfig</class>
         <class>com.jgg.sdp.domain.cfg.CFGConfigDesc</class>
         <class>com.jgg.sdp.domain.cfg.CFGConfigTooltip</class>
-        <class>com.jgg.sdp.domain.cfg.CFGCodigo</class>
+        <class>com.jgg.sdp.domain.cfg.CFGCode</class>
         <class>com.jgg.sdp.domain.cfg.CFGTranslate</class>
         
 <!--         <class>com.jgg.sdp.domain.collector.summary.SumModulo</class> -->
@@ -56,7 +56,6 @@
         <class>com.jgg.sdp.domain.rules.RULItem</class>        
         <class>com.jgg.sdp.domain.rules.RULRule</class>
         <class>com.jgg.sdp.domain.rules.RULSample</class>        
-        <class>com.jgg.sdp.domain.rules.RULSampleDesc</class>
         <class>com.jgg.sdp.domain.rules.RULScript</class>
                 
         <class>com.jgg.sdp.domain.session.SESArbol</class>

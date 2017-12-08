@@ -36,11 +36,11 @@
                <version>${sdp.version}</version>
            </dependency>
 
-            <dependency>
-               <groupId>com.jgg.sdp</groupId>
-               <artifactId>MODTools</artifactId>
-               <version>${sdp.version}</version>
-           </dependency>
+<!--             <dependency> -->
+<!--                <groupId>com.jgg.sdp</groupId> -->
+<!--                <artifactId>MODTools</artifactId> -->
+<!--                <version>${sdp.version}</version> -->
+<!--            </dependency> -->
 
             <dependency>
                <groupId>com.jgg.sdp</groupId>
@@ -59,30 +59,37 @@
                <artifactId>slf4j-log4j12</artifactId>
                <version>1.7.5</version>
            </dependency>
-         </dependencies>
+
+           <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+              <version>${spring.version}</version>
+           </dependency>
            
+         </dependencies>
+                    
       </profile>
 
       <profile>
            <id>Distribution</id>      
          <dependencies>
-            <dependency>
-               <groupId>com.jgg.sdp</groupId>
-               <artifactId>MODADT</artifactId>
-               <version>${sdp.version}</version>
-           </dependency>
+<!--             <dependency> -->
+<!--                <groupId>com.jgg.sdp</groupId> -->
+<!--                <artifactId>MODADT</artifactId> -->
+<!--                <version>${sdp.version}</version> -->
+<!--            </dependency> -->
 
-            <dependency>
-               <groupId>com.jgg.sdp</groupId>
-               <artifactId>MODTools</artifactId>
-               <version>${sdp.version}</version>
-           </dependency>
+<!--             <dependency> -->
+<!--                <groupId>com.jgg.sdp</groupId> -->
+<!--                <artifactId>MODTools</artifactId> -->
+<!--                <version>${sdp.version}</version> -->
+<!--            </dependency> -->
 
-            <dependency>
-               <groupId>com.jgg.sdp</groupId>
-               <artifactId>MODPrinter</artifactId>
-               <version>${sdp.version}</version>
-           </dependency>
+<!--             <dependency> -->
+<!--                <groupId>com.jgg.sdp</groupId> -->
+<!--                <artifactId>MODPrinter</artifactId> -->
+<!--                <version>${sdp.version}</version> -->
+<!--            </dependency> -->
        
            <dependency>
                <groupId>org.slf4j</groupId>
@@ -95,6 +102,13 @@
                <artifactId>slf4j-log4j12</artifactId>
                <version>1.7.5</version>
            </dependency>
+
+           <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-core</artifactId>
+              <version>${spring.version}</version>
+           </dependency>
+
          </dependencies>
 
       </profile>

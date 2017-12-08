@@ -36,7 +36,7 @@ public class LANG {
         }
         
     	l[0] = def.substring(0, pos);
-    	l[1] = def.substring(pos + 1);
+    	l[1] = def.substring(pos + 1, pos + 3);
     	return l;
     }
 

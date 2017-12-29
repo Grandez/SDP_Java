@@ -9,7 +9,9 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
 <!--         <class>com.jgg.sdp.domain.admin.ADMUsuario</class> -->
-                                
+
+        <class>com.jgg.sdp.domain.batch.BATPending</class>
+                                        
         <class>com.jgg.sdp.domain.cfg.CFGConfig</class>
         <class>com.jgg.sdp.domain.cfg.CFGConfigDesc</class>
         <class>com.jgg.sdp.domain.cfg.CFGConfigTooltip</class>
@@ -53,7 +55,8 @@
         <class>com.jgg.sdp.domain.rules.RULCond</class>        
         <class>com.jgg.sdp.domain.rules.RULDesc</class>
         <class>com.jgg.sdp.domain.rules.RULGroup</class>
-        <class>com.jgg.sdp.domain.rules.RULItem</class>        
+        <class>com.jgg.sdp.domain.rules.RULItem</class>
+        <class>com.jgg.sdp.domain.rules.RULMessage</class>        
         <class>com.jgg.sdp.domain.rules.RULRule</class>
         <class>com.jgg.sdp.domain.rules.RULSample</class>        
         <class>com.jgg.sdp.domain.rules.RULScript</class>

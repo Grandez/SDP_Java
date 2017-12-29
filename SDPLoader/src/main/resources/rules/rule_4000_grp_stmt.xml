@@ -11,12 +11,19 @@
    <r:group name="STMT">
       <idGroup>40</idGroup>
       <prefix>STM</prefix>
+      <r:title>
+          <text lang="xx">Instrucciones no permitidas</text>      
+      </r:title>
+
       <r:description>
           <text lang="xx">Instrucciones no permitidas</text>      
       </r:description>
       
       <r:item name="STMT">
          <object>STATEMENT</object>
+         <r:message>
+            <text>La instruccion {object} no esta permitida</text>
+         </r:message>
          
          <r:rule>
             <severity>5</severity>

@@ -12,15 +12,18 @@
       <idGroup>11</idGroup>
       <idParent>10</idParent>
       <prefix>CBL</prefix>
-      <r:description>
+      <r:title>
           <text lang="xx">Directivas de compilacion</text>      
-      </r:description>
+      </r:title>
       
       <r:item name="CBL_DIRECTIVE">
          <object>CBL</object>
          <r:description>
             <text lang="xx">No usar directivas de compilacion</text>
          </r:description>
+         <r:message>
+            <text lang="xx">No usar directivas de compilacion</text>
+         </r:message>
          
          <r:rule>
             <severity>5</severity>
@@ -34,9 +37,6 @@
       <r:item name="CBL_LIST_DIRECTIVE">
          <object>WORD</object>
          <active>true</active>
-         <r:description>
-            <text lang="xx">No usar sentencias de compilacion</text>
-         </r:description>
          
          <!--  Son logicamente excluyentes -->
          <r:rule name="eject">

@@ -10,7 +10,8 @@ public class RULSample implements Serializable {
 
 	private static final long serialVersionUID = 1814047234974235293L;
 
-	public static final String delSample      = "DELETE FROM RULSample s WHERE s.idSample = ?1";
+	public static final String delSample        = "DELETE FROM RULSample s WHERE s.idSample = ?1";
+	public static final String listSampleByType = "SELECT s FROM RULSample s WHERE s.idSample = ?1 AND s.type = ?2 ORDER BY s.line";
 	
 	@Id
 	@Column(name="idSample")

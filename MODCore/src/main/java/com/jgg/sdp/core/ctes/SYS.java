@@ -27,8 +27,8 @@ public class SYS {
 	public static final String DEF_USER = "System";
 	
 	// Lenguaje por defecto si no existe el propio
-	public static final String DEF_LANG    = "XX";
-	public static final String DEF_DIALECT = "xx";
+	public static final String DEF_LANG    = "xx";
+	public static final String DEF_DIALECT = "XX";
 	
 	// Cadena para identificar nulos
 	public static final String NULL = "N/A";

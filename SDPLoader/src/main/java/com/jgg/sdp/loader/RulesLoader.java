@@ -21,6 +21,7 @@ public class RulesLoader {
     private RulesItem    items   = null;
     private RulesRule    rules   = null;
 
+	private RulesMessage     msgs    = RulesMessage.getInstance();    
 	private RulesDescription descs   = RulesDescription.getInstance();
 	private RulesCondition   conds   = RulesCondition.getInstance();
 	private RulesScript      scripts = RulesScript.getInstance();
@@ -47,10 +48,10 @@ public class RulesLoader {
 		XMLParser<SDPRules> loader = new XMLParser<SDPRules>();
 		
 		for (File f : loader.loadFromResource("rules")) {
-//			System.out.print("Processing " + f.getName());
+			System.out.print("Processing " + f.getName());
 			SDPRules cfg = loader.readXML(f, "/SDPRules.xsd", SDPRules.class);
 			loadXMLFile(cfg);
-//	        System.out.println("\tOK");
+	        System.out.println("\tOK");
 		}
 
 		return 0;
@@ -101,7 +102,7 @@ public class RulesLoader {
             RULItem item = items.createItem(group, xmlItem);
             rules = RulesRule.getInstance();
             for (Rule xmlRule : xmlItem.getRule()) {
-            	rules.createRule(item.getIdGroup(), item.getIdItem(), xmlRule);
+            	rules.createRule(item.getIdGroup(), item.getIdItem(), xmlRule, item.getIdMsg());
 //            	r.friendly();
             }
         }
@@ -111,7 +112,7 @@ public class RulesLoader {
     	
    		RULItem item = items.createItem(xmlItem);
     	for (Rule xmlRule : xmlItem.getRule()) {
-    	     rules.createRule(item.getIdGroup(), item.getIdItem(), xmlRule);
+    	     rules.createRule(item.getIdGroup(), item.getIdItem(), xmlRule, item.getIdMsg());
 //    	     r.friendly();
     	}
     }
@@ -140,11 +141,16 @@ public class RulesLoader {
     	   for (RULScript script : scripts.getScripts()) dbCommon.update(script);
     	}
     	if (descs != null) {
-    	   for (RULDesc desc : descs.getDescriptions()) dbCommon.update(desc);
+    	   for (RULDesc desc : descs.getDescriptions()) 
+    		   dbCommon.update(desc);
     	}
         if (samples != null) {
       	   for (RULSample     samp  : samples.getSamples()) dbCommon.update(samp);
     	}    	
+        if (msgs != null) {
+       	   for (RULMessage     msg  : msgs.getMessages()) dbCommon.update(msg);
+     	}    	
+
     }
     
 	private void initEnvironment() {
@@ -157,6 +163,7 @@ public class RulesLoader {
 	    conds.clear();
 	    samples.clear();
 	    scripts.clear();
+	    msgs.clear();
 	}
 
 	public void deleteData() {
@@ -168,6 +175,7 @@ public class RulesLoader {
 		common.deleteQuery("DELETE FROM RULSample     s");
 		common.deleteQuery("DELETE FROM RULDesc       d");
 		common.deleteQuery("DELETE FROM RULScript     S");
+		common.deleteQuery("DELETE FROM RULMessage    M");
 	}
 
 }

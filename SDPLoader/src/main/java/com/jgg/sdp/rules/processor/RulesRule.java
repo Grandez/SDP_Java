@@ -15,6 +15,7 @@ public class RulesRule {
 	private ADTBag<RULRule>  rules        = new ADTBag<RULRule>();
 
 	private RulesDescription descs = RulesDescription.getInstance();
+	private RulesMessage     msgs  = RulesMessage.getInstance();	
 	private RulesCondition   conds = RulesCondition.getInstance();
 	private RulesSample      samps = RulesSample.getInstance();
 	
@@ -30,7 +31,7 @@ public class RulesRule {
 		return rule;
 	}
 
-	public RULRule createRule(Long idGroup, Long idItem, Rule xmlRule) {
+	public RULRule createRule(Long idGroup, Long idItem, Rule xmlRule, long idMsg) {
 		long key = 0L;		
 		RULRule rule =  null;
 		Long idRule = xmlRule.getIdRule();
@@ -48,28 +49,30 @@ public class RulesRule {
 		rule.setPriority(xmlRule.getPriority() == null ? 0 : xmlRule.getPriority());
 		rule.setSeverity(xmlRule.getSeverity());
         rule.setName(xmlRule.getName());
-		key = Long.parseLong(String.format("%02d%02d%02d", rule.getIdGroup(), 
+		key = Long.parseLong(String.format("%03d%03d%03d", rule.getIdGroup(), 
 				                                           rule.getIdItem(), 
 				                                           rule.getIdRule()));
 		
-		rule.setActive(processActivateConditions(key * 10, xmlRule));
-		rule.setIdCond(conds.createCondition((key * 10) + 1, xmlRule.getCondition(), 0));	
-		rule.setIdTitle(descs.createTitle(key, xmlRule.getTitle()));
+	    rule.setIdTitle(0L);
 		rule.setIdDesc(descs.createDescription(key, xmlRule.getDescription()));
+		rule.setIdMsg(msgs.createMessage(key, xmlRule.getMessage(), idMsg));
 		rule.setIdSample(samps.createSample(key, xmlRule.getSample()));
 		rule.setUid(System.getProperty("user.name"));
 		rule.setTms(new Timestamp(System.currentTimeMillis()));
+
+		rule.setActive(processActivateConditions(key * 10, xmlRule, rule.getIdMsg()));		
+		rule.setIdCond(conds.createCondition((key * 10) + 1, xmlRule.getCondition(), 0, rule.getIdMsg()));
 		rules.add(rule);
 		return rule;
 	}
 
-	private Long processActivateConditions(Long key, Rule xmlRule) {
+	private Long processActivateConditions(Long key, Rule xmlRule, long idMsg) {
 		Long active = processActive(xmlRule.isActive());
 		if (xmlRule.getOnConditions() != null) {
-			return conds.processConditions(key, xmlRule.getOnConditions().getCondition(), active);
+			return conds.processConditions(key, xmlRule.getOnConditions().getCondition(), active, idMsg);
 		}
 		if (xmlRule.getOnCondition() != null) {
-			return conds.processCondition(key, xmlRule.getOnCondition(), active);
+			return conds.processCondition(key, xmlRule.getOnCondition(), active, idMsg);
 		}
 		return active;
 	}

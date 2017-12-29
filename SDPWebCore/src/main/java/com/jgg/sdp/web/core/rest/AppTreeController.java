@@ -1,7 +1,7 @@
 /*
  * 
  */
-package com.jgg.sdp.web.rest.app;
+package com.jgg.sdp.web.core.rest;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.web.core.*;
-import com.jgg.sdp.web.json.*;
+import com.jgg.sdp.web.core.json.ApplTree;
 
 import static com.jgg.sdp.web.core.WEBCodes.*;
 

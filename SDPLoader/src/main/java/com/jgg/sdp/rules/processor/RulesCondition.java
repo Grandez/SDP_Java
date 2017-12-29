@@ -16,7 +16,8 @@ public class RulesCondition {
 	
 	private ADTBag<RULCond> conds = new ADTBag<RULCond>();
 	
-	private RulesScript scripts = RulesScript.getInstance();
+	private RulesScript  scripts = RulesScript.getInstance();
+	private RulesMessage msgs    = RulesMessage.getInstance();
 	
     private static RulesCondition cond = null;
     
@@ -30,15 +31,23 @@ public class RulesCondition {
     }
 
     public Long processConditions(Long key, List<ConditionType> list, long active) {
+    	return processConditions(key, list, active, 0L);
+    }
+    
+    public Long processConditions(Long key, List<ConditionType> list, long active, long idMsg) {
     	int seq = 1;
     	for (ConditionType c : list) {
-    		createCondition(key, c, seq++);
+    		createCondition(key, c, seq++, idMsg);
     	}
     	return key * active;
     }
-    
+
     public Long processCondition(Long key, ConditionType cond, long active) {
-    	createCondition(key, cond, 0);
+    	return processCondition(key, cond, active, 0L);
+    }
+    
+    public Long processCondition(Long key, ConditionType cond, long active, long idMsg) {
+    	createCondition(key, cond, 0, idMsg);
 		return key * active;
     }
     
@@ -46,7 +55,7 @@ public class RulesCondition {
     	return conds;
     }
     
-    public Long createCondition(long key, ConditionType c, int seq) {
+    public Long createCondition(long key, ConditionType c, int seq, long idMsg) {
     	RULCond cond = condService.getCondition(key,  seq);
     	if (cond == null) {
     		cond = new RULCond();
@@ -58,6 +67,7 @@ public class RulesCondition {
     	createRValue(key, cond, c);
     	createOperator(cond, c.getOperator(), c.isNegated());
     	
+    	cond.setIdMsg(msgs.createMessage(key, c.getMessage(), idMsg));
 		cond.setUid(System.getProperty("user.name"));
 		cond.setTms(new Timestamp(System.currentTimeMillis()));
 

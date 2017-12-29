@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.12.02 a las 09:47:50 PM CET 
+// Generado el: 2017.12.27 a las 01:08:04 PM CET 
 //
 
 
@@ -32,16 +32,17 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="idGroup" type="{http://www.sdp.com/SDPRules}idType" minOccurs="0"/>
  *         &lt;element name="object" type="{http://www.sdp.com/SDPRules}objectType"/>
  *         &lt;element name="active" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element ref="{http://www.sdp.com/SDPRules}title" minOccurs="0"/>
+ *         &lt;element ref="{http://www.sdp.com/SDPRules}description" minOccurs="0"/>
+ *         &lt;element ref="{http://www.sdp.com/SDPRules}message" minOccurs="0"/>
  *         &lt;choice minOccurs="0">
  *           &lt;element name="onCondition" type="{http://www.sdp.com/SDPRules}conditionType"/>
  *           &lt;element name="onConditions" type="{http://www.sdp.com/SDPRules}conditionTypeList"/>
  *         &lt;/choice>
- *         &lt;element ref="{http://www.sdp.com/SDPRules}description" minOccurs="0"/>
  *         &lt;element name="sample" type="{http://www.sdp.com/SDPRules}sampleType" minOccurs="0"/>
  *         &lt;element ref="{http://www.sdp.com/SDPRules}rule" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *       &lt;attribute name="name" use="required" type="{http://www.sdp.com/SDPRules}nameType" />
- *       &lt;attribute name="title" type="{http://www.sdp.com/SDPRules}titleType" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -55,9 +56,11 @@ import javax.xml.bind.annotation.XmlType;
     "idGroup",
     "object",
     "active",
+    "title",
+    "description",
+    "message",
     "onCondition",
     "onConditions",
-    "description",
     "sample",
     "rule"
 })
@@ -70,17 +73,19 @@ public class Item {
     protected ObjectType object;
     @XmlElement(defaultValue = "true")
     protected Boolean active;
-    protected ConditionType onCondition;
-    protected ConditionTypeList onConditions;
+    @XmlElement(namespace = "http://www.sdp.com/SDPRules")
+    protected Title title;
     @XmlElement(namespace = "http://www.sdp.com/SDPRules")
     protected Description description;
+    @XmlElement(namespace = "http://www.sdp.com/SDPRules")
+    protected Message message;
+    protected ConditionType onCondition;
+    protected ConditionTypeList onConditions;
     protected SampleType sample;
     @XmlElement(namespace = "http://www.sdp.com/SDPRules")
     protected List<Rule> rule;
     @XmlAttribute(name = "name", required = true)
     protected String name;
-    @XmlAttribute(name = "title")
-    protected String title;
 
     /**
      * Obtiene el valor de la propiedad idItem.
@@ -179,6 +184,78 @@ public class Item {
     }
 
     /**
+     * Obtiene el valor de la propiedad title.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Title }
+     *     
+     */
+    public Title getTitle() {
+        return title;
+    }
+
+    /**
+     * Define el valor de la propiedad title.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Title }
+     *     
+     */
+    public void setTitle(Title value) {
+        this.title = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad description.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Description }
+     *     
+     */
+    public Description getDescription() {
+        return description;
+    }
+
+    /**
+     * Define el valor de la propiedad description.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Description }
+     *     
+     */
+    public void setDescription(Description value) {
+        this.description = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad message.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Message }
+     *     
+     */
+    public Message getMessage() {
+        return message;
+    }
+
+    /**
+     * Define el valor de la propiedad message.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Message }
+     *     
+     */
+    public void setMessage(Message value) {
+        this.message = value;
+    }
+
+    /**
      * Obtiene el valor de la propiedad onCondition.
      * 
      * @return
@@ -224,30 +301,6 @@ public class Item {
      */
     public void setOnConditions(ConditionTypeList value) {
         this.onConditions = value;
-    }
-
-    /**
-     * Obtiene el valor de la propiedad description.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Description }
-     *     
-     */
-    public Description getDescription() {
-        return description;
-    }
-
-    /**
-     * Define el valor de la propiedad description.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Description }
-     *     
-     */
-    public void setDescription(Description value) {
-        this.description = value;
     }
 
     /**
@@ -325,30 +378,6 @@ public class Item {
      */
     public void setName(String value) {
         this.name = value;
-    }
-
-    /**
-     * Obtiene el valor de la propiedad title.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Define el valor de la propiedad title.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setTitle(String value) {
-        this.title = value;
     }
 
 }

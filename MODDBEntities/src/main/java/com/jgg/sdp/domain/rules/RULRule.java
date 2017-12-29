@@ -7,9 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="RUL_RULES")
-public class RULRule implements Serializable, IRules {
+public class RULRule implements Serializable, IRule {
 	
-	private static final long serialVersionUID = 7269245642444970460L;
+	private static final long serialVersionUID = 5373322486433249099L;
 
 	public final static String delRulesOfItem   = "DELETE FROM RULRule r where r.idGroup = ?1 AND r.idItem = ?2";
 	public final static String findMaxId        = "SELECT MAX(r.idRule) FROM RULRule r WHERE idGroup = ?1 AND idItem = ?2";
@@ -40,6 +40,12 @@ public class RULRule implements Serializable, IRules {
 
 	@Column(name="idTitle")
 	private Long idTitle;
+
+    @Column(name="prefix")
+    private String prefix;
+	
+	@Column(name="idMsg")
+	private Long idMsg;
 	
 	@Column(name="idCond")
 	private Long idCond;
@@ -93,6 +99,14 @@ public class RULRule implements Serializable, IRules {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 		
 	public Long getIdTitle() {
 		return idTitle;
@@ -102,6 +116,14 @@ public class RULRule implements Serializable, IRules {
 		this.idTitle = idTitle;
 	}
 
+	public Long getIdMsg() {
+		return idMsg;
+	}
+
+	public void setIdMsg(Long idMsg) {
+		this.idMsg = idMsg;
+	}
+	
 	public Long getIdDesc() {
 		return idDesc;
 	}
@@ -175,10 +197,12 @@ public class RULRule implements Serializable, IRules {
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idItem == null) ? 0 : idItem.hashCode());
+		result = prime * result + ((idMsg == null) ? 0 : idMsg.hashCode());
 		result = prime * result + ((idRule == null) ? 0 : idRule.hashCode());
 		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
 		result = prime * result + ((idTitle == null) ? 0 : idTitle.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
 		result = prime * result + ((priority == null) ? 0 : priority.hashCode());
 		result = prime * result + ((severity == null) ? 0 : severity.hashCode());
 		result = prime * result + ((tms == null) ? 0 : tms.hashCode());
@@ -220,6 +244,11 @@ public class RULRule implements Serializable, IRules {
 				return false;
 		} else if (!idItem.equals(other.idItem))
 			return false;
+		if (idMsg == null) {
+			if (other.idMsg != null)
+				return false;
+		} else if (!idMsg.equals(other.idMsg))
+			return false;
 		if (idRule == null) {
 			if (other.idRule != null)
 				return false;
@@ -239,6 +268,11 @@ public class RULRule implements Serializable, IRules {
 			if (other.name != null)
 				return false;
 		} else if (!name.equals(other.name))
+			return false;
+		if (prefix == null) {
+			if (other.prefix != null)
+				return false;
+		} else if (!prefix.equals(other.prefix))
 			return false;
 		if (priority == null) {
 			if (other.priority != null)
@@ -262,6 +296,6 @@ public class RULRule implements Serializable, IRules {
 			return false;
 		return true;
 	}
-	
+
 	
 }

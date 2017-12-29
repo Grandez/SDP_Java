@@ -93,7 +93,8 @@
                <module>../SDPClientWMQS</module>
                <module>../SDPClientJMS</module>               
                <module>../SDPLoader</module>               
-               <module>../SDPIVP</module>               
+               <module>../SDPIVP</module>           
+               <module>../SDPBatch</module>                   
            </modules>                                
            
        </profile>
@@ -165,13 +166,14 @@
                <module>../SDPCollector</module>
 <!--                <module>../SDPLogger</module> -->
                <module>../SDPLoader</module>
+               <module>../SDPBatch</module>               
                <module>../SDPIVP</module>
                
                <!-- Distribution WARs  -->
 <!--                <module>../SDPWebAdmin</module> -->
                <module>../SDPWebClient</module>    
                <module>../SDPWebCollector</module>
-                      
+                                            
            </modules>                                
            
        </profile>

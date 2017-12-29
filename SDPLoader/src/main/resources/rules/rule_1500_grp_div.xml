@@ -12,6 +12,10 @@
       <idGroup>15</idGroup>
       <prefix>DIV</prefix>
       <active>true</active>
+      <r:title>
+          <text>Control de divisiones</text>      
+      </r:title>
+      
       <r:description>
           <text lang="xx">Reglas de control de las divisiones</text>      
       </r:description>

@@ -19,7 +19,8 @@ public class RulesItem {
 	private RulesDescription descs = RulesDescription.getInstance();
 	private RulesCondition   conds = RulesCondition.getInstance();
 	private RulesSample      samps = RulesSample.getInstance();
-
+	private RulesMessage     msgs  = RulesMessage.getInstance();
+	
 	private static RulesItem item = null;
 	
 	public RulesItem() {
@@ -54,14 +55,16 @@ public class RulesItem {
 		
 		item.setType(processType(xmlItem.getObject().getType()));
 		
-		key = Long.parseLong(String.format("%02d%02d", item.getIdGroup(), item.getIdItem()));
-		
-		item.setActive(processActivateConditions(key * 10, xmlItem));		
-		item.setIdTitle(descs.createTitle(id, xmlItem.getTitle()));
+		key = Long.parseLong(String.format("%03d%03d", item.getIdGroup(), item.getIdItem()));
+				
+		item.setIdTitle(descs.createTitle(key, xmlItem.getTitle()));
+		item.setIdMsg(msgs.createMessage(key, xmlItem.getMessage()));
 		item.setIdDesc(descs.createDescription(key, xmlItem.getDescription()));
 		item.setIdSample(samps.createSample(key, xmlItem.getSample()));
 		item.setUid(System.getProperty("user.name"));
 		item.setTms(new Timestamp(System.currentTimeMillis()));
+		
+		item.setActive(processActivateConditions(key * 10, xmlItem, item.getIdMsg()));
 		
 		items.add(item);
 		return item;
@@ -79,13 +82,13 @@ public class RulesItem {
 		}   
 	}
 	
-	private Long processActivateConditions(Long key, Item xmlItem) {
+	private Long processActivateConditions(Long key, Item xmlItem, long idMsg) {
 		Long active = processActive(xmlItem.isActive());
 		if (xmlItem.getOnConditions() != null) {
-			return conds.processConditions(key, xmlItem.getOnConditions().getCondition(), active);
+			return conds.processConditions(key, xmlItem.getOnConditions().getCondition(), active, idMsg);
 		}
 		if (xmlItem.getOnCondition() != null) {
-			return conds.processCondition(key, xmlItem.getOnCondition(), active);
+			return conds.processCondition(key, xmlItem.getOnCondition(), active, idMsg);
 		}
 		return active;
 	}

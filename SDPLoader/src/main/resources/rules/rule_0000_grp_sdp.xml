@@ -13,8 +13,11 @@
       <idParent>0</idParent>
       <prefix>SDP</prefix>
       <active>true</active>
+      <r:title>
+         <text>Raiz de las reglas</text>
+      </r:title>
       <r:description>
-          <text lang="xx">Raiz de las reglas</text>      
+          <text>Raiz de las reglas</text>      
       </r:description>
    </r:group>
 

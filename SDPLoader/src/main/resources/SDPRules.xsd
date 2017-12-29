@@ -30,16 +30,18 @@
     		   <xs:element name="idParent"  type="idType"     minOccurs="0" maxOccurs="1"/>
     		   <xs:element name="prefix"    type="prefixType" minOccurs="1" maxOccurs="1"/>
                <xs:element name="active"    type="xs:boolean" minOccurs="0" maxOccurs="1"   default="true"/>
+               <xs:element ref="title"                        minOccurs="0" maxOccurs="1"/>               
+               <xs:element ref="description"                  minOccurs="0" maxOccurs="1"/>
+
                <xs:choice minOccurs="0" maxOccurs="1">
                   <xs:element name="onCondition"  type="conditionType"/>
                   <xs:element name="onConditions" type="conditionTypeList" />
                </xs:choice>
-               
-               <xs:element ref="description"                  minOccurs="0" maxOccurs="1"/>
+               <xs:element name="sample"    type="sampleType" minOccurs="0" maxOccurs="1"/>               
                <xs:element ref="item"                         minOccurs="0" maxOccurs="unbounded"  />
            </xs:sequence>
     	   <xs:attribute name="name"  type="nameType" use="required"/>
-    	   <xs:attribute name="title" type="titleType"/>
+
         </xs:complexType>
     </xs:element>
 
@@ -50,16 +52,20 @@
                <xs:element name="idGroup" type="idType"      minOccurs="0" maxOccurs="1"/>
                <xs:element name="object"  type="objectType"  minOccurs="1" maxOccurs="1"/>
                <xs:element name="active"  type="xs:boolean"  minOccurs="0" maxOccurs="1"   default="true"/>
+               <xs:element ref="title"                       minOccurs="0" maxOccurs="1"/>
+               <xs:element ref="description"                 minOccurs="0" maxOccurs="1"/>
+               <xs:element ref="message"                     minOccurs="0" maxOccurs="1"/>
+                                             
                <xs:choice minOccurs="0" maxOccurs="1">
                   <xs:element name="onCondition"  type="conditionType"/>
                   <xs:element name="onConditions" type="conditionTypeList" />
                </xs:choice>
-               <xs:element ref="description"                 minOccurs="0" maxOccurs="1"/>
+
                <xs:element name="sample"  type="sampleType"  minOccurs="0" maxOccurs="1"/>
                <xs:element ref="rule"                        minOccurs="0" maxOccurs="unbounded" />
            </xs:sequence>
            <xs:attribute name="name"  type="nameType" use="required"/>
-           <xs:attribute name="title" type="titleType"/>           
+           
        </xs:complexType>
        
     </xs:element>
@@ -72,19 +78,28 @@
                <xs:element name="idGroup"     type="idType"        minOccurs="0" maxOccurs="1"/>
                <xs:element name="priority"    type="xs:int"        minOccurs="0" maxOccurs="1"   default="0"/>
                <xs:element name="severity"    type="severityType"  minOccurs="1" maxOccurs="1"/>
-               <xs:element name="active"    type="xs:boolean" minOccurs="0" maxOccurs="1"   default="true"/>
+               <xs:element name="active"      type="xs:boolean"    minOccurs="0" maxOccurs="1"   default="true"/>
+               <xs:element ref="message"                           minOccurs="0" maxOccurs="1"/>               
+               <xs:element ref="description"                       minOccurs="0" maxOccurs="1"/>
+
                <xs:choice minOccurs="0" maxOccurs="1">
                   <xs:element name="onCondition"  type="conditionType"/>
                   <xs:element name="onConditions" type="conditionTypeList" />
-               </xs:choice>
-               <xs:element ref="description"                          minOccurs="0" maxOccurs="1"/>                
-               <xs:element name="condition"      type="conditionType" minOccurs="0" maxOccurs="1"/>
-               <xs:element name="sample"         type="sampleType"    minOccurs="0" maxOccurs="1"/>
+               </xs:choice>              
+               <xs:element name="condition"   type="conditionType" minOccurs="0" maxOccurs="1"/>
+               <xs:element name="sample"      type="sampleType"    minOccurs="0" maxOccurs="1"/>
            </xs:sequence>
-           <xs:attribute name="name"  type="nameType"/>
-           <xs:attribute name="title" type="titleType"/>           
+           <xs:attribute name="name"  type="nameType"/>          
        </xs:complexType>
    </xs:element>         
+
+  <xs:element name="message">
+    <xs:complexType>
+         <xs:sequence>     
+            <xs:element name="text" type="textType" minOccurs="1" maxOccurs="unbounded" />
+         </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 
   <xs:element name="description">
     <xs:complexType>
@@ -95,6 +110,14 @@
          </xs:sequence>
       </xs:choice>
       <xs:attribute name="id"  type="idType"  use="optional"/>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="title">
+    <xs:complexType>
+         <xs:sequence>     
+            <xs:element name="text" type="titleType" minOccurs="1" maxOccurs="unbounded" />
+         </xs:sequence>
     </xs:complexType>
   </xs:element>
 
@@ -121,12 +144,14 @@
       </xs:simpleContent>
   </xs:complexType>
   
-   <xs:simpleType name="titleType">
-       <xs:restriction base="xs:string">
-          <xs:minLength value="3"/>
-          <xs:maxLength value="48"/>
-       </xs:restriction>
-  </xs:simpleType>
+   <xs:complexType name="titleType">
+       <xs:simpleContent>
+         <xs:extension base="xs:string">
+            <xs:attribute type="xs:string" name="lang"    use="optional" default="xx"/>
+            <xs:attribute type="xs:string" name="dialect" use="optional" default="XX"/>
+         </xs:extension>         
+      </xs:simpleContent>
+  </xs:complexType>
   
    <xs:simpleType name="severityType">
        <xs:restriction base="xs:integer">
@@ -138,6 +163,7 @@
 
    <xs:complexType name="conditionType">
           <xs:sequence>
+             <xs:element ref="message" minOccurs="0" maxOccurs="1"/>
              <xs:choice minOccurs="0" maxOccurs="1">
                  <xs:element name="lvalue"          type="operandType"/>
                  <xs:element name="script"          type="scriptType"/>

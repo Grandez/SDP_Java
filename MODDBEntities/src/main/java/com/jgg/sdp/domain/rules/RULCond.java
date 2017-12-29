@@ -38,6 +38,9 @@ public class RULCond implements Serializable {
 	@Column(name="operator")
 	private Integer operator;
 
+	@Column(name="idMsg")
+	private Long idMsg;
+	
 	@Column(name="uid")
 	private String uid;
 	
@@ -58,6 +61,14 @@ public class RULCond implements Serializable {
 
 	public void setIdSeq(Integer idSeq) {
 		this. idSeq =  idSeq;
+	}
+
+	public Long getIdMsg() {
+		return idMsg;
+	}
+
+	public void setIdMsg(Long idMsg) {
+		this. idMsg =  idMsg;
 	}
 	
 	public Integer getLvalueType() {
@@ -121,6 +132,7 @@ public class RULCond implements Serializable {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((idCond == null) ? 0 : idCond.hashCode());
+		result = prime * result + ((idMsg == null) ? 0 : idMsg.hashCode());
 		result = prime * result + ((idSeq == null) ? 0 : idSeq.hashCode());
 		result = prime * result + ((lvalue == null) ? 0 : lvalue.hashCode());
 		result = prime * result + ((lvalueType == null) ? 0 : lvalueType.hashCode());
@@ -145,6 +157,11 @@ public class RULCond implements Serializable {
 			if (other.idCond != null)
 				return false;
 		} else if (!idCond.equals(other.idCond))
+			return false;
+		if (idMsg == null) {
+			if (other.idMsg != null)
+				return false;
+		} else if (!idMsg.equals(other.idMsg))
 			return false;
 		if (idSeq == null) {
 			if (other.idSeq != null)

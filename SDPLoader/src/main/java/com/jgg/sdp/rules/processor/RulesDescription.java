@@ -3,6 +3,8 @@ package com.jgg.sdp.rules.processor;
 import com.jgg.sdp.domain.services.rules.RULDescService;
 import com.jgg.sdp.loader.jaxb.rules.Description;
 import com.jgg.sdp.loader.jaxb.rules.TextType;
+import com.jgg.sdp.loader.jaxb.rules.Title;
+import com.jgg.sdp.loader.jaxb.rules.TitleType;
 import com.jgg.sdp.adt.ADTBag;
 import com.jgg.sdp.core.ctes.SYS;
 import com.jgg.sdp.domain.rules.RULDesc;
@@ -28,10 +30,12 @@ public class RulesDescription {
     	return descs;
     }
     
-    public Long createTitle(Long key, String title) {
+    public Long createTitle(Long key, Title title) {
     	if (title == null) return 0L;
     	descService.deleteDescription(key, 0);
-    	createDescription(key, 0, null, null, title);
+		for (TitleType t : title.getText()) {
+			createDescription(key, 0, t.getLang(), t.getDialect(), t.getValue());
+		}
     	return key;
     }
     

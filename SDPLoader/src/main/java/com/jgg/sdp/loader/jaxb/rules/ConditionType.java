@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.12.02 a las 09:47:50 PM CET 
+// Generado el: 2017.12.27 a las 01:08:04 PM CET 
 //
 
 
@@ -11,6 +11,7 @@ package com.jgg.sdp.loader.jaxb.rules;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
@@ -25,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element ref="{http://www.sdp.com/SDPRules}message" minOccurs="0"/>
  *         &lt;choice minOccurs="0">
  *           &lt;element name="lvalue" type="{http://www.sdp.com/SDPRules}operandType"/>
  *           &lt;element name="script" type="{http://www.sdp.com/SDPRules}scriptType"/>
@@ -52,6 +54,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "conditionType", propOrder = {
+    "message",
     "lvalue",
     "script",
     "type",
@@ -67,6 +70,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ConditionType {
 
+    @XmlElement(namespace = "http://www.sdp.com/SDPRules")
+    protected Message message;
     protected OperandType lvalue;
     protected ScriptType script;
     @XmlSchemaType(name = "string")
@@ -83,6 +88,30 @@ public class ConditionType {
     protected ScriptType rscript;
     @XmlAttribute(name = "negated")
     protected Boolean negated;
+
+    /**
+     * Obtiene el valor de la propiedad message.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Message }
+     *     
+     */
+    public Message getMessage() {
+        return message;
+    }
+
+    /**
+     * Define el valor de la propiedad message.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Message }
+     *     
+     */
+    public void setMessage(Message value) {
+        this.message = value;
+    }
 
     /**
      * Obtiene el valor de la propiedad lvalue.

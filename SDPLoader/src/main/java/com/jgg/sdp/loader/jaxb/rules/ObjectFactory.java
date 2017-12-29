@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.12.02 a las 09:47:50 PM CET 
+// Generado el: 2017.12.27 a las 01:08:04 PM CET 
 //
 
 
@@ -53,19 +53,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ConditionType }
+     * Create an instance of {@link Title }
      * 
      */
-    public ConditionType createConditionType() {
-        return new ConditionType();
+    public Title createTitle() {
+        return new Title();
     }
 
     /**
-     * Create an instance of {@link ConditionTypeList }
+     * Create an instance of {@link TitleType }
      * 
      */
-    public ConditionTypeList createConditionTypeList() {
-        return new ConditionTypeList();
+    public TitleType createTitleType() {
+        return new TitleType();
     }
 
     /**
@@ -82,6 +82,30 @@ public class ObjectFactory {
      */
     public TextType createTextType() {
         return new TextType();
+    }
+
+    /**
+     * Create an instance of {@link Message }
+     * 
+     */
+    public Message createMessage() {
+        return new Message();
+    }
+
+    /**
+     * Create an instance of {@link ConditionType }
+     * 
+     */
+    public ConditionType createConditionType() {
+        return new ConditionType();
+    }
+
+    /**
+     * Create an instance of {@link ConditionTypeList }
+     * 
+     */
+    public ConditionTypeList createConditionTypeList() {
+        return new ConditionTypeList();
     }
 
     /**

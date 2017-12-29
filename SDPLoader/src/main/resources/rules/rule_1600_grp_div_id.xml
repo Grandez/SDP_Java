@@ -13,6 +13,10 @@
       <idParent>15</idParent>
       <prefix>DIV</prefix>
       <active>true</active>
+      <r:title>
+          <text>IDENTIFICATION DIVISION</text>      
+      </r:title>
+
       <r:description>
           <text lang="xx">Reglas de control de procedure division</text>      
       </r:description>
@@ -21,8 +25,30 @@
          <object>IDENTIFICATION</object>
          <active>true</active>
          <r:description id="1601">
-             <text lang="xx">es necesario incluir la opcion {option}</text>      
+             <text lang="xx">Control de las opciones de IDENTIFICATION DIVISION</text>      
          </r:description>
+         <r:message>
+                  <text lang="xx" dialect="XX">No es necesario indicar {lvalue}</text>
+         </r:message>
+
+         <sample>
+               <description>
+               Los comentarios pueden empezar con *,/ o D
+               
+               Estos dos ultimos afectan a como se imprime el codigo fuente durante la fase de compilacion.   
+               Dado que no esta permitido imprimir listados desde el Host, estos tipos de comentarios no deben
+               utilizarse
+               </description> 
+               <correct>
+      * ESTE ES UN COMENTARIO CORRECTO           
+               </correct>
+                            
+               <bad>
+      / ESTE ES UN COMENTARIO INCORRECTO
+      D ESTE ES OTRO COMENTARIO INCORRECTO          
+               </bad>
+
+            </sample>                
          
          <r:rule>
             <severity>2</severity>
@@ -85,13 +111,14 @@
       
       <r:item name="DIV_AUTHOR">
          <object type="option">AUTHOR</object>
+         <r:description>
+             <text lang="xx">El autor debe seguir el patron "usuario - empresa"</text>      
+         </r:description>
+
          <onCondition>
             <lvalue type="option">AUTHOR</lvalue>
             <property>has</property>
          </onCondition>        
-         <r:description>
-             <text lang="xx">El autor debe seguir el patron "usuario - empresa"</text>      
-         </r:description>
          
          <r:rule name="name format">
             <severity>3</severity>
@@ -133,14 +160,14 @@
          <r:rule name="date updated">
             <priority>2</priority>
             <severity>3</severity>
+            <r:description>
+               <text lang="xx">La fecha de compilacion debe estar actualizada</text>      
+            </r:description>
             <onCondition>
                 <lvalue type="configuration">parser.force</lvalue>
                 <operator>is</operator>
                 <value>false</value>
             </onCondition>
-            <r:description>
-               <text lang="xx">La fecha de compilacion debe estar actualizada</text>      
-            </r:description>
             <condition>
                <lvalue type="expression">now() - as.date({object})</lvalue>
                <operator>lt</operator>

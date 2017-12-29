@@ -17,12 +17,19 @@
       
       <r:item name="TAB">
          <object>TAB</object>
-<!--          <active>true</active> -->
          <active>true</active>
-         
+         <r:title>
+            <text>Caracteres de tabulacion</text>
+         </r:title>
          <r:description>
-            <text lang="xx">No usar caracteres de tabulacion</text>
+            <text>
+              El uso de caracteres de tabulacion puede ser dependiente del codigo de paginas usado
+              Puede dar problemas de conversion ASCII/EBCDIC
+            </text>
          </r:description>
+         <r:message>
+            <text>No usar caracteres de tabulacion</text>
+         </r:message>
          
          <r:rule>
             <severity>2</severity>
@@ -34,9 +41,16 @@
 
       <r:item name="HEXDATA">
          <object>HEX</object>
+         <r:title>
+            <text>Valores Hexadecimales</text>
+         </r:title>
+         
          <r:description>
             <text lang="xx">Usar la codificacion hexadecimal para los caracteres no imprimibles</text>
          </r:description>
+         <r:message>
+            <text>Usar la codificacion hexadecimal para los caracteres no imprimibles</text>
+         </r:message>
             
          <r:rule>
             <severity>2</severity>

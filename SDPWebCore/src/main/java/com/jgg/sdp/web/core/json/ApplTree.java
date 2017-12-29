@@ -1,7 +1,7 @@
 /*
  * 
  */
-package com.jgg.sdp.web.json;
+package com.jgg.sdp.web.core.json;
 
 public class ApplTree {
  

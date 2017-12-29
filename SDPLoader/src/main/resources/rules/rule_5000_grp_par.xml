@@ -11,24 +11,31 @@
    <r:group name="PAR">
       <idGroup>50</idGroup>
       <prefix>PAR</prefix>
-      <r:description>
-          <text lang="xx">Calidad de parrafos</text>      
-      </r:description>
+      <r:title>
+          <text>Calidad de parrafos</text>      
+      </r:title>
       
       <r:item name="Inline">
          <object>PARAGRAPH</object>        
-         <onCondition>
-             <property>isInline()</property>
-         </onCondition>            
-
          <r:description>
             <text lang="xx">Control de parrafos inline</text>
          </r:description>
 
+         <onCondition>
+             <property>isInline()</property>
+         </onCondition>            
+
          <r:rule>
             <severity>3</severity>
+            <r:message>
+               <text>El numero maximo de instrucciones para un parrafo Inline es de {rvalue}</text>
+            </r:message>
+            
             <r:description>
-               <text lang="xx">Lineas del parrafo</text>
+               <text>
+                  Un parrafo Inline se debe usar cuando es ejecutado un numero elevado de veces
+                  y el numero y tipo de instrucciones es sencillo
+               </text>
             </r:description>
             <condition>
                <lvalue type="attribute">numLines</lvalue>
@@ -39,8 +46,15 @@
 
          <r:rule>
             <severity>3</severity>
+            <r:message>
+               <text>El parrafo Inline es demasiado complejo</text>
+            </r:message>
+            
             <r:description>
-               <text lang="xx">Lineas del parrafo</text>
+               <text>
+                   La complejidad del parrafo Inline es superior a {rvalue}
+                   Considere utilizar un parafo propio en su lugar
+               </text>
             </r:description>
             <condition>
                <lvalue type="attribute">numBlocks</lvalue>
@@ -53,15 +67,20 @@
          
       <r:item name="Outline">
          <object>PARAGRAPH</object>        
-         <onCondition>
-            <property>isOutline()</property>
-         </onCondition>
          <r:description>
             <text lang="xx">Control parrafos outline</text>
          </r:description>
 
+         <onCondition>
+            <property>isOutline()</property>
+         </onCondition>
+
          <r:rule>
             <severity>3</severity>
+            <r:message>
+               <text>Se desaconseja el uso de parrafos con una unica sentencia EXIT</text>
+            </r:message>
+            
             <r:description>
                <text lang="xx">Parrafos de EXIT</text>
             </r:description>
@@ -72,6 +91,10 @@
          
          <r:rule>
             <severity>3</severity>
+            <r:message>
+               <text>El numero maximo de instrucciones para un parrafo es de {rvalue}</text>
+            </r:message>
+            
             <r:description>
                <text lang="xx">Lineas del parrafo</text>
             </r:description>
@@ -96,6 +119,29 @@
 
          <r:rule>
             <severity>3</severity>
+            <r:message>
+               <text>El parrafo es demasiado complejo</text>
+            </r:message>
+            
+            <r:description>
+               <text>
+                   La complejidad del parrafo Inline es superior a {rvalue}
+                   Considere utilizar un parafo propio en su lugar
+               </text>
+            </r:description>
+            <condition>
+               <lvalue type="attribute">numBlocks</lvalue>
+               <operator>gt</operator>
+               <rvalue>5</rvalue>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <severity>3</severity>
+            <r:message>
+               <text>El parrafo es demasiado complejo</text>
+            </r:message>
+            
             <r:description>
                <text lang="xx">Complejidad del parrafo</text>
             </r:description>

@@ -1,7 +1,7 @@
 /*
  * 
  */
-package com.jgg.sdp.web.core;
+package com.jgg.sdp.web.core.rest;
 
 import java.util.*;
 
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.jgg.sdp.domain.services.web.*;
 import com.jgg.sdp.domain.web.*;
+import com.jgg.sdp.web.core.LANG;
 
 @RestController
 public class MessagesController {

@@ -7,9 +7,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="RUL_GROUPS")
-public class RULGroup implements Serializable, IRules {
+public class RULGroup implements Serializable, IRule {
 
-	private static final long serialVersionUID = -1942203409007224362L;
+	private static final long serialVersionUID = -334146089731244590L;
 
 	public static final String delGroup       = "DELETE FROM RULGroup g where g.idGroup = ?1";
     
@@ -39,6 +39,9 @@ public class RULGroup implements Serializable, IRules {
 
 	@Column(name="idTitle")
 	private Long idTitle;
+
+	@Column(name="idMsg")
+	private Long idMsg;
 	
 	@Column(name="name")
 	private String name;
@@ -82,6 +85,13 @@ public class RULGroup implements Serializable, IRules {
 
 	public void setIdDesc(Long idDesc) {
 		this.idDesc = idDesc;
+	}
+	public Long getIdMsg() {
+		return idMsg;
+	}
+
+	public void setIdMsg(Long idMsg) {
+		this.idMsg = idMsg;
 	}
 
 	public String getName() {
@@ -131,6 +141,7 @@ public class RULGroup implements Serializable, IRules {
 		result = prime * result + ((active == null) ? 0 : active.hashCode());
 		result = prime * result + ((idDesc == null) ? 0 : idDesc.hashCode());
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
+		result = prime * result + ((idMsg == null) ? 0 : idMsg.hashCode());
 		result = prime * result + ((idParent == null) ? 0 : idParent.hashCode());
 		result = prime * result + ((idTitle == null) ? 0 : idTitle.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -164,6 +175,11 @@ public class RULGroup implements Serializable, IRules {
 				return false;
 		} else if (!idGroup.equals(other.idGroup))
 			return false;
+		if (idMsg == null) {
+			if (other.idMsg != null)
+				return false;
+		} else if (!idMsg.equals(other.idMsg))
+			return false;
 		if (idParent == null) {
 			if (other.idParent != null)
 				return false;
@@ -196,6 +212,4 @@ public class RULGroup implements Serializable, IRules {
 			return false;
 		return true;
 	}
-
-	
 }

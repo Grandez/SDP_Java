@@ -61,25 +61,20 @@ public class RulesTree {
 		
 		for (RULGroup grp : groupsService.listActiveGroups()) {
 			RuleGroup group = new RuleGroup();
+			setRuleBase(group, grp);
 			group.setId(grp.getIdGroup());
 			group.setIdParent(grp.getIdParent());
-			group.setActivo(grp.getActive());
-			group.setName(grp.getName());
-			group.setPrefix(grp.getPrefix());
+
 			groupsKeyMap.put(group.getId(), group);
 			groupsNameMap.put(group.getName(), group.getId());
-              if (grp.getIdGroup() == 16) {
-//            	System.out.println("Nada");
-            }
 			loadItemsByGroup(group);
 		}
-//        printTree();
 	}
 
 	
 	private void loadItemsByGroup(RuleGroup group) {
 		for (RULItem itm : itemsService.listActiveItemsByGroup(group.getId())) {
-			RuleItem item = mountItem(itm);
+			RuleItem item = mountItem(group, itm);
 			item.setPrefix(group.getPrefix());
 			group.addItem(item);
 			HashMap<String, RuleItem> map = itemsMap.get(item.getName());
@@ -102,27 +97,34 @@ public class RulesTree {
 		}
 		
 	}
+
+	private void setRuleBase(RuleBase base, IRule reg) {
+        base.setIdDesc(reg.getIdDesc());
+        base.setIdTitle(reg.getIdTitle());
+        base.setIdMsg(reg.getIdMsg());
+        base.setName(reg.getName());
+        base.setActive(reg.getActive());
+        base.setPrefix(reg.getPrefix());
+        base.setUid(reg.getUid());
+        base.setTms(reg.getTms());
+	}
 	
-	private RuleItem mountItem(RULItem itm) {
-		RuleItem item = new RuleItem();
+	private RuleItem mountItem(RuleGroup group, RULItem itm) {
+		RuleItem item = new RuleItem(group);
+		setRuleBase(item, itm);
 		item.setIdGroup(itm.getIdGroup());
 		item.setIdItem(itm.getIdItem());
-		item.setName(itm.getName());
 		item.setObject(itm.getObject());
-		item.setType(itm.getType());
 		item.setActivations(getConditions(itm.getActive()));
 		return item;
 	}
 
 	private RuleRule mountRule(RuleItem item, RULRule rul) {
-		RuleRule rule = new RuleRule();
-		rule.setIdGroup(rul.getIdGroup());
-		rule.setIdItem(rul.getIdItem());
+		RuleRule rule = new RuleRule(item);
+		setRuleBase(item, rul);
 		rule.setIdRule(rul.getIdRule());
-		rule.setName(rul.getName());
 		rule.setSeverity(rul.getSeverity());
 		rule.setPriority(rul.getPriority());
-		rule.setPrefix(item.getPrefix());
 		rule.setActivations(getConditions(rul.getActive()));
 		rule.setCondition(getCondition(rul.getIdCond()));
 		return rule;
@@ -150,7 +152,7 @@ public class RulesTree {
 		return conds;
 	}
 	
-	
+/*	
 	private void printTree() {
 		printGroups();
 		printItems();
@@ -170,5 +172,5 @@ public class RulesTree {
 			System.out.println("\t" + it.next());
 		}
 	}
-	
+*/	
 }

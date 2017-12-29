@@ -12,7 +12,22 @@ public class RuleCond {
 	private Integer   operator;
 	private String    uid;
 	private Timestamp tms;
-	private boolean   negated;
+	private Boolean   negated;
+	
+	public RuleCond() {
+	}
+	
+	public RuleCond(RuleCond cond) {
+       idCond     = new Long(cond.getIdCond());
+       lvalueType = new Integer(cond.getLvalueType());
+       lvalue     = cond.getLvalue();
+       rvalueType = new Integer(cond.getRvalueType());
+       rvalue     = cond.getRvalue();
+       operator   = new Integer(cond.getOperator());
+       uid        = cond.getUid();
+       tms        = new Timestamp(cond.getTms().getTime());
+       negated    = new Boolean(cond.getNegated());
+	}
 	
 	public Long getIdCond() {
 		return idCond;
@@ -52,6 +67,9 @@ public class RuleCond {
 		this.operator = operator; 
 	}
 	
+	public Boolean getNegated() {
+		return negated;
+	}
 	public boolean isNegated() {
 		return negated;
 	}

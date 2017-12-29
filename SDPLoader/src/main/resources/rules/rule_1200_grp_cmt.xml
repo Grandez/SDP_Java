@@ -13,8 +13,14 @@
       <idParent>10</idParent>
       <prefix>CMT</prefix>
       <active>true</active>
+      <r:title>
+          <text>Comentarios</text>      
+      </r:title>
+      
       <r:description>
-          <text lang="xx">Comentarios</text>      
+          <text>
+             Los comentarios deben ser de la forma "* texto"
+          </text>      
       </r:description>
       
       <r:item name="CMT">

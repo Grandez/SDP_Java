@@ -1,22 +1,48 @@
 package com.jgg.sdp.web.adm.json;
 
 import java.sql.Timestamp;
+import java.util.List;
 
-public class JSonRuleCond {
+import com.jgg.sdp.domain.rules.RULCond;
+
+public class JSonRuleCond implements IJSonText {
 	
-	private Long idCond;
-	private Integer idSeq;
-	private Integer lvalueType;
-	private String lvalue;
-	private Integer rvalueType;
-	private String rvalue;
-	private Integer operator;
-	private String  message;
-	private String uid;
+	private Long      idCond;
+	private Integer   idSeq;
+	private Long      idMsg;
+	private Integer   lvalueType;
+	private String    lvalue;
+	private Integer   rvalueType;
+	private String    rvalue;
+	private Integer   operator;
+	private String    message;
+	private String    uid;
 	private Timestamp tms;
 	
-	private boolean negated;
+	private boolean negated = false;
 	
+	/**
+	 * Crea la copia del objeto de base de datos sobre JSON
+	 * Elimina nulos
+	 * @param cond
+	 */
+	public JSonRuleCond(RULCond cond) {
+		idCond     = (cond.getIdCond() == null) ? 0L : new Long(cond.getIdCond());  
+		idSeq      = (cond.getIdSeq() == null) ? 0  : new Integer(cond.getIdSeq());
+		idMsg      = (cond.getIdMsg() == null) ? 0L : new Long(cond.getIdMsg());
+		lvalueType = (cond.getLvalueType() == null) ? 0 : new Integer(cond.getLvalueType());
+		lvalue     = cond.getLvalue();
+		rvalueType = (cond.getRvalueType() == null) ? 0 : new Integer(cond.getRvalueType());
+		rvalue     = cond.getRvalue();
+		uid        = cond.getUid();
+		tms        = new Timestamp(cond.getTms().getTime());
+		if (idCond < 0) {
+			negated = true;
+			idCond *= -1;
+		} 
+		
+	}
+			
 	public Long getIdCond() {
 		return idCond;
 	}
@@ -29,6 +55,14 @@ public class JSonRuleCond {
 	public void setIdSeq(Integer idSeq) {
 		this.idSeq = idSeq;
 	}
+	public Long getIdMsg() {
+		return idMsg == null ? 0 : idMsg;
+	}
+	
+	public void setIdMsg(Long idMsg) {
+		this.idMsg = idMsg;
+	}
+
 	public Integer getLvalueType() {
 		return lvalueType;
 	}
@@ -50,6 +84,10 @@ public class JSonRuleCond {
 	public String getRvalue() {
 		return rvalue;
 	}
+	public String getValue() {
+		return rvalue;
+	}
+
 	public void setRvalue(String rvalue) {
 		this.rvalue = rvalue;
 	}
@@ -82,6 +120,17 @@ public class JSonRuleCond {
 	}
 	public void setNegated(boolean negated) {
 		this.negated = negated;
+	}
+
+	public Long getIdDesc() {
+		return null;
+	}
+
+	public void setDescription(String desc) {
+	}
+
+	public List<JSonRuleCond> getActivations() {
+		return null;
 	}
 
 	

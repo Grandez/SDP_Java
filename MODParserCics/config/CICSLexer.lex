@@ -74,16 +74,11 @@ import static com.jgg.sdp.parser.lang.CICSSym.*;
 
 SPACES=[\ \t]+
 
-ALPHA=[a-zA-Z]+
 ALPHANUM=[a-zA-Z0-9]
 ENTERO=[+|-]?[0-9]+
 DECIMAL=[+|-]?[0-9]+[\.\,]?[0-9]+
 
 ID = {ALPHANUM}({ALPHANUM}|\-|\_)*
-
-EXEC = {SPACES}EXEC
-EXECUTE = {SPACES}EXECUTE
-CICS = {SPACES}CICS
 
 %% 
 

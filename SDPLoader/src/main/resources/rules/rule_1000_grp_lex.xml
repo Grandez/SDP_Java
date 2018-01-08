@@ -11,6 +11,9 @@
    <r:group name="LEX">
       <idGroup>10</idGroup>
       <prefix>LEX</prefix>
+      <r:title>
+         <text>Analisis Lexico / Fuente</text>
+      </r:title>
       <r:description>
           <text lang="xx">Analisis lexico</text>      
       </r:description>

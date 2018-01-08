@@ -13,13 +13,19 @@
       <idParent>10</idParent>
       <prefix>CBL</prefix>
       <r:title>
-          <text lang="xx">Directivas de compilacion</text>      
+          <text lang="xx">Directivas</text>      
       </r:title>
       
       <r:item name="CBL_DIRECTIVE">
          <object>CBL</object>
+         <r:title>
+            <text lang="xx">Directivas de compilacion</text>      
+         </r:title>
          <r:description>
-            <text lang="xx">No usar directivas de compilacion</text>
+            <text>
+                Los parametros y las directivas de compilacion son definidas por el equipo de explotacion
+                No esta permitido sobreescribir esas directivas dentro del codigo fuente
+            </text>
          </r:description>
          <r:message>
             <text lang="xx">No usar directivas de compilacion</text>
@@ -37,6 +43,12 @@
       <r:item name="CBL_LIST_DIRECTIVE">
          <object>WORD</object>
          <active>true</active>
+         <r:title>
+            <text lang="xx">Directivas de impresion</text>      
+         </r:title>
+         <r:message>
+            <text lang="xx">No usar directivas de gestion de listados: **:Value:**</text>
+         </r:message>
          
          <!--  Son logicamente excluyentes -->
          <r:rule name="eject">

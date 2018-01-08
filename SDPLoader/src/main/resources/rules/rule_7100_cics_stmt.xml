@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas CICS</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="CICS">
+      <idGroup>71</idGroup>
+      <idParent>70</idParent>      
+      <prefix>CIC</prefix>
+      <r:title>
+          <text>CICS No permitido</text>      
+      </r:title>
+
+      <r:item name="CICS">
+         <object>STATEMENT</object>
+         <r:title>
+            <text>Sentencias CICS no permitidas</text>      
+         </r:title>
+         <r:message>
+           <text>Sentencia CICS no permitida: **:Value:**</text>
+         </r:message>
+                 
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <value>DISCARD</value>
+            </condition>            
+         </r:rule>
+      </r:item>
+   </r:group>
+
+</r:SDPRules>

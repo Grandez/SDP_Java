@@ -17,26 +17,26 @@ public class RULDescService extends AbstractService<RULDesc> {
 	private HashMap<Long, String> msgs = new HashMap<Long, String>();
 
 	public String getTitle(Long code, String[] lang) {
-		return getAsLine(getDescItem(code, 0, lang));
+		return getItemByType(code, 0, lang);
 	}
 	
-	public List<String> getDescription(Long code, String[] lang) {
-		List<RULDesc> l = getDescItem(code, 1, lang);
-		ArrayList<String> lista = new ArrayList<String>();
-		for (RULDesc r : l) {
-			lista.add(r.getTxt());
-		}
-		return lista;
+	public String getDescription(Long code, String[] lang) {
+		return getItemByType(code, 1, lang);
 	}
 	
-	private String getAsLine(List<RULDesc> lista) {
+	private String getItemByType(Long code, int type, String[] lang ) {
+		Long key = (code * 10) + type;
+		String cache = msgs.get(key);
+		if (cache != null) return cache;
 		StringBuilder sb = new StringBuilder();
-		if (lista.size() == 0) return null;	
-		for (RULDesc r : lista) {
+
+		for (RULDesc r : getDescItem(code, type, lang)) {
 			sb.append(r.getTxt());
 			sb.append('\n');
 		}
-		return sb.toString();
+		if (sb.length() > 0) sb.deleteCharAt(sb.length() - 1);
+		msgs.put(key, sb.toString());
+		return msgs.get(key);
 	}
 	
 	private List<RULDesc> getDescItem(Long code, Integer type, String[] lang) {

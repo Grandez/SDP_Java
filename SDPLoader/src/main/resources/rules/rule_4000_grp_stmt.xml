@@ -12,7 +12,7 @@
       <idGroup>40</idGroup>
       <prefix>STM</prefix>
       <r:title>
-          <text lang="xx">Instrucciones no permitidas</text>      
+          <text lang="xx">Control de instrucciones</text>      
       </r:title>
 
       <r:description>
@@ -21,8 +21,12 @@
       
       <r:item name="STMT">
          <object>STATEMENT</object>
+         <r:title>
+            <text>Instrucciones no permitidas</text>      
+         </r:title>
+
          <r:message>
-            <text>La instruccion {object} no esta permitida</text>
+            <text>La instruccion :Value: no esta permitida</text>
          </r:message>
          
          <r:rule>

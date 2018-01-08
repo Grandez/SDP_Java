@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas CICS</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="CICS">
+      <idGroup>72</idGroup>
+      <idParent>70</idParent>      
+      <prefix>CIC</prefix>
+      <r:title>
+          <text>Calidad CICS</text>      
+      </r:title>
+
+      <r:item name="RESP">
+         <object>STATEMENT</object>
+         <r:title>
+            <text>Control opcion RESP</text>      
+         </r:title>
+         <r:message>
+           <text>Las sentencias CICS deben incluir la opcion **:Value</text>
+         </r:message>
+                 
+         <r:rule>
+            <severity>4</severity>
+            <condition negated="true">
+               <lvalue type="option">RESP</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+       </r:item>
+   </r:group>
+
+</r:SDPRules>

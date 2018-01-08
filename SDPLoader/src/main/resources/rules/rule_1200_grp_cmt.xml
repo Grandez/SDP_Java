@@ -26,6 +26,10 @@
       <r:item name="CMT">
          <object>CMT</object>
          <active>true</active>
+         <r:title>
+           <text>Comentarios</text>      
+         </r:title>
+         
          <r:description>
             <text lang="xx">Gestion de comentarios</text>
          </r:description>
@@ -33,7 +37,7 @@
          <r:rule>
             <severity>2</severity>
             <r:description>
-               <text lang="xx">Los comentarios {comparator} {value}</text>
+               <text lang="xx">Los comentarios :Comparator: :Value:</text>
             </r:description>
             <condition negated="true">
                <type>string</type>

@@ -24,6 +24,7 @@ public class MDText {
 	}
 	
 	private String render(String txt) {
+		if (txt == null) return null;
 		Parser parser = Parser.builder().build();
 		Node document = parser.parse(txt);
 		HtmlRenderer renderer = HtmlRenderer.builder().build();

@@ -6,216 +6,186 @@ import org.springframework.web.bind.annotation.*;
 
 import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.rules.*;
-import com.jgg.sdp.web.adm.code.RulesCodeBase;
+import com.jgg.sdp.web.adm.code.RulesText;
 import com.jgg.sdp.web.adm.json.*;
 import com.jgg.sdp.web.core.LANG;
 import com.jgg.sdp.web.core.json.JSonTree;
 
-import static com.jgg.sdp.rules.ctes.CDGRules.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 public class RulesController {
 
     @Autowired
-    private RULGroupsService   grpService;    
+    private RULGroupsService  grpService;    
     @Autowired
-    private RULItemsService    itemService;    
+    private RULItemsService   itemService;    
     @Autowired
-    private RULRulesService    ruleService;    
+    private RULRulesService   ruleService;    
     @Autowired
-    private RULDescService     descService;    
+    private RULDescService    descService;
     @Autowired
-    private RulesCodeBase base;  
+    private RULCondsService   condService;        
+    @Autowired
+    private RULSamplesService sampService;    
+//
+
+    @Autowired
+    private RulesText base;  
 
     @RequestMapping("/rulesTree")
-    public List<JSonTree<JSonRule>> getRules(@RequestHeader HttpHeaders headers) {
-    	String lang[] = LANG.getLanguage(headers);
-        return loadData(lang);
+    public List<JSonTree<JSonItem>> getRules(@RequestHeader HttpHeaders headers) {
+    	ArrayList<JSonTree<JSonItem>> tree = new ArrayList<JSonTree<JSonItem>>();
+    	String[] lang = LANG.getLanguage(headers);
+    	
+    	for (JSonTree<JSonItem> group : loadGroups(lang)) {
+    		tree.add(group);
+    		loadItems(tree, group, lang);
+    	}
+        return tree;
     }
 
     @RequestMapping("/ruleDetail/{idGroup}")
-    public JSonRule getRulesGroup(@PathVariable Long idGroup, @RequestHeader HttpHeaders headers) {
+    public JSonItem getRulesGroup(@PathVariable Long idGroup, @RequestHeader HttpHeaders headers) {
     	return createGroup(grpService.getById(idGroup), LANG.getLanguage(headers));
     }
 
     @RequestMapping("/ruleDetail/{idGroup}/{idItem}")
-    public JSonRule getRulesItem(@PathVariable Long idGroup
+    public JSonItem getRulesItem(@PathVariable Long idGroup
     		                              ,@PathVariable Long idItem
     		                              ,@RequestHeader HttpHeaders headers) {
-    	JSonRule group = createGroup(grpService.getById(idGroup), LANG.getLanguage(headers));
+    	JSonItem group = createGroup(grpService.getById(idGroup), LANG.getLanguage(headers));
     	return createItem(group, itemService.getById(idGroup, idItem), LANG.getLanguage(headers));
     }
     
-    @RequestMapping("/ruleDetail/{idGroup}/{idItem}/{idRule}")
-    public JSonRule getRulesRule(@PathVariable Long idGroup
-    		                              ,@PathVariable Long idItem
-    		                              ,@PathVariable Long idRule
-    		                              ,@RequestHeader HttpHeaders headers) {
-    	JSonRule group = createGroup(grpService.getById(idGroup), LANG.getLanguage(headers));
-    	JSonRule item  = createItem(group, itemService.getById(idGroup, idItem), LANG.getLanguage(headers));    	
-    	return createRule(item, ruleService.getById(idGroup, idItem, idRule), LANG.getLanguage(headers));
-    }
-    
-    private List<JSonTree<JSonRule>> loadData(String[] lang) {
-    	ArrayList<JSonTree<JSonRule>> tree = new ArrayList<JSonTree<JSonRule>>();
-    	
-    	for (JSonTree<JSonRule> group : loadGroups(lang)) {
-    		tree.add(group);
-    		loadItems(tree, group, lang);
-    	}
-    	return tree;
-    }
-    
-    private List<JSonTree<JSonRule>> loadGroups(String lang[]) {
-    	ArrayList<JSonTree<JSonRule>> tree = new ArrayList<JSonTree<JSonRule>>(); 
+    private List<JSonTree<JSonItem>> loadGroups(String lang[]) {
+    	ArrayList<JSonTree<JSonItem>> tree = new ArrayList<JSonTree<JSonItem>>();
     	for (RULGroup g : grpService.listAll()) {
-    		JSonTree<JSonRule> group = new JSonTree<JSonRule>();
-    		group.setId(String.format("%03d",  g.getIdGroup()));
-        	group.setText(getTitle(lang, g));
-        	if (g.getIdGroup() == 0) {
-        		group.setParent("#");
-        	}
-        	else {
-        	    group.setParent(String.format("%03d",  g.getIdParent()));
-        	}
+    		String id = String.format("%03d",  g.getIdGroup());
+    		JSonTree<JSonItem> group = new JSonTree<JSonItem>();
+    		group.setId(id);
+        	group.setText(getTitle(g, lang));
+        	group.setParent(g.getIdGroup() == 0 ? "#" : String.format("%03d",  g.getIdParent()));
         	
-        	JSonRule json = new JSonRule();
-        	json.setActive(g.getActive() < 0L ? false : true);
-        	json.setId(group.getId());
-        	json.setIdGroup(g.getIdGroup());
-        	json.setNodeType(group.getParent().charAt(0) == '#' ? 0 : 1);
-        	group.setData(json);
+        	JSonItem item = new JSonItem(g);
+        	item.setNodeType(g.getIdGroup() == 0 ? 0 : 1);
+        	item.setId(id);
+        	item.setIdParent(g.getIdParent());
+        	item.setTitle(getTitle(g, lang));
+            item.setPrefix(g.getPrefix());
+            
+        	group.setData(item);
+        	
     		tree.add(group);
     	}
     	return tree;
     }
     
-    private void loadItems(ArrayList<JSonTree<JSonRule>> tree, JSonTree<JSonRule> parent, String lang[]) {
+    private void loadItems(ArrayList<JSonTree<JSonItem>> tree, JSonTree<JSonItem> parent, String lang[]) {
     	for (RULItem i : itemService.listByGroup(parent.getData().getIdGroup())) {
-    		JSonTree<JSonRule> item = new JSonTree<JSonRule>();
-    		item.setId(String.format("%03d%03d",  i.getIdGroup(), i.getIdItem()));
-    		item.setText(getTitle(lang, i));
+    		String id = String.format("%03d%03d",  i.getIdGroup(), i.getIdItem()); 
+    		JSonTree<JSonItem> item = new JSonTree<JSonItem>();
+    		item.setId(id);
+    		item.setText(getTitle(i, lang));
     		item.setParent(String.format("%03d",  i.getIdGroup()));
     		
-        	JSonRule json = new JSonRule(parent.getData());
-        	json.setActive(i.getActive() < 0L ? false : true);
-        	json.setId(item.getId());
-        	json.setIdGroup(i.getIdGroup());
-        	json.setIdItem(i.getIdItem());
-        	json.setNodeType(2);
-        	item.setData(json);
+        	JSonItem data = new JSonItem(i);
+        	data.setId(id);
+        	data.setIdItem(i.getIdItem());
+        	data.setNodeType(2);
+        	data.setTitle(getTitle(i, lang));
         	
+        	item.setData(data);
     		tree.add(item);
-//    		loadRules(tree, item, lang);
     	}
     }
 
-    private void loadRules(ArrayList<JSonTree<JSonRule>> tree, JSonTree<JSonRule> parent, String lang[]) {
-    	JSonRule p = parent.getData();
-    	for (RULRule r : ruleService.listByItem(p.getIdGroup(), p.getIdItem())) {
-    		JSonTree<JSonRule> rule = new JSonTree<JSonRule>();
-    		rule.setId(String.format("%03d%03d%03d",  r.getIdGroup(), r.getIdItem(), r.getIdRule()));
-    		rule.setText(getTitle(lang, r));
-    		rule.setParent(String.format("%03d%03d",  r.getIdGroup(), r.getIdItem()));
-
-    		JSonRule json = new JSonRule(p);
-        	json.setActive(r.getActive() < 0L ? false : true);
-        	json.setId(rule.getId());
-        	json.setIdGroup(r.getIdGroup());
-        	json.setIdItem(r.getIdItem());
-        	json.setIdRule(r.getIdRule());
-        	json.setNodeType(3);
-        	rule.setData(json);
-
-    		tree.add(rule);
-    	}
-    }
-        
-    private JSonRule createGroup(RULGroup group, String lang[]) {
-		JSonRule g = new JSonRule();
-		g.setId(String.format("%03d",  group.getIdGroup()));
-		g.setNodeType(group.getIdGroup() == 0 ? 0 : 1);
-        g.setIdGroup(group.getIdGroup());
+    private JSonItem createGroup(RULGroup group, String lang[]) {
+    	String id = String.format("%03d",  group.getIdGroup());
+		JSonItem g = new JSonItem(group);
+		g.setExpanded(true);        
+		g.setId(id);
         g.setIdParent(group.getIdParent());
-		createBase(g, group, lang);
-		if (group.getIdGroup() == 0) { // Raiz
-        	g.setIdDesc(group.getIdDesc());
-        	g.setDescription(base.mountDescription(group.getIdDesc(), lang));
-        	g.setIdMsg(group.getIdMsg());
-        	g.setMessage(base.mountMessage(group, lang));
-        	g.setIdTitle(group.getIdTitle());
-        }
-
+        g.setPrefix(group.getPrefix());
+        g.setTitle(getTitle(group, lang));
+        
+		createDetail(g, group, lang);
+        base.mountMessages(g, lang);		
 		return g;
     }
 
-    private JSonRule createItem(JSonRule i, RULItem item, String lang[]) {
+    private JSonItem createItem(JSonItem group, RULItem item, String lang[]) {
+    	String id = String.format("%03d%03d",  item.getIdGroup(), item.getIdItem());
+		JSonItem i = new JSonItem(item);
    		i.setNodeType(2);
-		i.setIdGroup(item.getIdGroup());
 		i.setIdItem(item.getIdItem());
-		i.setId(String.format("%03d%03d",  item.getIdGroup(), item.getIdItem()));
-		i.setSample(base.mountSample(item.getIdSample(), lang));
-		createBase(i, item, lang);		
+		i.setId(id);
+
+		i.merge(group);
+		createDetail(i, item, lang);
+		createRules(i, lang);
+		
+		base.mountMessages(i, lang);
         return i;
     }
 
-    private JSonRule createRule(JSonRule r, RULRule rule, String lang[]) {
-		r.setNodeType(3);
-		r.setIdGroup(rule.getIdGroup());
-		r.setIdItem(rule.getIdItem());
-		r.setIdRule(rule.getIdRule());
-		r.setId(String.format("%03d%03d%03d",  rule.getIdGroup(), rule.getIdItem(), rule.getIdRule()));
-		r.setPriority(rule.getPriority());
-		r.setSeverity(rule.getSeverity());
-
-		r.setSample(base.mountSample     (r.getIdSample(), lang));
-		createBase(r, rule, lang);
-		
-		return r;
-    }
-
-    private void createBase(JSonRule r, IRule obj, String[] lang) {
-        r.setActive(obj.getActive() <= OP_NEGATED ? false : true);
-        if (obj.getIdDesc()  != null && obj.getIdDesc() != 0) {
-        	r.setIdDesc(obj.getIdDesc());
-        	r.setDescription(base.mountDescription(obj.getIdDesc(), lang));
-        }
-        if (obj.getIdMsg()   != null && obj.getIdMsg() != 0) {
-        	r.setIdMsg(obj.getIdMsg());
-        	r.setMessage(base.mountMessage(obj, lang));
-        }
-        if (obj.getIdTitle() != null && obj.getIdTitle() != 0) {
-        	r.setIdTitle(obj.getIdTitle());
-        }
-        r.setName(obj.getName());
-        r.setPrefix(obj.getPrefix());
-        r.setTms(obj.getTms());
-        r.setUid(obj.getUid());
-        r.setStatus(obj.getActive());
-        
-//        r.setConds(base.getRawConditions(obj.getActive(), lang));
-		
-
-        
+    private void createRules(JSonItem parent, String lang[]) {
+    	
+    	for (RULRule r : ruleService.listByItem(parent.getIdGroup(), parent.getIdItem())) {
+    		JSonRule json = new JSonRule(r);
+        	json.setLabel(String.format("%s%02d%02d%02d",  parent.getPrefix(), r.getIdGroup(), r.getIdItem(), r.getIdRule()));
+        	json.setActivations(getActivations(r.getActive()));
+        	json.setCondition(getCondition(r.getIdCond()));
+    		parent.addRule(json);
+    	}
     }
     
-    private String getTitle(String lang[], IRule rule) {
+    private void createDetail(JSonItem item, IRule obj, String[] lang) {   
+        item.setActivations(getActivations(obj.getActive()));
+        item.setSample(getSample(item.getIdSample()));
+    }
+        
+    private String getTitle(IRule rule, String lang[]) {
     	String txt = null;
-    	System.out.println(rule.getName());
-    	if (rule.getName() != null && rule.getName().compareTo("TAB") == 0) {
-    		System.out.println(rule.getName());	
-    	}
-    	if (rule.getIdTitle() != null && rule.getIdTitle() != 0)  {
-    		txt = descService.getTitle      (rule.getIdTitle(), lang);
-    	}
+    	if (rule.getIdTitle() != 0)  txt = descService.getTitle(rule.getIdTitle(), lang);
     	if (txt == null)             txt = rule.getName();
     	return txt;
     }
     
-
-    
-    
+	public List<JSonRuleCond> getActivations(Long idCond) {
+		List<JSonRuleCond> list = new ArrayList<JSonRuleCond>();
+		
+	    for (RULCond cond: condService.getConditions(idCond)) {
+	    	list.add(new JSonRuleCond(cond));
+	    }
+	    
+	    return list;
+	}
+	
+	public JSonRuleCond getCondition(Long idCond) {
+		List<JSonRuleCond> list = getActivations(idCond);
+		return list.get(0);
+	}
+	
+	public JSonRuleSample getSample(Long idSample) {
+		if (idSample == 0) return null;
+		JSonRuleSample sample = new JSonRuleSample();
+		StringBuilder sb = new StringBuilder();
+		for (RULSample s : sampService.getSampleKO(idSample)) {
+			sb.append(s.getData());
+			sb.append('\n');
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		sample.setKo(sb.toString());
+		
+		sb.setLength(0);
+		for (RULSample s : sampService.getSampleOK(idSample)) {
+			sb.append(s.getData());
+			sb.append('\n');
+		}
+		sb.deleteCharAt(sb.length() - 1);
+		sample.setOk(sb.toString());
+		return sample;
+	}
+ 	
 }

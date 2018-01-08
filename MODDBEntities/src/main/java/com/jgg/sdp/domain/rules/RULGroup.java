@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name="RUL_GROUPS")
 public class RULGroup implements Serializable, IRule {
 
-	private static final long serialVersionUID = -334146089731244590L;
+	private static final long serialVersionUID = -585565667328081131L;
 
 	public static final String delGroup       = "DELETE FROM RULGroup g where g.idGroup = ?1";
     
@@ -42,6 +42,9 @@ public class RULGroup implements Serializable, IRule {
 
 	@Column(name="idMsg")
 	private Long idMsg;
+
+	@Column(name="idSample")
+	private Long idSample;
 	
 	@Column(name="name")
 	private String name;
@@ -86,12 +89,29 @@ public class RULGroup implements Serializable, IRule {
 	public void setIdDesc(Long idDesc) {
 		this.idDesc = idDesc;
 	}
+
+	public Long getIdTitle() {
+		return idTitle;
+	}
+
+	public void setIdTitle(Long idTitle) {
+		this.idTitle = idTitle;
+	}
+
 	public Long getIdMsg() {
 		return idMsg;
 	}
 
 	public void setIdMsg(Long idMsg) {
 		this.idMsg = idMsg;
+	}
+
+	public Long getIdSample() {
+		return idSample;
+	}
+
+	public void setIdSample(Long idSample) {
+		this.idSample = idSample;
 	}
 
 	public String getName() {
@@ -108,14 +128,6 @@ public class RULGroup implements Serializable, IRule {
 
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
-	}
-
-	public void setIdTitle(Long idTitle) {
-		this.idTitle = idTitle;
-	}
-	
-	public Long getIdTitle() {
-		return idTitle;
 	}
 
 	public String getUid() {
@@ -143,6 +155,7 @@ public class RULGroup implements Serializable, IRule {
 		result = prime * result + ((idGroup == null) ? 0 : idGroup.hashCode());
 		result = prime * result + ((idMsg == null) ? 0 : idMsg.hashCode());
 		result = prime * result + ((idParent == null) ? 0 : idParent.hashCode());
+		result = prime * result + ((idSample == null) ? 0 : idSample.hashCode());
 		result = prime * result + ((idTitle == null) ? 0 : idTitle.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
@@ -185,6 +198,11 @@ public class RULGroup implements Serializable, IRule {
 				return false;
 		} else if (!idParent.equals(other.idParent))
 			return false;
+		if (idSample == null) {
+			if (other.idSample != null)
+				return false;
+		} else if (!idSample.equals(other.idSample))
+			return false;
 		if (idTitle == null) {
 			if (other.idTitle != null)
 				return false;
@@ -212,4 +230,5 @@ public class RULGroup implements Serializable, IRule {
 			return false;
 		return true;
 	}
+
 }

@@ -11,13 +11,21 @@
    <r:group name="MOD">
       <idGroup>90</idGroup>     
       <prefix>MOD</prefix>
+      <r:title>
+          <text>Modulo</text>      
+      </r:title>
+      
       <r:description>
           <text lang="xx">Reglas globales del modulo</text>      
       </r:description>
       
       <r:item name="ModuleName">
          <object>MODULE</object>
-         <active>true</active>         
+         <active>true</active>
+         <r:title>
+             <text>Nombre del modulo</text>      
+         </r:title>
+                  
          <r:description>
             <text lang="xx">El nombre del ejecutable debe coincidir con el del fichero fuente</text>
          </r:description>
@@ -34,7 +42,11 @@
       
       <r:item name="ModuleCount">
          <object>MODULE</object>
-         <active>true</active>         
+         <active>true</active>      
+         <r:title>
+             <text>Numero de modulos</text>      
+         </r:title>
+            
          <r:description>
             <text lang="xx">Cada ejecutable se codifica en su propio fichero fuente</text>
          </r:description>

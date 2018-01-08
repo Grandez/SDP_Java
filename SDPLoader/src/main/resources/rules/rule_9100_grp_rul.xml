@@ -20,10 +20,10 @@
          <object>ISSUES</object>
         
          <r:description>
-            <text lang="xx">El numero maximo de incidencias de nivel {IdRule} {Comparador} {Valor}</text>
+            <text lang="xx">El numero maximo de incidencias de nivel :IdRule: es de :Rvalue:</text>
          </r:description>
          <r:message>
-            <text lang="xx">El numero maximo de incidencias de nivel {IdRule} {Comparador} {Valor}</text>
+            <text lang="xx">El numero maximo de incidencias de nivel :IdRule: es de :Rvalue:</text>
          </r:message>
          
          <r:rule>

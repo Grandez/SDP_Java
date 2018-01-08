@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Reglas de SQL</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="DB2">
+      <idGroup>61</idGroup>
+      <idParent>60</idParent>      
+      <prefix>SQL</prefix>
+      <r:title>
+          <text>SQL No permitido</text>      
+      </r:title>
+
+      <r:item name="DB2">
+         <object>STATEMENT</object>
+         <r:title>
+            <text>SQL No permitido</text>      
+         </r:title>
+         <r:message>
+           <text>En los programas no estan permitidas sentencias SQL de tipo :Group:</text>
+         </r:message>
+                 
+         <r:rule>
+            <severity>5</severity>            
+            <condition>
+               <lvalue type="attribute">group</lvalue>
+               <operator>eq</operator>
+               <rvalue>DCL</rvalue>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <severity>5</severity>            
+            <condition>
+               <lvalue type="attribute">group</lvalue>
+               <operator>eq</operator>
+               <rvalue>DDL</rvalue>
+            </condition>            
+         </r:rule>
+      </r:item>
+   </r:group>
+
+</r:SDPRules>

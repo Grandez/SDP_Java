@@ -22,13 +22,17 @@
          </r:description>
 
          <onCondition>
+            <r:message>
+               <text>Es un parrafo *Inline*</text>
+            </r:message>
+         
              <property>isInline()</property>
          </onCondition>            
 
          <r:rule>
             <severity>3</severity>
             <r:message>
-               <text>El numero maximo de instrucciones para un parrafo Inline es de {rvalue}</text>
+               <text>El numero maximo de instrucciones para un parrafo Inline es de :Rvalue:</text>
             </r:message>
             
             <r:description>
@@ -52,7 +56,7 @@
             
             <r:description>
                <text>
-                   La complejidad del parrafo Inline es superior a {rvalue}
+                   La complejidad del parrafo Inline es superior a :Rvalue:
                    Considere utilizar un parafo propio en su lugar
                </text>
             </r:description>
@@ -72,6 +76,10 @@
          </r:description>
 
          <onCondition>
+            <r:message>
+               <text>Es un parrafo independiente</text>
+            </r:message>
+         
             <property>isOutline()</property>
          </onCondition>
 
@@ -92,7 +100,7 @@
          <r:rule>
             <severity>3</severity>
             <r:message>
-               <text>El numero maximo de instrucciones para un parrafo es de {rvalue}</text>
+               <text>El numero maximo de instrucciones para un parrafo es de :Rvalue:</text>
             </r:message>
             
             <r:description>
@@ -125,7 +133,7 @@
             
             <r:description>
                <text>
-                   La complejidad del parrafo Inline es superior a {rvalue}
+                   La complejidad del parrafo Inline es superior a :Rvalue:
                    Considere utilizar un parafo propio en su lugar
                </text>
             </r:description>

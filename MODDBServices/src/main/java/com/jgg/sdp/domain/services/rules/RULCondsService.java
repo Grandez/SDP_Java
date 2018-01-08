@@ -11,7 +11,9 @@ import com.jgg.sdp.domain.services.AbstractService;
 public class RULCondsService extends AbstractService<RULCond> {
 
 	public List<RULCond> getConditions(Long id) {
-		return listQuery(RULCond.findById, id);
+		Long key = id;
+		if (key < 0) key *= -1;
+		return listQuery(RULCond.findById, key);
 	}
 
 	public RULCond getCondition(Long id, int seq) {

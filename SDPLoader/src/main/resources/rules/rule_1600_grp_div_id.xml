@@ -24,6 +24,10 @@
       <r:item name="DIV_ID">
          <object>IDENTIFICATION</object>
          <active>true</active>
+         <r:title>
+             <text>Opciones de IDENTIFICATION DIVISION</text>      
+         </r:title>
+         
          <r:description id="1601">
              <text lang="xx">Control de las opciones de IDENTIFICATION DIVISION</text>      
          </r:description>
@@ -94,6 +98,9 @@
       
       <r:item name="DIV_LINES">
          <object type="list">Option</object>
+         <r:title>
+             <text>Detalle de IDENTIFICATION DIVISION</text>      
+         </r:title>
 
          <r:rule name="lines">
             <priority>3</priority>
@@ -111,6 +118,10 @@
       
       <r:item name="DIV_AUTHOR">
          <object type="option">AUTHOR</object>
+         <r:title>
+             <text>Opcion AUTHOR</text>      
+         </r:title>
+         
          <r:description>
              <text lang="xx">El autor debe seguir el patron "usuario - empresa"</text>      
          </r:description>
@@ -132,6 +143,10 @@
 
       <r:item name="DIV_COMPILED">
          <object type="option">DATE-COMPILED</object>
+         <r:title>
+             <text>Opcion DATE-COMPILED</text>      
+         </r:title>
+         
          <onConditions>
             <condition>
                <lvalue type="configuration">parser.force</lvalue>
@@ -179,6 +194,10 @@
 
       <r:item name="ENDPOINT">
          <object>ENDPOINT</object>
+         <r:title>
+             <text>End of Statement</text>      
+         </r:title>
+         
          <r:description>
              <text lang="xx">Gestion de puntos"</text>      
          </r:description>

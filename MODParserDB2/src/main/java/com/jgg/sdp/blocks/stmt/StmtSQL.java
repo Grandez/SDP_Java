@@ -12,6 +12,10 @@ public class StmtSQL extends Statement<StmtSQL> {
 		super();
 	}
 	
+	public StmtSQL(String group) {
+		super(group);
+	}
+	
 	public StmtSQL(Symbol s) {
 		super(s);
 	}

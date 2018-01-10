@@ -5,22 +5,23 @@ import java.util.ArrayList;
 
 public class RuleBase {
 
-	protected Long   id;
-	protected Long   idParent;
-	protected Long   active;
-	protected Long   idTitle;
-	protected Long   idDesc;
-	protected Long   idMsg;
-	protected String prefix;
-	protected String name;
-	protected String title;
-	protected String description;
-	protected String message;
-
+	protected Long    id;
+	protected Long    idParent;
+	protected Long    active;
+	protected Long    idTitle;
+	protected Long    idDesc;
+	protected Long    idMsg;
+	protected String  prefix;
+	protected String  name;
+	protected String  title;
+	protected String  description;
+	protected String  message;
+	protected Integer type;
+	
 	protected String    uid;
 	protected Timestamp tms;
 	
-	protected Integer   type;
+	protected Integer   nodeType;
 
 	protected ArrayList<RuleCond>  activations = new ArrayList<RuleCond>();
 	
@@ -116,6 +117,12 @@ public class RuleBase {
 	}
 	public void setType(Integer type) {
 		this.type = type;
+	}
+	public Integer getNodeType() {
+		return nodeType;
+	}
+	public void setNodeType(Integer nodeType) {
+		this.nodeType = nodeType;
 	}
 	
 	public ArrayList<RuleCond> getActivations() {

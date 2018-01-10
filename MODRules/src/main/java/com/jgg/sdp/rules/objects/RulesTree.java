@@ -40,9 +40,6 @@ public class RulesTree {
 		Long id = groupsNameMap.get(name);
 		if (id == null) return null;
 		
-//		if (id == null) {
-//			throw new SystemException(MSG.EXCEPTION_RULE_GROUP, name);
-//		}
 		return getGroupById(id);
 	}
 	
@@ -75,7 +72,7 @@ public class RulesTree {
 	private void loadItemsByGroup(RuleGroup group) {
 		for (RULItem itm : itemsService.listActiveItemsByGroup(group.getId())) {
 			RuleItem item = mountItem(group, itm);
-			item.setPrefix(group.getPrefix());
+
 			group.addItem(item);
 			HashMap<String, RuleItem> map = itemsMap.get(item.getName());
 			if (map == null) {
@@ -116,6 +113,7 @@ public class RulesTree {
 		item.setIdItem(itm.getIdItem());
 		item.setObject(itm.getObject());
 		item.setActivations(getConditions(itm.getActive()));
+		item.setType(itm.getType());
 		return item;
 	}
 

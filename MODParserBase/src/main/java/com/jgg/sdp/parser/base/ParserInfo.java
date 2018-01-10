@@ -7,7 +7,6 @@ package com.jgg.sdp.parser.base;
 import java.util.*;
 
 import com.jgg.sdp.common.config.*;
-import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.common.ctes.MSG;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Copy;
@@ -86,11 +85,11 @@ public class ParserInfo {
 		return moduleName;
 	}
 	
-	public Symbol cosa(String txt, int code, int line, int col) {
-		int l = line + getOffset() + 1;
-		//Symbol s = new Symbol(code, l, col, txt); 
-		return symbolFactory.newSymbol(txt, code, new Symbol(code, l, col, txt));
-	}
+//	public Symbol cosa(String txt, int code, int line, int col) {
+//		int l = line + getOffset() + 1;
+//		//Symbol s = new Symbol(code, l, col, txt); 
+//		return symbolFactory.newSymbol(txt, code, new Symbol(code, l, col, txt));
+//	}
 	/*************************************************************/
 	/***      TRATAMIENTO DE SECCIONES                         ***/
 	/*** Se realiza aqui, por que se usa en diferentes parsers ***/

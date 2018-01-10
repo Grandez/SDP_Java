@@ -12,13 +12,14 @@ public class RuleItem extends RuleGroup {
 	public RuleItem() {}
 	public RuleItem(RuleGroup group) {
 		super(group);
-		this.type = 1;
+		this.nodeType = 1;
+		this.prefix = group.getPrefix();
 	}
 	public RuleItem(RuleItem item) {
 		super(item);
 		idItem = new Long(item.getIdItem());
 		object = item.getObject();
-		type = 1;
+		nodeType = 1;
 	}
 
 	public Long getIdItem() {

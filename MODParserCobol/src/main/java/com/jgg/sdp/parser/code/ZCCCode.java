@@ -27,7 +27,6 @@ import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.common.ctes.MSG;
 import com.jgg.sdp.core.ctes.*;
-import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.graph.*;
 import com.jgg.sdp.module.items.*;

@@ -49,7 +49,7 @@ public class RulesProcessor {
 		return issues; 
 	}
 
-    void processGroupByName(String name, RuleObject obj) {
+    public void processGroupByName(String name, RuleObject obj) {
     	RuleGroup group = tree.getGroupByName(name);
     	if (group == null) return;
     	for (RuleItem item : group.getItems()) {
@@ -63,6 +63,7 @@ public class RulesProcessor {
     }
 	
 	private void processItem(RuleItem item, RuleObject obj) {
+		
     	if (!processCondition(item.getActivations(), obj)) return;
 
     	if (item.getType() != null) changeComponent(item, obj);
@@ -507,7 +508,8 @@ public class RulesProcessor {
 	}
 		
 	private String mountMethodName(int type, String name) {
-		return name;
+		return "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
+//		return name;
 /*		
 		StringBuilder sb = new StringBuilder("dyn");
 		sb.append(name.substring(0, 1).toUpperCase());

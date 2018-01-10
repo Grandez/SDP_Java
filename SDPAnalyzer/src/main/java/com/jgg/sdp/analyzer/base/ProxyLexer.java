@@ -24,6 +24,9 @@ import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.db2.DB2Lexer;
 import com.jgg.sdp.parser.lang.*;
+import com.jgg.sdp.parser.rules.RulesCICS;
+import com.jgg.sdp.parser.rules.RulesSQL;
+import com.jgg.sdp.rules.components.RulesData;
 
 import static com.jgg.sdp.analyzer.base.Parsers.*;
 
@@ -151,6 +154,9 @@ public class ProxyLexer implements GenericScanner {
 	   
    	   StmtSQL sql = (StmtSQL) s.value;
 
+   	   RulesSQL  rules     = new RulesSQL();
+   	   rules.checkSQL(sql);
+   	   
    	   if (sql.isInclude()) {
    		   createCopy(s, CDG.DEP_INCLUDE);
    		   updateCopy(s);
@@ -170,7 +176,17 @@ public class ProxyLexer implements GenericScanner {
    }
 
    private void parseCICS() throws Exception {
-	   parseAlter(Parsers.CICS);   
+	   Symbol s = parseAlter(Parsers.CICS);   
+
+	   // En funcion de los EOF puede incluir stmtSQL en niveles
+	   // mas internos
+	   while (!(s.value instanceof StmtCICS)) s = (Symbol) s.value;
+	   
+   	   StmtCICS cics = (StmtCICS) s.value;
+
+   	   RulesCICS  rules     = new RulesCICS();
+   	   rules.checkCICS(cics);
+
    }
 
    private void parseCOPY() throws Exception {

@@ -8,7 +8,6 @@ import com.jgg.sdp.analyzer.*;
 import com.jgg.sdp.common.config.Messages;
 import com.jgg.sdp.common.exceptions.*;
 
-import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.unit.*;
 import com.jgg.sdp.domain.core.*;
@@ -252,8 +251,6 @@ public class SDPAnalyzer {
 	}
 
 	private String[] initEnvironment(String[] args) {
-		// Necesario para IVP
-		RulesProcessor.initInstance();
 
 		args = cfg.processCommandLine(AnalyzerParms.parms, args);
 		
@@ -263,6 +260,9 @@ public class SDPAnalyzer {
 					                                             : PARSER_CMD);
 		}
 
+		// Necesario para IVP
+		RulesProcessor.initInstance();
+		
 		return args;
 	}
 }

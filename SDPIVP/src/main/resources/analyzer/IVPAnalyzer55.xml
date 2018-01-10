@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<p:SDPIVP xmlns:p="http://www.sdp.com/SDPIVP" 
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+          xsi:schemaLocation="http://www.sdp.com/SDPIVP SDPIVP.xsd ">
+
+    <module>SDPAnalyzer</module>
+    <description>Control de codigo SQL</description>
+      
+   <preProcess>
+      <comment>
+         Establece las reglas por defecto
+      </comment>
+      <module>
+         <name>SDPLoader</name>
+         <parameters>
+            <parameter>--rules</parameter>
+            <parameter>--load</parameter>
+            <parameter>--clean</parameter>
+         </parameters>
+      </module>
+   </preProcess>
+   
+   <group name="Reglas SQL Generales">
+      <description>Control de reglas generales de DB2</description>
+      <pattern>IVP550*.cbl</pattern>
+   </group>
+<!--    <group name="Reglas Compilacion"> -->
+<!--       <description>Control de directivas</description> -->
+<!--       <pattern>IVP5002*.cbl</pattern> -->
+<!--    </group> -->
+<!--    <group name="Reglas IDENTIFICATION"> -->
+<!--       <description>Control de IDENTIFICATION DIVISION</description> -->
+<!--       <pattern>IVP5003*.cbl</pattern> -->
+<!--    </group> -->
+
+</p:SDPIVP>
+

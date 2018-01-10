@@ -50,9 +50,10 @@ public class FileFinder {
 	private static String mountFullPath(String dir, String name) {
 		// Full path
 		if (name.charAt(0) == '/' || name.charAt(0) == '\\') return name;
-		if (name.charAt(1) == ':')                           return name;
+		if (name.length() > 1 && name.charAt(1) == ':')      return name;
 		if (dir == null || dir.length() == 0)                return name;
 		
+		// Partial path
 		if (name.indexOf('/')  != -1) return name;
 		if (name.indexOf('\\') != -1) return name;
 		

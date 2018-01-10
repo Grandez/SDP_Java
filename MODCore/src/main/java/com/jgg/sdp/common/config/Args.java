@@ -155,7 +155,7 @@ public class Args {
 				params.put(prm[3],  prm[4]);
 			}
 		}
-
+/*
 		// Version vieja
 		if (prm.length < 8) {
 			if (prm[4] != Args.STRING) {
@@ -164,7 +164,7 @@ public class Args {
 			params.put(prm[4], args[next]);
 			return next;
 		}
-		
+*/
 		group = getGroup(prm[7]);
 
 		if (group != 0) {
@@ -178,7 +178,7 @@ public class Args {
 			if (prm[4] != Args.STRING) {
 				validateParm(args[next], prm[4]);
 			}
-			params.put(prm[4], args[next]);
+			params.put(prm[3], args[next]);
 		}
 		catch (NumberFormatException e) {
 			if (prm[4].charAt(0) == 'X') {

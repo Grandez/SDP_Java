@@ -29,9 +29,11 @@ import java_cup.runtime.Symbol;
 
 public class Statement<T> implements IStatement {
 
-    private   SymbolExt            verbo      = null;
-    private   ArrayList<SymbolExt> lvalues    = new ArrayList<SymbolExt>();
-    private   ArrayList<SymbolExt> rvalues    = new ArrayList<SymbolExt>();
+    private   SymbolExt            verbo    = null;
+    private   String               group    = null;
+    private   ArrayList<SymbolExt> lvalues  = new ArrayList<SymbolExt>();
+    private   ArrayList<SymbolExt> rvalues  = new ArrayList<SymbolExt>();
+    
     // Opciones segun aparecen
     protected ArrayList<Option>    lstOptions = new ArrayList<Option>();
     
@@ -57,6 +59,9 @@ public class Statement<T> implements IStatement {
 	/***************************************************************/
 	
 	public Statement() {
+	}
+	public Statement(String group) {
+		this.group = group;
 	}
 	
 	public Statement (Symbol s) {
@@ -245,6 +250,14 @@ public class Statement<T> implements IStatement {
 		return id;
 	}
 	
+	public void setGroup(String group) {
+		this.group = group;
+	}
+	
+	public String getGroup() {
+		return group;
+	}
+	
 	public int getOrden() {
 		return orden;
 	}
@@ -385,6 +398,6 @@ public class Statement<T> implements IStatement {
     public int getEndLine()   { return endLine;     }
     public int getBegColumn() { return begColumn;   }
     public int getEndColumn() { return endColumn;   }    
-    public int lines()        { return endLine - begLine + 1; }
+    public int getLines()     { return endLine - begLine + 1; }
     
 }

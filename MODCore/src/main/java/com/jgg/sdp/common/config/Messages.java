@@ -28,7 +28,7 @@ public class Messages {
 	    }
 	}
 	private Messages(String nombre) {
-	    //LOGGER = LoggerFactory.getLogger(nombre);
+	    LOGGER = LoggerFactory.getLogger(nombre);
 	}
 	
     public static Messages getInstance() {

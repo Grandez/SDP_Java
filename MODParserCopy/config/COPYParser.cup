@@ -82,7 +82,9 @@ non terminal Symbol     cpy_replacing_token ;
 /**********************************************************************/
 /**********************************************************************/
 
-copy ::=  cpy_stmt:c  {: RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  :}
+copy ::=  cpy_stmt:c  {: stmt.setGroup("COPY");
+                         RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  
+                      :}
      ; 
 
 /*********************************************************************/

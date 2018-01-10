@@ -108,7 +108,9 @@ non terminal Symbol     padre_indicator ;
 /**********************************************************************/
 /**********************************************************************/
 
-cics ::= cics_stmts:s  {: RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  :}   
+cics ::= cics_stmts:s  {: stmt.setGroup("CICS");
+                          RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  
+                       :}   
      |                                                            
      ;
    

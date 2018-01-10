@@ -21,7 +21,7 @@ parser code {:
 action code {:
    ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
    ParserInfo      info     = ParserInfo.getInstance();
-   StmtSQL         stmt     = new StmtSQL();
+   StmtSQL         stmt     = new StmtSQL("DDL");
    
    public void initActionClass() {
    }

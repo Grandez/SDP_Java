@@ -197,6 +197,6 @@ public class Option implements IReflect {
     public int getEndLine()   { return endLine;     }
     public int getBegColumn() { return begColumn;   }
     public int getEndColumn() { return endColumn;   }    
-    public int lines()        { return endLine - begLine + 1; }
+    public int getLines()     { return endLine - begLine + 1; }
 
 }

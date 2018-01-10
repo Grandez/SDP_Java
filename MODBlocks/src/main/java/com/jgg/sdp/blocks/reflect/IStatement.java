@@ -10,15 +10,15 @@ public interface IStatement extends IReflect {
 	public boolean hasEndPoint();
 	public boolean hasOption(String name);
 	
-	// Atributos
-	public int lines();	
+	// Atributos (Empiezan con get)
+	
 
 	// Metodos (Evitar sobrecarga de funciones)
 	public Object        getOptionByName(String name);
 	public List<Option>  getOptionList  ();
-	public Object  getLValue      ();
-	public Object  getLValueList  ();
-	public Object  getRValue      ();
-	public Object  getRValueList  ();
+	public Object        getLValue      ();
+	public Object        getLValueList  ();
+	public Object        getRValue      ();
+	public Object        getRValueList  ();
 	
 }

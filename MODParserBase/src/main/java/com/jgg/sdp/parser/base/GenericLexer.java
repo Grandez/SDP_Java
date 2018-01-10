@@ -105,7 +105,7 @@ public abstract class GenericLexer {
    }
 
    public void print(String txt) {
-//     System.out.println(txt);
+     System.out.println(txt);
    }   
    
    /*******************************************************/

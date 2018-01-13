@@ -8,7 +8,8 @@ public class RuleGroup extends RuleBase {
 
 	protected Long idGroup;
 	
-	private ArrayList<RuleItem> items = new ArrayList<RuleItem>();
+	private ArrayList<Long>     children = new ArrayList<Long>();
+	private ArrayList<RuleItem> items    = new ArrayList<RuleItem>();
 	private HashMap<Integer, Integer> keyNum = new HashMap<Integer, Integer>();
 	private HashMap<String, Integer> keyTxt = new HashMap<String, Integer>();
 	
@@ -37,6 +38,13 @@ public class RuleGroup extends RuleBase {
 		this.parent = parent;
 	}
 
+	public void addChildren(Long idChildren) {
+		children.add(idChildren);
+	}
+	public List<Long> getChildren() {
+		return children;
+	}
+	
 	public void addItem(RuleItem item) {
 		items.add(item);
 		int pos = items.size() - 1;

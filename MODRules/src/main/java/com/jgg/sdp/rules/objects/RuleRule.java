@@ -41,4 +41,8 @@ public class RuleRule  extends RuleItem {
 		this.condition = condition;
 	}
 	
+	@Override
+	public String toString() {
+		return idGroup + "-" + idItem + "-" + idRule;
+	}
 }

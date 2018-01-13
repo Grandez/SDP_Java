@@ -133,6 +133,7 @@ public class RulesController {
     	
     	for (RULRule r : ruleService.listByItem(parent.getIdGroup(), parent.getIdItem())) {
     		JSonRule json = new JSonRule(r);
+    		
         	json.setLabel(String.format("%s%02d%02d%02d",  parent.getPrefix(), r.getIdGroup(), r.getIdItem(), r.getIdRule()));
         	json.setActivations(getActivations(r.getActive()));
         	json.setCondition(getCondition(r.getIdCond()));
@@ -175,16 +176,20 @@ public class RulesController {
 			sb.append(s.getData());
 			sb.append('\n');
 		}
-		sb.deleteCharAt(sb.length() - 1);
-		sample.setKo(sb.toString());
+		if (sb.length() > 0) {
+		    sb.deleteCharAt(sb.length() - 1);
+		    sample.setKo(sb.toString());
+			sb.setLength(0);
+		}
 		
-		sb.setLength(0);
 		for (RULSample s : sampService.getSampleOK(idSample)) {
 			sb.append(s.getData());
 			sb.append('\n');
 		}
-		sb.deleteCharAt(sb.length() - 1);
-		sample.setOk(sb.toString());
+		if (sb.length() > 0) {		
+		    sb.deleteCharAt(sb.length() - 1);
+		    sample.setOk(sb.toString());
+		}
 		return sample;
 	}
  	

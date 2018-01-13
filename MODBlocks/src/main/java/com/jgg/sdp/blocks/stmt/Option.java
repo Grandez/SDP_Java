@@ -40,47 +40,14 @@ public class Option implements IReflect {
 
      public Option(Symbol s, SymbolExt t) {
     	 first(s);
-    	 last(t);
+    	 if (t != null) last(t);
      }
      
      public Option(Symbol s, Symbol t) {
     	 first(s);
-    	 last(t);
-     }
-/*     
-     public Option(Symbol s, Tokens t) {
-    	 this.id = s.sym;
-    	 this.name = (String) s.value;
-//    	 vars.add(new SymbolExt(s));
-    	 for (Symbol v : t.getTokens()) {
-            vars.add(new SymbolExt(v));
-    	 }   
+    	 if (t != null) last(t);
      }
 
-     public Option(Symbol s, Statement stmt) {
-    	 this.id = s.sym;
-    	 this.name = (String) s.value;
-//    	 vars.add(new SymbolExt(s));
-     }
-     
-     // Para evitar el cast a String
-     public Option(int id, Object name) {
-    	 this.id = id;
-    	 this.name = (String) name;
-     }
-     
-     public Option(int id, String name, SymbolExt var) {
-    	 this.id = id;
-    	 this.name = name;
-    	 this.vars.add(var);
-     }
-
-     public Option(int id, String name, Symbol var) {
-    	 this.id = id;
-    	 this.name = name;
-    	 this.vars.add(new SymbolExt(var));
-     }
-*/     
      public Option addValue(SymbolExt v) {
     	 vars.add(v);
     	 return this;

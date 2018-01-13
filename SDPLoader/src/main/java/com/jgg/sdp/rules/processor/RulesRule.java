@@ -3,6 +3,7 @@ package com.jgg.sdp.rules.processor;
 import java.sql.Timestamp;
 
 import com.jgg.sdp.adt.ADTBag;
+import com.jgg.sdp.domain.rules.RULItem;
 import com.jgg.sdp.domain.rules.RULRule;
 import com.jgg.sdp.domain.services.rules.RULRulesService;
 import com.jgg.sdp.loader.jaxb.rules.*;
@@ -31,31 +32,32 @@ public class RulesRule {
 		return rule;
 	}
 
-	public RULRule createRule(Long idGroup, Long idItem, Rule xmlRule, long idMsg) {
+	public RULRule createRule(RULItem item, Rule xmlRule) {
 		long key = 0L;		
 		RULRule rule =  null;
 		Long idRule = xmlRule.getIdRule();
 		if (idRule == null || idRule == 0) {
-			idRule = rulesService.getNextId(idGroup, idItem);
+			idRule = rulesService.getNextId(item.getIdGroup(), item.getIdItem());
 		}
 		else {
-			rule = rulesService.getById(idGroup, idItem, idRule);
+			rule = rulesService.getById(item.getIdGroup(), item.getIdItem(), idRule);
 		}
 		if (rule == null) rule = new RULRule();
 		
-		rule.setIdGroup(idGroup);
-		rule.setIdItem(idItem);
+		rule.setIdGroup(item.getIdGroup());
+		rule.setIdItem(item.getIdItem());
 		rule.setIdRule(idRule);
 		rule.setPriority(xmlRule.getPriority() == null ? 0 : xmlRule.getPriority());
 		rule.setSeverity(xmlRule.getSeverity());
         rule.setName(xmlRule.getName());
+        rule.setPrefix(item.getPrefix());
 		key = Long.parseLong(String.format("%03d%03d%03d", rule.getIdGroup(), 
 				                                           rule.getIdItem(), 
 				                                           rule.getIdRule()));
 		
 	    rule.setIdTitle(0L);
 		rule.setIdDesc(descs.createDescription(key, xmlRule.getDescription()));
-		rule.setIdMsg(msgs.createMessage(key, xmlRule.getMessage(), idMsg));
+		rule.setIdMsg(msgs.createMessage(key, xmlRule.getMessage(), item.getIdMsg()));
 		rule.setIdSample(samps.createSample(key, xmlRule.getSample()));
 		rule.setUid(System.getProperty("user.name"));
 		rule.setTms(new Timestamp(System.currentTimeMillis()));

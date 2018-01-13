@@ -16,8 +16,11 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.module.factorias.*;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.code.*;
+import com.jgg.sdp.parser.stmt.*;
+import com.jgg.sdp.blocks.stmt.Option;
+import com.jgg.sdp.blocks.stmt.Statement;
+import com.jgg.sdp.blocks.stmt.Tokens;
 import com.jgg.sdp.blocks.symbols.*;
-import com.jgg.sdp.blocks.stmt.*;
 
 /** CUP v0.11a beta 20060608 generated parser.
   * @version Mon Jan 08 20:16:36 CET 2018

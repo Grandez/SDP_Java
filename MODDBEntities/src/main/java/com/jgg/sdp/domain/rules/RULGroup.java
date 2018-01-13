@@ -20,9 +20,12 @@ public class RULGroup implements Serializable, IRule {
 	public static final String findMaxId      = "SELECT MAX(r.idGroup) FROM RULGroup r";
 	
     public static final String listAll             = "SELECT r FROM RULGroup r";
-	public static final String listActive          = "SELECT r FROM RULGroup r WHERE r.active   >= 0";
-	public static final String listChildren        = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1 AND r.idGroup <> ?1";
-	public static final String listChildrenActive  = "SELECT r FROM RULGroup r WHERE r.idParent  = ?1 AND r.active > 0";
+	public static final String listActive          = "SELECT r FROM RULGroup r WHERE r.active   >  0";
+	public static final String listChildren        = "SELECT r FROM RULGroup r WHERE r.idParent =  ?1 " +
+			                                                                  "AND   r.idGroup  <> ?1";
+	public static final String listChildrenActive  = "SELECT r FROM RULGroup r WHERE r.idParent =  ?1 " +
+			                                                                  "AND   r.idGroup  <> ?1 " +
+	                                                                          "AND   r.active > 0";
 	
 	@Id
 	@Column(name="idGroup")

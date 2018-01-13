@@ -2,7 +2,7 @@
 // Este archivo ha sido generado por la arquitectura JavaTM para la implantación de la referencia de enlace (JAXB) XML v2.2.8-b130911.1802 
 // Visite <a href="http://java.sun.com/xml/jaxb">http://java.sun.com/xml/jaxb</a> 
 // Todas las modificaciones realizadas en este archivo se perderán si se vuelve a compilar el esquema de origen. 
-// Generado el: 2017.12.27 a las 01:08:04 PM CET 
+// Generado el: 2018.01.12 a las 11:49:12 AM CET 
 //
 
 
@@ -35,13 +35,14 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;/choice>
  *         &lt;element name="operator" type="{http://www.sdp.com/SDPRules}operatorType" minOccurs="0"/>
  *         &lt;choice minOccurs="0">
- *           &lt;element name="property" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *           &lt;element name="attribute" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *           &lt;element name="method" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *           &lt;element name="expression" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *           &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *           &lt;element name="method" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *           &lt;element name="option" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *           &lt;element name="property" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *           &lt;element name="rvalue" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *           &lt;element name="rscript" type="{http://www.sdp.com/SDPRules}scriptType"/>
+ *           &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;/choice>
  *       &lt;/sequence>
  *       &lt;attribute name="negated" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
@@ -60,13 +61,14 @@ import javax.xml.bind.annotation.XmlType;
     "type",
     "configuration",
     "operator",
-    "property",
     "attribute",
-    "method",
     "expression",
-    "value",
+    "method",
+    "option",
+    "property",
     "rvalue",
-    "rscript"
+    "rscript",
+    "value"
 })
 public class ConditionType {
 
@@ -79,13 +81,14 @@ public class ConditionType {
     protected String configuration;
     @XmlSchemaType(name = "anySimpleType")
     protected String operator;
-    protected String property;
     protected String attribute;
-    protected String method;
     protected String expression;
-    protected String value;
+    protected String method;
+    protected String option;
+    protected String property;
     protected String rvalue;
     protected ScriptType rscript;
+    protected String value;
     @XmlAttribute(name = "negated")
     protected Boolean negated;
 
@@ -234,30 +237,6 @@ public class ConditionType {
     }
 
     /**
-     * Obtiene el valor de la propiedad property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getProperty() {
-        return property;
-    }
-
-    /**
-     * Define el valor de la propiedad property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setProperty(String value) {
-        this.property = value;
-    }
-
-    /**
      * Obtiene el valor de la propiedad attribute.
      * 
      * @return
@@ -279,30 +258,6 @@ public class ConditionType {
      */
     public void setAttribute(String value) {
         this.attribute = value;
-    }
-
-    /**
-     * Obtiene el valor de la propiedad method.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getMethod() {
-        return method;
-    }
-
-    /**
-     * Define el valor de la propiedad method.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setMethod(String value) {
-        this.method = value;
     }
 
     /**
@@ -330,27 +285,75 @@ public class ConditionType {
     }
 
     /**
-     * Obtiene el valor de la propiedad value.
+     * Obtiene el valor de la propiedad method.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getValue() {
-        return value;
+    public String getMethod() {
+        return method;
     }
 
     /**
-     * Define el valor de la propiedad value.
+     * Define el valor de la propiedad method.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
-        this.value = value;
+    public void setMethod(String value) {
+        this.method = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad option.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getOption() {
+        return option;
+    }
+
+    /**
+     * Define el valor de la propiedad option.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setOption(String value) {
+        this.option = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getProperty() {
+        return property;
+    }
+
+    /**
+     * Define el valor de la propiedad property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setProperty(String value) {
+        this.property = value;
     }
 
     /**
@@ -399,6 +402,30 @@ public class ConditionType {
      */
     public void setRscript(ScriptType value) {
         this.rscript = value;
+    }
+
+    /**
+     * Obtiene el valor de la propiedad value.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Define el valor de la propiedad value.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**

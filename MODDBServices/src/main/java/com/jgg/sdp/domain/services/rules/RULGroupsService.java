@@ -37,8 +37,8 @@ public class RULGroupsService extends AbstractService<RULGroup> {
 		ArrayList<RULGroup> groups = new ArrayList<RULGroup>();
 		
 		RULGroup root = findQuery(RULGroup.findActiveById, 0L);
-		// Todo anulado
-		if (root == null) return groups;
+		
+		if (root == null) return groups;   // Todo anulado
 		
 		HashSet<String> set = new HashSet<String>();
 		groups.add(root);
@@ -60,6 +60,10 @@ public class RULGroupsService extends AbstractService<RULGroup> {
 
 	public List<RULGroup> listChildren(Long idParent) {
 		return listQuery(RULGroup.listChildren, idParent);
+	}
+
+	public List<RULGroup> listActiveChildren(Long idParent) {
+		return listQuery(RULGroup.listChildrenActive, idParent);
 	}
 	
 	public void clean() {

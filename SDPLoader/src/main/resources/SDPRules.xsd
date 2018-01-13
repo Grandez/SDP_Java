@@ -172,13 +172,14 @@
              </xs:choice>
              <xs:element name="operator"            type="operatorType"  minOccurs="0" maxOccurs="1"/>      
              <xs:choice minOccurs="0" maxOccurs="1">
-                 <xs:element name="property"        type="xs:string"/>
                  <xs:element name="attribute"       type="xs:string"/>
-                 <xs:element name="method"          type="xs:string"/>
                  <xs:element name="expression"      type="xs:string"/>
-                 <xs:element name="value"           type="xs:string"/>
+                 <xs:element name="method"          type="xs:string"/>
+                 <xs:element name="option"          type="xs:string"/>
+                 <xs:element name="property"        type="xs:string"/>
                  <xs:element name="rvalue"          type="xs:string"/>
                  <xs:element name="rscript"         type="scriptType"/>                 
+                 <xs:element name="value"           type="xs:string"/>
              </xs:choice>
 
          </xs:sequence>

@@ -32,7 +32,7 @@
              <text lang="xx">Control de las opciones de IDENTIFICATION DIVISION</text>      
          </r:description>
          <r:message>
-                  <text lang="xx" dialect="XX">No es necesario indicar {lvalue}</text>
+                  <text lang="xx" dialect="XX">No es necesario indicar **:Lvalue:**</text>
          </r:message>
 
          <sample>
@@ -184,7 +184,7 @@
                 <value>false</value>
             </onCondition>
             <condition>
-               <lvalue type="expression">now() - as.date({object})</lvalue>
+               <lvalue type="expression">now() - as.date(:Object:)</lvalue>
                <operator>lt</operator>
                <expression>7</expression>
             </condition>        

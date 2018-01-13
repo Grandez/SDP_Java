@@ -8,7 +8,7 @@
       <replace>true</replace>
    </r:header>
    
-   <r:group name="CICS">
+   <r:group name="CICS_OPT">
       <idGroup>72</idGroup>
       <idParent>70</idParent>      
       <prefix>CIC</prefix>
@@ -17,22 +17,39 @@
       </r:title>
 
       <r:item name="RESP">
-         <object>STATEMENT</object>
+         <object type="option">RESP</object>
          <r:title>
             <text>Control opcion RESP</text>      
          </r:title>
          <r:message>
-           <text>Las sentencias CICS deben incluir la opcion **:Value</text>
+           <text>Las sentencias CICS deben incluir la opcion **:Object:**</text>
          </r:message>
                  
          <r:rule>
             <severity>4</severity>
             <condition negated="true">
-               <lvalue type="option">RESP</lvalue>
+               <property>has</property>               
+            </condition>        
+         </r:rule>
+       </r:item>
+
+      <r:item name="NOHANDLE">
+         <object type="option">NOHANDLE</object>
+         <r:title>
+            <text>Control opcion NOHANDLE</text>      
+         </r:title>
+                 
+         <r:rule>
+            <severity>4</severity>
+            <condition>
+               <r:message>
+                 <text>Las sentencias CICS deben ser controladas</text>
+               </r:message>
                <property>has</property>
             </condition>        
          </r:rule>
        </r:item>
+
    </r:group>
 
 </r:SDPRules>

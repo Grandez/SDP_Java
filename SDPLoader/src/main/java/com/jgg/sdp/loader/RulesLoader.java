@@ -102,7 +102,7 @@ public class RulesLoader {
             RULItem item = items.createItem(group, xmlItem);
             rules = RulesRule.getInstance();
             for (Rule xmlRule : xmlItem.getRule()) {
-            	rules.createRule(item.getIdGroup(), item.getIdItem(), xmlRule, item.getIdMsg());
+            	rules.createRule(item, xmlRule);
 //            	r.friendly();
             }
         }
@@ -112,7 +112,7 @@ public class RulesLoader {
     	
    		RULItem item = items.createItem(xmlItem);
     	for (Rule xmlRule : xmlItem.getRule()) {
-    	     rules.createRule(item.getIdGroup(), item.getIdItem(), xmlRule, item.getIdMsg());
+    	     rules.createRule(item, xmlRule);
 //    	     r.friendly();
     	}
     }

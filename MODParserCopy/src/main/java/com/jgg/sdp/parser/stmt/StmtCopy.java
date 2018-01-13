@@ -1,7 +1,9 @@
-package com.jgg.sdp.blocks.stmt;
+package com.jgg.sdp.parser.stmt;
 
 import java.util.ArrayList;
 
+import com.jgg.sdp.blocks.stmt.Option;
+import com.jgg.sdp.blocks.stmt.Statement;
 import com.jgg.sdp.blocks.symbols.*;
 
 import java_cup.runtime.Symbol;

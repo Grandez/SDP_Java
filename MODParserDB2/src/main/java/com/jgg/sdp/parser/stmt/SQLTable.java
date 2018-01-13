@@ -1,4 +1,4 @@
-package com.jgg.sdp.blocks.stmt;
+package com.jgg.sdp.parser.stmt;
 
 public class SQLTable {
 	

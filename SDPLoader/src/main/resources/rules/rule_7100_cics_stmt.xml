@@ -8,7 +8,7 @@
       <replace>true</replace>
    </r:header>
    
-   <r:group name="CICS">
+   <r:group name="CICS_STMT">
       <idGroup>71</idGroup>
       <idParent>70</idParent>      
       <prefix>CIC</prefix>
@@ -16,7 +16,7 @@
           <text>CICS No permitido</text>      
       </r:title>
 
-      <r:item name="CICS">
+      <r:item name="CICS_STMT">
          <object>STATEMENT</object>
          <r:title>
             <text>Sentencias CICS no permitidas</text>      

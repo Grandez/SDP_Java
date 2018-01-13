@@ -9,6 +9,7 @@ import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.blocks.stmt.*;
+import com.jgg.sdp.parser.stmt.StmtCICS;
 
 import com.jgg.sdp.parser.code.CICSCode;
 
@@ -48,6 +49,7 @@ action code {:
 
    public String getSymbolName(Symbol s)    { return (String) s.value; }
    public void debug(String txt)            { System.err.println(txt); }
+   public void print(String txt)            { System.out.println(txt); }
 
 :}
 
@@ -83,21 +85,21 @@ non terminal StmtCICS cics_stmts      ;
 non terminal StmtCICS cics_statement  ;
 non terminal StmtCICS cics_stmt       ;
 
-non terminal Option cics_options    ;
-non terminal Option cics_parm_list  ;
-non terminal Option cics_parm_attr  ;
+non terminal Option   cics_options    ;
+non terminal Option   cics_parm_list  ;
+non terminal Option   cics_parm_attr  ;
 
 non terminal Symbol   cics_parm       ;
 non terminal Symbol   cics_values     ;
 non terminal Symbol   cics_value      ;
 non terminal Symbol   number          ;
 
-non terminal Symbol   ident_base  ;
+non terminal Symbol   ident_base      ;
 
-non terminal Symbol     padres_lst  ;
-non terminal Symbol     padres      ;
-non terminal Symbol     padre       ;
-non terminal Symbol     padre_indicator ;  
+non terminal Symbol   padres_lst      ;
+non terminal Symbol   padres          ;
+non terminal Symbol   padre           ;
+non terminal Symbol   padre_indicator ;  
 
 
 /**********************************************************************/
@@ -127,11 +129,11 @@ cics_options ::= cics_parm_list:c {: RESULT = c;    :}
              |                    {: RESULT = null; :}
              ;
              
-cics_parm_list ::= cics_parm_attr:c                {: RESULT = stmt.addParm(c); :}
-               |   cics_parm_list cics_parm_attr:c {: RESULT = stmt.addParm(c); :} 
+cics_parm_list ::= cics_parm_attr:c                {: RESULT = stmt.addOption(c); :}
+               |   cics_parm_list cics_parm_attr:c {: RESULT = stmt.addOption(c); :} 
                ;
                                  
-cics_parm_attr ::= ID:i cics_parm:c      {: RESULT = new Option(i,c); :}
+cics_parm_attr ::= ID:i     cics_parm:c  {: RESULT = new Option(i,c); :}
                |   LENGTH:i cics_parm:c  {: RESULT = new Option(i,c); :}
                ;
                

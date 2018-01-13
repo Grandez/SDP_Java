@@ -13,17 +13,21 @@ public class JSonRule {
     private String    label;
     private Boolean   active; 
     private Long      idMsg;
+    private String    name;
     
+	private JSonRuleSample          sample = null;
+	
 	private String  message;
 	
 	private ArrayList<JSonRuleCond> activations = new ArrayList<JSonRuleCond>();
 	private JSonRuleCond            condition   = null;
 	
 	public JSonRule(RULRule r) {
-		idRule     = new Long(r.getIdRule());  
-		priority   = new Integer(r.getPriority());
-		severity   = new Integer(r.getSeverity());
-        idMsg      = (r.getIdMsg() == null) ? 0L : new Long(r.getIdMsg());
+		idRule   = new Long(r.getIdRule());  
+		priority = new Integer(r.getPriority());
+		severity = new Integer(r.getSeverity());
+        idMsg    = (r.getIdMsg() == null) ? 0L : new Long(r.getIdMsg());
+        name     = r.getName();
 	}
 	
 	public Long getIdRule() {
@@ -58,6 +62,14 @@ public class JSonRule {
 		this.label = label;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public String getMessage() {
 		return message;
 	}

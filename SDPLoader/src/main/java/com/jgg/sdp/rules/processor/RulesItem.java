@@ -61,6 +61,7 @@ public class RulesItem {
 		item.setIdMsg(msgs.createMessage(key, xmlItem.getMessage()));
 		item.setIdDesc(descs.createDescription(key, xmlItem.getDescription()));
 		item.setIdSample(samps.createSample(key, xmlItem.getSample()));
+		item.setPrefix(group.getPrefix());
 		item.setUid(System.getProperty("user.name"));
 		item.setTms(new Timestamp(System.currentTimeMillis()));
 		

@@ -51,9 +51,21 @@ public class RulesProcessor {
 
     public void processGroupByName(String name, RuleObject obj) {
     	RuleGroup group = tree.getGroupByName(name);
+    	processGroup(group, obj);
+    }
+
+    public void processGroupById(Long idGroup, RuleObject obj) {
+    	RuleGroup group = tree.getGroupById(idGroup);
+    	processGroup(group, obj);
+    }
+    
+    private void processGroup(RuleGroup group, RuleObject obj) {
     	if (group == null) return;
     	for (RuleItem item : group.getItems()) {
     		processItem(item, obj);
+    	}
+    	for (Long idGroup : group.getChildren()) {
+    		processGroupById(idGroup, obj);
     	}
     }
 	
@@ -84,6 +96,7 @@ public class RulesProcessor {
 	}
 	
 	private boolean processRule(RuleRule rule, RuleObject obj) {
+//		System.out.println("Procesando regla: " + rule);
 //		if (rule.getName() != null && rule.getName().compareTo("date format") == 0) {
 //			rule.getName();
 //		}
@@ -279,12 +292,16 @@ public class RulesProcessor {
 	}
 
 	private Boolean makeBoolean(Object val) {
-		if (val == null) return new Boolean(false);
+		if (val == null) return false;
+		
 		if (val instanceof Boolean) return (Boolean) val;
 		
-		char c = val.toString().charAt(0); 
+		String res = val.toString();
+		if (res.length() == 0) return false;
+		
+		char c = res.charAt(0); 
 		if (c == '0' || c == 'N' || c == 'n') return new Boolean(false);
-        return  new Boolean(true);
+        return true;
 	}
 	
 	/**
@@ -344,6 +361,7 @@ public class RulesProcessor {
 	}
 
 	private Object processValue(int type, String data, RuleObject obj) {
+		if (data == null) return null;
         if (data.compareToIgnoreCase("true") == 0) return new Boolean(true);
         if (data.compareToIgnoreCase("false") == 0) return new Boolean(false);
         try {

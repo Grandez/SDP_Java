@@ -14,6 +14,7 @@ import com.jgg.sdp.module.items.Paragraph;
 public class TBParagraphs {
 
 	private int parrafos = 0;
+	private int prevStmts = 0;
 	
 	ArrayList<Paragraph>       lstParrs  = new ArrayList<Paragraph>();
 	HashMap<String, Integer>   parrs     = new HashMap<String, Integer>();
@@ -22,12 +23,11 @@ public class TBParagraphs {
 	
 	public Paragraph addParagraph(String name, int line, int stmts) {
 		String upper = name.toUpperCase();
-		Paragraph p = new Paragraph(upper, line, stmts);
+		Paragraph p = new Paragraph(upper, line);
 		p.setIndex(++parrafos);
 
 		p.setOrden(lstParrs.size());
 		p.setLine(line);
-		p.setSentences(stmts);
 		
 		// Parrafo inicial, se referencia por caida
 		if (stmts == 0) p.incReferences();
@@ -37,8 +37,9 @@ public class TBParagraphs {
         
 		if (lstParrs.size() > 1) {
 			Paragraph p2 = lstParrs.get(lstParrs.size() - 2); 
-			p2.setSentences(p.getSentences() - p2.getSentences());
+			p2.setNumStatements(stmts - prevStmts);
 		}
+		prevStmts = stmts;
 		return p;
 	}
 

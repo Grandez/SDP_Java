@@ -332,7 +332,7 @@ public class Module {
      */
     public void lastParagraph(int lastLine, int stmts) {
         Paragraph p = tbParagraphs.getCurrentParagraph();
-        if (p != null) p.setSentences(stmts - p.getSentences());
+        if (p != null) p.setNumStatements(stmts - p.getNumStatements());
     }
 
     //// *********************************************************************    

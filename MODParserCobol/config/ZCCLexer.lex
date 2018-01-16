@@ -77,6 +77,10 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       return symbol(code);
    }
                   
+   public void tabsInText(String txt) {
+      if (txt.indexOf('\t') != -1) rules.checkTabsInText(symbolExt(WORDSLINE));
+   }
+                  
    public SymbolExt symbolExt(int code)             { return new SymbolExt(symbol(code));              }     
    public Symbol    symbol   (int code)             { return symbol(code, yytext(), yyline, yycolumn); }
    public Symbol    symbol   (int code, String txt) { return symbol(code, txt,      yyline, yycolumn); }
@@ -222,8 +226,8 @@ PARAGRAPH  = {SP}{ID}
   CBL                         { return symbol(CBL                     ); } 
   CHARACTER                   { return symbol(CHARACTER               ); } 
   CHARACTERS                  { return symbol(CHARACTERS              ); } 
-  CLASS                       { return symbol(CLASS                   ); } 
-  CLASS-ID                    { return symbol(CLASS-ID                ); } 
+  // CLASS                       { return symbol(CLASS                   ); } 
+  //CLASS-ID                    { return symbol(CLASS-ID                ); } 
   CLOSE                       { return symbol(CLOSE                   ); } 
   COBOL                       { return symbol(COBOL                   ); } 
   CODE                        { return symbol(CODE                    ); } 
@@ -265,7 +269,7 @@ PARAGRAPH  = {SP}{ID}
   DEBUG-NAME                  { return symbol(DEBUG_NAME              ); } 
   DEBUG-SUB-[1-3]             { return symbol(DEBUG_SUB               ); } 
   DEBUGGING                   { return symbol(DEBUGGING               ); } 
-  DECIMAL-POINT               { return symbol(DECIMAL_POINT           ); } 
+//  DECIMAL-POINT               { return symbol(DECIMAL_POINT           ); } 
   DECLARATIVES                { return symbol(DECLARATIVES            ); } 
   DELETE                      { return symbol(DELETE                  ); } 
   DELIMITED                   { return symbol(DELIMITED               ); } 
@@ -275,7 +279,7 @@ PARAGRAPH  = {SP}{ID}
   DISPLAY                     { return symbol(DISPLAY                 ); } 
   DISPLAY-1                   { return symbol(DISPLAY_1               ); } 
   DIVIDE                      { return symbol(DIVIDE                  ); } 
-  DIVISION                    { return symbol(DIVISION                ); } 
+//  DIVISION                    { return symbol(DIVISION                ); } 
   DOWN                        { return symbol(DOWN                    ); } 
   DUPLICATES                  { return symbol(DUPLICATES              ); } 
   DYNAMIC                     { return symbol(DYNAMIC                 ); } 
@@ -377,7 +381,7 @@ PARAGRAPH  = {SP}{ID}
   LINKAGE                     { return symbol(LINKAGE                 ); } 
   LOCAL-STORAGE               { return symbol(LOCAL_STORAGE           ); } 
   LOCK                        { return symbol(LOCK                    ); } 
-  LOW-VALUE[Ss]?              { return symbol(LOWVAL); } 
+  LOW-VALUE[Ss]?              { return symbol(LOWVAL                  ); } 
   MEMORY                      { return symbol(MEMORY                  ); } 
   MERGE                       { return symbol(MERGE                   ); } 
   METHOD                      { return symbol(METHOD                  ); } 
@@ -441,7 +445,7 @@ PARAGRAPH  = {SP}{ID}
   RECORDING                   { return symbol(RECORDING               ); } 
   RECORDS                     { return symbol(RECORDS                 ); } 
   RECURSIVE                   { return symbol(RECURSIVE               ); } 
-  REDEFINES                   { return symbol(REDEFINES               ); } 
+//  REDEFINES                   { return symbol(REDEFINES               ); } 
   REEL                        { return symbol(REEL                    ); } 
   REFERENCE                   { return symbol(REFERENCE               ); } 
   REFERENCES                  { return symbol(REFERENCES              ); } 
@@ -467,11 +471,11 @@ PARAGRAPH  = {SP}{ID}
   ROUNDED                     { return symbol(ROUNDED                 ); } 
   RUN                         { return symbol(RUN                     ); } 
   SAME                        { return symbol(SAME                    ); } 
-  SD                          { return symbol(SD                      ); } 
+//  SD                          { return symbol(SD                      ); } 
   SEARCH                      { return symbol(SEARCH                  ); } 
   SECTION                     { return symbol(SECTION                 ); } 
   SECURITY                    { return symbol(SECURITY                ); } 
-  SEGMENT-LIMIT               { return symbol(SEGMENT_LIMIT           ); } 
+//  SEGMENT-LIMIT               { return symbol(SEGMENT_LIMIT           ); } 
   SELECT                      { return symbol(SELECT                  ); } 
   SELF                        { return symbol(SELF                    ); } 
   SENTENCE                    { return symbol(SENTENCE                ); } 
@@ -690,9 +694,27 @@ PARAGRAPH  = {SP}{ID}
 
  ">="              { return symbol(REL_GE); }
  "<="              { return symbol(REL_LE); }
- "**"              { if (yycolumn < 4) commentInit(yytext(), yyline); else return symbol(OP_POW); }
- "*"               { if (yycolumn < 4) commentInit(yytext(), yyline); else return symbol(OP_MUL); }
- "/"               { if (yycolumn < 4) commentInit(yytext(), yyline); else return symbol(OP_DIV); }
+ "**"              { if (yycolumn < 4) {
+                         pushState(COMMENT);
+                         commentInit(yytext(), yyline); 
+                      } else {
+                         return symbol(OP_POW);
+                      } 
+                   }
+ "*"               { if (yycolumn < 4) {
+                         pushState(COMMENT);
+                         commentInit(yytext(), yyline); 
+                      } else {
+                        return symbol(OP_MUL); 
+                      }
+                   }
+ "/"               { if (yycolumn < 4) {
+                         pushState(COMMENT);
+                         commentInit(yytext(), yyline); 
+                      } else {
+                         return symbol(OP_DIV); 
+                      }
+                   }   
  "+"               { return symbol(OP_ADD); }
  "-"               { return symbol(OP_SUB); }
  ">"               { return symbol(REL_GT); }
@@ -702,7 +724,7 @@ PARAGRAPH  = {SP}{ID}
  "."               { return symbol(ZCCSym.ENDP); }
 
  ";"               { data = true; }
- ":"               { return symbol(OP_COL); }  
+ ":"               { return symbol(OP_COLON); }  
 
   {ENDVERB}        { return symbol(END_VERB);    }
   
@@ -823,9 +845,7 @@ PARAGRAPH  = {SP}{ID}
 }
 
 <COMMENT> {
-  {BLANKS}      { rules.checkTabsInText(symbolExt(WORDSLINE));
-                  commentAppend(yytext()); 
-                }
+  {BLANKS}      { tabsInText(yytext()); commentAppend(yytext()); }
   \n            { commentEnd(yyline);      }                 
   [a-zA-Z0-9]+  { commentAppend(yytext()); }
   [^]           { commentAppend(yytext()); }    

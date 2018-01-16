@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Instrucciones aritmeticas</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="STMTARIT">
+      <idGroup>42</idGroup>
+      <idParent>40</idParent>
+      <prefix>STM</prefix>
+      <r:title>
+          <text lang="xx">Instrucciones aritmeticas</text>      
+      </r:title>
+
+      <r:description>
+          <text lang="xx">Instrucciones aritmeticas</text>      
+      </r:description>
+
+      <onConditions>
+         <condition>
+            <lvalue type="property">groupName</lvalue>
+            <value>COBOL</value>
+          </condition>
+         <condition>
+            <lvalue type="property">subgroupName</lvalue>
+            <value>ARIT</value>
+          </condition>
+
+      </onConditions>        
+      
+      <r:item name="RVALUES">
+         <object>STATEMENT</object>
+         <r:title>
+            <text>Multiple RValues</text>      
+         </r:title>
+
+         <r:message>
+            <text>No se recomienda utilizar operaciones aritmeticas sobre varios elementos</text>
+         </r:message>
+         
+         <r:rule>
+            <severity>3</severity>
+            <condition>
+               <lvalue type="property">numRValues</lvalue>
+               <operator>gt</operator>
+               <rvalue>1</rvalue>
+            </condition>            
+         </r:rule>
+
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>

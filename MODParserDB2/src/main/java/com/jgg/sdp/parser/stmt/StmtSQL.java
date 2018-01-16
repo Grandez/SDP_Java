@@ -14,8 +14,8 @@ public class StmtSQL extends Statement<StmtSQL> {
 		super();
 	}
 	
-	public StmtSQL(String group) {
-		super(group);
+	public StmtSQL(Integer group, Integer subGroup) {
+		super(group, subGroup);
 	}
 	
 	public StmtSQL(Symbol s) {

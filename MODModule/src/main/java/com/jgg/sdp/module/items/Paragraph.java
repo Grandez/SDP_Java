@@ -9,10 +9,11 @@ package com.jgg.sdp.module.items;
 
 public class Paragraph {
 
-	private String  name = null;     // Nombre del parrafo
-	private int     line = -1;       // Linea
-	private int     references = 0;  // Numero de referencias
-	private int     sentences = 0;   // Numero de sentencias
+	private String  name          = null;     // Nombre del parrafo
+	private int     line          = -1;       // Linea
+	private int     references    = 0;  // Numero de referencias
+	private int     numStatements = 0;   // Numero de sentencias
+	private int     numBlocks     = 0;   // Numero de sentencias	
     private int     ciclomatic = 1;  // Conplejidad ciclomatica
 	private int     index = -1;      // Indice en la tabla Working
     private int     orden = 0;       // Orden en el fichero fuente 
@@ -22,11 +23,10 @@ public class Paragraph {
 		this.name = name.trim();
 	}
 	
-	public Paragraph(String name, int line, int sentences) {
+	public Paragraph(String name, int line) {
 		// La mascara es {espacio}nombre parrafo
 		this.name = name.trim();
 		this.line = line;
-		this.sentences = sentences;
 	}
 	
 	public String getName() { 
@@ -48,11 +48,21 @@ public class Paragraph {
 	public void incReferences() {
 		references++;
 	}
-	public void setSentences(int sentences) {
-		this.sentences = sentences;
+	public void setNumStatements(int sentences) {
+		this.numStatements = sentences;
 	}
-	public int getSentences() {
-		return sentences;
+	public int getNumStatements() {
+		return numStatements;
+	}
+	
+	public void incBlocks() {
+		this.numBlocks++;
+	}
+	public void setNumBlocks(int blocks) {
+		this.numBlocks = blocks;
+	}
+	public int getNumBlocks() {
+		return numBlocks;
 	}
 
 	public int getCiclomatic() {

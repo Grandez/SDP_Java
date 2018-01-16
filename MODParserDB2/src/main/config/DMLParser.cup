@@ -7,8 +7,8 @@ import com.jgg.sdp.core.ctes.*;
 
 import com.jgg.sdp.parser.base.*;
 
-import com.jgg.sdp.blocks.symbols.*;
-import com.jgg.sdp.blocks.stmt.*;
+import com.jgg.sdp.parser.stmt.StmtSQL;
+import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
@@ -25,7 +25,7 @@ parser code {:
 action code {:
    ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
    ParserInfo      info     = ParserInfo.getInstance();
-   StmtSQL         stmt     = new StmtSQL("DML");
+   StmtSQL         stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_DML);
    
    public void initActionClass() {
    }

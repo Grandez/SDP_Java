@@ -3,11 +3,10 @@ package com.jgg.sdp.parser.lang;
 import java_cup.runtime.*;
 
 import com.jgg.sdp.parser.base.*;
-
-import com.jgg.sdp.parser.base.*;
-
 import com.jgg.sdp.blocks.symbols.*;
-import com.jgg.sdp.blocks.stmt.*;
+
+import com.jgg.sdp.parser.stmt.StmtSQL;
+import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
@@ -23,7 +22,7 @@ parser code {:
 action code {:
    ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
    ParserInfo      info     = ParserInfo.getInstance();
-   StmtSQL         stmt     = new StmtSQL("PCL");
+   StmtSQL         stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_PCL);
    
    public void initActionClass() {
    }

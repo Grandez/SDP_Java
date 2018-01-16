@@ -11,6 +11,7 @@ import com.jgg.sdp.module.factorias.*;
 
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.code.*;
+import com.jgg.sdp.parser.stmt.*;
 
 import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.blocks.stmt.*;
@@ -93,8 +94,12 @@ terminal Symbol DIV_DATA ;
 
 terminal Symbol ID        ;
 terminal Symbol IDTOKEN   ;
+terminal Symbol PGMNAME   ;
 terminal Symbol NUMERO    ;
-terminal Symbol LEVEL     ;
+terminal Symbol LEVELXX   ;
+terminal Symbol LEVEL66   ;
+terminal Symbol LEVEL77   ;
+terminal Symbol LEVEL88   ;
 terminal Symbol HEX_VAL   ;
 terminal Symbol LITERAL   ;
 
@@ -290,7 +295,6 @@ non terminal Symbol endp_opt ;
 /*                   VARIABLES                             */
 /***********************************************************/
 
-non terminal Symbol nivel;
 non terminal Symbol var_value            ;
 non terminal Symbol var_occurs           ;
 non terminal Symbol var_occurs_from      ;
@@ -310,7 +314,15 @@ non terminal Symbol init_val_num         ;
 
 non terminal Variable variables     ;
 non terminal Variable variable      ;
-non terminal Variable var_def       ;
+non terminal Variable var_xx        ;
+non terminal Variable var_66        ;
+non terminal Variable var_77        ;
+non terminal Variable var_88        ;
+non terminal Variable var_xx_head   ;
+non terminal Variable var_66_head   ;
+non terminal Variable var_77_head   ;
+non terminal Variable var_88_head   ;
+
 non terminal Var      var_data      ;
 non terminal Var      var_data_def  ;
 non terminal          var_usage     ;
@@ -405,6 +417,20 @@ non terminal Variable    fd_def       ;
 non terminal Symbol      fd_desc      ;
 
 /***********************************************************/
+/*    CLAUSES                                              */
+/***********************************************************/
+
+non terminal clause_renames        ;
+
+non terminal clause_thru_opt ;
+non terminal clause_thru     ;
+
+non terminal clause_value          ;
+non terminal clause_value_list     ;
+non terminal clause_value_item     ;
+
+
+/***********************************************************/
 /*    OTRAS SENTENCIAS                                     */
 /***********************************************************/
 
@@ -414,7 +440,8 @@ non terminal           padres      ;
 non terminal           padre       ;
 non terminal           padre_indicator ;
 
-non terminal Symbol        figurative  ;
+non terminal Symbol   figurative  ;
+non terminal Symbol   constant    ;
 
 /**********************************************************************/
 /**********************************************************************/
@@ -469,7 +496,7 @@ programId ::= programId_verb:v ident_endp:p programId_name:n programId_type_opt 
 programId_verb ::= PGMID:p {: RESULT = new SymbolExt(p); :}
                ;
 
-programId_name ::= IDTOKEN:i {: RESULT = new SymbolExt(i); :}
+programId_name ::= PGMNAME:i {: RESULT = new SymbolExt(i); :}
                ;
                
 programId_type_opt ::= programId_type:t {: rules.checkProgramType(t); :}
@@ -864,16 +891,24 @@ variables ::= variable
           |   variables variable 
           ;
            
-variable ::= var_def:v var_data_def endp_opt   {: RESULT = module.addVariable(v); :} 
+variable ::= var_xx:v {: RESULT = module.addVariable(v); :}
+         |   var_66:v {: RESULT = module.addVariable(v); :}
+         |   var_77:v {: RESULT = module.addVariable(v); :}
+         |   var_88:v {: RESULT = module.addVariable(v); :}
          |   SQLDATA 
          |   ENDSQL // endp_opt
          ;
            
-var_def    ::= nivel:n var_name:s  {: currVar = code.createVar(n,s);
-                                      RESULT = currVar; 
-                                   :}
-           ;
-           
+var_xx ::= var_xx_head:v var_data_def endp_opt  {: RESULT = v; :}  ;
+var_66 ::= var_66_head:v clause_renames ENDP    {: RESULT = v; :}  ;
+var_77 ::= var_77_head:v var_data_def   ENDP    {: RESULT = v; :}  ;
+var_88 ::= var_88_head:v clause_value   ENDP    {: RESULT = v; :}  ;
+
+var_xx_head ::= LEVELXX:l var_name:v {: currVar = code.createVar(l,v);  RESULT = currVar; :} ;
+var_66_head ::= LEVEL66:l ID:v       {: currVar = code.createVar(l,v);  RESULT = currVar; :} ;
+var_77_head ::= LEVEL77:l ID:v       {: currVar = code.createVar(l,v);  RESULT = currVar; :} ;
+var_88_head ::= LEVEL88:l ID:v       {: currVar = code.createVar(l,v);  RESULT = currVar; :} ;
+              
 var_name   ::= ID:s           {: RESULT = s; :}
            |   PIC_ALPHANUM:s {: RESULT = s; :}
            |   PIC_ALPHA:s    {: RESULT = s; :}
@@ -886,9 +921,6 @@ var_filler ::=  FILLER:f   {: RESULT = f; :}
            |               {: RESULT = new Symbol(ZCDSym.FILLER,0,0, " "); :}        
            ;
            
-nivel ::= LEVEL:n        {: RESULT = n; :}
-      ;
-
 var_data_def ::= var_data
              |
              ;
@@ -1056,6 +1088,12 @@ padre_indicator ::= OF
                 ;
                  
 
+
+endp_opt ::= ENDP:e   {: RESULT = e;    :}
+         |            {: RESULT = null; :}
+         ;
+
+
 figurative ::= SPACES:f   {: RESULT = f; :}
            |   ZERO:f     {: RESULT = f; :}
            |   HIGHVAL:f  {: RESULT = f; :}
@@ -1064,7 +1102,29 @@ figurative ::= SPACES:f   {: RESULT = f; :}
            |   NULL:f     {: RESULT = f; :}
            ;
 
-endp_opt ::= ENDP:e   {: RESULT = e;    :}
-         |            {: RESULT = null; :}
+constant ::= figurative:c {: RESULT = c; :}
+         |   LITERAL:c    {: RESULT = c; :}
+         |   NUMERO:c     {: RESULT = c; :}
+         |   LEVELXX:c    {: RESULT = c; :}
          ;
+         
+clause_renames ::= RENAMES ID clause_thru_opt
+               ;
+               
+clause_value ::= VALUE clause_value_list
+             ;
+             
+clause_value_list ::= clause_value_item
+                  |   clause_value_list clause_value_item
+                  ;
+                  
+clause_value_item ::= constant clause_thru_opt
+                  ;
 
+clause_thru_opt ::= clause_thru
+                |
+                ;
+                      
+clause_thru ::= THRU constant
+            ;
+                  

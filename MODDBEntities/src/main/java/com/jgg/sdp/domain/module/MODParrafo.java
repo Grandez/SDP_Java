@@ -36,6 +36,9 @@ public class MODParrafo implements Serializable {
 	@Column(name="sentencias")
 	Integer sentencias;
 
+	@Column(name="blqoues")
+	Integer bloques;
+	
 	@Column(name="referencias")
 	Integer referencias;
 
@@ -86,6 +89,14 @@ public class MODParrafo implements Serializable {
 		this.sentencias = sentencias;
 	}
 
+	public Integer getBloques() {
+		return bloques;
+	}
+
+	public void setBloques(Integer bloques) {
+		this.bloques = bloques;
+	}
+	
 	public Integer getReferencias() {
 		return referencias;
 	}
@@ -136,6 +147,9 @@ public class MODParrafo implements Serializable {
 				+ ((referencias == null) ? 0 : referencias.hashCode());
 		result = prime * result
 				+ ((sentencias == null) ? 0 : sentencias.hashCode());
+		result = prime * result
+				+ ((bloques == null) ? 0 : bloques.hashCode());
+
 		return result;
 	}
 	@Override
@@ -186,6 +200,11 @@ public class MODParrafo implements Serializable {
 			if (other.sentencias != null)
 				return false;
 		} else if (!sentencias.equals(other.sentencias))
+			return false;
+		if (bloques == null) {
+			if (other.bloques != null)
+				return false;
+		} else if (!bloques.equals(other.bloques))
 			return false;
 		return true;
 	}

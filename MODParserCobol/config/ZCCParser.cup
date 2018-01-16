@@ -1,10 +1,7 @@
 package com.jgg.sdp.parser.lang;
 
-import java.util.*;
-
 import java_cup.runtime.*;
 
-import com.jgg.sdp.common.ctes.*;
 import com.jgg.sdp.common.config.*;
 import com.jgg.sdp.core.ctes.TRAP;
 
@@ -14,9 +11,12 @@ import com.jgg.sdp.module.factorias.*;
 
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.parser.code.*;
+import com.jgg.sdp.parser.stmt.*;
 
 import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.blocks.stmt.*;
+
+import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    GenericScanner scanner = null;
@@ -108,7 +108,7 @@ terminal Symbol OP_MUL       ;
 terminal Symbol OP_DIV       ;
 terminal Symbol OP_SUB       ;
 terminal Symbol OP_ADD       ;
-terminal Symbol OP_COL       ;
+terminal Symbol OP_COLON       ;
 
 terminal Symbol REL_GE  ;
 terminal Symbol REL_LE  ;
@@ -159,7 +159,6 @@ terminal Symbol CANCEL              ;
 terminal Symbol CBL                 ;
 terminal Symbol CHARACTER           ;
 terminal Symbol CHARACTERS          ;
-terminal Symbol CLASS               ;
 terminal Symbol CLASS_ID            ;
 terminal Symbol CLOSE               ;
 terminal Symbol COBOL               ;
@@ -197,7 +196,6 @@ terminal Symbol DEBUG_LINE          ;
 terminal Symbol DEBUG_NAME          ;
 terminal Symbol DEBUG_SUB           ;
 terminal Symbol DEBUGGING           ;
-terminal Symbol DECIMAL_POINT       ;
 terminal Symbol DECLARATIVES        ;
 terminal Symbol DELETE              ;
 terminal Symbol DELIMITED           ;
@@ -207,7 +205,6 @@ terminal Symbol DESCENDING          ;
 terminal Symbol DISPLAY             ;
 terminal Symbol DISPLAY_1           ;
 terminal Symbol DIVIDE              ;
-terminal Symbol DIVISION            ;
 terminal Symbol DOWN                ;
 terminal Symbol DUPLICATES          ;
 terminal Symbol DYNAMIC             ;
@@ -372,7 +369,6 @@ terminal Symbol RECORD              ;
 terminal Symbol RECORDING           ;
 terminal Symbol RECORDS             ;
 terminal Symbol RECURSIVE           ;
-terminal Symbol REDEFINES           ;
 terminal Symbol REEL                ;
 terminal Symbol REFERENCE           ;
 terminal Symbol REFERENCES          ;
@@ -398,11 +394,9 @@ terminal Symbol RIGHT               ;
 terminal Symbol ROUNDED             ;
 terminal Symbol RUN                 ;
 terminal Symbol SAME                ;
-terminal Symbol SD                  ;
 terminal Symbol SEARCH              ;
 terminal Symbol SECTION             ;
 terminal Symbol SECURITY            ;
-terminal Symbol SEGMENT_LIMIT       ;
 terminal Symbol SELECT              ;
 terminal Symbol SELF                ;
 terminal Symbol SENTENCE            ;
@@ -415,9 +409,6 @@ terminal Symbol SHIFT_IN            ;
 terminal Symbol SHIFT_OUT           ;
 terminal Symbol SIGN                ;
 terminal Symbol SIZE                ;
-terminal Symbol SKIP1               ;
-terminal Symbol SKIP2               ;
-terminal Symbol SKIP3               ;
 terminal Symbol SORT                ;
 terminal Symbol SORT_CONTROL        ;
 terminal Symbol SORT_CORE_SIZE      ;
@@ -867,12 +858,13 @@ non terminal StmtCobol stmtEndPerform ;
 non terminal StmtCobol stmtEndP      ;
 non terminal StmtCobol stmtEndSearch ;
 
-non terminal StmtCobol stmtExec      ;
+non terminal StmtCobol stmtCics      ;
+non terminal StmtCobol stmtSQL       ;
 
 non terminal StmtCobol stmtReturn ;             
 non terminal StmtCobol stmtStop   ;             
 non terminal StmtCobol stmtAdd    ;             
-non terminal StmtCobol stmtTest    ;
+//non terminal StmtCobol stmtTest    ;
              
 non terminal StmtCobol stmtSet       ;       
 non terminal StmtCobol set_verb      ;
@@ -921,12 +913,12 @@ non terminal StmtCobol stmtOpen_mode     ;
 non terminal Tokens closeFile , closeLstFiles ;
 
 non terminal SymbolExt expression         ;
-non terminal           expression_arit    ;
-non terminal           expr_colon         ;
-non terminal           expr_colon_opt     ;
-non terminal           expr_colon_value   ;
-non terminal           expr_operand       ;
-non terminal           expr_primary       ;
+non terminal SymbolExt expression_arit    ;
+non terminal SymbolExt expr_colon         ;
+non terminal SymbolExt expr_colon_opt     ;
+non terminal SymbolExt expr_colon_value   ;
+non terminal SymbolExt expr_operand       ;
+non terminal SymbolExt expr_primary       ;
 
 non terminal           logical_condition  ;
 non terminal           logical_begin      ;
@@ -950,8 +942,6 @@ non terminal           logical_rel        ;
 non terminal           logical_expr       ;
 non terminal           logical_operand    ;
 
-non terminal           conditional_expression ;
-non terminal           logical_expresion ;
 non terminal           logical_relation ;
 non terminal           operator_arit      ;
 
@@ -1037,9 +1027,7 @@ cobolCode ::=  module {: code.EndOfFile(lastStmt, hasEndProgram);
                       :}
           ; 
 
-module ::= procedure_division      
-           end_program                        
-       ;
+module ::= procedure_division  end_program ;
 
 end_program  ::= END_PGM:s SYM ENDP {: hasEndProgram = true; 
                                       StmtCobol stmt = new StmtCobol(s); 
@@ -1054,7 +1042,7 @@ end_program  ::= END_PGM:s SYM ENDP {: hasEndProgram = true;
 /* Procedure division                                                */
 /*********************************************************************/
                                              
-procedure_division ::= proc_div_header  bloque_procedure
+procedure_division ::= proc_div_header bloque_procedure
                    ;
 
 proc_div_header    ::= PROC_DIV:s  resto_call:p {: code.beginCode(s); :}
@@ -1084,8 +1072,7 @@ list_parms ::= SYM:s               {: RESULT = new Tokens(s); :}
            |   list_parms:l SYM:s  {: RESULT = l.add(s);      :} 
            ;
                                          
-bloque_procedure   ::= bloque_inicial  lista_parrafos
-                   ;
+bloque_procedure ::= bloque_inicial  lista_parrafos  ;
 
 // Bloque sentences podria ser vacio
 // Por eso no es necesario indicarlo en bloque_inicial                 
@@ -1108,11 +1095,11 @@ bloque_sentences ::= lista_stmt
                  |               
                  ;
                         
-parrafo_name     ::= PARRAFO:p parr_section:b ENDP 
-                     {: // if (b == true) code.notSupportedSection(p); 
-                        RESULT = code.processParrafo(p, lastStmt); 
-                     :}   
-                 ;  
+parrafo_name ::= PARRAFO:p parr_section:b ENDP 
+                 {: // if (b == true) code.notSupportedSection(p); 
+                    RESULT = code.processParrafo(p, lastStmt); 
+                 :}   
+             ;  
  
 parr_section     ::= SECTION:s {: RESULT = true;  :}
                  |             {: RESULT = false; :}
@@ -1122,17 +1109,18 @@ lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(s, lastStm
            |   lista_stmt stmt:s  {: lastStmt = code.processStatement(s, lastStmt); :}
            ;
 
-stmt     ::= verbos:s         {: RESULT = s; code.incStmt(); :}
+stmt     ::= verbos:s         {: RESULT = s; code.incStmt(s); :}
          |   noverbos:s       {: RESULT = s; :}
          ;  
 
-verbos   ::= stmtControl:s    {: RESULT = s; module.incStmtControl(); :}
-         |   stmtFlujo:s      {: RESULT = s; module.incStmtFlujo();   :}
-         |   stmtDatos:s      {: RESULT = s; module.incStmtDatos();   :}
-         |   stmtArit:s       {: RESULT = s; module.incStmtArit();    :}
-         |   stmtIO:s         {: RESULT = s; module.incStmtIO();      :}
-         |   stmtLang:s       {: RESULT = s; module.incStmtLang();    :}       
-         |   stmtExec:s       {: RESULT = s;                         :}
+verbos   ::= stmtControl:s    {: s.setGroup(CDG.STMT_CONTROL); RESULT = s; module.incStmtControl(); :}
+         |   stmtFlujo:s      {: s.setGroup(CDG.STMT_FLOW);    RESULT = s; module.incStmtFlujo();   :}
+         |   stmtDatos:s      {: s.setGroup(CDG.STMT_DATA);    RESULT = s; module.incStmtDatos();   :}
+         |   stmtArit:s       {: s.setGroup(CDG.STMT_ARIT);    RESULT = s; module.incStmtArit();    :}
+         |   stmtIO:s         {: s.setGroup(CDG.STMT_IO);      RESULT = s; module.incStmtIO();      :}
+         |   stmtLang:s       {: s.setGroup(CDG.STMT_LANG);    RESULT = s; module.incStmtLang();    :}       
+         |   stmtCics:s       {: s.setGroup(CDG.STMT_CICS);    RESULT = s; module.incStmtCics();    :}
+         |   stmtSQL:s        {: s.setGroup(CDG.STMT_SQL);     RESULT = s; module.incStmtSql();     :}         
          ;
 
 noverbos ::= stmtEndP:s        {: RESULT = code.checkFlujo( s, lastStmt);:}
@@ -1225,10 +1213,10 @@ stmtIO2 ::= stmtAccept:s         {: RESULT = s; :}
 /* Sentencias de operaciones aritmeticas */
 stmtArit ::= stmtMultiply:s    {: RESULT = s; :}
          |   stmtCompute:s     {: RESULT = s; :}
-//         |   stmtAdd:s         {: RESULT = s; :}
+         |   stmtAdd:s         {: RESULT = s; :}
          |   stmtDivide:s      {: RESULT = s; :}
          |   stmtSubtract:s    {: RESULT = s; :}
-         |   stmtTest:s        {: RESULT = s; :}
+//         |   stmtTest:s        {: RESULT = s; :}
          ;
             
 /* Sentencias del lenguaje */
@@ -1239,12 +1227,12 @@ stmtLang    ::= stmtCancel:s      {: RESULT = s; :}
 /* Verbos */
                                                    
 
-stmtContinue    ::=  CONTINUE:s   {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
+stmtContinue    ::=  CONTINUE:s   {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     ;
 
 
 
-stmtGoback      ::=  GOBACK:s     {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
-stmtMerge       ::=  MERGE:s      {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
+stmtGoback      ::=  GOBACK:s     {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     ;
+stmtMerge       ::=  MERGE:s      {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     ;
 
 
 moduloCall ::= variable:i  {: RESULT = i; :}
@@ -1266,17 +1254,17 @@ exitTypes ::= stmtExitG:s {: RESULT = s; :}
           |   stmtExitPgm:s {: RESULT = s; :}
           ;  
                         
-stmtExitG ::=  EXIT:s  exitType:t   {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
+stmtExitG ::=  EXIT:s  exitType:t   {: StmtCobol stmt = new StmtCobol(s, code.getNumStatements());
                                        RESULT = stmt.addRValue(t); 
                                     :}    
           ;
 
-stmtExitP ::=  EXIT_PERFORM:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
+stmtExitP ::=  EXIT_PERFORM:s  {: StmtCobol stmt = new StmtCobol(s, code.getNumStatements());
                            RESULT = stmt.addRValue(code.makeSymbol(ZCCSym.PERFORM, -1, -1, "PERFORM")); 
                         :}    
           ;
 
-stmtExitPgm ::=  EXIT_PGM:s  {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
+stmtExitPgm ::=  EXIT_PGM:s  {: StmtCobol stmt = new StmtCobol(s, code.getNumStatements());
                                RESULT = stmt.addRValue(s); 
                             :}
             ;                    
@@ -1286,18 +1274,21 @@ exitType  ::= PROGRAM:s   {: RESULT = s; :}
           |               {: RESULT = code.makeSymbol(ZCCSym.PARRAFO, -1, -1, ""); :}
           ;
           
-stmtNext     ::=  NEXT:s       {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
+stmtNext     ::=  NEXT:s       {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     ;
 
 stmtReturn   ::=  RETURN:r  SYM:i stmtRead_detail:j     
                   {: StmtCobol stmt = code.fileAccess(TRAP.ACC_READ, r, i);
                      RESULT = stmt; // .addTokens(j); 
                   :}
              ;
-stmtExec ::= CICSCODE:s {: module.incStmtCics(); RESULT = new StmtCobol(s, code.getStmts()); :}     
-         |   SQLCODE:s  {: module.incStmtSql();  RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtCics ::= CICSCODE:s {: RESULT = new StmtCobol(s, code.getNumStatements()); :}
          ;
+         
+              
+stmtSQL ::= SQLCODE:s  {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     
+        ;
 
-stmtEndExec ::= ENDEXEC:s {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtEndExec ::= ENDEXEC:s {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     
             ;
             
 /*************************************************************************************/
@@ -1384,12 +1375,12 @@ stmtCall_returning ::= RETURNING lvalue
                                                                                       
 // CANCEL
 
-stmtCancel ::= CANCEL:s rvalue  {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;               
+stmtCancel ::= CANCEL:s rvalue  {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     ;               
 
 // COMPUTE 
 
 stmtCompute  ::=  COMPUTE:s compute_lvalue REL_EQ compute_rvalues compute_options_opt
-                   {: StmtCobol stmt = new StmtCobol(s, code.getStmts());
+                   {: StmtCobol stmt = new StmtCobol(s, code.getNumStatements());
 //                      stmt.addSymbol(i);
                       RESULT = stmt; 
                    :}     
@@ -1417,7 +1408,7 @@ compute_option ::= option_size_error
                    ;
 // DISPLAY
 
-stmtDisplay ::= DISPLAY:s rvalue_list {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtDisplay ::= DISPLAY:s rvalue_list {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     
             ;
                                                                                               
 // DIVIDE
@@ -1487,7 +1478,7 @@ when_thru ::= THRU logical_condition
 stmtGoTo ::=  GOTO:s opt_to 
                      stmtGoto_procs 
                      stmtGoto_depending_opt   
-                     {: RESULT = new StmtCobol(s, code.getStmts()); :} 
+                     {: RESULT = new StmtCobol(s, code.getNumStatements()); :} 
          ;
 
 stmtGoto_procs ::= SYM
@@ -1574,7 +1565,7 @@ move_verb ::= MOVE:s {: RESULT = new StmtCobol(s, currStmt); :}
            
 // MULTIPLY
 
-stmtMultiply ::=  MULTIPLY:s stmtMultiply_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}
+stmtMultiply ::=  MULTIPLY:s stmtMultiply_detail {: RESULT = new StmtCobol(s, code.getNumStatements()); :}
              ;
              
 stmtMultiply_detail ::= stmtMultiply_by multiply_options_opt
@@ -1834,7 +1825,7 @@ stmtSort_procedure ::= INPUT SYM
                                                                                       
 // START
 
-stmtStart ::= START:s SYM stmtStart_key    {: RESULT = new StmtCobol(s, code.getStmts()); :}     ;
+stmtStart ::= START:s SYM stmtStart_key    {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     ;
 
 stmtStart_key ::= KEY logical_oper rvalue
               |
@@ -1876,7 +1867,7 @@ string_pointer_opt ::= opt_with POINTER lvalue
                                                                 
 // SUBTRACT
 
-stmtSubtract ::= SUBTRACT:s stmtSubtract_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtSubtract ::= SUBTRACT:s stmtSubtract_detail {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     
              ;
              
 stmtSubtract_detail ::= rvalue_list stmtSubtract_options
@@ -1892,7 +1883,7 @@ stmtSubtract_option ::= FROM rvalue_list
                     ;
 // UNSTRING
 
-stmtUnstring ::=  UNSTRING:s  stmtUnstring_detail {: RESULT = new StmtCobol(s, code.getStmts()); :}     
+stmtUnstring ::=  UNSTRING:s  stmtUnstring_detail {: RESULT = new StmtCobol(s, code.getNumStatements()); :}     
              ;
 
 stmtUnstring_detail ::= rvalue stmtUnstring_delimited_opt stmtUnstring_to stmtUnstring_options_opt 
@@ -1994,8 +1985,8 @@ stmtDelete   ::=  DELETE:d SYM:i
                  {: RESULT = code.fileAccess(TRAP.ACC_DELETE, d, i); :}
              ;
 
-stmtStop     ::=  STOP:s     optTokens  {: RESULT = new StmtCobol(s, code.getStmts()); :}    
-             |    STOPRUN:s  optTokens  {: RESULT = new StmtCobol(s, code.getStmts()); :}
+stmtStop     ::=  STOP:s     optTokens  {: RESULT = new StmtCobol(s, code.getNumStatements()); :}    
+             |    STOPRUN:s  optTokens  {: RESULT = new StmtCobol(s, code.getNumStatements()); :}
              ;
 
 stmtClose       ::=  CLOSE:c  closeLstFiles:l  
@@ -2129,29 +2120,29 @@ eatWriteItem ::= token:s {: RESULT = new Tokens(s); :}
 /*****************************************************************/
 /*****************************************************************/
 
-expression ::= expression_arit
+expression ::= expression_arit:e {: RESULT = e; :} 
            ;
             
-expression_arit ::= expr_operand
-                |   expression_arit operator_arit expr_operand
+expression_arit ::= expr_operand:e                                 {: RESULT = e; :}
+                |   expression_arit:e operator_arit expr_operand   {: RESULT = e; :}
                 ;
 
-expr_colon ::= expression expr_colon_opt
+expr_colon ::= expression:e expr_colon_opt {: RESULT = e; :}
            ;
            
-expr_colon_opt ::= OP_COL expr_colon_value
-               |
+expr_colon_opt ::= OP_COLON expr_colon_value:e {: RESULT = e;    :}
+               |                               {: RESULT = null; :}
                ;
 
-expr_colon_value ::= expr_primary
-                 |
+expr_colon_value ::= expr_primary:e {: RESULT = e;    :}
+                 |                  {: RESULT = null; :}
                  ;
                                            
-expr_operand ::= expr_primary
-             |   LPAR expr_colon RPAR
+expr_operand ::= expr_primary:e           {: RESULT = e; :}
+             |   LPAR expr_colon:e RPAR   {: RESULT = e; :}
              ;
 
-expr_primary ::= rvalue
+expr_primary ::= rvalue:e                 {: RESULT = e; :}
              ;
 
                                         

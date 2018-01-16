@@ -6,6 +6,9 @@ import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.blocks.stmt.*;
+import com.jgg.sdp.parser.stmt.*;
+
+import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
@@ -82,7 +85,7 @@ non terminal Symbol     cpy_replacing_token ;
 /**********************************************************************/
 /**********************************************************************/
 
-copy ::=  cpy_stmt:c  {: stmt.setGroup("COPY");
+copy ::=  cpy_stmt:c  {: stmt.setGroup(CDG.STMT_COPY);
                          RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  
                       :}
      ; 

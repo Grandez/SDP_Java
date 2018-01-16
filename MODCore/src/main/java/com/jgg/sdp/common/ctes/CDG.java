@@ -183,6 +183,23 @@ public class CDG {
     // Modos de funcionamiento del Analizador
     public static final int MODE_DB    =  0;
     public static final int MODE_LOCAL =  1;
+   
+    // Tipos de instrucciones
+    public static final int STMT_COBOL   = 10;    
+    public static final int STMT_DATA    = 11;
+    public static final int STMT_CONTROL = 12;
+    public static final int STMT_FLOW    = 13;
+    public static final int STMT_ARIT    = 14;
+    public static final int STMT_IO      = 15;
+    public static final int STMT_LANG    = 16;       
+    public static final int STMT_CICS    = 20;
+    public static final int STMT_SQL     = 30;
+    public static final int STMT_DCL     = 31; 
+    public static final int STMT_DDL     = 32;
+    public static final int STMT_DML     = 33;
+    public static final int STMT_PCL     = 34;
+    public static final int STMT_TCL     = 35;   
+    public static final int STMT_COPY    = 40;
     
 	private CDG() {
 		

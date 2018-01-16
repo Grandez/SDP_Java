@@ -109,8 +109,8 @@ public class SDPAnalyzer {
 		    rc = RC.NOT_SUP;
 		    res = MSG.KO;
         } catch (ParseException s) {
-        	System.out.println(s.getLocalizedMessage());
-        	s.printStackTrace();
+//        	System.out.println(s.getLocalizedMessage());
+//        	s.printStackTrace();
         	txt = msg.getExceptionMessage(s);
             unit.setStatus(CDG.STATUS_SDP_ERROR);
             rc = RC.SEVERE;

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>Instrucciones no permitidas</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="STMTBAD">
+      <idGroup>41</idGroup>
+      <idParent>40</idParent>
+      <prefix>STM</prefix>
+      <r:title>
+          <text lang="xx">Instrucciones no permitidas</text>      
+      </r:title>
+
+      <r:description>
+          <text lang="xx">Instrucciones no permitidas</text>      
+      </r:description>
+      
+      <r:item name="STMTBAD">
+         <object>STATEMENT</object>
+         <r:title>
+            <text>Instrucciones no permitidas</text>      
+         </r:title>
+
+         <r:message>
+            <text>La instruccion :Value: no esta permitida</text>
+         </r:message>
+         
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <value>GOTO</value>
+            </condition>            
+         </r:rule>
+
+         <r:rule>
+            <severity>5</severity>
+            <condition>
+               <value>DISPLAY</value>
+            </condition>            
+         </r:rule>
+         
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>

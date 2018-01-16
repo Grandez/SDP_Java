@@ -291,7 +291,8 @@ public class Persister {
     		p.setLinea(parr.getLine());
     		p.setNombre(parr.getName());
     		p.setReferencias(parr.getReferences());
-    		p.setSentencias(parr.getSentences());
+    		p.setSentencias(parr.getNumStatements());
+    		p.setBloques(parr.getNumBlocks());
     		p.setIndice(parr.getIndex());
     		p.setCc(parr.getCiclomatic());
     		p.setIsExit(parr.isExit() ? 1 : 0);

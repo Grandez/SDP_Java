@@ -24,13 +24,15 @@ import com.jgg.sdp.tools.Firma;
 import com.jgg.sdp.adt.ADTHashDup;
 import com.jgg.sdp.blocks.reflect.*;
 import com.jgg.sdp.blocks.symbols.*;
+import com.jgg.sdp.common.ctes.CDGText;
 
 import java_cup.runtime.Symbol;
 
 public class Statement<T> implements IStatement {
 
     private   SymbolExt            verbo    = null;
-    private   String               group    = null;
+    private   Integer              group    = null;
+    private   Integer              subGroup = null;
     private   ArrayList<SymbolExt> lvalues  = new ArrayList<SymbolExt>();
     private   ArrayList<SymbolExt> rvalues  = new ArrayList<SymbolExt>();
     
@@ -60,8 +62,14 @@ public class Statement<T> implements IStatement {
 	
 	public Statement() {
 	}
-	public Statement(String group) {
+	
+	public Statement(Integer group) {
 		this.group = group;
+	}
+
+	public Statement(Integer group, Integer subGroup) {
+		this.group = group;
+		this.subGroup = subGroup;
 	}
 	
 	public Statement (Symbol s) {
@@ -250,12 +258,20 @@ public class Statement<T> implements IStatement {
 		return id;
 	}
 	
-	public void setGroup(String group) {
+	public void setGroup(Integer group) {
 		this.group = group;
 	}
 	
-	public String getGroup() {
+	public Integer getGroup() {
 		return group;
+	}
+
+	public void setSubGroup(Integer subGroup) {
+		this.subGroup = subGroup;
+	}
+	
+	public Integer getSubGroup() {
+		return subGroup;
 	}
 	
 	public int getOrden() {
@@ -400,4 +416,17 @@ public class Statement<T> implements IStatement {
     public int getEndColumn() { return endColumn;   }    
     public int getLines()     { return endLine - begLine + 1; }
     
+    public String getGroupName() {
+    	return CDGText.getStmtGroupName(group);
+    }
+    public String getSubgroupName() {
+    	return CDGText.getStmtSubGroupName(subGroup);
+    }
+    public Integer getNumRValues() {
+    	return rvalues.size();
+    }
+    public Integer getNumLValues() {
+    	return lvalues.size();
+    }
+
 }

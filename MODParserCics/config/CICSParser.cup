@@ -7,7 +7,6 @@ import com.jgg.sdp.common.config.*;
 
 import com.jgg.sdp.parser.base.*;
 
-import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.blocks.stmt.*;
 import com.jgg.sdp.parser.stmt.StmtCICS;
 
@@ -110,7 +109,7 @@ non terminal Symbol   padre_indicator ;
 /**********************************************************************/
 /**********************************************************************/
 
-cics ::= cics_stmts:s  {: stmt.setGroup("CICS");
+cics ::= cics_stmts:s  {: stmt.setGroup(CDG.STMT_CICS);
                           RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  
                        :}   
      |                                                            

@@ -56,8 +56,14 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
    boolean beginPic  = true;   
 
    public Symbol levelOrNum() {
+       int val = Integer.parseInt(yytext().trim());
+       if (val == 66) return symbol(LEVEL66);
+       if (val == 77) return symbol(LEVEL77);
+       if (val == 88) return symbol(LEVEL88);
+       if (val >  49) return symbol(NUMERO);
+       
        if (lastSymbol == NUMERO) return symbol(NUMERO);
-       return symbol(LEVEL);
+       return symbol(LEVELXX);
    }
 
    public Symbol symbolID(int code) {
@@ -77,6 +83,10 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
        }
        return symbol(ENDP);
    } 
+   
+   public void tabsInText(String txt) {
+      if (txt.indexOf('\t') != -1) rules.checkTabsInText(symbolExt(WORDSLINE));
+   }
    
    public SymbolExt symbolExt(int code)             { return new SymbolExt(symbol(code));              }     
    public Symbol    symbol   (int code)             { return symbol(code, yytext(), yyline, yycolumn); }
@@ -108,6 +118,7 @@ TABS=[\t]+
 BLANKS=[ \t]+
 POINTS=\.[ \t]*\.
 WORD=[a-zA-Z0-9\_\-]+
+PGMNAME=[a-zA-Z0-9]+
 
 NUMERO=[+|-]?[0-9]+
 DECIMAL=[+|-]?[0-9]+[\.\,][0-9]+
@@ -184,7 +195,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   ^[ ]+SKIP[1-9]?     { rules.checkPrintDirective(symbolExt(SKIP, "SKIP"));  }
   ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective(symbolExt(EJECT, "EJECT")); }
 
-  PROGRAM-ID    { pushState(ID_OPTIONS); return symbolID(PGMID);        }
+  PROGRAM-ID    { return symbolID(PGMID);        }
   AUTHOR        { pushState(ID_OPTIONS); return symbolID(AUTHOR);       }
   DATE-WRITTEN  { pushState(ID_OPTIONS); return symbolID(DATEW);        }
   DATE-COMPILED { pushState(ID_OPTIONS); return symbolID(DATEC);        }   
@@ -212,23 +223,23 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 
   ENVIRONMENT{BLANKS}DIVISION     { inDesc = false;
                                     resetState(ENV_DIVISION); 
-                                    rules.checkTabsInText(symbolExt(WORDSLINE));
+                                    tabsInText(yytext());
                                     return symbol(DIV_ENV); 
                                   }
 
   DATA{BLANKS}DIVISION            { resetState(DATA_DIVISION);
                                     inDesc = false;   
-                                    rules.checkTabsInText(symbolExt(WORDSLINE));
+                                    tabsInText(yytext());
                                     return symbol(DIV_DATA);
                                   }
 
-  PROCEDURE{BLANKS}DIVISION       { rules.checkTabsInText(symbolExt(WORDSLINE)); 
+  PROCEDURE{BLANKS}DIVISION       { tabsInText(yytext()); 
                                     pushBack = yytext().length(); 
                                     yyclose(); 
                                   }
   \.               { return symbol(ENDP);   }
-  {WORD}           { /* nada */ }
-  {NUMERO}         { /* nada */ }
+  {PGMNAME}        { return symbol(PGMNAME);   }
+  {NUMERO}         { System.out.println("JGGERR INIT caracter: " + yytext() + "(" + yyline + "," + yycolumn + ")"); }
   {SPACES}         { /* nada */ }
   {TABS}           { rules.checkTab(symbolExt(TAB)); }
 
@@ -292,23 +303,22 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective(symbolExt(EJECT, "EJECT")); }
                                    
   CONFIGURATION{BLANKS}SECTION   { pushState(CONF_SECT);   
-                                   rules.checkTabsInText(symbolExt(WORDSLINE));
+                                   tabsInText(yytext());
                                    return symbol(CONF_SECTION); 
                                  }
                                  
   INPUT-OUTPUT{BLANKS}SECTION    { pushState(IO_SECT);
-                                   rules.checkTabsInText(symbolExt(WORDSLINE));
+                                   tabsInText(yytext());
                                    return symbol(IO_SECTION);   
                                  }
 
   DATA{BLANKS}DIVISION           { resetState(DATA_DIVISION);
                                    inDesc = false;
-                                   rules.checkTabsInText(symbolExt(WORDSLINE));   
+                                   tabsInText(yytext());   
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(symbolExt(WORDSLINE));
-                                   pushBack = yytext().length(); 
+  PROCEDURE{BLANKS}DIVISION      { tabsInText(yytext());
                                    yyclose(); 
                                  }
 
@@ -369,17 +379,17 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 
   INPUT-OUTPUT{BLANKS}SECTION    { popState();
                                    pushState(IO_SECT);
-                                   rules.checkTabsInText(symbolExt(WORDSLINE));
+                                   tabsInText(yytext());
                                    return symbol(IO_SECTION);   
                                  }
 
   DATA{BLANKS}DIVISION           { resetState(DATA_DIVISION);
                                    inDesc = false;   
-                                   rules.checkTabsInText(symbolExt(WORDSLINE));
+                                   tabsInText(yytext());
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(symbolExt(WORDSLINE));
+  PROCEDURE{BLANKS}DIVISION      { tabsInText(yytext());
                                    pushBack = yytext().length(); 
                                    yyclose(); 
                                  }
@@ -442,11 +452,11 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 
   DATA{BLANKS}DIVISION           { resetState(DATA_DIVISION);
                                    inDesc = false;   
-                                   rules.checkTabsInText(symbolExt(WORDSLINE));
+                                   tabsInText(yytext());
                                    return symbol(DIV_DATA);
                                  }
 
-  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(symbolExt(WORDSLINE));
+  PROCEDURE{BLANKS}DIVISION      { tabsInText(yytext());
                                    pushBack = yytext().length(); 
                                    yyclose(); 
                                  }
@@ -486,13 +496,15 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   ^[ \t]+SKIP[1-9]?     { rules.checkPrintDirective(symbolExt(SKIP, "SKIP"));  }
   ^[ \t]+EJECT[ ]*[\.]? { rules.checkPrintDirective(symbolExt(EJECT, "EJECT")); }
   ^\-                   { /* JGG, Pendiente de revisar */ }  
-  ^[ \t]+[0-9]+         { return levelOrNum(); }
+  ^[ \t]+[0-9]+         { tabsInText(yytext());
+                          return levelOrNum(); 
+                        }
   
-  FILE{BLANKS}SECTION            { rules.checkTabsInText(symbolExt(WORDSLINE)); return symbol(FILE_SECTION);    }
-  WORKING-STORAGE{BLANKS}SECTION { rules.checkTabsInText(symbolExt(WORDSLINE)); return symbol(WORKING_SECTION); }
-  LOCAL-STORAGE{BLANKS}SECTION   { rules.checkTabsInText(symbolExt(WORDSLINE)); return symbol(LOCAL_SECTION);   }
-  LINKAGE{BLANKS}SECTION         { rules.checkTabsInText(symbolExt(WORDSLINE)); return symbol(LINKAGE_SECTION); }
-  PROCEDURE{BLANKS}DIVISION      { rules.checkTabsInText(symbolExt(WORDSLINE));
+  FILE{BLANKS}SECTION            { tabsInText(yytext()); return symbol(FILE_SECTION);    }
+  WORKING-STORAGE{BLANKS}SECTION { tabsInText(yytext()); return symbol(WORKING_SECTION); }
+  LOCAL-STORAGE{BLANKS}SECTION   { tabsInText(yytext()); return symbol(LOCAL_SECTION);   }
+  LINKAGE{BLANKS}SECTION         { tabsInText(yytext()); return symbol(LINKAGE_SECTION); }
+  PROCEDURE{BLANKS}DIVISION      { tabsInText(yytext());
                                    pushBack = yytext().length(); 
                                    yyclose(); 
                                  }
@@ -731,7 +743,7 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
 }
 
 <COMMENT> {
-  {BLANKS}      { rules.checkTabsInText(symbolExt(WORDSLINE));
+  {BLANKS}      { tabsInText(yytext());
                   commentAppend(yytext()); 
                 }
   \n            { commentEnd(yyline);      }                 

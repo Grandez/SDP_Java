@@ -8,6 +8,10 @@ import com.jgg.sdp.domain.graph.DCGNode;
 
 @Entity
 @Table(name="DCG_NODES")
+@NamedQueries( {
+	 @NamedQuery(name="DCGNode.listNodes", query="SELECT n FROM DCGNode n WHERE n.idVersion = ?1 AND n.idGrafo = ?2")
+})
+
 public class DCGNode implements Serializable {
 
 	private static final long serialVersionUID = -5885991423139457689L;
@@ -18,11 +22,11 @@ public class DCGNode implements Serializable {
 
 	@Id
 	@Column(name="idGrafo")
-	Integer idGrafo;
+	Long idGrafo;
 		
 	@Id
 	@Column(name="idNode")
-	Integer idNode;
+	Long idNode;
 
 	@Column(name="tipo")
 	Integer tipo;
@@ -31,7 +35,7 @@ public class DCGNode implements Serializable {
 	String nombre;
 
 	@Column(name="subgraph")
-	Integer subgraph;
+	Long subgraph;
 	
 	public Long getIdVersion() {
 		return idVersion;
@@ -41,20 +45,20 @@ public class DCGNode implements Serializable {
 		this.idVersion = idVersion;
 	}
 
-	public Integer getIdNode() {
+	public Long getIdNode() {
 		return idNode;
 	}
 
-	public void setIdNode(Integer idNode) {
+	public void setIdNode(Long idNode) {
 		this.idNode = idNode;
 	}
 
 	
-	public Integer getIdGrafo() {
+	public Long getIdGrafo() {
 		return idGrafo;
 	}
 
-	public void setIdGrafo(Integer idGrafo) {
+	public void setIdGrafo(Long idGrafo) {
 		this.idGrafo = idGrafo;
 	}
 
@@ -74,11 +78,11 @@ public class DCGNode implements Serializable {
 		this.nombre = nombre;
 	}
 
-	public Integer getSubgraph() {
+	public Long getSubgraph() {
 		return subgraph;
 	}
 
-	public void setSubgraph(Integer subgraph) {
+	public void setSubgraph(Long subgraph) {
 		this.subgraph = subgraph;
 	}
 

@@ -14,12 +14,14 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+import com.jgg.sdp.domain.core.SDPModulo;
 import com.jgg.sdp.domain.module.*;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.domain.services.log.LOGMsgService;
 import com.jgg.sdp.domain.services.module.*;
 import com.jgg.sdp.domain.services.summary.*;
 import com.jgg.sdp.domain.summary.*;
+import com.jgg.sdp.web.core.json.ApplTree;
 import com.jgg.sdp.web.json.*;
 
 @RestController
@@ -113,6 +115,25 @@ public class ArbolController {
         }        
 
         return last;
+    }
+
+    @RequestMapping("/grafos")
+    public List<ApplTree> mountTree() {
+        ArrayList<ApplTree> appTree = new ArrayList<ApplTree>();
+        ApplTree node = new ApplTree();
+        node.setId(0L);
+        node.setText("ROOT");
+        node.setParent("#");
+        appTree.add(node);
+        
+        for (SDPModulo mod: moduloService.listModulesByAppl(40301L)) {
+        	node = new ApplTree();
+        	node.setId(mod.getIdVersion());
+        	node.setText(mod.getNombre());
+        	node.setParent("0");
+        	appTree.add(node);
+        }
+    	return appTree;
     }
     
 }

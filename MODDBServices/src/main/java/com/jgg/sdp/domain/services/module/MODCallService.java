@@ -18,7 +18,7 @@ import com.jgg.sdp.domain.services.AbstractService;
 public class MODCallService extends AbstractService<MODCall> {
     
     public List<MODCall> getListCall(Long idVersion) {
-          return lista(MODCall.listCall, idVersion);
+          return listQuery(MODCall.listCall, idVersion);
     }
     
     public List<MODCall> getListCalling(String module) {
@@ -28,5 +28,8 @@ public class MODCallService extends AbstractService<MODCall> {
    public MODCall getModule(Long idVersion, String module) {
 	   return findQuery(MODCall.find, idVersion, module);
    }
-    
+   
+   public List<MODCall> listCalls(Long idVersion) {
+       return list("listCalls", idVersion);
+ }
 }

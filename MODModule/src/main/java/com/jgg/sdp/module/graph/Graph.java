@@ -9,37 +9,35 @@ package com.jgg.sdp.module.graph;
 
 import java.util.*;
 
-import com.jgg.sdp.module.base.Module;
+import com.jgg.sdp.module.items.Paragraph;
 import com.jgg.sdp.module.tables.TBParagraphs;
 import com.jgg.sdp.tools.*;
 
+import static com.jgg.sdp.module.graph.NodeTypes.*;
+
 public class Graph {
 
-	private Module module;
-	
+    private FactoryGraphs nodes    = FactoryGraphs.getInstance(false);
+    
 	// Los subgrafos se incorporan de acuerdo con su id (id = indice)
 	// El map permite buscarlo por nombre 
     private ArrayList<SubGraph>       graphs = new ArrayList<SubGraph>();
-	private HashMap<String, SubGraph> raw    = new HashMap<String, SubGraph>();
+	private HashMap<String, SubGraph> map    = new HashMap<String, SubGraph>();
 	
-    private HashMap<Integer, Grafo> grafos    = new HashMap<Integer, Grafo>();
-    private HashMap<Integer, Node>  nodos     = new HashMap<Integer, Node>();
-    private HashSet<Edge>           edges     = new HashSet<Edge>();
-    private ArrayList<Edge>         lstEdges  = new ArrayList<Edge>();
+	// Grafos procesados
+    private HashMap<Long, String> grafos  = new HashMap<Long, String>();
+    private HashMap<Long, Node>   nodos   = new HashMap<Long, Node>();
+    private HashSet<Edge>         edges   = new HashSet<Edge>();
     
 	private SubGraph root = null;
-	private FactoryGraphs nodes = FactoryGraphs.getInstance(true);
 
 	HashMap<Node, Node> changes = new HashMap<Node, Node>();
+
+	private JGGQueue<String> sigGraph = null; 
 	
-    public Graph(Module module) {
-    	this.module = module;
-    }
-
-    public List<Grafo> getGraphs() {
-    	return new ArrayList<Grafo>(grafos.values());
-    }
-
+	public List<SubGraph> getGraphs() {
+		return graphs;
+	}
     public List<Node> getNodes() {
     	return new ArrayList<Node>(nodos.values());
     }
@@ -53,11 +51,11 @@ public class Graph {
     
     public void add(SubGraph sub) {
     	graphs.add(sub);
-    	raw.put(sub.getName(),  sub);
+    	map.put(sub.getName(),  sub);
     	if (root == null) {
     		Node n = sub.getRoot();
-    		n.setType(Nodes.PGMBEG);
-    		n.getLast().setType(Nodes.PGMEND);
+    		n.setType(PGMBEG);
+    		n.getLast().setType(PGMEND);
     		root = sub;
     	}
     }
@@ -66,135 +64,110 @@ public class Graph {
     	return root;
     }
     
-    public void parse() {
-    	getWorkEdges();
-    	reduceGraph();
-    	for (Edge e: lstEdges) {
-    		nodos.put(e.getFrom().getId(), e.getFrom());
-    		nodos.put(e.getTo().getId(), e.getTo());
-    		if (grafos.get(e.getIdGrafo()) == null) {
-    			SubGraph s = graphs.get(e.getIdGrafo());
-    		    grafos.put(e.getIdGrafo(), new Grafo(s.getId(), s.getLevel(), s.getName()));
-    		}
-    	}
+    public void parse(TBParagraphs tbPars) {
+    	int level = 0;
+    	sigGraph = new JGGQueue<String>();
+    	sigGraph.enqueue(root.getName());
     	
-    	// Quitar los edges duplicados
-    	for (Edge e: lstEdges) edges.add(e);
-//JGG    	printData();
+    	while (!sigGraph.isEmpty()) {
+       	   SubGraph graph = map.get(sigGraph.dequeue());
+       	   if (graph == null)                     continue;
+           if (grafos.get(graph.getId()) != null) continue;
+           if (!graph.isGraph())                  continue;
+       	   System.out.println("Procesando grafo: " + graph.getName());
+       	   reduceGraph(graph);
+           grafos.put(graph.getId(), graph.getName());
+           
+           processNodes(graph, sigGraph, tbPars);
+    	} 
+    	printData();
     }
     
-    private void getWorkEdges() {
-    	JGGQueue<SubGraph> sigGraph = new JGGQueue<SubGraph>();
-    	HashSet<Integer> mapGraph = new HashSet<Integer>();
-    	
-    	sigGraph.enqueue(root);
-    	
-        root.setLevel(0);
+    private void processNodes(SubGraph graph, JGGQueue<String> sig, TBParagraphs tbPars) {
+        JGGQueue<Node>  nodes   = new JGGQueue<Node>();
         
-    	while (!sigGraph.isEmpty()) {
-       	   SubGraph graph = sigGraph.dequeue();
-       	   if (mapGraph.contains(graph.getId())) continue;
-       	   mapGraph.add(graph.getId());
-//       	   System.out.println("Procesando grafo: " + graph.getName());
-           HashSet<Integer> map    = new HashSet<Integer>();
-           JGGQueue<Node>  nodes   = new JGGQueue<Node>();           
-           processNodes(graph, sigGraph, nodes, map);
-    	} 
-    }
-
-    private void processNodes(SubGraph graph, JGGQueue<SubGraph> queue, JGGQueue<Node>  nodes, HashSet<Integer> map) {
-    	nodes.enqueue(graph.getRoot());
+    	Node beg = graph.getRoot();
+    	beg.setName(graph.getName());
+    	nodes.enqueue(beg);
     	
     	while (!nodes.isEmpty()) {
      	   Node act = nodes.dequeue();
-     	   if (map.contains(act.getId())) continue;
-     	   map.add(act.getId());
-     	   if (act.isItem()) checkGraph(graph, queue, act);
-     	   nodes.enqueue(act.getNodes());
-     	   // Alinea los bordes
-           for (Node next : act.getNodes()) {
-                lstEdges.add(new Edge(act.getGraphParent(), act, next));
+     	   if (nodos.get(act.getId()) != null) continue;
+     	   nodos.put(act.getId(), act);
+           for (Node next : act.getChildren()) {
+        	   nodes.enqueue(next);
+        	   if (next.isGraph()) {
+        		   SubGraph g = map.get(next.getName());
+        		   if (g != null) g.setLevel(graph.getLevel() + 1);
+        	   }
+        	   if (next.getFrom().compareToIgnoreCase(next.getTo()) != 0) {
+        		   expandThru(next, tbPars);
+        	   }
+        	   else {
+                  edges.add(new Edge(act.getIdGraph(), act, next));
+        	   }
            }
         }
     } 	
 
-    private void reduceGraph() {
-        
+    private void reduceGraph(SubGraph graph) {
+        HashMap<Long, Node>  nodos     = new HashMap<Long, Node>();
+    	ArrayList<Node> hijos = new ArrayList<Node>();
     	boolean changed = false;
-    	do {
-//    	    printEdges();
-    	    changed = false;
-    		for (int i = 0; i < lstEdges.size(); i++) {
-    			Edge e = lstEdges.get(i);
-    			if (e.toBlock()) { 
-    				changes.put(e.getTo(), e.getFrom());
-    				lstEdges.remove(i--);
-    			}
-    			changed = checkChange(e, changed);
-    		}
-    	} while (changed);
-    }
-/*
-    private void printEdges() {
-        for (int i = 0; i < lstEdges.size(); i++) {
-            Edge e = lstEdges.get(i);
-            System.out.println(i + ": " + e.getFrom() + " -> " + e.getTo());
+    	
+        JGGQueue<Node>  nodes   = new JGGQueue<Node>();
+        
+    	nodes.enqueue(graph.getRoot());
+    	
+    	while (!nodes.isEmpty()) {
+     	   Node act = nodes.dequeue();
+     	   
+     	   if (nodos.get(act.getId()) != null) continue;
+     	   nodos.put(act.getId(), act);
+     	   hijos = new ArrayList<Node>();
+           changed = true;
+     	   while (changed) {
+     		   changed = false;
+     	       for (Node next : act.getChildren()) {
+           	       if (next.isConnector()) {
+           		       for (Node n: next.getChildren()) hijos.add(n);
+           		       changed = true;
+           	       }
+           	       if (!next.isConnector()) hijos.add(next);
+     	       }
+     	       if (changed) act.setChildren(hijos);
+           }        
+     	   
+           for (Node next : act.getChildren()) {
+        	   nodes.enqueue(next);
+           }
         }
     }
-*/    
-    private boolean checkChange(Edge e, boolean changed) {
-		Node n = changes.get(e.getFrom());
-		
-		if (n != null) {
-			e.setFrom(n);
-			return true;
-		}
-		return changed;
-	}
-	
-    private void checkGraph(SubGraph graph, JGGQueue<SubGraph> queue, Node node) {
-    	// Completar PERFORM A THRU B
-    	if (node.getFrom().compareTo(node.getTo()) != 0) {
-    		generateThruParagraphs(node);
-    	}
+
+    private void expandThru(Node node, TBParagraphs tbPars) {
+    	List<Paragraph> lista = tbPars.getFromThru(node.getFrom(), node.getTo());
     	
-    	SubGraph s = raw.get(node.getName());
-    	if (s != null) {
-    		s.setLevel(graph.getLevel() + 1);
-    		node.setGraphChild(s.getId());
-    		queue.enqueue(s);
+    	Node from = node;
+    	for (Paragraph p: lista) {
+    		Node n = nodes.getNode(PERFORM, p.getName());	
+            edges.add(new Edge(node.getIdGraph(), from, n));
+            from = n;
     	}
     }
 
-    private void generateThruParagraphs(Node node) {
-    	String from = node.getName();
-    	String parr;
-    	Node curr = node;
-    	TBParagraphs tb = module.getTBParagraphs();
-    	int pos = tb.getParagraphOrder(from);
-    	parr = tb.getParagraph(pos).getName();
-    	while (parr.compareTo(node.getTo()) != 0) {
-    		pos++;
-    		parr = tb.getParagraph(pos).getName();
-    		Node n = nodes.getNode(Nodes.PERFORM, parr);
-    		n.last(curr.getLast());
-    		curr.last(n);
-    		curr = n;
-    	}
-    }
-        
     private void printData() {
-//    	System.out.println("============================================");    	
-//    	for (Grafo g : grafos) {
-//    		System.out.println("Grafo: " + String.format("%3d", g.getId()) + " - " + g.getName());
-//    	}
+    	//System.out.println("============================================");    	
+    	for (Long g : grafos.keySet()) {
+    		System.out.println("Grafo: " + String.format("%3d", g) + " - " + grafos.get(g));
+    	}
     	
-//    	System.out.println("============================================");
-//    	for (Node n : nodos) {
-//    		System.out.println("Nodo: " + String.format("%3d", n.getId()) + " - " + String.format("%3d", n.getGraphChild()) + " - " + n.getName());
-//    	}
-//    	System.out.println("============================================");
-//    	for (Edge e : lstEdges) System.out.println(e.toString());
+    	//System.out.println("============================================");
+    	for (Node n : nodos.values()) {
+    		System.out.println("Nodo: " + String.format("%3d", n.getId()) + " - " + String.format("%3d", n.getGraphChild()) + " - " + n.getName());
+    	}
+    	//System.out.println("============================================");
+    	edges.forEach(System.out::println);
+//    	for (Edge e : edges..forEach(action);.values()) System.out.println(e.toString());
 
     }
 }

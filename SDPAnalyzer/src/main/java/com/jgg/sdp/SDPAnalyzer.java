@@ -15,8 +15,11 @@ import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.domain.services.core.*;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.rules.components.RulesProcessor;
+import com.jgg.sdp.tools.Propiedades;
 
 import static com.jgg.sdp.common.ctes.CFG.*;
+
+import java.util.HashMap;
 
 public class SDPAnalyzer {
 
@@ -34,6 +37,9 @@ public class SDPAnalyzer {
 	private int     rc      = RC.OK;
 	private int     maxRC   = RC.OK;
 
+	// Lista de ficheros erroneos (temporal para desarrollo)
+	private HashMap<String, String> erroneous = null;
+	
     public SDPAnalyzer() {
           initObject();    	
     }
@@ -110,7 +116,7 @@ public class SDPAnalyzer {
 		    res = MSG.KO;
         } catch (ParseException s) {
 //        	System.out.println(s.getLocalizedMessage());
-//        	s.printStackTrace();
+        	s.printStackTrace();
         	txt = msg.getExceptionMessage(s);
             unit.setStatus(CDG.STATUS_SDP_ERROR);
             rc = RC.SEVERE;
@@ -209,18 +215,26 @@ public class SDPAnalyzer {
 	 */
 	private int hasToProcess(Unit unit) {
 		SDPFile f = null;
+		String baseName = null;
 		
 		// Es local mode?
 		if (file == null) {
-		   f = fileService.findByNameAndType(unit.getMainSource().getBaseName(), CDG.SOURCE_CODE);
-		   if (f == null) return MSG.OK;
+			baseName = unit.getMainSource().getBaseName();
+		   f = fileService.findByNameAndType(baseName, CDG.SOURCE_CODE);
+		   if (f == null) return (erroneous.get(baseName) == null) ? MSG.OK : MSG.IGNORED;
 		}
 		else {
-		   if (file.getEstado() == CDG.STATUS_UNPARSED) return MSG.OK;
+			baseName = file.getArchivo();
+		   if (file.getEstado() == CDG.STATUS_UNPARSED) {
+			   return (erroneous.get(baseName) == null) ? MSG.OK : MSG.IGNORED;
+		   }
 		}
 		
 		// Es el mismo?
 		Source src = unit.getMainSource();
+		
+		if (erroneous.get(src.getBaseName()) != null) return MSG.IGNORED;
+		
 		if (f.getFirma().compareTo(src.getFirma()) != 0) return RC.OK;
 		
 		//Marcar como existente
@@ -260,9 +274,10 @@ public class SDPAnalyzer {
 					                                             : PARSER_CMD);
 		}
 
-		// Necesario para IVP
-		RulesProcessor.initInstance();
-		
+		RulesProcessor.initInstance();  // Necesario para IVP
+
+		Propiedades props = new Propiedades();
+		erroneous = props.loadResource("ignore.txt", ';');
 		return args;
 	}
 }

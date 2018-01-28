@@ -355,7 +355,7 @@ public class Persister {
             dep.setModo(d.getModo());
             dep.setEstado(d.getEstado());
             dep.setRefs(d.getRefs());
-            dep.setEjecutado(0); // Siempre 0 (Se actualiza al ejecutarse)
+            dep.setEjecutado(0L); // Siempre 0 (Se actualiza al ejecutarse)
             generate(dep);
         }
     }
@@ -529,11 +529,12 @@ public class Persister {
     private void updateGrafo() {
     	Graph g = module.getGraph();
     	
-    	for (Grafo grf : g.getGraphs()) {
+    	for (SubGraph grf : g.getGraphs()) {
     		DCGGraph grafo = new DCGGraph();
     		grafo.setIdVersion(idVersion);
     		grafo.setIdGrafo(grf.getId());
-    		grafo.setLevel(grf.getLevel());
+//    		grafo.setLevel(grf.getLevel());
+    		grafo.setLevel(0);    		
     		grafo.setName(grf.getName());
     		generate(grafo);
     	}
@@ -541,11 +542,11 @@ public class Persister {
     	for (Node nodo : g.getNodes()) {
     		DCGNode node = new DCGNode();
     		node.setIdVersion(idVersion);
-    		node.setIdGrafo(nodo.getGraphParent());
+    		node.setIdGrafo(nodo.getIdGraph());
     		node.setIdNode(nodo.getId());
     		node.setSubgraph(nodo.getGraphChild());
     		node.setNombre(nodo.getName());
-    		node.setTipo(nodo.getSubtype().ordinal());
+    		node.setTipo(nodo.getType());
     		generate(node);
     	}
     	

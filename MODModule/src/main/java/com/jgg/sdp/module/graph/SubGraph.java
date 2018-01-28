@@ -15,11 +15,14 @@ import java.util.*;
 
 import com.jgg.sdp.tools.Cadena;
 
+import static com.jgg.sdp.module.graph.NodeTypes.*;
+
 public class SubGraph {
 	
 	private String  name;
-	private int     id;
-	private int     level = Integer.MAX_VALUE;
+	private Long    id;
+	private boolean real  = false;
+	private int     level = 0;
 	
     private Node first;    
     private Node current = null;
@@ -29,27 +32,25 @@ public class SubGraph {
     
     boolean reduced = true;
     
-    public SubGraph() {
-    }
-    
-    public SubGraph(String name, int id) {
+    public SubGraph(long id, String name) {
         this.name = name;
         this.id = id;
-    	first = nodes.getNode(Nodes.BEGIN, "BEGIN");
-    	first.last(nodes.getNode(Nodes.END, "END"));
-    	stackPush(first);
+    	first = nodes.getNode(BEGIN, "BEGIN");
+    	first.addChild(nodes.getNode(END, "END"));
+    	current = currents.push(first);
 //    	print("BEGIN");
     }
 
     // GETTERS AND SETTERS
     
-    public String  getName()  { return name;  }
-    public int     getId()    { return id;    }
-    public Node    getRoot()  { return first; }
-    public int     getLevel() { return level; }
-    public boolean isGraph()  { return first.getNumNodes() > 1; }
-    public void setLevel(int level) {
-    	if (level < this.level) this.level = level;
+    public String  getName()   { return name;  }
+    public long    getId()     { return id;    }
+    public Node    getRoot()   { return first; }
+    public boolean isGraph()   { return real;  }
+    public int     getLevel()  { return level; }
+    
+    public void    setLevel(int level)  { 
+    	if (this.level == 0) this.level = level;  
     }
     
     /**********************************************************/
@@ -57,50 +58,71 @@ public class SubGraph {
     /**********************************************************/
     
     /**
-     * Nodo lineal, inserta el nodo y cambia el current
-     * @param type Tipo de nodo
-     * @param name Nombre del nodo
-     */
-    public void addNode(Nodes type, String name) {
-    	addNode(type, name, name);
-    }
-    
-    public void addNode(Nodes type, String from, String to) {
-       if (to == null) to = from;	
-	   Node tmp = nodes.getNode(type, from, to);
-       tmp.first(current.getLast());
-       current.replace(tmp);
-       stackReplace(tmp);
-       //print("NODE");
-    }
-    
-    /**
-     * Bucle lineal
-     * Son PERFORM VARYING/UNTIL
+     * Nodo lineal
+     * Son PERFORM 
      * 
-     *       +------------+
-     *       |            |
-     * PREV -+-> BEG --> NEXT --> END
-     * CURRENT    X
-     * STACK: END
+     * BEG --> NODE1 --> END
+     * CURRENT   X
+     * STACK: NODE1
+     *       
+     * BEG --> NODE1 --> ACT --> END
+     * CURRENT            X
+     * STACK: ACT      
      * 
+     *        
      * @param type Tipo del nodo central
      * @param from Nombre del nodo central
      * @param to   Parte THRU
      */
+    
+    public void addLinearNode(Integer type, String name) {
+    	addLinearNode(type, name, name);
+    }
+    
+    
+    public void addLinearNode(Integer type, String from, String to) {
+    	addLinearNode(type, from, to, false);
+    }
+    
+    public void addLinearNode(Integer type, String from, String to, boolean loop) {
+       if (to == null) to = from;	
+ 	   Node tmp = nodes.getNode(type, from, to);
+ 	   tmp.addChild(current.getLast());
+ 	   current.replaceChild(tmp);
+       current = tmp;
+       stackReplace(tmp);
+       if (loop) {
+    	   current.addChildFirst(tmp);
+    	   current.setActive(1);
+       }
+       real = true;
+    }
+    
+    /**
+     * Crea un bloque BEG-END
+     * 
+     * BEG --> NODE1 --> END
+     * CURRENT   X
+     * STACK: NODE1
+     *       
+     * BEG --> NODE1 --> BEG --> END --> END
+     * CURRENT            X
+     * STACK: BEG      
+     * 
+     */
 
-    public void addBlock(Nodes type) {
+    public void addBlock(Integer type) {
     	addBlock(type, type.toString(), false);
     }
     
-    public void addBlock(Nodes type, String name, boolean loop) {
-    	Node beg = nodes.getNode(Nodes.BLOCK, type, "BEGIN " + name);
-    	Node end = nodes.getNode(Nodes.END, Nodes.BLOCK, "END " + name);
+    public void addBlock(Integer type, String name, boolean loop) {
+    	Node beg = nodes.getNode(BLOCK, type, "BEGIN " + name);
+    	Node end = nodes.getNode(END, BLOCK, "END " + name);
 
-    	beg.last(end);
-    	end.last(current.getLast());
+    	beg.addChild(end);
+    	end.addChild(current.getLast());
     	current.replace(beg);
-    	stackPush(beg);
+    	current = currents.push(beg);
     }
 
 
@@ -109,35 +131,62 @@ public class SubGraph {
      * Hay que cerrar todas las pendientes
      * Caso EVALUATE WHEN
      *    
-     * PREV --> BEG --> END --> NEXT
+     * BEG --> NODE1 --> END
+     * CURRENT   X
+     * STACK: NODE1
      *       
-     * STACK: PREV - BEG
-     *       
-     * PREV ---> BEG -------------+-> END ---> NEXT
+     * BEG ---> NODE1 ------------+-> END ---> NEXT
      *            |               |         
      *            + BEG1 -> END1 -+         
      *       
-     * STACK: PREV - BEG - BEG1      
+     * STACK: NODE1 | BEG1      
      *       
      * @param type Tipo del nodo central
      * @param from Nombre del nodo central
      * @param to   Parte THRU
      */
-    
-    public void addChoice(Nodes type, boolean closeChoice) {
-    	Node beg = nodes.getNode(Nodes.BRANCH, type.toString());
-    	Node end = nodes.getNode(Nodes.END, "END " + type.toString());
 
-    	stackSet(Nodes.BLOCK, true);
+    public void addIF(Integer type) {
+    	Node beg   = nodes.getNode(BEGIN, IF_BEG);
+    	Node end   = nodes.getNode(END,   IF_END);
+    	Node left  = nodes.getNode(BEGIN, IF_LEFT);
+    	Node right = nodes.getNode(BEGIN, IF_RIGHT);
     	
-    	beg.last(end);
-    	end.last(current.getLast());
+    	end.moveChildren(current.getChildren());
+    	
+    	left.addChild(end);
+    	right.addChild(end);
+    	
+    	
+    	beg.addChild(left);
+    	beg.addChild(right);
+    	current.replaceChild(beg);
+    	
+    	stackReplace(end);
+    	stackPush(beg, false);
+    	stackPush(left, true);
+    }
+
+    public void addElse() {
+    	stackSet(IF_BEG);
+    	current.setActive(B_RIGHT);
+    	stackReplace(current.getActiveChild());
+    }
+    
+    public void addChoice(Integer type, boolean closeChoice) {
+    	Node beg = nodes.getNode(BRANCH, type.toString());
+    	Node end = nodes.getNode(END, "END " + type.toString());
+
+    	stackSet(BLOCK, true);
+    	
+    	beg.addChild(end);
+    	end.addChild(current.getLast());
     	if (closeChoice) {
     		current.replace(beg);
     	} else {
-    	   current.first(beg);
+    	   current.addChildFirst(beg);
     	}
-    	stackPush(beg);
+    	current = currents.push(beg);
     	//print("EDGE");
     }
     
@@ -162,11 +211,8 @@ public class SubGraph {
      * @param to   Parte THRU
      */
     
-    public void endCycle(Nodes type) {
-    	Node end = current.getLast();
-    	stackSet(type, false);
-    	stackPush(end);
-    	//print("CYCLE");
+    public void endCycle(Integer type) {
+    	stackSet(type);
     }
     
     /***************************************************/
@@ -174,25 +220,35 @@ public class SubGraph {
     /***************************************************/
     
     private void stackReplace(Node n) {
-    	Node aux;
-    	while ((aux = currents.pop()).getType().isItem());
-        currents.push(aux);
-    	stackPush(n);
-    }
-
-    private void stackPush(Node n) {
+    	currents.pop();
     	current = currents.push(n);
     }
     
     private void stackPop() {
     	current = currents.pop();
     }
+
+    private void stackPush(Node n) {
+    	stackPush(n, true);
+    }
     
-    private void stackSet(Nodes type, boolean keep) {
+    private void stackPush(Node n, boolean setCurrent) {
+    	currents.push(n);
+    	if (setCurrent) current = n;
+    }
+    
+    private void stackSet(int subType) {
+    	Node n = currents.pop();
+    	while (n.getSubtype() != subType) 
+    		n = currents.pop();
+    	stackPush(n);
+    }
+    
+    private void stackSet(int type, boolean keep) {
     	// En fin de programa y multimodulos puede llamarse varias veces
     	while (!currents.isEmpty() && (current = currents.pop()).getType() != type);
     	if (!currents.isEmpty()) current = currents.peek();
-    	if (keep) stackPush(current);
+    	if (keep) current = currents.push(current);
     }
 /*
     public SubGraph reduce() {
@@ -237,16 +293,16 @@ public class SubGraph {
     	StringBuilder str = new StringBuilder();
     	str.append(name + "\n" + first.toString() + "\n");
 
-    	HashSet<Integer> nodes = new HashSet<Integer>();    	
+    	HashSet<Long> nodes = new HashSet<Long>();    	
     	nodes.add(first.getId());
     	
-    	for (Node next : first.getNodes()) {
+    	for (Node next : first.getChildren()) {
     		str.append(toString(1, next, nodes));
     	}
     	return str.toString();
     }
     
-    private String toString(int level, Node node, HashSet<Integer> nodes) {
+    private String toString(int level, Node node, HashSet<Long> nodes) {
     	
     	if (nodes.contains(node.getId())) return "";
     	
@@ -256,15 +312,10 @@ public class SubGraph {
 		str.append(pad + "|\n");        
         str.append(pad + node.toString() + "\n");
         
-    	for (Node n : node.getNodes()) {
+    	for (Node n : node.getChildren()) {
     		str.append(toString(level + 1, n, nodes));
     	}
     	return str.toString();
     }
 
-    private void print(String txt) {
-    	System.out.println(txt);
-	    System.out.println(toString());
-
-    }
 }

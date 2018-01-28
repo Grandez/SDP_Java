@@ -42,4 +42,8 @@ public class RuleItem extends RuleGroup {
 		return rules;
 	}
 
+	@Override
+	public String toString() {
+		return idGroup + "-" + idItem;
+	}
 }

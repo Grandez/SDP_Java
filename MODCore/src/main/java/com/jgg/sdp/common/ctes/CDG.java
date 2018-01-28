@@ -185,7 +185,11 @@ public class CDG {
     public static final int MODE_LOCAL =  1;
    
     // Tipos de instrucciones
-    public static final int STMT_COBOL   = 10;    
+    public static final int STMT_G_COBOL =  1;
+    public static final int STMT_G_CICS  =  2;
+    public static final int STMT_G_SQL   =  3;
+    public static final int STMT_G_COPY  =  4;    
+    public static final int STMT_COBOL   = 10;       
     public static final int STMT_DATA    = 11;
     public static final int STMT_CONTROL = 12;
     public static final int STMT_FLOW    = 13;

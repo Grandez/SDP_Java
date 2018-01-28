@@ -8,6 +8,10 @@ import com.jgg.sdp.domain.graph.DCGGraph;
 
 @Entity
 @Table(name="DCG_GRAPHS")
+@NamedQueries( {
+	 @NamedQuery(name="DCGGraph.getGraph",  query="SELECT g FROM DCGGraph g WHERE g.idVersion = ?1 AND g.idGrafo = ?2")
+	,@NamedQuery(name="DCGGraph.getGraphs", query="SELECT g FROM DCGGraph g WHERE g.idVersion = ?1")
+})
 public class DCGGraph implements Serializable {
 
 	private static final long serialVersionUID = -1238086103731821178L;
@@ -18,7 +22,7 @@ public class DCGGraph implements Serializable {
     
     @Id
     @Column(name="idGrafo")
-    Integer idGrafo;
+    Long idGrafo;
 
     @Column(name="level")
     Integer level;
@@ -34,11 +38,11 @@ public class DCGGraph implements Serializable {
 		this.idVersion = idVersion;
 	}
 
-	public Integer getIdGrafo() {
+	public Long getIdGrafo() {
 		return idGrafo;
 	}
 
-	public void setIdGrafo(Integer idGrafo) {
+	public void setIdGrafo(Long idGrafo) {
 		this.idGrafo = idGrafo;
 	}
 

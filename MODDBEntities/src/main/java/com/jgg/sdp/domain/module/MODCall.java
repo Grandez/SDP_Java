@@ -6,6 +6,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="MOD_CALLS")
+@NamedQueries( {
+	 @NamedQuery(name="MODCall.listCalls",  query="SELECT c FROM MODCall c WHERE c.idVersion = ?1")
+})
+
 public class MODCall implements Serializable {
 
 	public final static String listCall = 
@@ -39,7 +43,7 @@ public class MODCall implements Serializable {
 	Integer estado;
 
 	@Column(name="ejecutado")
-	Integer ejecutado;
+	Long ejecutado;
 
 	public MODCall() {
 	}
@@ -86,11 +90,11 @@ public class MODCall implements Serializable {
         this.modo = modo;
     }
 
-    public Integer getEjecutado() {
+    public Long getEjecutado() {
         return ejecutado;
     }
 
-    public void setEjecutado(Integer ejecutado) {
+    public void setEjecutado(Long ejecutado) {
         this.ejecutado = ejecutado;
     }
 

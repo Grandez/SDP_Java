@@ -16,5 +16,9 @@ import com.jgg.sdp.domain.services.AbstractService;
 
 @Repository
 public class DCGNodeService extends AbstractService<DCGNode> {
+	
+	public List<DCGNode> listNodes(Long idVersion, Long idGraph) {
+		return list("listNodes", idVersion, idGraph);
+	}
 
 }

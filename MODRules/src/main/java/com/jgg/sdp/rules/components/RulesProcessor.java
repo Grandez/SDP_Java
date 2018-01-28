@@ -75,7 +75,7 @@ public class RulesProcessor {
     }
 	
 	private void processItem(RuleItem item, RuleObject obj) {
-		
+//		System.out.println("Item: " + item.toString());
     	if (!processCondition(item.getActivations(), obj)) return;
 
     	if (item.getType() != null) changeComponent(item, obj);
@@ -153,7 +153,8 @@ public class RulesProcessor {
 	
 	private Object calculateOperandL(Integer type, String data, RuleObject obj) {
 		switch (type) {
-	        case TYPE_PROPERTY:  return processProperty (type, data, obj); 
+	        case TYPE_PROPERTY:  
+	        	 return processProperty (type, data, obj); 
 	        case TYPE_ATTRIBUTE: 
 	             String m = mountMethodName(type, data);
 	             return Reflect.executeMethod(obj.getComponent(), m);
@@ -349,8 +350,7 @@ public class RulesProcessor {
 		// Son true or false
 		
 		if (!pat.startsWith("EXIST") && pat.compareTo("HAS") != 0) {
-            String m = mountMethodName(type, data);
-		    res = (Boolean) Reflect.executeMethod(obj.getComponent(), m);
+		    res = (Boolean) Reflect.executeMethod(obj.getComponent(), data);
 		}
 		return res;
 	}

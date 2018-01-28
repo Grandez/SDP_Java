@@ -161,7 +161,7 @@ public class XLSDataTree implements XLSDataRecord {
 		call.setModo(CDG.CALL_NO_DEF);
 		call.setRefs(0);
 		call.setIdVersion(0L);
-		call.setEjecutado(0);
+		call.setEjecutado(0L);
 		
 		return createRoutine(call, 0, tree);
 	}

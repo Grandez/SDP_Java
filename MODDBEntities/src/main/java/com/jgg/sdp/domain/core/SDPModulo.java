@@ -9,6 +9,10 @@ import com.jgg.sdp.tools.Fechas;
 
 @Entity
 @Table(name="SDP_MODULOS")
+@NamedQueries( {
+	 @NamedQuery(name="SDPModulo.findModule",  query="SELECT m FROM SDPModulo m WHERE m.nombre = ?1")
+})
+
 public class SDPModulo implements Serializable {
 
 	private static final long serialVersionUID = 5075465127828213428L;

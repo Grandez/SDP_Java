@@ -21,7 +21,7 @@ import com.jgg.sdp.rules.components.RulesData;
 parser code {:
    GenericScanner scanner = null;
    Module module     = ModulesFactory.getDefaultModule();
-   Summary summary   = module.getSummary();
+//   Summary summary   = module.getSummary();
    Configuration cfg = ConfigurationBase.getInstance();
    ParserInfo    info     = ParserInfo.getInstance();
              
@@ -37,7 +37,7 @@ parser code {:
 
 action code {:
    Module          module   = null;
-   Summary         summary  = null;
+//   Summary         summary  = null;
    Persistence     fichero  = null;
    ZCDCode         code     = null;
    BlockCode       currBlock = null; 
@@ -54,8 +54,7 @@ action code {:
    int     numFillers = 0;
           
    public void initActionClass() {
-      module  = ModulesFactory.getMainModule();
-      summary = module.getSummary();
+      module  = info.getModule();
       code = new ZCDCode(module);
    }
 
@@ -307,10 +306,8 @@ non terminal Symbol var_index            ;
 non terminal Symbol var_type             ;
 non terminal Symbol var_order            ;
 non terminal Symbol var_name             ;
-non terminal Symbol var_filler           ;
-non terminal Symbol init_val_list        ;  
+non terminal Symbol var_filler           ; 
 non terminal Symbol init_val             ;
-non terminal Symbol init_val_num         ;
 
 non terminal Variable variables     ;
 non terminal Variable variable      ;
@@ -1045,29 +1042,15 @@ pic_size_opt ::= pic_size
              ;
              
                       
-var_value ::= VALUE init_val_list:i  
+var_value ::= VALUE init_val:v {: currVar.setInitValue((String) v.value); :}  
           ;
 
-/* Los niveles 88 pueden tener varios valores */
-
-init_val_list ::= init_val:i                {: currVar.setInitValue((String) i.value); :}
-              |   init_val_list init_val:i  {: currVar.setInitValue((String) i.value); :}
-              ;
-
-init_val ::= LITERAL:s        {: RESULT = s; :}
+init_val ::= constant:s       {: RESULT = s; :}
          |   DFHCICS:s        {: RESULT = s; :}
-         |   init_val_num:s   {: RESULT = s; :}
+         |   PIC_FMT:s pic_dec_opt {: RESULT = s; :}
          |   PIC_NUM:s        {: RESULT = s; :}
-         |   figurative:f     {: RESULT = f; :} 
          |   PIC_ALPHANUM init_val:v {: RESULT = v; :}
-         |   HEX_VAL:s        {: RESULT = s; :}
-         |   THRU:s           {: RESULT = s; :} 
          ;
-
-init_val_num ::= NUMERO:s  pic_dec_opt {: RESULT = s; :}
-             |   PIC_FMT:s pic_dec_opt {: RESULT = s; :}
-             ;
-
 
 rvalue ::= ID:i padres_lst {: RESULT = i; :}
        ; 
@@ -1106,6 +1089,7 @@ constant ::= figurative:c {: RESULT = c; :}
          |   LITERAL:c    {: RESULT = c; :}
          |   NUMERO:c     {: RESULT = c; :}
          |   LEVELXX:c    {: RESULT = c; :}
+         |   HEX_VAL:c    {: RESULT = c; :}
          ;
          
 clause_renames ::= RENAMES ID clause_thru_opt

@@ -21,7 +21,7 @@ public class CommentLine {
    public String  getRawComment() { return rawComment;       }   
    public boolean isDecorator()   { return doc == false;     }
    public boolean isComment()     { return doc == true;      }
-   public int     length()        { return comment.length(); }
+   public int     getLength()     { return comment.length(); }
    
    @Override
    public String toString()       { return comment;       }

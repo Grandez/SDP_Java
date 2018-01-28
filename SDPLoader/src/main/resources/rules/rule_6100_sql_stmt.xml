@@ -28,7 +28,7 @@
          <r:rule>
             <severity>5</severity>            
             <condition>
-               <lvalue type="attribute">group</lvalue>
+               <lvalue type="attribute">subgroupName</lvalue>
                <operator>eq</operator>
                <rvalue>DCL</rvalue>
             </condition>            
@@ -37,7 +37,7 @@
          <r:rule>
             <severity>5</severity>            
             <condition>
-               <lvalue type="attribute">group</lvalue>
+               <lvalue type="attribute">subgroupName</lvalue>
                <operator>eq</operator>
                <rvalue>DDL</rvalue>
             </condition>            

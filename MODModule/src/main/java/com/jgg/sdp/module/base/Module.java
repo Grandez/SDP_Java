@@ -41,7 +41,7 @@ public class Module {
 	private TBSumIssues   sumIssues    = new TBSumIssues();
 	
 	private TBFiles       tbFiles      = new TBFiles();
-    private Graph         grafo        = new Graph(this);
+    private Graph         grafo        = new Graph();
     private TBBadStmts    tbBad        = new TBBadStmts();
 
 	private TBBloques     tbBloques    = new TBBloques();
@@ -499,10 +499,7 @@ public class Module {
     ////  Tratamiento GRAFO                          
     //// *********************************************************************
     
-    public Graph           getGraph()           { return grafo;          }
-    public void            makeGraph()          { 
-//JGG    	grafo.parse();
-    	
-    }
+    public Graph  getGraph()    { return grafo;              }
+    public void   makeGraph()   { grafo.parse(tbParagraphs); }
 
 }

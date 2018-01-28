@@ -11,7 +11,7 @@ public class XLSRoutine {
 	private int    modo;
 	private int    metodo;
 	private int    estado;
-	private int    ejecutado;
+	private long   ejecutado;
 	
 	private int    firstLevel = 64000;
 	private int    lastLevel  = 0;
@@ -55,10 +55,10 @@ public class XLSRoutine {
 	public void setModo(int modo) {
 		this.modo = modo;
 	}
-	public int getEjecutado() {
+	public long getEjecutado() {
 		return ejecutado;
 	}
-	public void setEjecutado(int ejecutado) {
+	public void setEjecutado(long ejecutado) {
 		this.ejecutado = ejecutado;
 	}
 	public void combineModo(int modo) {

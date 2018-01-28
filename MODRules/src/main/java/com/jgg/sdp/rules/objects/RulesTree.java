@@ -61,7 +61,7 @@ public class RulesTree {
 			setRuleBase(group, grp);
 			group.setId(grp.getIdGroup());
 			group.setIdParent(grp.getIdParent());
-            System.out.println("Grupo: " + group.getId() + " - " + group.getName()); 
+ 
 			groupsKeyMap.put(group.getId(), group);
 			groupsNameMap.put(group.getName(), group.getId());
 			loadItemsByGroup(group);

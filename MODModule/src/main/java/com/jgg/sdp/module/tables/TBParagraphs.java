@@ -104,4 +104,16 @@ public class TBParagraphs {
 		Integer pos = parrs.get(name);
 		return (pos == null) ? -1 : pos;
 	}
+	
+	public List<Paragraph> getFromThru(String from, String to) {
+		List<Paragraph> l = new ArrayList<Paragraph>();
+		int beg = parrs.get(from);
+		int end = parrs.get(to);
+		
+		for (int idx = beg + 1; idx <= end; idx++) {
+			l.add(lstParrs.get(idx));
+		}
+		return l;
+		
+	}
 }

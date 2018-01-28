@@ -64,7 +64,8 @@ public class Statement<T> implements IStatement {
 	}
 	
 	public Statement(Integer group) {
-		this.group = group;
+		this.group = group / 10;
+		this.subGroup = group;
 	}
 
 	public Statement(Integer group, Integer subGroup) {

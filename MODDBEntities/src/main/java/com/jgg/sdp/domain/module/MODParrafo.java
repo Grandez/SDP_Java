@@ -36,7 +36,7 @@ public class MODParrafo implements Serializable {
 	@Column(name="sentencias")
 	Integer sentencias;
 
-	@Column(name="blqoues")
+	@Column(name="bloques")
 	Integer bloques;
 	
 	@Column(name="referencias")

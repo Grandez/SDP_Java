@@ -28,6 +28,7 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
 %xstate STEXEC , EMBEDDED 
 %xstate CICSSYM
 %xstate ST_FUNCTION
+%xstate ST_REPLACE
 
 %xstate COMMENT        
 %xstate QUOTE_STRING   
@@ -249,7 +250,6 @@ PARAGRAPH  = {SP}{ID}
   COMPUTATIONAL-4             { return symbol(COMP4                   ); } 
   COMPUTATIONAL-5             { return symbol(COMP5                   ); } 
   COMPUTE                     { return symbol(COMPUTE                 ); } 
-  CONFIGURATION               { return symbol(CONFIGURATION           ); } 
   CONTAINS                    { return symbol(CONTAINS                ); } 
   CONTENT                     { return symbol(CONTENT                 ); } 
   CONTINUE                    { return symbol(CONTINUE                ); } 
@@ -453,9 +453,10 @@ PARAGRAPH  = {SP}{ID}
   RELEASE                     { return symbol(RELEASE                 ); } 
   RELOAD                      { return symbol(RELOAD                  ); } 
   REMAINDER                   { return symbol(REMAINDER               ); } 
-  REMOVAL                     { return symbol(REMOVAL                 ); } 
   RENAMES                     { return symbol(RENAMES                 ); } 
-  REPLACE                     { return symbol(REPLACE                 ); } 
+  REPLACE                     { rules.checkCobolDirective(symbol(REPLACE));
+                                pushState(ST_REPLACE); 
+                              } 
   REPLACING                   { return symbol(REPLACING               ); } 
   REPOSITORY                  { return symbol(REPOSITORY              ); } 
   RERUN                       { return symbol(RERUN                   ); } 
@@ -535,7 +536,6 @@ PARAGRAPH  = {SP}{ID}
   UNTIL                       { return symbol(UNTIL                   ); } 
   UP                          { return symbol(UP                      ); } 
   UPON                        { return symbol(UPON                    ); } 
-  USAGE                       { return symbol(USAGE                   ); } 
   USE                         { return symbol(USE                     ); } 
   USING                       { return symbol(USING                   ); } 
   VALUE                       { return symbol(VALUE                   ); } 
@@ -918,6 +918,19 @@ PARAGRAPH  = {SP}{ID}
    \n           { info.module.incLines(data); data = false; }
    \r           { /* do nothing */ }
     
+}
+
+// Se come todo hasta el punto
+<ST_REPLACE> {
+  ^[\*\/dD]     { pushState(COMMENT); 
+                  commentInit(yytext(), yyline);    
+                }
+   {SPACES}     { /* DO NOTHING */ }
+   {TABS}       { rules.checkTab(symbolExt(TAB)); }
+   \n           { info.module.incLines(data); data = false; }
+   \r           { /* do nothing */ }
+   \.           { popState(); }
+   [^]          { /* do nothing */ }   
 }
 
 <EMBEDDED> {

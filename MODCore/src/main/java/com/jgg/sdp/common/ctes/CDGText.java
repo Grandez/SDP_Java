@@ -13,6 +13,10 @@ public class CDGText {
 	
 	private static String getStmtName(int group) {
 		switch (group) {
+           case STMT_G_COBOL: return "COBOL";		
+           case STMT_G_CICS:  return "CICS";
+           case STMT_G_SQL:   return "SQL"; 
+           case STMT_G_COPY:  return "COPY";           
            case STMT_COBOL:   return "COBOL";    
            case STMT_DATA:    return "DATA";
            case STMT_CONTROL: return "CONTROL";

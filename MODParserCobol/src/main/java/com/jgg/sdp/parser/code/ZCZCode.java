@@ -16,12 +16,5 @@ public class ZCZCode {
 	   	this.module = module;
         this.info = ParserInfo.getInstance();
 	}
-
-    public void setDivision(int div, int line) {
-    	info.addDivision(div, line);
-    }
-    public void setSection(int sect, int line) {
-    	info.addSection(sect, line);
-    }
     
 }

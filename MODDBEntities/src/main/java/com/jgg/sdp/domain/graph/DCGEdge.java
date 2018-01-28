@@ -8,6 +8,10 @@ import com.jgg.sdp.domain.graph.DCGEdge;
 
 @Entity
 @Table(name="DCG_EDGES")
+@NamedQueries( {
+	 @NamedQuery(name="DCGEdge.listEdges", query="SELECT e FROM DCGEdge e WHERE e.idVersion = ?1 AND e.idGrafo = ?2")
+})
+
 public class DCGEdge implements Serializable {
 
 	private static final long serialVersionUID = 6151611699600715094L;
@@ -18,15 +22,15 @@ public class DCGEdge implements Serializable {
 
 	@Id
 	@Column(name="idGrafo")
-	Integer idGrafo;
+	Long idGrafo;
 
 	@Id
 	@Column(name="idFrom")
-	Integer idFrom;
+	Long idFrom;
 
 	@Id
 	@Column(name="idTo")
-	Integer idTo;
+	Long idTo;
 
 	public Long getIdVersion() {
 		return idVersion;
@@ -36,27 +40,27 @@ public class DCGEdge implements Serializable {
 		this.idVersion = idVersion;
 	}
 
-	public Integer getIdGrafo() {
+	public Long getIdGrafo() {
 		return idGrafo;
 	}
 
-	public void setIdGrafo(Integer idGrafo) {
+	public void setIdGrafo(Long idGrafo) {
 		this.idGrafo = idGrafo;
 	}
 
-	public Integer getIdFrom() {
+	public Long getIdFrom() {
 		return idFrom;
 	}
 
-	public void setIdFrom(Integer idFrom) {
+	public void setIdFrom(Long idFrom) {
 		this.idFrom = idFrom;
 	}
 
-	public Integer getIdTo() {
+	public Long getIdTo() {
 		return idTo;
 	}
 
-	public void setIdTo(Integer idTo) {
+	public void setIdTo(Long idTo) {
 		this.idTo = idTo;
 	}
 

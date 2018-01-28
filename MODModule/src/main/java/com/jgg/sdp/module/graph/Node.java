@@ -11,31 +11,41 @@ package com.jgg.sdp.module.graph;
 
 import java.util.*;
 
+import static com.jgg.sdp.module.graph.NodeTypes.*;
+
 public class Node {
 
-	private int   idGraph;   // Grafo en el que aparece
-	private int   graph;     // Grafo al que apunta
-	private int   id;        // Id del nodo
-	private String name;     // Nombre del nodo
-	private String to;       // Casos PERFORM A THRU B
-	private Nodes  type;     // Tipo del nodo
-	private Nodes  subtype;  // Subtipo del nodo
+	private long    idGraph;  // Grafo en el que aparece
+	private long    graph;    // Grafo al que apunta
+	private long    id;       // Id del nodo
+	private String  name;     // Nombre del nodo
+	private String  to;       // Casos PERFORM A THRU B
+	private int     type;     // Tipo del nodo
+	private int     subtype;  // Subtipo del nodo
+	private Integer active;
 	
 	private ArrayList<Node> hijos = new ArrayList<Node>();
 	
-    public Node(Nodes type, int idGraph, int id) {
-    	this(type, "", "", idGraph, id);
-    }
-    
-    public Node(Nodes type, String name, int idGraph, int id) {
+    public Node(Integer type, String name, int idGraph, int id) {
     	this(type, name, name, idGraph, id);
     }
 
-    public Node(Nodes type, String from, String to, int idGraph, int id) {
-    	this(Nodes.getType(type), type, from, to, idGraph, id);
+    public Node(Integer type, String from, String to, int idGraph, int id) {
+    	this(type, type, from, to, idGraph, id);
+    }
+
+    public Node(int type, int idGraph, int id) {
+    	String n = NodeTypes.getNodeName(type) + "-" + id;
+    	this.type = type;
+    	this.subtype = type;
+    	this.name = n;
+    	this.to   = n;
+    	this.id = id;
+    	this.idGraph = idGraph - 1;
+    	this.graph = -1;
     }
     
-    public Node(Nodes type, Nodes subtype, String from, String to, int idGraph, int id) {
+    public Node(int type, Integer subtype, String from, String to, int idGraph, int id) {
     	this.type = type;
     	this.subtype = subtype;
     	this.name = from;
@@ -45,8 +55,25 @@ public class Node {
     	this.graph = -1;
     }
 
-    public void setChilds(ArrayList<Node> hijos) {
-    	this.hijos = hijos;
+    public void setChildren(ArrayList<Node> other) {
+    	this.hijos.clear();
+    	while (other.size() > 0) {
+    		this.hijos.add(other.remove(0));
+    	}
+    }
+    
+    public void moveChildren(ArrayList<Node> hijos) {
+    	while (hijos.size() > 0) {
+    		this.hijos.add(hijos.remove(0));
+    	}
+    }
+    public void copyChildren(ArrayList<Node> hijos) {
+    	for (Node hijo : hijos) this.hijos.add(hijo);
+    }
+    
+    public void replaceChild(Node child) {
+    	if (hijos.size() > 0) hijos.remove(hijos.size() - 1);
+    	hijos.add(child);
     }
     
     public void setFromTo(String from, String to) {
@@ -58,7 +85,7 @@ public class Node {
     	this.graph = idGraph;
     }
     
-    public int getGraphParent() {
+    public long getIdGraph() {
     	return idGraph;
     }
 
@@ -66,11 +93,11 @@ public class Node {
     	this.graph = graph;
     }
     
-    public int getGraphChild() {
+    public long getGraphChild() {
     	return graph;
     }
     
-    public int getId() {
+    public long getId() {
     	return id;
     }
     
@@ -78,24 +105,28 @@ public class Node {
     	this.id = id;
     }
     
-    public void setType(Nodes type) {
+    public void setType(Integer type) {
     	this.type = type;
     }
     
-    public Nodes getType() {
+    public Integer getType() {
     	return type;
     }
 
-    public void setSubtype(Nodes subtype) {
+    public void setSubtype(Integer subtype) {
     	this.subtype = subtype;
     }
     
-    public Nodes getSubtype() {
+    public Integer getSubtype() {
     	return subtype;
     }
     
     public String getName() {
     	return name;
+    }
+
+    public void setName(String name) {
+    	this.name = name;
     }
     
     public String getFrom() {
@@ -110,20 +141,35 @@ public class Node {
     	return hijos.size();
     }
     
-    public ArrayList<Node> getNodes() {
-    	return hijos;
-    }
-
-    public void first(Node node) {    	
-		hijos.add(0, node);
+    public Node getActiveChild() {
+    	return hijos.get(active);
     }
     
-    public void last(Node node) {
+    public ArrayList<Node> getChildren() {
+    	return hijos;
+    }
+    public Node getLastChild() {
+    	return hijos.get(hijos.size() - 1);
+    }
+
+    public void addChildFirst(Node node) {    	
+		hijos.add(0, node);
+    }    
+    
+    public void addChildLast(Node node) {
     	hijos.add(node);
     }
     
+    public void addChild(Node node) {
+    	addChildLast(node);
+    }
+    
+    public void setActive(int pos) {
+    	active = (pos == -1) ? hijos.size() - 1 : pos;
+    }
+    
     /**
-     * Cambia el ultimo nodo de la lsisa de las hijas
+     * Cambia el ultimo nodo de la lista de las hijas
      * @param node Nodo nuevo
      */
     public void replace(Node node) {
@@ -141,31 +187,40 @@ public class Node {
     }
 
     public boolean isItem() {
-    	return type.isItem();
+    	return false;
     }
     public boolean isBegin() {
-    	return type == Nodes.BEGIN;
+    	return type == BEGIN;
     }
     public boolean isEnd() {
-    	return type == Nodes.END;
+    	return type == END;
+    }
+
+    public boolean isConnector() {
+    	return (type == BEGIN || type == END) ? true : false;
+    }
+    
+    public boolean isGraph() {
+    	return (type == PERFORM);
     }
     
     @Override
     public String toString() {
-    	return String.format("+ %03d - %d - %s" , id, type.ordinal(), name);
+    	return String.format("+ %03d - %d-%d %s" , id, type, subtype, name);
     }
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + graph;
-		result = prime * result + id;
-		result = prime * result + idGraph;
+		result = prime * result + ((active == null) ? 0 : active.hashCode());
+		result = prime * result + (int) (graph ^ (graph >>> 32));
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int) (idGraph ^ (idGraph >>> 32));
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((subtype == null) ? 0 : subtype.hashCode());
+		result = prime * result + subtype;
 		result = prime * result + ((to == null) ? 0 : to.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + type;
 		return result;
 	}
 
@@ -178,7 +233,17 @@ public class Node {
 		if (getClass() != obj.getClass())
 			return false;
 		Node other = (Node) obj;
+		if (active == null) {
+			if (other.active != null)
+				return false;
+		} else if (!active.equals(other.active))
+			return false;
 		if (graph != other.graph)
+			return false;
+		if (hijos == null) {
+			if (other.hijos != null)
+				return false;
+		} else if (!hijos.equals(other.hijos))
 			return false;
 		if (id != other.id)
 			return false;
@@ -200,6 +265,8 @@ public class Node {
 			return false;
 		return true;
 	}
-    
+
+    // OJO el hashCode puede ser recursivo
+
     
 } 

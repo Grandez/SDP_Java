@@ -23,7 +23,6 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.rules.components.RulesData;
-import com.jgg.sdp.rules.components.RulesProcessor;
 
 public class ZCDCode extends ZCZCode{
 
@@ -33,6 +32,12 @@ public class ZCDCode extends ZCZCode{
     	super(module);
 	}
 
+    public void setDivision(int div, int line) {
+    	info.addDivision(div, line);
+    }
+    public void setSection(int sect, int line) {
+    	info.addSection(sect, line);
+    }
     
     public Variable getVariable(Symbol s) {
     	return null;

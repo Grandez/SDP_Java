@@ -74,7 +74,7 @@ public class Parser {
 	   module.addIssues(RulesProcessor.getInstance().getIssues());
 	   
 	   //Procesa el grafo
-	   //module.makeGraph();
+	   module.makeGraph();
 	   
 	   mountStatus(module);
 

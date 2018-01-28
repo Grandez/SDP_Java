@@ -17,7 +17,11 @@ import com.jgg.sdp.domain.services.AbstractService;
 @Repository
 public class DCGGraphService extends AbstractService<DCGGraph> {
 
-    public List<DCGGraph> getGrafo(Long idVersion, Long idGrafo) {
-        return list("getGrafo", idVersion, idGrafo);
+    public List<DCGGraph> getGraphs(Long idVersion) {
+        return list("getGraphs", idVersion);
     }
+    public DCGGraph getRootGraph(Long idVersion) {
+        return find("getGraph", idVersion, 0);
+    }
+
 }

@@ -12,6 +12,7 @@ import java.util.*;
 
 import org.springframework.stereotype.Repository;
 
+import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.domain.core.SDPModulo;
 import com.jgg.sdp.domain.services.AbstractService;
 
@@ -31,6 +32,16 @@ public class SDPModuloService extends AbstractService<SDPModulo> {
 		return find("findByName", name);
 	}
 
+	public SDPModulo findModuleName(String name) {
+		List<SDPModulo> mods = list("findModule", name);
+		if (mods.size() == 0) return null;
+		if (mods.size() == 1) return mods.get(0);
+		for (SDPModulo m : mods) {
+			if (m.getTipo() == CDG.SOURCE_UNDEF || m.getTipo() == CDG.SOURCE_CODE) return m;
+		}
+		return null;
+	}
+	
 	public SDPModulo findByVersion(Long version) {
 		return findQuery(SDPModulo.findByVersion, version);
 	}

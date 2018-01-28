@@ -18,10 +18,11 @@ import com.jgg.sdp.blocks.stmt.*;
 
 import com.jgg.sdp.common.ctes.*;
 
+import com.jgg.sdp.rules.components.*;
+
 parser code {:
    GenericScanner scanner = null;
    Module        module   = ModulesFactory.getDefaultModule();
-   Summary       summary  = module.getSummary();
    Configuration cfg      = ConfigurationBase.getInstance();
    ParserInfo    info     = ParserInfo.getInstance();
              
@@ -40,12 +41,12 @@ parser code {:
 :}
 
 action code {:
-   Module          module   = null;
-   Summary         summary  = null;
-   Persistence     fichero  = null;
-   ZCCCode         code     = null;
-   Sections        sections = null;
-   ParserInfo      info     = ParserInfo.getInstance();
+
+   RulesCode   rules    = new RulesCode();
+   Module      module   = null;
+   Persistence fichero  = null;
+   ZCCCode     code     = null;
+   ParserInfo  info     = ParserInfo.getInstance();
       
    Variable  currVar       = null;
    StmtCobol lastStmt      = null;  // Ultima instruccion
@@ -57,9 +58,7 @@ action code {:
    int     numFillers = 0;
    
    public void initActionClass() {
-      module = ModulesFactory.getMainModule();
-      summary = module.getSummary();
-      sections = module.getSections();
+      module = info.getModule();
       code = new ZCCCode(module);
    }
 
@@ -175,7 +174,6 @@ terminal Symbol COMP3               ;
 terminal Symbol COMP4               ;
 terminal Symbol COMP5               ;
 terminal Symbol COMPUTE             ;
-terminal Symbol CONFIGURATION       ;
 terminal Symbol CONTAINS            ;
 terminal Symbol CONTENT             ;
 terminal Symbol CONTINUE            ;
@@ -287,7 +285,6 @@ terminal Symbol INSTALLATION        ;
 terminal Symbol INTO                ;
 terminal Symbol INVALID             ;
 terminal Symbol INVOKE              ;
-terminal Symbol IS                  ;
 terminal Symbol JNIENVPTR           ;
 terminal Symbol JUST                ;
 terminal Symbol JUSTIFIED           ;
@@ -376,7 +373,6 @@ terminal Symbol RELATIVE            ;
 terminal Symbol RELEASE             ;
 terminal Symbol RELOAD              ;
 terminal Symbol REMAINDER           ;
-terminal Symbol REMOVAL             ;
 terminal Symbol RENAMES             ;
 terminal Symbol REPLACE             ;
 terminal Symbol REPLACING           ;
@@ -457,7 +453,6 @@ terminal Symbol UNSTRING            ;
 terminal Symbol UNTIL               ;
 terminal Symbol UP                  ;
 terminal Symbol UPON                ;
-terminal Symbol USAGE               ;
 terminal Symbol USE                 ;
 terminal Symbol USING               ;
 terminal Symbol VALUE               ;
@@ -707,7 +702,6 @@ non terminal StmtCobol stmtString       ;
 non terminal StmtCobol string_verb      ;
 non terminal           string_from      ;
 non terminal           string_from_item ; 
-non terminal           string_rvalues   ;
 non terminal           string_delimited       ;
 non terminal           string_delimited_token ;
 non terminal           string_into            ;
@@ -765,10 +759,12 @@ non terminal Boolean parr_section;
 
 non terminal Symbol exitType;
 
-non terminal           lista_stmt   ;
-non terminal StmtCobol stmt     ;
-non terminal StmtCobol verbos   ;
-non terminal StmtCobol noverbos ;
+non terminal           lista_stmt ;
+non terminal StmtCobol stmt       ;
+non terminal StmtCobol verbos     ;
+non terminal StmtCobol noverbos   ;
+non terminal StmtCobol directives ;
+non terminal StmtCobol dir_trace  ;
 
 non terminal Tokens    resto_call      ;
 non terminal Tokens    list_parms_opt  ;
@@ -1005,7 +1001,6 @@ non terminal Symbol opt_data      ;
 non terminal Symbol opt_date_fmt  ;
 non terminal Symbol opt_in        ;
 non terminal Symbol opt_key       ;
-non terminal Symbol opt_not       ;
 non terminal Symbol opt_to        ;
 non terminal Symbol opt_with      ;
 
@@ -1111,8 +1106,16 @@ lista_stmt ::= stmt:s             {: lastStmt = code.processStatement(s, lastStm
 
 stmt     ::= verbos:s         {: RESULT = s; code.incStmt(s); :}
          |   noverbos:s       {: RESULT = s; :}
+         |   directives:s     {: RESULT = s; rules.checkCobolDirective(s); :}
          ;  
 
+directives ::= dir_trace:s    {: RESULT = s; :}
+           ;
+           
+dir_trace ::= READY:s TRACE  {: RESULT = new StmtCobol(s, code.getNumStatements()); :} 
+          |   RESET:s TRACE  {: RESULT = new StmtCobol(s, code.getNumStatements()); :} 
+          ;
+          
 verbos   ::= stmtControl:s    {: s.setGroup(CDG.STMT_CONTROL); RESULT = s; module.incStmtControl(); :}
          |   stmtFlujo:s      {: s.setGroup(CDG.STMT_FLOW);    RESULT = s; module.incStmtFlujo();   :}
          |   stmtDatos:s      {: s.setGroup(CDG.STMT_DATA);    RESULT = s; module.incStmtDatos();   :}
@@ -1846,10 +1849,6 @@ string_from ::= string_from_item
 string_from_item ::= rvalue_list string_delimited
                  ;
                  
-string_rvalues ::= rvalue
-               |   string_rvalues rvalue
-               ;
-               
 string_delimited ::= DELIMITED  opt_by string_delimited_token
                  ;
                                 
@@ -2432,10 +2431,6 @@ opt_key ::= KEY:s {: RESULT = s; :}
         |
         ;
 
-opt_not ::= NOT:s {: RESULT = s; :}
-        |
-        ;
-          
 opt_with ::= WITH:s {: RESULT = s; :}
          |
          ;

@@ -17,8 +17,15 @@ public class Propiedades {
     private BufferedReader in = null;
     private StringBuilder sb = new StringBuilder();
     private HashMap<String, String> parms = new HashMap<String, String>();
+
+    private char sep = '=';
     
     public HashMap<String, String> loadResource(String resourceName) {
+    	return loadResource(resourceName, '=');
+    }
+    
+    public HashMap<String, String> loadResource(String resourceName, char sep) {
+    	this.sep = sep;
         in = getResource(resourceName);
         if (in != null) loadKeys();
         return parms;
@@ -96,10 +103,20 @@ public class Propiedades {
     }
     
     private void loadClave(String linea) {
-        String[] par = linea.split("=");
-        String valor;
-        if (par.length != 2) return;
-        valor = par[1].trim();
+        String[] par = linea.split(Character.toString(sep));
+        StringBuilder sb = new StringBuilder();
+        if (par.length == 1) {
+        	sb.append(par[0]);
+        	sb.append(sep);
+        }
+        else {
+        	for (int idx = 1; idx < par.length; idx++) {
+            	sb.append(par[idx]);
+            	sb.append(sep);
+        	}
+        }
+        sb.deleteCharAt(sb.length() - 1);
+        String valor = sb.toString().trim();
         if (valor.charAt(0) == '\"' || valor.charAt(0) == '\'') {
             valor = valor.substring(1, valor.length() - 1);
         }

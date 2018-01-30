@@ -1,12 +1,14 @@
 package com.jgg.sdp.web.client.graph.json;
 
-public class JSonNode {
-	private Long    idVersion;
-	private Long    idGraph;
+public class JSonNode implements Comparable<JSonNode> {
+//	private Long    idVersion;
+//	private Long    idGraph;
 	private Long    subGraph;
 	private Long    idNode;
 	private Integer type;
+	private int     level = 0;
 	private String  name;
+	private boolean virtual = false;
 	
 	private String  category;
 	private Long    key;
@@ -16,23 +18,23 @@ public class JSonNode {
 	public JSonNode() {
 		
 	}
-	public JSonNode(Long idVersion) {
-		this.idVersion = idVersion;
-		this.idNode = idVersion;
+	public JSonNode(Long idNode) {
+		//this.idVersion = idVersion;
+		this.idNode = idNode;
 	}
 	
-	public Long getIdVersion() {
-		return idVersion;
-	}
-	public void setIdVersion(Long idVersion) {
-		this.idVersion = idVersion;
-	}
-	public Long getIdGraph() {
-		return idGraph;
-	}
-	public void setIdGraph(Long idGraph) {
-		this.idGraph = idGraph;
-	}
+//	public Long getIdVersion() {
+//		return idVersion;
+//	}
+//	public void setIdVersion(Long idVersion) {
+//		this.idVersion = idVersion;
+//	}
+//	public Long getIdGraph() {
+//		return idGraph;
+//	}
+//	public void setIdGraph(Long idGraph) {
+//		this.idGraph = idGraph;
+//	}
 	public Long getIdNode() {
 		return idNode;
 	}
@@ -77,5 +79,25 @@ public class JSonNode {
 	public void setData(Object data) {
 		this.data = data;
 	}
+	public boolean isVirtual() {
+		return virtual;
+	}
+	public void setVirtual(boolean virtual) {
+		this.virtual = virtual;
+	}
+	public int getLevel() {
+		return level;
+	}
+	public void setLevel(int level) {
+		this.level = level;
+	}
 
+	public int compareTo(JSonNode n) {
+		return level - n.level;
+    }
+	
+	@Override
+	public String toString() {
+		return name + "(" + idNode + ")"; 
+	}
 }

@@ -24,13 +24,19 @@ public class NodeTypes {
     public final static int BRANCH    = 48;   
     public final static int PERFORM   = 51;
 
-    public final static int MODULE       = 60;
-    public final static int CALL_STATIC  = 61;
-    public final static int CALL_DYNAMIC = 62;
-    public final static int CALL_LINK    = 63;
-    public final static int CALL_XCTL    = 64;
-    public final static int CALL_TRAN    = 66;
-
+    public final static int ROOT       = 10;
+    public final static int COBOL      = 11;
+    public final static int CICS       = 12;
+    public final static int TRAN       = 13;
+    public final static int GRAL       = 15;    
+    
+//    public final static int CALL_STATIC  = 61;
+//    public final static int CALL_DYNAMIC = 62;
+//    public final static int CALL_LINK    = 63;
+//    public final static int CALL_XCTL    = 64;
+//    public final static int CALL_TRAN    = 66;
+//    public final static int TRX          = 70;
+    
     public final static int B_START  = 1;
     public final static int B_END    = 2;
     public final static int B_LEFT   = 0;
@@ -56,8 +62,6 @@ public class NodeTypes {
     	   case CHOICE      : txt = "CHOICE";        break;
     	   case BRANCH      : txt = "BRANCH";        break;
     	   case PERFORM     : txt = "PERFORM";       break;
-    	   case CALL_STATIC : txt = "CALL_STATIC";   break;
-    	   case CALL_DYNAMIC: txt = "CALL_DYNAMIC";  break;
     	   default: txt = "NODE";
     	}
     	return txt;

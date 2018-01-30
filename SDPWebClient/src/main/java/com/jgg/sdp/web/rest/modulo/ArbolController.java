@@ -117,8 +117,8 @@ public class ArbolController {
         return last;
     }
 
-    @RequestMapping("/grafos")
-    public List<ApplTree> mountTree() {
+    @RequestMapping("/arbol/{idAppl}")
+    public List<ApplTree> mountTree(@PathVariable Long idAppl) {
         ArrayList<ApplTree> appTree = new ArrayList<ApplTree>();
         ApplTree node = new ApplTree();
         node.setId(0L);
@@ -126,7 +126,7 @@ public class ArbolController {
         node.setParent("#");
         appTree.add(node);
         
-        for (SDPModulo mod: moduloService.listModulesByAppl(40301L)) {
+        for (SDPModulo mod: moduloService.listModulesByAppl(idAppl)) {
         	node = new ApplTree();
         	node.setId(mod.getIdVersion());
         	node.setText(mod.getNombre());

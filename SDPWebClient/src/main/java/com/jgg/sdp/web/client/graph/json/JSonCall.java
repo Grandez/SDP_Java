@@ -1,11 +1,11 @@
 package com.jgg.sdp.web.client.graph.json;
 
 public class JSonCall {
-	private Integer method;  // Verbo 
-    private Integer mode;    // Dinamico - Estatico
-    private Integer refs;
-    private Integer status;
-    private Long    execs;
+	private Integer method = 0;  // Verbo 
+    private Integer mode   = 0;    // Dinamico - Estatico
+    private Integer refs   = 1;
+    private Integer status = 1;
+    private Long    execs  = 1L;
 	public Integer getMethod() {
 		return method;
 	}

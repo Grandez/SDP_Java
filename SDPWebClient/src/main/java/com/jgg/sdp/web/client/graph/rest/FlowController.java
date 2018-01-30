@@ -62,8 +62,8 @@ public class FlowController {
     	HashMap<Long, String> nodes = new HashMap<Long, String>();
     	for (DCGNode node : nodeService.listNodes(graph.getIdVersion(),  graph.getIdGraph())) {
     		JSonNode n = new JSonNode();
-    		n.setIdVersion(node.getIdVersion());
-    		n.setIdGraph(node.getIdGrafo());
+//    		n.setIdVersion(node.getIdVersion());
+//    		n.setIdGraph(node.getIdGrafo());
     		n.setIdNode(node.getIdNode());
     		n.setName(node.getNombre());
     		n.setType(node.getTipo());

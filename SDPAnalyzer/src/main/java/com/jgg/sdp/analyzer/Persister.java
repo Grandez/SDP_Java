@@ -528,7 +528,7 @@ public class Persister {
     
     private void updateGrafo() {
     	Graph g = module.getGraph();
-    	
+
     	for (SubGraph grf : g.getGraphs()) {
     		DCGGraph grafo = new DCGGraph();
     		grafo.setIdVersion(idVersion);
@@ -556,6 +556,7 @@ public class Persister {
     		edge.setIdGrafo(e.getIdGrafo());
     		edge.setIdFrom(e.getFrom().getId());
     		edge.setIdTo(e.getTo().getId());
+    		edge.setType(e.getType());
     		generate(edge);
     	}
     }

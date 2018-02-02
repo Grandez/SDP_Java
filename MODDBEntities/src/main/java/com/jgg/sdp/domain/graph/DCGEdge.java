@@ -14,7 +14,7 @@ import com.jgg.sdp.domain.graph.DCGEdge;
 
 public class DCGEdge implements Serializable {
 
-	private static final long serialVersionUID = 6151611699600715094L;
+	private static final long serialVersionUID = 4826456593799197878L;
 
 	@Id
 	@Column(name="idVersion")
@@ -32,6 +32,9 @@ public class DCGEdge implements Serializable {
 	@Column(name="idTo")
 	Long idTo;
 
+	@Column(name="tipo")
+	Integer type;
+	
 	public Long getIdVersion() {
 		return idVersion;
 	}
@@ -63,6 +66,12 @@ public class DCGEdge implements Serializable {
 	public void setIdTo(Long idTo) {
 		this.idTo = idTo;
 	}
+	public Integer getType() {
+		return type;
+	}
+	public void setType(Integer type) {
+		this.type = type;
+	}
 
 	@Override
 	public int hashCode() {
@@ -72,6 +81,7 @@ public class DCGEdge implements Serializable {
 		result = prime * result + ((idGrafo == null) ? 0 : idGrafo.hashCode());
 		result = prime * result + ((idTo == null) ? 0 : idTo.hashCode());
 		result = prime * result + ((idVersion == null) ? 0 : idVersion.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -104,8 +114,11 @@ public class DCGEdge implements Serializable {
 				return false;
 		} else if (!idVersion.equals(other.idVersion))
 			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
 		return true;
 	}
-	
-	
 }

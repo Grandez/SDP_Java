@@ -32,7 +32,6 @@ public class Module {
     private int           cpyType      = 0;
     private boolean       cpyIgnored   = false;
 	
-//	private Stack<Source> sources      = new Stack<Source>();
 	private Summary       summary      = new Summary();
 	private Codigo        codigo       = new Codigo();	
 	private TBCics        tbCics       = new TBCics();
@@ -40,10 +39,10 @@ public class Module {
 	private Comment       comment      = new Comment();
 	private TBSumIssues   sumIssues    = new TBSumIssues();
 	
-	private TBFiles       tbFiles      = new TBFiles();
-    private Graph         grafo        = new Graph();
+    private Graph         graph        = new Graph();
     private TBBadStmts    tbBad        = new TBBadStmts();
 
+	private TBFiles       tbFiles      = new TBFiles();    
 	private TBBloques     tbBloques    = new TBBloques();
     private TBParagraphs  tbParagraphs = new TBParagraphs();
 	private TBVars        tbVars       = new TBVars();
@@ -61,6 +60,7 @@ public class Module {
 
 	private String        author      = "N/A";
     private int           tipo        = CDG.SOURCE_CODE;
+    private boolean       firstParr   = false;
     
     // Por defecto completo, se actualiza si hay fallos
     private int          copys       = CDG.CPY_ST_FULL;
@@ -181,6 +181,9 @@ public class Module {
     	this.name = name;
     	ModulesFactory.setModuleName(name);
     }
+    
+    public void    setFirstParagraph(boolean b) { firstParr = b;     }
+    public boolean startsWithParagraph()        { return firstParr;  }
     
     public void    setStatements(int stmt)   { statements = stmt;    }
     public int     getStatements()           { return statements;    }
@@ -499,7 +502,7 @@ public class Module {
     ////  Tratamiento GRAFO                          
     //// *********************************************************************
     
-    public Graph  getGraph()    { return grafo;              }
-    public void   makeGraph()   { grafo.parse(tbParagraphs); }
+    public Graph  getGraph()    { return graph;              }
+    public void   makeGraph()   { graph.parse(tbParagraphs); }
 
 }

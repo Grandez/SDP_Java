@@ -65,16 +65,15 @@ public class Graph {
     }
     
     public void parse(TBParagraphs tbPars) {
-    	int level = 0;
     	sigGraph = new JGGQueue<String>();
     	sigGraph.enqueue(root.getName());
     	
     	while (!sigGraph.isEmpty()) {
        	   SubGraph graph = map.get(sigGraph.dequeue());
+   		
        	   if (graph == null)                     continue;
            if (grafos.get(graph.getId()) != null) continue;
-           if (!graph.isGraph())                  continue;
-       	   System.out.println("Procesando grafo: " + graph.getName());
+//           if (!graph.isGraph())                  continue;
        	   reduceGraph(graph);
            grafos.put(graph.getId(), graph.getName());
            
@@ -100,7 +99,7 @@ public class Graph {
         		   SubGraph g = map.get(next.getName());
         		   if (g != null) g.setLevel(graph.getLevel() + 1);
         	   }
-        	   if (next.getFrom().compareToIgnoreCase(next.getTo()) != 0) {
+        	   if (next.collapsed()) {
         		   expandThru(next, tbPars);
         	   }
         	   else {
@@ -129,11 +128,13 @@ public class Graph {
      	   while (changed) {
      		   changed = false;
      	       for (Node next : act.getChildren()) {
-           	       if (next.isConnector()) {
-           		       for (Node n: next.getChildren()) hijos.add(n);
+           	       if (!next.isValidNode()) {
+           		       for (Node n: next.getChildren()) {
+           		    	   hijos.add(n);
+           		       }
            		       changed = true;
            	       }
-           	       if (!next.isConnector()) hijos.add(next);
+           	       if (next.isValidNode()) hijos.add(next);
      	       }
      	       if (changed) act.setChildren(hijos);
            }        
@@ -156,18 +157,17 @@ public class Graph {
     }
 
     private void printData() {
-    	//System.out.println("============================================");    	
+    	System.out.println("============================================");    	
     	for (Long g : grafos.keySet()) {
     		System.out.println("Grafo: " + String.format("%3d", g) + " - " + grafos.get(g));
     	}
     	
-    	//System.out.println("============================================");
+    	System.out.println("============================================");
     	for (Node n : nodos.values()) {
     		System.out.println("Nodo: " + String.format("%3d", n.getId()) + " - " + String.format("%3d", n.getGraphChild()) + " - " + n.getName());
     	}
-    	//System.out.println("============================================");
+    	System.out.println("============================================");
     	edges.forEach(System.out::println);
-//    	for (Edge e : edges..forEach(action);.values()) System.out.println(e.toString());
 
     }
 }

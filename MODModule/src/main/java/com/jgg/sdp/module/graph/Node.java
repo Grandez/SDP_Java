@@ -11,9 +11,12 @@ package com.jgg.sdp.module.graph;
 
 import java.util.*;
 
+import com.jgg.sdp.core.ctes.TRAP;
+
 import static com.jgg.sdp.module.graph.NodeTypes.*;
 
-public class Node {
+public class Node
+ {
 
 	private long    idGraph;  // Grafo en el que aparece
 	private long    graph;    // Grafo al que apunta
@@ -22,15 +25,25 @@ public class Node {
 	private String  to;       // Casos PERFORM A THRU B
 	private int     type;     // Tipo del nodo
 	private int     subtype;  // Subtipo del nodo
-	private Integer active;
+	private int     active = -1;
+	private int     stmts = 0;
+	private String  label;    // Tool tip
+	private int     cause = EDGE_NORMAL; // Existe por? (IF, ELSE, ...)
 	
 	private ArrayList<Node> hijos = new ArrayList<Node>();
+	private Stack<Integer>  pila = new Stack<Integer>();
+
+	private Node terminal = null;
+	
+	/****************************************************************/
+	/***                TRATAMIENTO NODOS                           */
+	/****************************************************************/
 	
     public Node(Integer type, String name, int idGraph, int id) {
-    	this(type, name, name, idGraph, id);
+    	this(type, type, name, name, idGraph, id);
     }
 
-    public Node(Integer type, String from, String to, int idGraph, int id) {
+    public Node(Integer type, String from, String to, int stmts, int idGraph, int id) {
     	this(type, type, from, to, idGraph, id);
     }
 
@@ -41,7 +54,7 @@ public class Node {
     	this.name = n;
     	this.to   = n;
     	this.id = id;
-    	this.idGraph = idGraph - 1;
+    	this.idGraph = idGraph;
     	this.graph = -1;
     }
     
@@ -51,37 +64,29 @@ public class Node {
     	this.name = from;
     	this.to   = to;
     	this.id = id;
-    	this.idGraph = idGraph - 1;
+    	this.idGraph = idGraph;
     	this.graph = -1;
     }
 
-    public void setChildren(ArrayList<Node> other) {
-    	this.hijos.clear();
-    	while (other.size() > 0) {
-    		this.hijos.add(other.remove(0));
-    	}
+    /**
+     * Cambia los datos del nodo
+     * Sin cambiar punteros
+     * @param node
+     */
+    public void copy(Node node) {
+    	name     = node.getName();
+    	to       = node.getTo();
+    	type     = node.getType();
+    	subtype  = node.getSubtype();
+    	stmts    = node.getStmts();
+    	terminal = node.getTerminal();
     }
+
+	/****************************************************************/
+	/***                GETTERS AND SETTERS                          */
+	/****************************************************************/
     
-    public void moveChildren(ArrayList<Node> hijos) {
-    	while (hijos.size() > 0) {
-    		this.hijos.add(hijos.remove(0));
-    	}
-    }
-    public void copyChildren(ArrayList<Node> hijos) {
-    	for (Node hijo : hijos) this.hijos.add(hijo);
-    }
-    
-    public void replaceChild(Node child) {
-    	if (hijos.size() > 0) hijos.remove(hijos.size() - 1);
-    	hijos.add(child);
-    }
-    
-    public void setFromTo(String from, String to) {
-    	this.name = from;
-    	this.to = to;
-    }
-    
-    public void setGraph(int idGraph) {
+    public void setIdGraph(int idGraph) {
     	this.graph = idGraph;
     }
     
@@ -89,14 +94,6 @@ public class Node {
     	return idGraph;
     }
 
-    public void setGraphChild(int graph) {
-    	this.graph = graph;
-    }
-    
-    public long getGraphChild() {
-    	return graph;
-    }
-    
     public long getId() {
     	return id;
     }
@@ -120,7 +117,13 @@ public class Node {
     public Integer getSubtype() {
     	return subtype;
     }
-    
+
+    public void setTerminal(Node n) {
+    	terminal = n;
+    }
+    public Node getTerminal() {
+    	return terminal;
+    }
     public String getName() {
     	return name;
     }
@@ -141,7 +144,107 @@ public class Node {
     	return hijos.size();
     }
     
-    public Node getActiveChild() {
+    
+    public int getCause() {
+		return cause;
+	}
+
+	public void setCause(int cause) {
+		this.cause = cause;
+	}
+
+	public void setLabel(String label) {
+    	this.label = label;
+    }
+	
+    public String getLabel() {
+    	return label;
+    }
+
+	/****************************************************************/
+	/***                TRATAMIENTO HIJOS                           */
+	/****************************************************************/
+    
+    public int getNumChilds() {
+    	return hijos.size();
+    }
+    
+    public void addChild(Node node) {
+    	hijos.add(node);
+    	active = hijos.size() - 1;
+    	pila.push(active);
+    }
+
+    public Node removeChild(int pos) {
+    	return hijos.remove(pos);
+    }
+    
+    public Node removeChild() {
+    	return hijos.remove(pila.pop().intValue());
+    }
+    
+    public void addChildren(ArrayList<Node> other) {
+    	for (Node n : other) addChild(n);
+    }
+    
+    public void setChildren(ArrayList<Node> other) {
+    	hijos.clear();
+    	pila.clear();
+    	while (other.size() > 0) {
+    		addChild(other.remove(0));
+    	}
+    }
+    public Node getChild() {
+    	return hijos.get(active);
+    }
+
+    public Node getChild(int pos) {
+    	return hijos.get(pos);
+    }
+    
+    public void previous() {
+    	pila.pop();
+    	active = pila.peek();
+    }
+    
+    public Node moveChild(Node n) {
+    	return n.removeChild();
+    }
+    
+    public void moveActiveChild(Node parent) {
+    	hijos.add(parent.getActiveChild(true));
+    }
+    
+    public void copyChildren(ArrayList<Node> hijos) {
+    	for (Node hijo : hijos) this.hijos.add(hijo);
+    }
+    
+    public void replaceChild(Node child) {
+    	if (hijos.size() > 0) hijos.remove(active);
+    	hijos.add(child);
+    }
+    
+    public void setFromTo(String from, String to) {
+    	this.name = from;
+    	this.to = (to == null) ? from : to;
+    }
+    
+
+    public void setGraphChild(int graph) {
+    	this.graph = graph;
+    }
+    
+    public long getGraphChild() {
+    	return graph;
+    }
+    
+
+	public Node getActiveChild() {
+    	return getActiveChild(false);
+    }
+	
+	public Node getActiveChild(boolean remove) {
+		if (remove) return hijos.remove(active);
     	return hijos.get(active);
     }
     
@@ -152,18 +255,6 @@ public class Node {
     	return hijos.get(hijos.size() - 1);
     }
 
-    public void addChildFirst(Node node) {    	
-		hijos.add(0, node);
-    }    
-    
-    public void addChildLast(Node node) {
-    	hijos.add(node);
-    }
-    
-    public void addChild(Node node) {
-    	addChildLast(node);
-    }
-    
     public void setActive(int pos) {
     	active = (pos == -1) ? hijos.size() - 1 : pos;
     }
@@ -196,77 +287,39 @@ public class Node {
     	return type == END;
     }
 
-    public boolean isConnector() {
-    	return (type == BEGIN || type == END) ? true : false;
+    public boolean isValidNode() {
+    	if (type == BEGIN) return false;
+    	if (type == END)   return false;
+    	if (type == BLOCK && stmts == 0) return false;
+    	return true;
+    }
+    
+    public boolean collapsed() {
+    	if (type != PERFORM) return false;
+ 	   return name.compareTo(to) != 0;
     }
     
     public boolean isGraph() {
     	return (type == PERFORM);
     }
     
-    @Override
+    
+    public int getStmts() {
+		return stmts;
+	}
+
+	public void setStmts(int stmts) {
+		this.stmts = stmts;
+	}
+
+	public void endStmts(int stmts) {
+		this.stmts = stmts - this.stmts;
+		if (type == TRAP.BLOCK) name = name + "(" + this.stmts + ")";
+	}
+	
+	@Override
     public String toString() {
     	return String.format("+ %03d - %d-%d %s" , id, type, subtype, name);
     }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((active == null) ? 0 : active.hashCode());
-		result = prime * result + (int) (graph ^ (graph >>> 32));
-		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + (int) (idGraph ^ (idGraph >>> 32));
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + subtype;
-		result = prime * result + ((to == null) ? 0 : to.hashCode());
-		result = prime * result + type;
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Node other = (Node) obj;
-		if (active == null) {
-			if (other.active != null)
-				return false;
-		} else if (!active.equals(other.active))
-			return false;
-		if (graph != other.graph)
-			return false;
-		if (hijos == null) {
-			if (other.hijos != null)
-				return false;
-		} else if (!hijos.equals(other.hijos))
-			return false;
-		if (id != other.id)
-			return false;
-		if (idGraph != other.idGraph)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (subtype != other.subtype)
-			return false;
-		if (to == null) {
-			if (other.to != null)
-				return false;
-		} else if (!to.equals(other.to))
-			return false;
-		if (type != other.type)
-			return false;
-		return true;
-	}
-
-    // OJO el hashCode puede ser recursivo
-
-    
 } 

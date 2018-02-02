@@ -62,6 +62,40 @@
          
       </r:item>
 
+      <r:item name="ModuleStart">
+         <object>MODULE</object>
+         <active>true</active>      
+         <r:title>
+             <text>Inicio con codigo</text>      
+         </r:title>
+            
+         <r:description>
+            <text lang="xx">El codigo fuente inicia en un parrafo</text>
+         </r:description>
+         
+         <r:rule>
+            <severity>1</severity>
+            <r:message>
+               <text lang="xx">No es necesario indicar un parrafo inicial</text>
+            </r:message>   
+            <condition>
+               <property>startsWithParagraph</property>
+            </condition>            
+         </r:rule>
+         
+         <r:rule>
+            <severity>1</severity>
+            <active>false</active>
+            <r:message>
+               <text lang="xx">No es necesario indicar un parrafo inicial</text>
+            </r:message>   
+            <condition negated="true">
+               <property>startsWithParagraph</property>
+            </condition>            
+         </r:rule>
+         
+      </r:item>
+
    </r:group>
 
 </r:SDPRules>

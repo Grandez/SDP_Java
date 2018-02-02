@@ -64,37 +64,18 @@ public class AnalyzerEval {
 	private int evaluateCase(Module module, IVPCase c) {
 		if (c.getDescription().length() > 0) printer.lineFixCnt(" - " + c.getDescription());
 	
-		int obj = selectObject(c.getObject()); 
-		switch(obj) {
-		   case SDPANALYZER: return evaluateAnalyzer(module, c);
-		   default: return evaluateComponent(obj, module, c);
-		}
+		String strObj = selectObject(c.getObject());
+		Object component = getResult(module, "get" + strObj);
+		Object value     = getResult(component, "get" + c.getMethod());
+		return evaluate(value, c);
     }
 
-	private int evaluateAnalyzer(Module module, IVPCase c) {
-		String objeto = "get" + c.getObject().toUpperCase();
-		
-		Object res = getResult(module, c.getMethod());
-//		System.out.println(res.toString());
-		if (res instanceof Integer) return Matchers.matchInteger((Integer) res, c);
+	private int evaluate(Object value, IVPCase c) {
+		if (value instanceof Integer) return Matchers.matchInteger((Integer) value, c);
 		return 0;
 		
 	}
-
-	private int evaluateComponent(int id, Module module, IVPCase c) {
-		
-		Object o = null;
-		switch (id) {
-		   case ISSUES: o = module.getTbIssues(); break; 
-		}
-		
-		Object res = getResult(o, c.getMethod());
-		//System.out.println(res.toString());
-		if (res instanceof Integer) return Matchers.matchInteger((Integer) res, c);
-		return 0;
-		
-	}
-
+	
 	private Object getResult(Object o, String method) {
 		
 		try {
@@ -121,10 +102,11 @@ public class AnalyzerEval {
 	}
 	
 
-	private int selectObject(String txt) {
-		if (txt.compareToIgnoreCase("SDPAnalyzer") == 0) return SDPANALYZER;
-		if (txt.compareToIgnoreCase("Issues")      == 0) return ISSUES;		
-		return 0;
+	private String selectObject(String txt) {
+		return txt;
+//		if (txt.compareToIgnoreCase("SDPAnalyzer") == 0) return SDPANALYZER;
+//		if (txt.compareToIgnoreCase("Issues")      == 0) return ISSUES;		
+//		return 0;
 	}
 	
 }

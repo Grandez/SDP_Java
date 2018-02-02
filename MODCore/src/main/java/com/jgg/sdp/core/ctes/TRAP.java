@@ -15,7 +15,7 @@ public class TRAP {
 	public static final int HTRAP      =   0x100;  //  256
 	public static final int HCODE      =   0x200;  //  512
 	public static final int HACCESS    =   0x400;  // 1024
-	public static final int HGRAFO     =   0x800;
+//	public static final int HGRAFO     =   0x800;
 	public static final int HUNDEF3    =  0x1000;
 	public static final int HUNDEF4    =  0x2000;
     public static final int HUNDEF5    =  0x4000;
@@ -53,7 +53,21 @@ public class TRAP {
 	public static final int IF         =     0x40;
 	public static final int EVAL       =     0x80;
 	public static final int SEARCH     =     0x100;
+
+	// Valores de code
 	
+	public static final int WORKING     = HCODE + WORKINGS;  // 514
+	public static final int BLOCK       = HCODE + BLOQUE;    // 516
+	public static final int IN_PARR     = HCODE + PARR;      // 518
+	public static final int FIRST_PARR  = HCODE + FIRST;
+	public static final int END_IF      = HCODE + IF + 1;
+	public static final int ELSE        = HCODE + IF + 2;
+	public static final int END_EVAL    = HCODE + EVAL + 1;
+	public static final int WHEN        = HCODE + EVAL + 2;
+	public static final int BRANCH      = HCODE + EVAL + 3;
+	public static final int END_SEARCH  = HCODE + SEARCH + 1;	
+    public static final int ATEND       = HCODE + 0x200;
+    
 	// Mascara de ACCESS
 	
     public static final int OPEN      =   0x01;
@@ -66,15 +80,6 @@ public class TRAP {
 	public static final int TOTAL     =   0x80;
 	
 
-	// Valores de code
-	
-	public static final int WORKING     = HCODE + WORKINGS;  // 514
-	public static final int BLOCK       = HCODE + BLOQUE;    // 516
-	public static final int IN_PARR     = HCODE + PARR;      // 518
-	public static final int FIRST_PARR  = HCODE + FIRST;
-	public static final int END_IF      = HCODE + IF;
-	public static final int END_EVAL    = HCODE + EVAL;
-    public static final int END_SEARCH  = HCODE + SEARCH;	
 	
 	// Valores BEG
 	
@@ -111,13 +116,6 @@ public class TRAP {
 	public static final int PARRWRK     =  0x400;
 	public static final int BEG_SESSION =   0x00;
 	public static final int END_SESSION =   0x01;
-
-	// Usados para el grafo
-	
-	public static final int EVALUATE = HGRAFO + 2;
-	public static final int WHEN     = HGRAFO + 3;
-	public static final int ELSE     = HGRAFO + 4;
-	public static final int ATEND    = HGRAFO + 8;
 	
 	// Usados por SDPTRAPx
 

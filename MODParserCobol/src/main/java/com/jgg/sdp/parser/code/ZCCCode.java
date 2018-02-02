@@ -59,7 +59,7 @@ public class ZCCCode extends ZCZCode {
     // Ejemplo:
     //   READ DATO AT END imperative-statement
     private boolean imperative    = false;
-    private int     numStatements = 0;
+    private int     numStatements = 0; // No contempla la actual
     private int     bloques       = 0;
     private boolean skipBlock     = false;
 
@@ -98,6 +98,7 @@ public class ZCCCode extends ZCZCode {
         trap = injector.setPrevTrap(trap);
 
         grafo = newGraph(0, module.getName());
+        grafo.addLinearNode(TRAP.BLOCK, 0);
 	}
 	
 	public Symbol makeSymbol(int code, int line, int column, String text) {
@@ -139,16 +140,36 @@ public class ZCCCode extends ZCZCode {
         currBlock = new Block(bloque, stmts, cause);
 		
         module.addBlock(currBlock, endLine);
-//        grafo.addNode(NodeTypes.CODE, "Code");
-        
+
         if (genTrap) {
 		   Trap trap = new Trap(TRAP.BLOCK, bloque);
 	       injector.setNextTrap(trap);
         }   
         
+        processGraph(stmt, cause);
+        
 		return bloque;		
 	}
-
+    private void processGraph(StmtCobol stmt, Integer cause) {
+    	boolean full =  (stmt != null && stmt.endWithPoint()) ? true : false; 
+    	switch (cause) {
+    	    case TRAP.BEG_MODULE: break;
+    	    case TRAP.BLOCK:      grafo.addLinearNode(cause, numStatements); break;
+    	    case TRAP.IF:         
+    	    case TRAP.EVAL:
+    	    case TRAP.SEARCH:     grafo.addBlock(cause, numStatements, stmt.toText()); break;
+    	    case TRAP.END_IF:   
+    	    case TRAP.END_EVAL:  
+    	    case TRAP.END_SEARCH: grafo.endBlock(numStatements, full); break;    	    
+    	    case TRAP.ELSE:       
+    	    	grafo.addBranch(cause, numStatements, true, null); break;
+    	    case TRAP.WHEN:    	
+    	    	 boolean close = stmt.getOptionByName("OTHER") != null ? true : false;      
+    	    	 grafo.addBranch(cause, numStatements, close, stmt.toText());
+//    	   default: grafo.addLinearNode(TRAP.BLOCK, cause, numStatements);    break; 	 
+    	}
+    }
+    
 	public StmtCobol processStatement(StmtCobol stmt, StmtCobol last) {
 
 		calculateBlock(stmt, last);
@@ -213,10 +234,7 @@ public class ZCCCode extends ZCZCode {
         // Incluir una llamada a ese Perform
 	    
         if (numStatements == 0) {
-//        	grafo.getRoot().setType(NodeTypes.PARAGRAPH);
-        	//grafo.getRoot().setName(name);
-//         	grafo.addBlock(NodeTypes.PERFORM, name, false);
-//        	grafo.changeNode(NodeTypes.PERFORM, name);
+        	module.setFirstParagraph(true);
             parrafo = module.getParagraph("");
             if (parrafo != null) {
                 parrafo.setName(name);
@@ -282,7 +300,7 @@ public class ZCCCode extends ZCZCode {
 	    Symbol verb = stmt.getVerb();
 	    
 		injector.loadTraps(verb.left, verb.right);
-        module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStatements + 1);
+        module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStatements);
 		newBlock(stmt, true, TRAP.INLINE);
 		skipBlock = true;
 		addToGraph(stmt, "INLINE");
@@ -307,7 +325,7 @@ public class ZCCCode extends ZCZCode {
         if (currBlock != null) currBlock.addPerform(from);
         
         boolean loop = stmt.getOption(UNTIL) == null ? false : true;
-		grafo.addLinearNode(NodeTypes.PERFORM, from, to, loop);
+		grafo.addLinearNode(TRAP.PERFORM, from, to, numStatements, loop);
 	}
 	
 	private void addToGraph(StmtCobol stmt, String from) {
@@ -333,11 +351,10 @@ public class ZCCCode extends ZCZCode {
 	}
 	
     public StmtCobol processIf(StmtCobol stmt) {
-    	grafo.addIF(NodeTypes.IF);
         parrafo.incCiclomatic();
         stackFlujo.push(stmt);
 
-        module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStatements + 1);
+        module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStatements);
         newBlock(stmt, true, TRAP.IF); 
         skipBlock = true;
 
@@ -346,35 +363,25 @@ public class ZCCCode extends ZCZCode {
     }
 
     public StmtCobol processElse(StmtCobol stmt) {
-    	grafo.addElse();
         newBlock(stmt, true, TRAP.ELSE);
         return stmt;
     }
 
     public StmtCobol processEvaluate(StmtCobol stmt) {
-//    	grafo.addBlock(NodeTypes.EVALUATE);
+        grafo.addBlock(TRAP.SEARCH, numStatements, stmt.toText());
         stackFlujo.push(stmt);
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStatements);
-//        newBlock(true, TRAP.EVALUATE);
-//        skipBlock = true;
         return stmt;
     }
 
     public StmtCobol processSearch(StmtCobol stmt) {
-//        grafo.addBlock(NodeTypes.SEARCH);
+        grafo.addBlock(TRAP.SEARCH, numStatements, stmt.toText());
         stackFlujo.push(stmt);
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStatements);
-//        newBlock(true, TRAP.EVALUATE);
-//        skipBlock = true;
         return stmt;
     }
     
-    public StmtCobol processWhen(StmtCobol stmt) {
-    	//jgg Si no es OTHER
-    	boolean close = false;
-    	if (stmt.getOptionByName("OTHER") != null) close = true;
-//    	grafo.addChoice(NodeTypes.WHEN, close);
-    	
+    public StmtCobol processWhen(StmtCobol stmt) {   	
     	stackFlujo.peek().addOption(stmt.asOption());
         parrafo.incCiclomatic();
         newBlock(stmt, true, TRAP.WHEN);
@@ -514,6 +521,7 @@ public class ZCCCode extends ZCZCode {
 		trapEOF(last, hasEndCode);
         module.setStatements(numStatements);
         module.setParagraphReferences();
+        grafo.endGraph(numStatements);
 //        insertSDPFields();  // Debe ser lo ultimo
 //        setInjectorVars();
 	}
@@ -565,56 +573,46 @@ public class ZCCCode extends ZCZCode {
 	public StmtCobol checkFlujo(StmtCobol stmt, StmtCobol last) {
 	    Trap trap = null;
 	    Integer cause = null;
-	    Integer node = null;
 	
+	    stmt.setEndPoint(true);
+	    last.setEndPoint(true);
+	    
 	    if (stackFlujo.isEmpty()) return stmt;
 	    StmtCobol flujo = stackFlujo.pop();
 
 	    while (flujo != null) {
+	    	cause = null;
 	        switch (flujo.getVerb().sym) {
-	           case IF: 
-	               cause = TRAP.END_IF;
-	               node = NodeTypes.IF_END;
-	               trap = new Trap(cause, bloques + 1);
-	               break;
-               case EVALUATE:
-                   cause = TRAP.END_EVAL;
-                   node = NodeTypes.EVALUATE;
-                   trap = new Trap(cause, bloques + 1);
-                   break;
-               case SEARCH:
-                   cause = TRAP.END_SEARCH;
-                   node = NodeTypes.SEARCH;
-                   trap = new Trap(cause, bloques + 1);
-                   break;
+	           case IF:        cause = TRAP.END_IF;     break;
+               case EVALUATE:  cause = TRAP.END_EVAL;   break;
+               case SEARCH:    cause = TRAP.END_SEARCH; break;
 	        }
+	        if (cause != null) trap = new Trap(cause, bloques + 1);
             injector.setPrevTrap(trap);
 	        module.endBlock(stmt.getBegLine(), numStatements);
-	        grafo.endCycle(node);
-	        newBlock(null, false, cause);
+	        newBlock(stmt, false, cause);
 	        flujo = (stackFlujo.isEmpty()) ? null : stackFlujo.pop();
 	    }
 	    return stmt;
 	}
 	
 	public StmtCobol endIf(StmtCobol stmt) {
-        cleanStackFlujo("IF");
+		cleanStackFlujo("IF");
         newBlock(stmt, true, TRAP.END_IF);
-        grafo.endCycle(NodeTypes.IF_END);
+
         return stmt;
 	}
 	
     public StmtCobol endEvaluate(StmtCobol stmt) {
         cleanStackFlujo("EVALUATE");
         newBlock(true, TRAP.END_EVAL);
-        //grafo.endCycle(NodeTypes.EVALUATE);
         return stmt;
     }
 
     public StmtCobol endSearch(StmtCobol stmt) {
         cleanStackFlujo("SEARCH");
         newBlock(true, TRAP.END_SEARCH);
-        //grafo.endCycle(NodeTypes.SEARCH);
+        grafo.endBlock(numStatements, false);
         return stmt;
     }
     
@@ -771,14 +769,14 @@ public class ZCCCode extends ZCZCode {
 		return v;
 	}
 
-	public SymbolExtList setVarListWrite(SymbolExtList lista) {
-		for (SymbolExt s : lista.getVarList()) {
+	public SymbolList setVarListWrite(SymbolList lista) {
+		for (SymbolExt s : lista.getSymbols()) {
 			module.setVarWrite(s.getName(), s.getParentName());
 		}
 		return lista;
 	}
 	
-	public void checkCall(SymbolExtList l, SymbolExt r) {
+	public void checkCall(SymbolList l, SymbolExt r) {
 		String value = null;
 		boolean id = false;
 		
@@ -801,7 +799,7 @@ public class ZCCCode extends ZCZCode {
 		    	 return;
 		}
 		
-        for (SymbolExt s : l.getVarList()) {
+        for (SymbolExt s : l.getSymbols()) {
 			   module.setVarValue(s.getName(), value, id);
 		}
 	}
@@ -811,4 +809,5 @@ public class ZCCCode extends ZCZCode {
 		rootGraph.add(sub);
 		return sub;
 	}
+	
 }

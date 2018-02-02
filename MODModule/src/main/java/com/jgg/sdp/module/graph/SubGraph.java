@@ -13,6 +13,7 @@ package com.jgg.sdp.module.graph;
 
 import java.util.*;
 
+import com.jgg.sdp.core.ctes.TRAP;
 import com.jgg.sdp.tools.Cadena;
 
 import static com.jgg.sdp.module.graph.NodeTypes.*;
@@ -57,6 +58,9 @@ public class SubGraph {
     /* GESTION GRAFO                                          */
     /**********************************************************/
     
+    public void endGraph(int stmts) {
+    	current.endStmts(stmts);
+    }
     /**
      * Nodo lineal
      * Son PERFORM 
@@ -74,145 +78,166 @@ public class SubGraph {
      * @param from Nombre del nodo central
      * @param to   Parte THRU
      */
-    
-    public void addLinearNode(Integer type, String name) {
-    	addLinearNode(type, name, name);
+
+    public void addLinearNode(Integer type, int stmts) {
+    	addLinearNode(type, "CODE", stmts);
+    }
+    public void addLinearNode(Integer type, int subtype, int stmts) {
+    	addLinearNode(type, "CODE", stmts);
+    }
+
+    public void addLinearNode(Integer type, String name, int stmts) {
+    	addLinearNode(type, name, name, stmts);
+    }
+    public void addLinearNode(Integer type, String from, String to, int stmts) {
+    	addLinearNode(type, from, to, stmts, false);
     }
     
-    
-    public void addLinearNode(Integer type, String from, String to) {
-    	addLinearNode(type, from, to, false);
-    }
-    
-    public void addLinearNode(Integer type, String from, String to, boolean loop) {
-       if (to == null) to = from;	
- 	   Node tmp = nodes.getNode(type, from, to);
- 	   tmp.addChild(current.getLast());
- 	   current.replaceChild(tmp);
-       current = tmp;
-       stackReplace(tmp);
+    public Node addLinearNode(Integer type, String from, String to, int stmts, boolean loop) {
+  	    Node node = nodes.getNode(type, from, to, stmts);
+  	  
+    	if (current.getSubtype() == BRANCH_BEG) {
+    		node.addChild(current.getTerminal());
+    		node.setCause(EDGE_IF);
+    		current.addChild(node);
+    		stackPush(node);
+    		return node;
+    	}
+        
+ 	   if (current.getType() == TRAP.BLOCK) {
+ 		  current.endStmts(stmts);  
+ 	 	  if (current.getStmts() == 0) {
+ 	 		  current.copy(node);
+ 	 		  real = true;
+ 	 		  return node;
+ 	 	  }
+ 	   }
+
+ 	   node.addChild(current.getChild());
+ 	   current.replaceChild(node);
+ 	   stackReplace(node);
+ 	   
        if (loop) {
-    	   current.addChildFirst(tmp);
+    	   current.addChild(node);
     	   current.setActive(1);
        }
        real = true;
+       return node;
     }
     
-    /**
-     * Crea un bloque BEG-END
-     * 
-     * BEG --> NODE1 --> END
-     * CURRENT   X
-     * STACK: NODE1
-     *       
-     * BEG --> NODE1 --> BEG --> END --> END
-     * CURRENT            X
-     * STACK: BEG      
-     * 
-     */
-
-    public void addBlock(Integer type) {
-    	addBlock(type, type.toString(), false);
-    }
-    
-    public void addBlock(Integer type, String name, boolean loop) {
-    	Node beg = nodes.getNode(BLOCK, type, "BEGIN " + name);
-    	Node end = nodes.getNode(END, BLOCK, "END " + name);
-
-    	beg.addChild(end);
-    	end.addChild(current.getLast());
-    	current.replace(beg);
-    	current = currents.push(beg);
-    }
-
-
     /**
      * Inserta otra rama creando un subgrafo interno 
      * Hay que cerrar todas las pendientes
      * Caso EVALUATE WHEN
      *    
      * BEG --> NODE1 --> END
-     * CURRENT   X
      * STACK: NODE1
      *       
      * BEG ---> NODE1 ------------+-> END ---> NEXT
      *            |               |         
      *            + BEG1 -> END1 -+         
      *       
-     * STACK: NODE1 | BEG1      
+     * STACK: NODE1 | END1 | BEG1      
      *       
-     * @param type Tipo del nodo central
-     * @param from Nombre del nodo central
-     * @param to   Parte THRU
      */
+    
+    public Node addBlock(int cause, int stmts, String label) {
+    	current.endStmts(stmts);
+    	Node beg   = nodes.getNode(cause, BRANCH_BEG, stmts);
+    	Node end   = nodes.getNode(END,   BRANCH_END, stmts);
+    	
+    	end.setCause(EDGE_ELSE);
+    	beg.setTerminal(end);
+    	
+    	switch (cause) {
+    	   case TRAP.IF:     beg.setName("IF");       break;
+    	   case TRAP.EVAL:   beg.setName("EVALUATE"); break;
+    	   case TRAP.SEARCH: beg.setName("SEARCH");   break;
+    	}
 
-    public void addIF(Integer type) {
-    	Node beg   = nodes.getNode(BEGIN, IF_BEG);
-    	Node end   = nodes.getNode(END,   IF_END);
-    	Node left  = nodes.getNode(BEGIN, IF_LEFT);
-    	Node right = nodes.getNode(BEGIN, IF_RIGHT);
-    	
-    	end.moveChildren(current.getChildren());
-    	
-    	left.addChild(end);
-    	right.addChild(end);
-    	
-    	
-    	beg.addChild(left);
-    	beg.addChild(right);
-    	current.replaceChild(beg);
+    	if (current.getSubtype() == BRANCH_BEG) {
+    		end.addChild(current.getTerminal());
+    		beg.setCause(EDGE_IF);
+    		current.addChild(beg);
+    	}
+    	else {
+    		end.addChild(current.getChild());
+        	current.replaceChild(beg);
+    	}
     	
     	stackReplace(end);
-    	stackPush(beg, false);
-    	stackPush(left, true);
-    }
-
-    public void addElse() {
-    	stackSet(IF_BEG);
-    	current.setActive(B_RIGHT);
-    	stackReplace(current.getActiveChild());
+    	stackPush(beg);
+    	return beg;
     }
     
-    public void addChoice(Integer type, boolean closeChoice) {
-    	Node beg = nodes.getNode(BRANCH, type.toString());
-    	Node end = nodes.getNode(END, "END " + type.toString());
-
-    	stackSet(BLOCK, true);
+    public void endBlock(int stmts, boolean full) {
+    	Node end;
+    	Node n;
+    	do { end = stackPop();
+    	     end.endStmts(stmts);
+    	}  	while (end.getSubtype() != BRANCH_BEG && end.getSubtype() != BRANCH_END);
     	
-    	beg.addChild(end);
-    	end.addChild(current.getLast());
-    	if (closeChoice) {
-    		current.replace(beg);
-    	} else {
-    	   current.addChildFirst(beg);
+    	// Si encuentra un IF, detras esta su end (Caso IF IF)
+    	// Si encuentra en END ha habido un ELSE
+    	if (end.getSubtype() == BRANCH_BEG) {
+    	    if (end.getNumChilds() < 2) end.addChild(end.getTerminal());
+    	    end = stackPop();
     	}
-    	current = currents.push(beg);
-    	//print("EDGE");
+    	
+    	// Fin con punto. Acaba todas las ramas
+    	if (full) {
+    		n = stackPop();
+    		while (n.getSubtype() == BRANCH_END) {
+    			n = stackPop();
+    			if (n.getSubtype() == BRANCH_BEG) {
+    				if (n.getNumChilds() < 2) n.addChild(end.getTerminal());
+    			}
+    		}
+    	   n.endStmts(stmts); 
+    	}
+ 	   stackPush(end);
     }
     
+    public Node addBranch(int type, int stmts, boolean close, String label) {
+    	current.endStmts(stmts);
+
+    	Node node   = nodes.getNode(TRAP.BLOCK, BRANCH, "CODE", stmts);
+    	node.setLabel(label);
+		node.setCause(EDGE_ELSE);
+		
+    	if (type == TRAP.WHEN) {
+    		node.setCause(EDGE_IF);
+    		if (close) node.setCause(EDGE_ELSE);
+     	}
+    	
+    	stackSet(BRANCH_BEG);
+    	current.addChild(node);
+    	node.addChild(current.getTerminal());  
         
-    /**
-     * Casos END-xxxx
-     * Ajusta el nodo actual en la pila 
-     *  
-     * Ejemplo:
-     *    
-     *        Situacion previa
-     *        
-     * PREV -+-> BEG1 -> NODO -+-> END -> NEXT
-     *       |                 |
-     *       +---BEG2 -> NODO -+
-     * STACK =  PREV - BEG2
-     *
-     * STACK = END
-     * 
-     * @param type Tipo del nodo central
-     * @param from Nombre del nodo central
-     * @param to   Parte THRU
-     */
+    	// Si hay que cerrar, hay que quitar la parte else
+    	// del nodo anterior al end
+    	
+    	if (close) stackPop(false); // Quitar IF
+    		
+//    		Node ifend = stackPop(true);  // Guardar el END-BRANCH
+//    		current.removeChild(0);       // Quitar la parte ELSE (0 Siempre apunta al fin)
+//    		stackPush(ifend, false);      // Restarurar el END-BRANCH
+//    	}
+    	stackPush(node);
+    	
+    	return node;
+    }
     
-    public void endCycle(Integer type) {
-    	stackSet(type);
+    /***************************************************/
+    /* TRATAMIENTO NODO                                */
+    /***************************************************/
+
+    public void setStmtsBeg(int beg) {
+    	current.setStmts(beg);
+    }
+    
+    public void setStmtsEnd(int end) {
+    	current.setStmts(end - current.getStmts());
     }
     
     /***************************************************/
@@ -224,8 +249,13 @@ public class SubGraph {
     	current = currents.push(n);
     }
     
-    private void stackPop() {
-    	current = currents.pop();
+    private Node stackPop() {
+    	return stackPop(true);
+    }
+    private Node stackPop(boolean setCurrent) {
+    	Node n = currents.pop();
+    	if (setCurrent && !currents.empty()) current = currents.peek();
+    	return n;
     }
 
     private void stackPush(Node n) {
@@ -237,56 +267,14 @@ public class SubGraph {
     	if (setCurrent) current = n;
     }
     
-    private void stackSet(int subType) {
+    private Node stackSet(int subType) {
     	Node n = currents.pop();
     	while (n.getSubtype() != subType) 
     		n = currents.pop();
     	stackPush(n);
+    	return n;
     }
     
-    private void stackSet(int type, boolean keep) {
-    	// En fin de programa y multimodulos puede llamarse varias veces
-    	while (!currents.isEmpty() && (current = currents.pop()).getType() != type);
-    	if (!currents.isEmpty()) current = currents.peek();
-    	if (keep) current = currents.push(current);
-    }
-/*
-    public SubGraph reduce() {
-    	ArrayList<Node> childs;
-    	ArrayList<Node> newChilds;
-    	Node curr = first;
-    	Node wrk;
-    	
-    	while (reduced) {
-    	   childs = curr.getNodes();
-    	   newChilds = new ArrayList<Node>();
-    	   for (int i = 0; i < childs.size(); i++) {
-    		   wrk = childs.get(i);
-	    		if (wrk.isVirtual()) {
-	    			for (Node n : wrk.getNodes()) newChilds.add(n); 
-	    		}
-	    		else {
-	    			newChilds.add(wrk);
-	    		}
-    	   }
-    	   curr.setChilds(newChilds);
-    	   Node padre = curr;
- 		   for (Node next: curr.getNodes()) {
-
-// 			   Node hijo = getHijo(next);
-   			
- 		   }
-    		
-    	}
-    }
-*/    
-    private Node getChild(Node n) {
-    	if (n == null) return null;
-    	Node child = getChild(n);
-    	if (child == null) return null;
-        return n;  	
-    	
-    }
     @Override
     public String toString() {
 

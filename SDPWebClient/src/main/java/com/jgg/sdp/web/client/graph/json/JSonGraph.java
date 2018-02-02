@@ -5,9 +5,9 @@ import java.util.*;
 public class JSonGraph {
 	private Long    idVersion;
 	private Long    idGraph;
+	private boolean isGroup = false;
 	private String  name;
-	private boolean data = false;
-	private boolean isGroup = false; 
+	private boolean data = false; 
 	
 	private ArrayList<JSonNode> nodes = new ArrayList<JSonNode>();
 	private ArrayList<JSonEdge> edges = new ArrayList<JSonEdge>();

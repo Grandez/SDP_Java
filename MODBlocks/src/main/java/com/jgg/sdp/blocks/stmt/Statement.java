@@ -30,6 +30,7 @@ import java_cup.runtime.Symbol;
 
 public class Statement<T> implements IStatement {
 
+	private   StringBuilder        text     = new StringBuilder();
     private   SymbolExt            verbo    = null;
     private   Integer              group    = null;
     private   Integer              subGroup = null;
@@ -124,6 +125,7 @@ public class Statement<T> implements IStatement {
 	
 	@SuppressWarnings("unchecked")
 	public T addRValue(Symbol s) {
+		text.append(s.value + " ");
 		rvalues.add(new SymbolExt(s));
 		endLine   = s.left;
 		endColumn = s.right;
@@ -132,6 +134,7 @@ public class Statement<T> implements IStatement {
 	
 	@SuppressWarnings("unchecked")
 	public T addRValue(SymbolExt s) {
+		text.append(s.value + " ");
 		rvalues.add(s);
 		endLine   = s.left;
 		endColumn = s.right;
@@ -148,6 +151,7 @@ public class Statement<T> implements IStatement {
 	
 	@SuppressWarnings("unchecked")
 	public T addLValue(Symbol s) {
+		text.append(s.value + " ");
 		lvalues.add(new SymbolExt(s));
 		endLine   = s.left;
 		endColumn = s.right;
@@ -156,6 +160,7 @@ public class Statement<T> implements IStatement {
 	
 	@SuppressWarnings("unchecked")
 	public T addLValue(SymbolExt s) {
+		text.append(s.value + " ");
 		lvalues.add(s);
 		endLine   = s.left;
 		endColumn = s.right;
@@ -163,16 +168,9 @@ public class Statement<T> implements IStatement {
 	}
 
 	@SuppressWarnings("unchecked")
-	public T addLValue(SymbolExtList l) {
-		for (Symbol s : l.getVarList()) {
-			addLValue(s);
-		}
-		return (T) this;
-	}
-	
-	@SuppressWarnings("unchecked")
 	public T addLValue(SymbolList list) {
 		for (Symbol s : list.getSymbols()) {
+			text.append(s.value + " ");
 			addLValue(s);
 		}
 		return (T) this;
@@ -287,9 +285,9 @@ public class Statement<T> implements IStatement {
 		return endPoint;
 	}
 	
-	public void addIssue(int id) {
-//		issues.add(new Issue(id));
-	}
+//	public void addIssue(int id) {
+////		issues.add(new Issue(id));
+//	}
 	
 	/***************************************************************/
 	/***     OPCIONES                                            ***/
@@ -311,13 +309,6 @@ public class Statement<T> implements IStatement {
 		return mapOptId.getItem(id) != null;
 	}
 	
-/*	
-	public Option addOption(SymbolExt s) {
- 		Option opt = new Option(s.sym, (String) s.value, s);
- 		return addOption(opt);
-	}
-*/
-    
     public Option getOptionByPos(int pos) {
     	return lstOptions.get(pos);
     }
@@ -342,10 +333,6 @@ public class Statement<T> implements IStatement {
     /***************************************************************/
 	/***   INTERFAZ PARA LLAMADAS INTROSPECTION                  ***/
 	/***************************************************************/
-
-    public String toString() {
-    	return verbo.toString();
-    }
     
 	public String toValue() {
 		return toString();
@@ -430,4 +417,12 @@ public class Statement<T> implements IStatement {
     	return lvalues.size();
     }
 
+    @Override    
+    public String toString() {
+    	return verbo.toString();
+    }
+    
+    public String toText() {
+    	return text.toString();
+    }
 }

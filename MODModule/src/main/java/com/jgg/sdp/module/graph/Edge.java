@@ -5,11 +5,13 @@ public class Edge {
 	private long idGrafo;
 	private Node from;
 	private Node to;
+	private int  type;
 	
 	public Edge(long idGrafo, Node from, Node to) {
 		this.idGrafo = idGrafo;
 		this.from = from;
 		this.to = to;
+		this.type = to.getCause();
 	}
 	
 	public long getIdGrafo() {
@@ -28,6 +30,13 @@ public class Edge {
 	}
 	public Node getTo() {
 		return to;
+	}
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 	@Override

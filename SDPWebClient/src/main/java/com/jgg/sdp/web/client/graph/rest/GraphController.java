@@ -18,7 +18,7 @@ import com.jgg.sdp.domain.services.graph.*;
 import com.jgg.sdp.web.client.graph.json.*;
 
 @RestController
-public class FlowController {
+public class GraphController {
 
     @Autowired
     private DCGGraphService graphService;
@@ -39,10 +39,12 @@ public class FlowController {
     }
     
     private List<JSonGraph> getGraphs(Long idVersion) {
+    	HashMap<String, JSonGraph> map = new HashMap<String, JSonGraph>(); 
     	List<JSonGraph> graphs = new ArrayList<JSonGraph>();
     	for (DCGGraph graph : graphService.getGraphs(idVersion)) {
     		JSonGraph g = createGraph(graph);
-    		if (graph.getIdGrafo() == 0) g.setGroup(false);
+    		JSonGraph p = map.get(g.getName());
+    		if (p != null) p.setGroup(true);
     		graphs.add(g);
     	}
     	return graphs;
@@ -62,8 +64,6 @@ public class FlowController {
     	HashMap<Long, String> nodes = new HashMap<Long, String>();
     	for (DCGNode node : nodeService.listNodes(graph.getIdVersion(),  graph.getIdGraph())) {
     		JSonNode n = new JSonNode();
-//    		n.setIdVersion(node.getIdVersion());
-//    		n.setIdGraph(node.getIdGrafo());
     		n.setIdNode(node.getIdNode());
     		n.setName(node.getNombre());
     		n.setType(node.getTipo());
@@ -76,7 +76,7 @@ public class FlowController {
     
     private void loadEdges(JSonGraph graph, HashMap<Long, String> nodes) {
     	for (DCGEdge edge : edgeService.listEdges(graph.getIdVersion(),  graph.getIdGraph())) {
-    		graph.addEdge(new JSonEdge(edge.getIdFrom(), edge.getIdTo()));
+    		graph.addEdge(new JSonEdge(edge.getIdFrom(), edge.getIdTo(), edge.getType()));
     	}
     }
     

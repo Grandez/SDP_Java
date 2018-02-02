@@ -958,8 +958,8 @@ non terminal SymbolExt     constantes  ;
 non terminal SymbolExt     constante   ;
 
 non terminal SymbolExt     lvalue      ; 
-non terminal SymbolExtList lvalue_list ; 
-non terminal SymbolExtList rvalue_list ;
+non terminal SymbolList lvalue_list ; 
+non terminal SymbolList rvalue_list ;
 
 non terminal SymbolExt     variable               ;
 non terminal SymbolExt     var_base               ;
@@ -1092,7 +1092,7 @@ bloque_sentences ::= lista_stmt
                         
 parrafo_name ::= PARRAFO:p parr_section:b ENDP 
                  {: // if (b == true) code.notSupportedSection(p); 
-                    RESULT = code.processParrafo(p, lastStmt); 
+                    RESULT = code.processParagraph(p, lastStmt); 
                  :}   
              ;  
  
@@ -1497,7 +1497,7 @@ stmtGoto_depending ::= DEPENDING rvalue
                                                           
 // IF
 
-stmtIf ::= if_verb:s logical_condition {:  RESULT = code.processIf(s); :}
+stmtIf ::= if_verb:s logical_condition:l {:  RESULT = code.processIf(s); :}
        ;
 
 if_verb ::= IF:s {: RESULT = new StmtCobol(s, currStmt); :}
@@ -2070,11 +2070,11 @@ option_order ::= ASCENDING
 /* Otras palabras reservadas                                  */
 /**************************************************************/
 
-stmtEndP        ::= ENDP:s        {: RESULT = new StmtCobol(s); :} ;
-stmtElse        ::= ELSE:s        {: RESULT = new StmtCobol(s); :} ;   
+stmtEndP        ::= ENDP:s         {: RESULT = new StmtCobol(s); RESULT.setEndPoint(true); :} ;
+stmtElse        ::= ELSE:s         {: RESULT = new StmtCobol(s); :} ;   
 stmtEndIf       ::= END_IF:s       {: RESULT = new StmtCobol(s); :} ;
 stmtEndPerform  ::= END_PERFORM:s  {: RESULT = new StmtCobol(s); :} ;
-stmtEndEvaluate ::= END_EVALUATE:s     {: RESULT = new StmtCobol(s); :} ;
+stmtEndEvaluate ::= END_EVALUATE:s {: RESULT = new StmtCobol(s); :} ;
 stmtEndVerb     ::= END_VERB:s     {: RESULT = new StmtCobol(s); :} ;
 stmtEndSearch   ::= END_SEARCH:s   {: RESULT = new StmtCobol(s); :} ;
                                        
@@ -2322,7 +2322,7 @@ operator_arit ::= OP_ADD
 lvalue ::= variable:i  {: RESULT = i; code.setVarWrite(i); :}  
        ;
        
-lvalue_list ::= lvalue:i                {: RESULT = new SymbolExtList(i); :}
+lvalue_list ::= lvalue:i                          {: RESULT = new SymbolList(i); :}
             |   lvalue_list:l opt_comma lvalue:i  {: RESULT = l.add(i);       :}
             ;
                    

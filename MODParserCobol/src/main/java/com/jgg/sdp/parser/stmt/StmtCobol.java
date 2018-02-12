@@ -2,9 +2,7 @@ package com.jgg.sdp.parser.stmt;
 
 import com.jgg.sdp.blocks.stmt.Option;
 import com.jgg.sdp.blocks.stmt.Statement;
-import com.jgg.sdp.blocks.symbols.*;
-
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.*;
 
 public class StmtCobol extends Statement<StmtCobol> {
 
@@ -12,20 +10,20 @@ public class StmtCobol extends Statement<StmtCobol> {
 		super(s);
 	}
 
-	public StmtCobol(Symbol s) {
+	public StmtCobol(SDPSymbol s) {
 		super(s);
 	}
 	
-	public StmtCobol(Symbol s, StmtCobol curr) {
+	public StmtCobol(SDPSymbol s, StmtCobol curr) {
 		super(s);
 		curr = this;
 	}
 
-	public StmtCobol(Symbol s, int stmts) {
+	public StmtCobol(SDPSymbol s, int stmts) {
 		super(s, stmts);
 	}
 
-	public StmtCobol(Symbol s, SymbolList l)  {
+	public StmtCobol(SDPSymbol s, SDPSymbol l)  {
 		super(s, l);
 	}
 	
@@ -33,7 +31,7 @@ public class StmtCobol extends Statement<StmtCobol> {
 	// Podria quedarse un WHEN huerfano
 	public Option replaceOption(Option opt) {
 		Option last = lstOptions.get(lstOptions.size() - 1);
-	    opt.addSymbol(new SymbolExt(last.getSymbol()));
+	    opt.addSymbol(new SDPSymbol(last.getSymbol()));
 	    lstOptions.remove(lstOptions.size() - 1);
 	    return addOption(opt);
 	}		

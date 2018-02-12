@@ -9,6 +9,7 @@ import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.blocks.stmt.*;
 import com.jgg.sdp.parser.stmt.StmtCICS;
+import com.jgg.sdp.parser.symbols.*;
 
 import com.jgg.sdp.parser.code.CICSCode;
 
@@ -38,10 +39,12 @@ parser code {:
 
 action code {:
 
-   CICSCode    code     = new CICSCode();
-   StmtCICS    stmt     = null;
-   ParserInfo      info     = ParserInfo.getInstance();
-   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
+   ParserInfo  info        = ParserInfo.getInstance();
+   CICSCode    code        = new CICSCode(info.getModule());
+   StmtCICS    stmt        = null;
+   Option      currOption  = null;
+
 
    public void initActionClass() {
    }
@@ -63,15 +66,279 @@ init with {:
 /****************************************************************************/
 /****************************************************************************/
 
-terminal Symbol DECIMAL   ;
-terminal Symbol ENTERO    ;
-terminal Symbol ID        ; 
-terminal Symbol IN        ;
-terminal Symbol LENGTH    ;
-terminal Symbol LITERAL   ;
-terminal Symbol LPAR      ;
-terminal Symbol OF        ;
-terminal Symbol RPAR      ;
+terminal SDPSymbol DECIMAL   ;
+terminal SDPSymbol ENTERO    ;
+terminal SDPSymbol ID        ; 
+terminal SDPSymbol IN        ;
+terminal SDPSymbol LENGTH    ;
+terminal SDPSymbol LITERAL   ;
+terminal SDPSymbol LPAR      ;
+terminal SDPSymbol OF        ;
+terminal SDPSymbol RPAR      ;
+
+/****************************************************************************/
+/****************************************************************************/
+/*               VERBOS Y PARALABRAS CICS                                   */
+/****************************************************************************/
+/****************************************************************************/
+terminal SDPSymbol ABEND                   ;
+terminal SDPSymbol ABORT                   ;
+terminal SDPSymbol ACQPROCESS              ;
+terminal SDPSymbol ACQUIRE                 ;
+terminal SDPSymbol ACTIVITY                ;
+terminal SDPSymbol ACTIVITYID              ;
+terminal SDPSymbol ADD                     ;
+terminal SDPSymbol ADDRESS                 ;
+terminal SDPSymbol AID                     ;
+terminal SDPSymbol ALLOCATE                ;
+terminal SDPSymbol ASKTIME                 ;
+terminal SDPSymbol ASSIGN                  ;
+terminal SDPSymbol ATTACH                  ;
+terminal SDPSymbol ATTRIBUTES              ;
+terminal SDPSymbol AUTINSTMODEL            ;
+terminal SDPSymbol AUTOINSTALL             ;
+terminal SDPSymbol BEAN                    ;
+terminal SDPSymbol BIF                     ;
+terminal SDPSymbol BREXIT                  ;
+terminal SDPSymbol BRFACILITY              ;
+terminal SDPSymbol BUILD                   ;
+terminal SDPSymbol CANCEL                  ;
+terminal SDPSymbol CERTIFICATE             ;
+terminal SDPSymbol CFDTPOOL                ;
+terminal SDPSymbol CHANGE                  ;
+terminal SDPSymbol CHANNEL                 ;
+terminal SDPSymbol CHECK                   ;
+terminal SDPSymbol CLASSCACHE              ;
+terminal SDPSymbol CLOSE                   ;
+terminal SDPSymbol COLLECT                 ;
+terminal SDPSymbol COMPOSITE               ;
+terminal SDPSymbol CONDITION               ;
+terminal SDPSymbol CONFIRMATION            ;
+terminal SDPSymbol CONNECT                 ;
+terminal SDPSymbol CONNECTION              ;
+terminal SDPSymbol CONTAINER               ;
+terminal SDPSymbol CONTROL                 ;
+terminal SDPSymbol CONVERSE                ;
+terminal SDPSymbol CONVERTTIME             ;
+terminal SDPSymbol CONVID                  ;
+terminal SDPSymbol COPY                    ;
+terminal SDPSymbol CORBASERVER             ;
+terminal SDPSymbol COUNTER                 ;
+terminal SDPSymbol CREATE                  ;
+terminal SDPSymbol DATATOXML               ;
+terminal SDPSymbol DB2CONN                 ;
+terminal SDPSymbol DB2ENTRY                ;
+terminal SDPSymbol DB2TRAN                 ;
+terminal SDPSymbol DCOUNTER                ;
+terminal SDPSymbol DEEDIT                  ;
+terminal SDPSymbol DEFINE                  ;
+terminal SDPSymbol DELAY                   ;
+terminal SDPSymbol DELETE                  ;
+terminal SDPSymbol DELETEQ                 ;
+terminal SDPSymbol DELETSHIPPED            ;
+terminal SDPSymbol DEQ                     ;
+terminal SDPSymbol DIGEST                  ;
+terminal SDPSymbol DISABLE                 ;
+terminal SDPSymbol DISCARD                 ;
+terminal SDPSymbol DISCONNECT              ;
+terminal SDPSymbol DISPATCHER              ;
+terminal SDPSymbol DJAR                    ;
+terminal SDPSymbol DOCTEMPLATE             ;
+terminal SDPSymbol DOCUMENT                ;
+terminal SDPSymbol DSNAME                  ;
+terminal SDPSymbol DUMP                    ;
+terminal SDPSymbol DUMPDS                  ;
+terminal SDPSymbol ENABLE                  ;
+terminal SDPSymbol END                     ;
+terminal SDPSymbol ENDAFFINITY             ;
+terminal SDPSymbol ENDBR                   ;
+terminal SDPSymbol ENDBROWSE               ;
+terminal SDPSymbol ENDFILE                 ;
+terminal SDPSymbol ENDOUTPUT               ;
+terminal SDPSymbol ENQ                     ;
+terminal SDPSymbol ENQMODEL                ;
+terminal SDPSymbol ENTER                   ;
+terminal SDPSymbol ENTRYNAME               ;
+terminal SDPSymbol EODS                    ;
+terminal SDPSymbol ERASE                   ;
+terminal SDPSymbol ERASEAUP                ;
+terminal SDPSymbol ERROR                   ;
+terminal SDPSymbol EVENT                   ;
+terminal SDPSymbol EXCI                    ;
+terminal SDPSymbol EXIT                    ;
+terminal SDPSymbol EXITPROGRAM             ;
+terminal SDPSymbol EXTERNAL                ;
+terminal SDPSymbol EXTRACT                 ;
+terminal SDPSymbol FILE                    ;
+terminal SDPSymbol FORCE                   ;
+terminal SDPSymbol FORMATTIME              ;
+terminal SDPSymbol FORMFIELD               ;
+terminal SDPSymbol FREE                    ;
+terminal SDPSymbol FREEMAIN                ;
+terminal SDPSymbol GDS                     ;
+terminal SDPSymbol GET                     ;
+terminal SDPSymbol GETMAIN                 ;
+terminal SDPSymbol GETNEXT                 ;
+terminal SDPSymbol HANDLE                  ;
+terminal SDPSymbol HOST                    ;
+terminal SDPSymbol HTTPHEADER              ;
+terminal SDPSymbol IGNORE                  ;
+terminal SDPSymbol INPUT                   ;
+terminal SDPSymbol INQUIRE                 ;
+terminal SDPSymbol INSERT                  ;
+terminal SDPSymbol INVOKE                  ;
+terminal SDPSymbol IRC                     ;
+terminal SDPSymbol ISSUE                   ;
+terminal SDPSymbol JOURNALMODEL            ;
+terminal SDPSymbol JOURNALNAME             ;
+terminal SDPSymbol JOURNALNUM              ;
+terminal SDPSymbol JVM                     ;
+terminal SDPSymbol JVMPOOL                 ;
+terminal SDPSymbol JVMPROFILE              ;
+terminal SDPSymbol LINK                    ;
+terminal SDPSymbol LIST                    ;
+terminal SDPSymbol LOAD                    ;
+terminal SDPSymbol LOGONMSG                ;
+terminal SDPSymbol LSRPOOL                 ;
+terminal SDPSymbol MAP                     ;
+terminal SDPSymbol MAPPED                  ;
+terminal SDPSymbol MAPPINGDEV              ;
+terminal SDPSymbol MAPSET                  ;
+terminal SDPSymbol MESSAGE                 ;
+terminal SDPSymbol MODENAME                ;
+terminal SDPSymbol MONITOR                 ;
+terminal SDPSymbol MOVE                    ;
+terminal SDPSymbol MVSTCB                  ;
+terminal SDPSymbol NETNAME                 ;
+terminal SDPSymbol NOEDIT                  ;
+terminal SDPSymbol NOTE                    ;
+terminal SDPSymbol OPEN                    ;
+terminal SDPSymbol OPERATOR                ;
+terminal SDPSymbol OUTPUT                  ;
+terminal SDPSymbol PAGE                    ;
+terminal SDPSymbol PARSE                   ;
+terminal SDPSymbol PARTITIONSET            ;
+terminal SDPSymbol PARTN                   ;
+terminal SDPSymbol PARTNER                 ;
+terminal SDPSymbol PARTNSET                ;
+terminal SDPSymbol PASS                    ;
+terminal SDPSymbol PASSWORD                ;
+terminal SDPSymbol PERFORM                 ;
+terminal SDPSymbol PIPELINE                ;
+terminal SDPSymbol POINT                   ;
+terminal SDPSymbol POP                     ;
+terminal SDPSymbol POST                    ;
+terminal SDPSymbol PREPARE                 ;
+terminal SDPSymbol PRINT                   ;
+terminal SDPSymbol PROCESS                 ;
+terminal SDPSymbol PROCESSTYPE             ;
+terminal SDPSymbol PROFILE                 ;
+terminal SDPSymbol PROGRAM                 ;
+terminal SDPSymbol PURGE                   ;
+terminal SDPSymbol PUSH                    ;
+terminal SDPSymbol PUT                     ;
+terminal SDPSymbol QUERY                   ;
+terminal SDPSymbol READ                    ;
+terminal SDPSymbol READNEXT                ;
+terminal SDPSymbol READPREV                ;
+terminal SDPSymbol READQ                   ;
+terminal SDPSymbol REATTACH                ;
+terminal SDPSymbol REBUILD                 ;
+terminal SDPSymbol RECEIVE                 ;
+terminal SDPSymbol RECORD                  ;
+terminal SDPSymbol RELEASE                 ;
+terminal SDPSymbol REMOVE                  ;
+terminal SDPSymbol REPLACE                 ;
+terminal SDPSymbol REQID                   ;
+terminal SDPSymbol REQUESTMODEL            ;
+terminal SDPSymbol RESET                   ;
+terminal SDPSymbol RESETBR                 ;
+terminal SDPSymbol RESETTIME               ;
+terminal SDPSymbol RESUME                  ;
+terminal SDPSymbol RESYNC                  ;
+terminal SDPSymbol RETRIEVE                ;
+terminal SDPSymbol RETURN                  ;
+terminal SDPSymbol REWIND                  ;
+terminal SDPSymbol REWRITE                 ;
+terminal SDPSymbol ROLLBACK                ;
+terminal SDPSymbol ROUTE                   ;
+terminal SDPSymbol RRMS                    ;
+terminal SDPSymbol RUN                     ;
+terminal SDPSymbol SECURITY                ;
+terminal SDPSymbol SEND                    ;
+terminal SDPSymbol SERVICE                 ;
+terminal SDPSymbol SESSIONS                ;
+terminal SDPSymbol SET                     ;
+terminal SDPSymbol SHUTDOWN                ;
+terminal SDPSymbol SIGNAL                  ;
+terminal SDPSymbol SIGNOFF                 ;
+terminal SDPSymbol SIGNON                  ;
+terminal SDPSymbol SOAPFAULT               ;
+terminal SDPSymbol SPOOLCLOSE              ;
+terminal SDPSymbol SPOOLOPEN               ;
+terminal SDPSymbol SPOOLREAD               ;
+terminal SDPSymbol SPOOLWRITE              ;
+terminal SDPSymbol START                   ;
+terminal SDPSymbol STARTBR                 ;
+terminal SDPSymbol STARTBROWSE             ;
+terminal SDPSymbol STATISTICS              ;
+terminal SDPSymbol STORAGE                 ;
+terminal SDPSymbol STREAMNAME              ;
+terminal SDPSymbol SUBEVENT                ;
+terminal SDPSymbol SUBPOOL                 ;
+terminal SDPSymbol SUSPEND                 ;
+terminal SDPSymbol SYNCPOINT               ;
+terminal SDPSymbol SYSDUMPCODE             ;
+terminal SDPSymbol SYSTEM                  ;
+terminal SDPSymbol TASK                    ;
+terminal SDPSymbol TCLASS                  ;
+terminal SDPSymbol TCPIP                   ;
+terminal SDPSymbol TCPIPSERVICE            ;
+terminal SDPSymbol TCT                     ;
+terminal SDPSymbol TD                      ;
+terminal SDPSymbol TDQUEUE                 ;
+terminal SDPSymbol TERMINAL                ;
+terminal SDPSymbol TEST                    ;
+terminal SDPSymbol TEXT                    ;
+terminal SDPSymbol TIMER                   ;
+terminal SDPSymbol TRACEDEST               ;
+terminal SDPSymbol TRACEFLAG               ;
+terminal SDPSymbol TRACENUM                ;
+terminal SDPSymbol TRACETYPE               ;
+terminal SDPSymbol TRANCLASS               ;
+terminal SDPSymbol TRANDUMPCODE            ;
+terminal SDPSymbol TRANSACTION             ;
+terminal SDPSymbol TRANSFORM               ;
+terminal SDPSymbol TRANSID                 ;
+terminal SDPSymbol TS                      ;
+terminal SDPSymbol TSMODEL                 ;
+terminal SDPSymbol TSPOOL                  ;
+terminal SDPSymbol TSQNAME                 ;
+terminal SDPSymbol TSQUEUE                 ;
+terminal SDPSymbol TYPETERM                ;
+terminal SDPSymbol UNLOCK                  ;
+terminal SDPSymbol UOW                     ;
+terminal SDPSymbol UOWDSNFAIL              ;
+terminal SDPSymbol UOWENQ                  ;
+terminal SDPSymbol UOWLINK                 ;
+terminal SDPSymbol UPDATE                  ;
+terminal SDPSymbol URIMAP                  ;
+terminal SDPSymbol URL                     ;
+terminal SDPSymbol VERIFY                  ;
+terminal SDPSymbol VOLUME                  ;
+terminal SDPSymbol VTAM                    ;
+terminal SDPSymbol WAIT                    ;
+terminal SDPSymbol WAITCICS                ;
+terminal SDPSymbol WEB                     ;
+terminal SDPSymbol WEBSERVICE              ;
+terminal SDPSymbol WORKREQUEST             ;
+terminal SDPSymbol WRITE                   ;
+terminal SDPSymbol WRITEQ                  ;
+terminal SDPSymbol WSACONTEXT              ;
+terminal SDPSymbol WSAEPR                  ;
+terminal SDPSymbol XCTL                    ;
+terminal SDPSymbol XMLTODATA               ;
+
 
 /****************************************************************************/
 /****************************************************************************/
@@ -79,26 +346,132 @@ terminal Symbol RPAR      ;
 /****************************************************************************/
 /****************************************************************************/
 
-non terminal Symbol   cics            ;
-non terminal StmtCICS cics_stmts      ;
+non terminal Symbol       cics                      ;
+non terminal StmtCICS     cics_stmt_acquire         ;     
+non terminal StmtCICS     cics_stmt_collect         ;
+non terminal StmtCICS     cics_stmt_create          ;
+non terminal StmtCICS     cics_stmt_disable         ;
+non terminal StmtCICS     cics_stmt_discard         ;
+non terminal StmtCICS     cics_stmt_enable          ;
+non terminal StmtCICS     cics_stmt_inquire         ;
+non terminal StmtCICS     cics_stmt_perform         ; 
+non terminal StmtCICS     cics_stmt_resync          ;
+non terminal StmtCICS     cics_stmt_set             ;
+                          
+non terminal SDPSymbol       cics_create               ;
+non terminal SDPSymbol       cics_disable              ;
+non terminal SDPSymbol       cics_perform              ;
+non terminal SDPSymbol       cics_set                  ;
+
+non terminal StmtCICS cics_area_pgm      ;
+non terminal StmtCICS cics_area_program  ;
+non terminal StmtCICS cics_area_web      ;
+non terminal StmtCICS cics_area_sys      ;
+
 non terminal StmtCICS cics_statement  ;
 non terminal StmtCICS cics_stmt       ;
 
-non terminal Option   cics_options    ;
-non terminal Option   cics_parm_list  ;
-non terminal Option   cics_parm_attr  ;
+non terminal StmtCICS cics_stmt_common  ;
+non terminal StmtCICS cics_stmt_one     ;
+non terminal StmtCICS cics_stmt_two     ;
 
-non terminal Symbol   cics_parm       ;
-non terminal Symbol   cics_values     ;
-non terminal Symbol   cics_value      ;
-non terminal Symbol   number          ;
+non terminal StmtCICS cics_group_abend   ;
+non terminal StmtCICS cics_stmt_gds    ;
+non terminal StmtCICS cics_stmt_wait     ;
+non terminal StmtCICS cics_group_auth    ;
+non terminal StmtCICS cics_group_bms     ; 
+non terminal StmtCICS cics_stmt_bif     ;
+non terminal StmtCICS cics_group_bts     ;
+non terminal StmtCICS cics_stmt_start ;
+non terminal StmtCICS cics_group_diag    ;
+non terminal StmtCICS cics_stmt_doc     ;
+non terminal StmtCICS cics_stmt_address     ;
+non terminal StmtCICS cics_group_excep   ;
+non terminal StmtCICS cics_group_file    ;
+non terminal StmtCICS cics_group_interval     ;
+non terminal StmtCICS cics_group_journaling     ;
+non terminal StmtCICS cics_stmt_counter     ;
 
-non terminal Symbol   ident_base      ;
+non terminal StmtCICS cics_group_schedul     ;     
+non terminal StmtCICS cics_group_spool     ;
+non terminal StmtCICS cics_group_storage     ;
+non terminal StmtCICS cics_group_task     ;
+non terminal StmtCICS cics_group_ts     ;
+non terminal StmtCICS cics_group_terminal     ;
+             
+non terminal StmtCICS cics_stmt_assign  ;             
+non terminal StmtCICS cics_stmt_extract ;
+non terminal StmtCICS cics_stmt_issue   ;
 
-non terminal Symbol   padres_lst      ;
-non terminal Symbol   padres          ;
-non terminal Symbol   padre           ;
-non terminal Symbol   padre_indicator ;  
+non terminal StmtCICS cics_stmt_send    ;
+non terminal StmtCICS cics_stmt_monitor ;
+non terminal StmtCICS cics_stmt_syncpoint ;
+non terminal StmtCICS cics_stmt_connect   ;
+non terminal StmtCICS cics_stmt_converse  ;
+non terminal StmtCICS cics_stmt_receive   ;
+non terminal StmtCICS cics_stmt_get       ;
+non terminal StmtCICS cics_stmt_delete    ;
+non terminal StmtCICS cics_stmt_suspend   ;
+
+non terminal SDPSymbol    cics_stmt_word     ;
+non terminal SDPSymbol    cics_stmt_words    ;             
+
+non terminal SDPSymbol    cics_discard       ;
+non terminal SDPSymbol    cics_extract       ;
+non terminal SDPSymbol    cics_extract_types ;
+non terminal SDPSymbol    cics_gds           ;
+non terminal SDPSymbol    cics_inquire       ;
+non terminal SDPSymbol    cics_issue         ;
+non terminal SDPSymbol    cics_receive       ;
+non terminal SDPSymbol    cics_receive_map   ;
+non terminal SDPSymbol    cics_send_map      ;
+non terminal SDPSymbol    cics_send_text     ;
+non terminal SDPSymbol    cics_bif           ;
+non terminal SDPSymbol    cics_check         ;
+non terminal SDPSymbol    cics_define        ;
+non terminal SDPSymbol    cics_delete_types  ;
+non terminal SDPSymbol    cics_endbrowse     ;
+non terminal SDPSymbol    cics_getnext       ;
+non terminal SDPSymbol    cics_get_types     ;
+non terminal SDPSymbol    cics_counter_type  ;
+non terminal SDPSymbol    cics_link          ;
+non terminal SDPSymbol    cics_reset         ;
+non terminal SDPSymbol    cics_retrieve      ;
+non terminal SDPSymbol    cics_startbrowse   ;
+non terminal SDPSymbol    cics_start         ;
+non terminal SDPSymbol    cics_document      ;
+non terminal SDPSymbol    cics_address       ;
+non terminal SDPSymbol    cics_journal       ;
+non terminal SDPSymbol    cics_counter_action  ;
+non terminal SDPSymbol    cics_spool_mode      ;
+non terminal SDPSymbol    cics_word_rollback   ;
+non terminal SDPSymbol    cics_tcpip           ;      
+non terminal SDPSymbol    cics_ts_type      ;
+non terminal SDPSymbol    cics_issue_terminal      ;
+non terminal SDPSymbol    cics_terminal_wait      ;
+non terminal SDPSymbol    cics_web      ;
+non terminal SDPSymbol    cics_invoke      ;
+non terminal SDPSymbol    cics_soap        ;
+non terminal SDPSymbol    cics_transform      ;
+non terminal SDPSymbol    cics_wsacontext      ;
+non terminal SDPSymbol    cics_send_types  ;
+
+non terminal SDPSymbol   cics_option_name   ;
+non terminal SDPSymbol   cics_reserved_word ;
+non terminal SDPSymbol   cics_parm_opt      ;
+non terminal SDPSymbol   cics_parms         ;
+non terminal SDPSymbol   cics_parm          ;
+
+non terminal Option      cics_options       ;
+non terminal Option      cics_options_lst   ;
+non terminal Option      cics_option        ;
+
+non terminal SDPSymbol   number             ;
+non terminal SDPSymbol   ident_base         ;
+non terminal SDPSymbol   padres_lst         ;
+non terminal SDPSymbol   padres             ;
+non terminal SDPSymbol   padre              ;
+non terminal SDPSymbol   padre_indicator    ;   
 
 
 /**********************************************************************/
@@ -109,69 +482,779 @@ non terminal Symbol   padre_indicator ;
 /**********************************************************************/
 /**********************************************************************/
 
-cics ::= cics_stmts:s  {: stmt.setGroup(CDG.STMT_CICS);
-                          RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  
-                       :}   
-     |                                                            
+cics ::= cics_statement:s  {: code.processCICSStatement(stmt);
+                              RESULT = symbolFactory.newSymbol(0, 0, 0, stmt);  
+                           :}   
+     |                     {: RESULT = symbolFactory.newSymbol(0, 0, 0, null); :}        
      ;
-   
-cics_stmts ::= cics_statement:s             {: RESULT = code.processCICSStatement(s); :}
-           ;
-           
-cics_statement ::= cics_stmt:s cics_options:o {: RESULT = s; :}
+              
+cics_statement ::= cics_stmt:s cics_options:o {: RESULT = s; :}  
                ;
-               
-cics_stmt ::= ID:i    {: stmt = new StmtCICS(i); RESULT = stmt; :}
+
+cics_stmt ::= cics_area_pgm:s      {: stmt.setGroup(CDG.STMT_CICS_PGM);   RESULT = s; :}
+          |   cics_area_program:s  {: stmt.setGroup(CDG.STMT_CICS_CTL);   RESULT = s; :}
+          |   cics_area_web:s      {: stmt.setGroup(CDG.STMT_CICS_WEB);   RESULT = s; :}
+          |   cics_area_sys:s      {: stmt.setGroup(CDG.STMT_CICS_SYS);   RESULT = s; :}         
+          |   cics_stmt_common:s   {: stmt.setGroup(CDG.STMT_CICS_PGM);   RESULT = s; :}  
           ;
+                        
+/**********************************************************************/
+/*                        AREAS                                       */
+/**********************************************************************/
+
+cics_area_pgm ::= cics_group_abend:s               {: RESULT = s; :}
+              |   cics_group_auth               :s {: RESULT = s; :}
+              |   cics_group_bms                :s {: RESULT = s; :}
+              |   cics_group_bts                :s {: RESULT = s; :}
+              |   cics_group_diag               :s {: RESULT = s; :}
+              |   cics_group_excep              :s {: RESULT = s; :}
+              |   cics_group_file               :s {: RESULT = s; :}
+              |   cics_group_interval           :s {: RESULT = s; :}
+              |   cics_group_journaling         :s {: RESULT = s; :}
+              |   cics_group_schedul            :s {: RESULT = s; :}
+              |   cics_group_spool              :s {: RESULT = s; :}
+              |   cics_group_storage            :s {: RESULT = s; :}
+              |   cics_group_task               :s {: RESULT = s; :}
+              |   cics_group_ts                 :s {: RESULT = s; :}
+              |   cics_group_terminal           :s {: RESULT = s; :}
+              ;
+
+cics_area_program ::=  LINK:w      {: stmt = new StmtCICS(w); :}
+                   |   LOAD:w      {: stmt = new StmtCICS(w); :}
+                   |   RELEASE:w   {: stmt = new StmtCICS(w); :}
+                   |   RETURN:w    {: stmt = new StmtCICS(w); :}
+                   |   XCTL:w      {: stmt = new StmtCICS(w); :}
+                   ;
+
+cics_area_web ::= CONVERTTIME:w                    {: stmt = new StmtCICS(w);         :}
+               |   WEB:w cics_web:w2               {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   INVOKE:w cics_invoke:w2         {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   SOAPFAULT:w cics_soap:w2        {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   TRANSFORM:w cics_transform:w2   {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   WSACONTEXT:w cics_wsacontext:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   WSAEPR:w CREATE:w2              {: stmt = new StmtCICS(w.add(w2)); :}    
+               ;
+
+cics_area_sys ::= cics_stmt_acquire:s    {: RESULT = s; :} 
+              |   cics_stmt_collect:s    {: RESULT = s; :} 
+              |   cics_stmt_create:s     {: RESULT = s; :}  
+              |   cics_stmt_disable:s    {: RESULT = s; :}
+              |   cics_stmt_discard:s    {: RESULT = s; :} 
+              |   cics_stmt_enable:s     {: RESULT = s; :}  
+              |   cics_stmt_extract:s    {: RESULT = s; :} 
+              |   cics_stmt_inquire:s    {: RESULT = s; :} 
+              |   cics_stmt_perform:s    {: RESULT = s; :} 
+              |   cics_stmt_resync:s     {: RESULT = s; :}  
+              |   cics_stmt_set:s        {: RESULT = s; :}
+              ;     
+               
+cics_stmt_common ::= cics_stmt_one              
+                 |   cics_stmt_two              
+                 |   cics_stmt_gds              
+                 |   cics_stmt_bif              
+                 |   cics_stmt_wait             
+                 |   cics_stmt_issue            
+                 |   cics_stmt_start              
+                 |   cics_stmt_doc              
+                 |   cics_stmt_address              
+                 |   cics_stmt_counter          
+                 |   cics_stmt_monitor          
+                 |   cics_stmt_syncpoint        
+                 |   cics_stmt_assign           
+                 |   cics_stmt_send             
+                 |   cics_stmt_connect          
+                 |   cics_stmt_converse          
+                 |   cics_stmt_get              
+                 |   cics_stmt_delete           
+                 |   cics_stmt_receive               
+                 |   cics_stmt_suspend          
+                 ;
+
+
+/**********************************************************************/
+/*                        GRUPOS                                     */
+/**********************************************************************/
+
+cics_group_abend ::= ABEND:w           {: stmt = new StmtCICS(w);         :}
+                 |   HANDLE:w ABEND:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+                 ;
+         
+cics_group_auth ::= CHANGE:w PASSWORD:w2  {: stmt = new StmtCICS(w.add(w2)); :}    
+                |   SIGNOFF:w             {: stmt = new StmtCICS(w);         :}
+                |   SIGNON:w              {: stmt = new StmtCICS(w);         :}
+                |   VERIFY:w PASSWORD:w2  {: stmt = new StmtCICS(w.add(w2)); :}    
+                ;
+           
+cics_group_bms ::= PURGE MESSAGE:w  {: stmt = new StmtCICS(w); :}
+               |   ROUTE:w          {: stmt = new StmtCICS(w); :}
+               ;
+                                                         
+cics_group_bts ::= ACQUIRE:w                         {: stmt = new StmtCICS(w);         :}
+               |   ADD:w         SUBEVENT:w2         {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   CHECK:w       cics_check:w2       {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   DEFINE:w      cics_define:w2      {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   ENDBROWSE:w   cics_endbrowse:w2   {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   FORCE:w       TIMER:w2            {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   GETNEXT:w     cics_getnext:w2     {: stmt = new StmtCICS(w.add(w2)); :}       
+               |   LINK:w        cics_link:w2        {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   REMOVE:w      SUBEVENT:w2         {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   RESET:w       cics_reset:w2       {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   RESUME:w                          {: stmt = new StmtCICS(w);         :}
+               |   RETRIEVE:w    cics_retrieve:w2    {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   RUN:w                             {: stmt = new StmtCICS(w);         :}
+               |   STARTBROWSE:w cics_startbrowse:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+               |   TEST:w        EVENT:w2            {: stmt = new StmtCICS(w.add(w2)); :}    
+               ;
+
+cics_group_diag ::= DUMP:w  TRANSACTION:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+                |   ENTER:w TRACENUM:w2    {: stmt = new StmtCICS(w.add(w2)); :}    
+                ;
+
+cics_group_excep ::= HANDLE:w CONDITION:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+                 |   IGNORE:w CONDITION:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+                 |   POP:w    HANDLE:w2    {: stmt = new StmtCICS(w.add(w2)); :}    
+                 |   PUSH:w   HANDLE:w2    {: stmt = new StmtCICS(w.add(w2)); :}    
+                 ;
+                 
+cics_group_file ::= ENDBR:w    {: stmt = new StmtCICS(w); :}
+                |   READ:w     {: stmt = new StmtCICS(w); :}
+                |   READNEXT:w {: stmt = new StmtCICS(w); :}
+                |   READPREV:w {: stmt = new StmtCICS(w); :}
+                |   RESETBR:w  {: stmt = new StmtCICS(w); :}
+                |   REWRITE:w  {: stmt = new StmtCICS(w); :}
+                |   STARTBR:w  {: stmt = new StmtCICS(w); :}
+                |   UNLOCK:w   {: stmt = new StmtCICS(w); :}
+                |   WRITE:w    {: stmt = new StmtCICS(w); :}
+                ;
+                
+cics_group_interval ::= ASKTIME:w       {: stmt = new StmtCICS(w);         :}
+                    |   DELAY:w         {: stmt = new StmtCICS(w);         :}
+                    |   FORMATTIME:w    {: stmt = new StmtCICS(w);         :}
+                    |   POST:w          {: stmt = new StmtCICS(w);         :}
+                    |   RETRIEVE:w      {: stmt = new StmtCICS(w);         :}
+                    |   START:w         {: stmt = new StmtCICS(w);         :}
+                    |   WAIT:w EVENT:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+                    ;
+                    
+cics_group_journaling ::= WAIT:w  cics_journal:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+                      |   WRITE:w cics_journal:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+                      ;
+
+cics_group_schedul ::= START ATTACH:w {: stmt = new StmtCICS(w); :}
+                   |   START BREXIT:w {: stmt = new StmtCICS(w); :}
+                   ;                   
+                   
+cics_group_spool ::= SPOOLCLOSE:w                     {: stmt = new StmtCICS(w);         :}
+                 |   SPOOLOPEN:w  cics_spool_mode:w2  {: stmt = new StmtCICS(w.add(w2)); :}    
+                 |   SPOOLREAD:w                      {: stmt = new StmtCICS(w);         :}
+                 |   SPOOLWRITE:w                     {: stmt = new StmtCICS(w);         :}
+                 ;
+                 
+cics_group_storage ::= FREEMAIN:w {: stmt = new StmtCICS(w); :}
+                   |   GETMAIN:w  {: stmt = new StmtCICS(w); :}
+                   ;
+
+
+cics_group_task ::= CHANGE:w TASK:w2    {: stmt = new StmtCICS(w.add(w2)); :}    
+                |   DEQ:w               {: stmt = new StmtCICS(w);         :}
+                |   ENQ:w               {: stmt = new StmtCICS(w);         :}
+                |   WAIT:w EXTERNAL:w2  {: stmt = new StmtCICS(w.add(w2)); :}    
+                |   WAITCICS:w          {: stmt = new StmtCICS(w);         :}
+                ;
+
+cics_group_ts ::= DELETEQ:w cics_ts_type:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+              |   READQ:w   cics_ts_type:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+              |   WRITEQ:w  cics_ts_type:w2 {: stmt = new StmtCICS(w.add(w2)); :}    
+              ;
+              
+              
+cics_group_terminal ::= BUILD:w ATTACH:w2                {: stmt = new StmtCICS(w.add(w2)); :}    
+                    |   HANDLE:w AID:w2                  {: stmt = new StmtCICS(w.add(w2)); :}    
+                    |   ISSUE:w cics_issue_terminal:w2   {: stmt = new StmtCICS(w.add(w2)); :}    
+                    |   POINT:w                          {: stmt = new StmtCICS(w);         :}
+                    |   WAIT:w cics_terminal_wait:w2     {: stmt = new StmtCICS(w.add(w2)); :}    
+                    ;
+
+/**********************************************************************/
+/*                     STATEMENTS                                     */
+/**********************************************************************/
+              
+cics_stmt_one ::= cics_stmt_word:w  {: stmt = new StmtCICS(w); :}
+              ;
+
+cics_stmt_two ::= cics_stmt_words:w {: stmt = new StmtCICS(w); :}
+              ;
+              
+cics_stmt_word ::= ALLOCATE:w {: RESULT = w; :}
+               |   ASSIGN:w   {: RESULT = w; :}
+               |   CANCEL:w   {: RESULT = w; :}
+               |   CONVERSE:w {: RESULT = w; :}
+               |   FREE:w     {: RESULT = w; :}
+               |   MONITOR:w  {: RESULT = w; :}
+               |   SUSPEND:w  {: RESULT = w; :}
+              ;
+
+cics_stmt_words ::= CONNECT:w PROCESS:w2    {: RESULT = w.add(w2); :}    
+                |   PUT:w     CONTAINER:w2  {: RESULT = w.add(w2); :}    
+                |   MOVE:w    CONTAINER:w2  {: RESULT = w.add(w2); :}    
+                |   QUERY:w   SECURITY:w2   {: RESULT = w.add(w2); :}    
+                |   SIGNAL:w  EVENT:w2      {: RESULT = w.add(w2); :}    
+                |   WAIT:w    CONVID:w2     {: RESULT = w.add(w2); :}    
+                |   WRITE:w   OPERATOR:w2   {: RESULT = w.add(w2); :}    
+                ;
+
+cics_stmt_address   ::= ADDRESS:w cics_address:w2           {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_bif       ::= BIF:w cics_bif:w2                   {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_delete    ::= DELETE:w cics_delete_types:w2       {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_discard   ::= DISCARD:w cics_discard:w2           {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_doc       ::= DOCUMENT:w cics_document:w2         {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_extract   ::= EXTRACT:w cics_extract_types:w2     {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_gds       ::= GDS:w cics_gds:w2                   {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_get       ::= GET:w cics_get_types:w2             {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_issue     ::= ISSUE:w cics_issue:w2               {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_receive   ::= RECEIVE:w cics_receive:w2           {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_send      ::= SEND:w cics_send_types:w2           {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_start     ::= START:w cics_start:w2               {: stmt = new StmtCICS(w.add(w2)); :}           ;           
+cics_stmt_syncpoint ::= SYNCPOINT:w cics_word_rollback:w2   {: stmt = new StmtCICS(w.add(w2)); :}           ;
+cics_stmt_counter   ::= cics_counter_action:w cics_counter_type:w2 {: stmt = new StmtCICS(w.add(w2)); :}    ;   
+
+
+/**********************************************************************/
+/*                     SYSTEM                                     */
+/**********************************************************************/
+
+cics_stmt_resync     ::= RESYNC:w ENTRYNAME:w2      {: stmt = new StmtCICS(w.add(w2)); :}     ;
+cics_stmt_set        ::= SET:w cics_set:w2          {: stmt = new StmtCICS(w.add(w2)); :}     ;
+cics_stmt_perform    ::= PERFORM:w  cics_perform:w2 {: stmt = new StmtCICS(w.add(w2)); :}     ;            
+cics_stmt_acquire    ::= ACQUIRE:w TERMINAL:w2      {: stmt = new StmtCICS(w.add(w2)); :}     ;
+cics_stmt_collect    ::= COLLECT:w STATISTICS:w2    {: stmt = new StmtCICS(w.add(w2)); :}     ;
+cics_stmt_create     ::= CREATE:w cics_create:w2    {: stmt = new StmtCICS(w.add(w2)); :}     ;
+cics_stmt_enable     ::= ENABLE:w PROGRAM :w2       {: stmt = new StmtCICS(w.add(w2)); :}     ;
+cics_stmt_inquire    ::= INQUIRE:w cics_inquire:w2  {: stmt = new StmtCICS(w.add(w2)); :}     ;  
+cics_stmt_disable    ::= DISABLE:w cics_disable:w2  {: stmt = new StmtCICS(w.add(w2)); :}     ;
+
+
+/**********************************************************************/
+/*                RESTO DE SENTENCIAS                                 */
+/**********************************************************************/                 
+
+cics_address ::= SET:w {: RESULT = w; :}
+             |
+             ;
+
+
+cics_bif ::= DEEDIT:w {: RESULT = w; :}
+         |   DIGEST:w {: RESULT = w; :}
+         ;
+
+cics_check ::= ACQPROCESS:w  {: RESULT = w; :}  
+           |   ACTIVITY:w    {: RESULT = w; :} 
+           |   TIMER:w       {: RESULT = w; :}           
+           ;             
+        
+cics_counter_action ::= DEFINE:w {: RESULT = w; :}
+                    |   QUERY:w  {: RESULT = w; :}
+                    |   REWIND:w {: RESULT = w; :}
+                    |   UPDATE:w {: RESULT = w; :}
+                    ;
+
+cics_counter_type ::= COUNTER:w {: RESULT = w; :}
+                  |  DCOUNTER:w {: RESULT = w; :}
+                  ;                    
+
+cics_define ::= ACTIVITY:w           {: RESULT = w;         :} 
+            |   COMPOSITE:w EVENT:w2 {: RESULT = w.add(w2); :}    
+            |   INPUT:w EVENT:w2     {: RESULT = w.add(w2); :}     
+            |   PROCESS:w            {: RESULT = w;         :} 
+            |   TIMER:w              {: RESULT = w;         :} 
+            ;
+
+cics_delete_types ::= CONTAINER:w            {: RESULT = w; :}
+                  |   cics_counter_type:w    {: RESULT = w; :}
+                  |   ACTIVITY:w             {: RESULT = w; :}
+                  |   EVENT:w                {: RESULT = w; :}
+                  |   TIMER:w                {: RESULT = w; :}
+                  | 
+                  ;
+
+cics_discard ::= AUTINSTMODEL    :w  {: RESULT = w; :}
+             |   CONNECTION      :w  {: RESULT = w; :}
+             |   CORBASERVER     :w  {: RESULT = w; :}
+             |   DB2CONN         :w  {: RESULT = w; :}
+             |   DB2ENTRY        :w  {: RESULT = w; :}
+             |   DB2TRAN         :w  {: RESULT = w; :}
+             |   DJAR            :w  {: RESULT = w; :}
+             |   DOCTEMPLATE     :w  {: RESULT = w; :}
+             |   ENQMODEL        :w  {: RESULT = w; :}
+             |   FILE            :w  {: RESULT = w; :}
+             |   JOURNALMODEL    :w  {: RESULT = w; :}
+             |   JOURNALNAME     :w  {: RESULT = w; :}
+             |   PARTNER         :w  {: RESULT = w; :}
+             |   PIPELINE        :w  {: RESULT = w; :}
+             |   PROCESSTYPE     :w  {: RESULT = w; :}
+             |   PROFILE         :w  {: RESULT = w; :}
+             |   PROGRAM         :w  {: RESULT = w; :}
+             |   REQUESTMODEL    :w  {: RESULT = w; :}
+             |   TCPIPSERVICE    :w  {: RESULT = w; :}
+             |   TDQUEUE         :w  {: RESULT = w; :}
+             |   TERMINAL        :w  {: RESULT = w; :}
+             |   TRANCLASS       :w  {: RESULT = w; :}
+             |   TRANSACTION     :w  {: RESULT = w; :}
+             |   TSMODEL         :w  {: RESULT = w; :}
+             |   URIMAP          :w  {: RESULT = w; :}
+             |   WEBSERVICE      :w  {: RESULT = w; :}
+             ;              
+                                    
+cics_document ::= CREATE:w   {: RESULT = w; :}
+              |   DELETE:w   {: RESULT = w; :}
+              |   INSERT:w   {: RESULT = w; :}
+              |   RETRIEVE:w {: RESULT = w; :}
+              |   SET:w      {: RESULT = w; :}
+              ;
+
+cics_endbrowse ::= ACTIVITY:w  {: RESULT = w; :} 
+               |   CONTAINER:w {: RESULT = w; :} 
+               |   EVENT:w     {: RESULT = w; :} 
+               |   PROCESS:w   {: RESULT = w; :}                   
+               ;
+
+cics_extract_types ::= cics_extract:w {: RESULT = w; :}
+                   |   cics_tcpip:w   {: RESULT = w; :}
+                   |   WEB:w          {: RESULT = w; :}
+                   |   ATTACH:w       {: RESULT = w; :}
+                   |   LOGONMSG:w     {: RESULT = w; :}
+                   |   TCT:w          {: RESULT = w; :}
+                   ;
+
+cics_extract ::= ATTRIBUTES:w  {: RESULT = w; :}
+             |   PROCESS:w     {: RESULT = w; :}
+             |   EXIT:w        {: RESULT = w; :}
+             |   STATISTICS:w  {: RESULT = w; :}
+             ;
+                          
+cics_gds ::= ALLOCATE:w   {: RESULT = w; :}
+         |   ASSIGN:w     {: RESULT = w; :}
+         |   FREE:w       {: RESULT = w; :}
+         |   RECEIVE:w    {: RESULT = w; :}
+         |   SEND:w       {: RESULT = w; :}         
+         |   WAIT:w       {: RESULT = w; :}
+         |   cics_stmt_extract
+         |   cics_stmt_issue
+         |   cics_stmt_connect
+         ;
+
+cics_getnext ::= ACTIVITY:w  {: RESULT = w; :} 
+             |   CONTAINER:w {: RESULT = w; :} 
+             |   EVENT:w     {: RESULT = w; :} 
+             |   PROCESS:w   {: RESULT = w; :}              
+             ;
+
+cics_get_types ::= CONTAINER:w         {: RESULT = w; :}
+               |   cics_counter_type:w {: RESULT = w; :}
+               ;
+
+cics_invoke ::= SERVICE:w    {: RESULT = w; :}
+            |   WEBSERVICE:w {: RESULT = w; :}
+            ;
+
+cics_issue ::= ABEND:w        {: RESULT = w; :}
+           |   ABORT:w        {: RESULT = w; :}
+           |   ADD:w          {: RESULT = w; :}
+           |   CONFIRMATION:w {: RESULT = w; :}
+           |   END:w          {: RESULT = w; :}
+           |   ERASE:w        {: RESULT = w; :}
+           |   ERROR:w        {: RESULT = w; :}
+           |   NOTE:w         {: RESULT = w; :}
+           |   PREPARE:w      {: RESULT = w; :}
+           |   QUERY:w        {: RESULT = w; :}
+           |   RECEIVE:w      {: RESULT = w; :}
+           |   REPLACE:w      {: RESULT = w; :}
+           |   SIGNAL:w       {: RESULT = w; :}
+           |   WAIT:w         {: RESULT = w; :}
+           ;  
+
+cics_issue_terminal ::= COPY:w          {: RESULT = w; :}
+                    |   DISCONNECT:w    {: RESULT = w; :}
+                    |   ENDFILE:w       {: RESULT = w; :}
+                    |   ENDOUTPUT:w     {: RESULT = w; :}
+                    |   EODS:w          {: RESULT = w; :}
+                    |   ERASEAUP:w      {: RESULT = w; :}
+                    |   LOAD:w          {: RESULT = w; :}
+                    |   PASS:w          {: RESULT = w; :}
+                    |   PRINT:w         {: RESULT = w; :}
+                    |   RESET:w         {: RESULT = w; :}
+                    ;
+
+cics_journal ::= JOURNALNAME:w {: RESULT = w; :}
+             |   JOURNALNUM:w  {: RESULT = w; :}
+             ;
+
+cics_link ::= ACQPROCESS:w       {: RESULT = w;         :}
+          |   LINK:w ACTIVITY:w2 {: RESULT = w.add(w2); :}    
+          ;
+
+cics_receive ::= MAP:w  cics_receive_map:w2 {: RESULT = w.add(w2); :}
+             |   PARTN:w                    {: RESULT = w;         :}
+             |                              {: RESULT = null;      :}
+             ;
+
+cics_receive_map ::= MAPPINGDEV:w {: RESULT = w;    :}        
+                 |                {: RESULT = null; :}
+                 ;
+
+cics_reset ::= ACQPROCESS:w {: RESULT = w; :}
+           |   ACTIVITY:w   {: RESULT = w; :}        
+           ;
+
+cics_retrieve ::= REATTACH:w EVENT:w2 {: RESULT = w.add(w2); :}
+              |   SUBEVENT:w          {: RESULT = w;         :} 
+              ;
+
+cics_send_types ::= CONTROL:w                 {: RESULT = w;         :}
+                |   MAP:w cics_send_map:w2    {: RESULT = w.add(w2); :}
+                |   PAGE:w                    {: RESULT = w;         :}
+                |   PARTNSET:w                {: RESULT = w;         :}
+                |   TEXT:w cics_send_text:w2  {: RESULT = w.add(w2); :}
+                |                             {: RESULT = null;      :} 
+                ;
+
+cics_send_map ::= MAPPINGDEV:w             {: RESULT = w; :}
+              |
+              ;
+                                    
+cics_soap ::= ADD:w    {: RESULT = w; :}        
+          |   CREATE:w {: RESULT = w; :}
+          |   DELETE:w {: RESULT = w; :}
+          ;
+
+cics_spool_mode ::= INPUT:w  {: RESULT = w; :}
+                |   OUTPUT:w {: RESULT = w; :}
+                ;      
+
+cics_start ::= TRANSID:w {: RESULT = w; :}
+           |   CHANNEL:w {: RESULT = w; :}
+           ;
+
+cics_startbrowse ::= ACTIVITY:w  {: RESULT = w; :}
+                 |   CONTAINER:w {: RESULT = w; :}
+                 |   EVENT:w     {: RESULT = w; :}
+                 |   PROCESS:w   {: RESULT = w; :}
+                 ;
+
+cics_tcpip ::= CERTIFICATE:w {: RESULT = w; :}
+           |   TCPIP:w       {: RESULT = w; :}
+           ;
+                
+cics_terminal_wait ::= SIGNAL:w   {: RESULT = w; :}
+                   |   TERMINAL:w {: RESULT = w; :}
+                   ;
+
+cics_send_text ::= MAPPED:w {: RESULT = w;    :}        
+               |   NOEDIT:w {: RESULT = w;    :}
+               |            {: RESULT = null; :} 
+               ;
           
-cics_options ::= cics_parm_list:c {: RESULT = c;    :}
-             |                    {: RESULT = null; :}
+cics_transform ::= DATATOXML:w {: RESULT = w; :}  
+               |   XMLTODATA:w {: RESULT = w; :}
+               ;  
+
+cics_ts_type ::= TS:w {: RESULT = w; :}
+             |   TD:w {: RESULT = w; :}
+             ;
+
+cics_word_rollback ::= ROLLBACK:w {: RESULT = w;    :}
+                   |              {: RESULT = null; :} 
+                   ;
+               
+cics_wsacontext ::= BUILD:w  {: RESULT = w; :}
+                |   DELETE:w {: RESULT = w; :}
+                |   GET:w    {: RESULT = w; :}
+                ;
+                
+cics_web ::= CLOSE:w                     {: RESULT = w;         :}
+         |   CONVERSE:w                  {: RESULT = w;         :}
+         |   ENDBROWSE:w FORMFIELD:w2    {: RESULT = w.add(w2); :}    
+         |   ENDBROWSE:w HTTPHEADER:w2   {: RESULT = w.add(w2); :}    
+         |   OPEN:w                      {: RESULT = w;         :}
+         |   PARSE:w URL:w2              {: RESULT = w.add(w2); :}    
+         |   READ:w FORMFIELD:w2         {: RESULT = w.add(w2); :}    
+         |   READ:w HTTPHEADER:w2        {: RESULT = w.add(w2); :}    
+         |   READNEXT:w FORMFIELD:w2     {: RESULT = w.add(w2); :}    
+         |   READNEXT:w HTTPHEADER:w2    {: RESULT = w.add(w2); :}    
+         |   RECEIVE:w                   {: RESULT = w;         :}
+         |   RETRIEVE:w                  {: RESULT = w;         :}
+         |   SEND:w                      {: RESULT = w;         :}
+         |   STARTBROWSE:w FORMFIELD:w2  {: RESULT = w.add(w2); :}    
+         |   STARTBROWSE:w HTTPHEADER:w2 {: RESULT = w.add(w2); :}    
+         |   WRITE:w HTTPHEADER:w2       {: RESULT = w.add(w2); :}    
+         ;
+
+
+cics_create               ::= CONNECTION        :w       {: RESULT = w; :}
+                          |   CORBASERVER       :w       {: RESULT = w; :}
+                          |   DB2CONN           :w       {: RESULT = w; :}
+                          |   DB2ENTRY          :w       {: RESULT = w; :}
+                          |   DB2TRAN           :w       {: RESULT = w; :}
+                          |   DJAR              :w       {: RESULT = w; :}
+                          |   DOCTEMPLATE       :w       {: RESULT = w; :}
+                          |   ENQMODEL          :w       {: RESULT = w; :}
+                          |   FILE              :w       {: RESULT = w; :}
+                          |   JOURNALMODEL      :w       {: RESULT = w; :}
+                          |   LSRPOOL           :w       {: RESULT = w; :}
+                          |   MAPSET            :w       {: RESULT = w; :}
+                          |   PARTITIONSET      :w       {: RESULT = w; :}
+                          |   PARTNER           :w       {: RESULT = w; :}
+                          |   PIPELINE          :w       {: RESULT = w; :}
+                          |   PROCESSTYPE       :w       {: RESULT = w; :}
+                          |   PROFILE           :w       {: RESULT = w; :}
+                          |   PROGRAM           :w       {: RESULT = w; :}
+                          |   REQUESTMODEL      :w       {: RESULT = w; :}
+                          |   SESSIONS          :w       {: RESULT = w; :}
+                          |   TCPIPSERVICE      :w       {: RESULT = w; :}
+                          |   TDQUEUE           :w       {: RESULT = w; :}
+                          |   TERMINAL          :w       {: RESULT = w; :}
+                          |   TRANCLASS         :w       {: RESULT = w; :}
+                          |   TRANSACTION       :w       {: RESULT = w; :}
+                          |   TSMODEL           :w       {: RESULT = w; :}
+                          |   TYPETERM          :w       {: RESULT = w; :}
+                          |   URIMAP            :w       {: RESULT = w; :}
+                          |   WEBSERVICE        :w       {: RESULT = w; :}
+                          ;
+                          
+cics_disable              ::= AUTINSTMODEL    :w         {: RESULT = w; :}
+                          |   CONNECTION      :w         {: RESULT = w; :}
+                          |   CORBASERVER     :w         {: RESULT = w; :}
+                          |   DB2CONN         :w         {: RESULT = w; :}
+                          |   DB2ENTRY        :w         {: RESULT = w; :}
+                          |   DB2TRAN         :w         {: RESULT = w; :}
+                          |   DJAR            :w         {: RESULT = w; :}
+                          |   DOCTEMPLATE     :w         {: RESULT = w; :}
+                          |   ENQMODEL        :w         {: RESULT = w; :}
+                          |   FILE            :w         {: RESULT = w; :}
+                          |   JOURNALMODEL    :w         {: RESULT = w; :}
+                          |   JOURNALNAME     :w         {: RESULT = w; :}
+                          |   PARTNER         :w         {: RESULT = w; :}
+                          |   PIPELINE        :w         {: RESULT = w; :}
+                          |   PROCESSTYPE     :w         {: RESULT = w; :}
+                          |   PROFILE         :w         {: RESULT = w; :}
+                          |   PROGRAM         :w         {: RESULT = w; :}
+                          |   REQUESTMODEL    :w         {: RESULT = w; :}
+                          |   TCPIPSERVICE    :w         {: RESULT = w; :}
+                          |   TDQUEUE         :w         {: RESULT = w; :}
+                          |   TERMINAL        :w         {: RESULT = w; :}
+                          |   TRANCLASS       :w         {: RESULT = w; :}
+                          |   TRANSACTION     :w         {: RESULT = w; :}
+                          |   TSMODEL         :w         {: RESULT = w; :}
+                          |   URIMAP          :w         {: RESULT = w; :}
+                          |   WEBSERVICE      :w         {: RESULT = w; :}
+                          ;
+                          
+cics_inquire ::= ACTIVITYID:w {: RESULT = w; :}
+             |   CONTAINER:w  {: RESULT = w; :}
+             |   EVENT:w      {: RESULT = w; :}
+             |   PROCESS:w    {: RESULT = w; :}
+             |   TIMER:w      {: RESULT = w; :}        
+             |   AUTINSTMODEL     :w        {: RESULT = w; :}                      
+                          |   AUTOINSTALL      :w        {: RESULT = w; :}
+                          |   BEAN             :w        {: RESULT = w; :}
+                          |   BRFACILITY       :w        {: RESULT = w; :}
+                          |   CFDTPOOL         :w        {: RESULT = w; :}
+                          |   CLASSCACHE       :w        {: RESULT = w; :}
+                          |   CONNECTION       :w        {: RESULT = w; :}
+                          |   CORBASERVER      :w        {: RESULT = w; :}
+                          |   DB2CONN          :w        {: RESULT = w; :}
+                          |   DB2ENTRY         :w        {: RESULT = w; :}
+                          |   DB2TRAN          :w        {: RESULT = w; :}
+                          |   DELETSHIPPED     :w        {: RESULT = w; :}
+                          |   DISPATCHER       :w        {: RESULT = w; :}
+                          |   DJAR             :w        {: RESULT = w; :}
+                          |   DOCTEMPLATE      :w        {: RESULT = w; :}
+                          |   DSNAME           :w        {: RESULT = w; :}
+                          |   DUMPDS           :w        {: RESULT = w; :}
+                          |   ENQ              :w        {: RESULT = w; :}
+                          |   ENQMODEL         :w        {: RESULT = w; :}
+                          |   EXCI             :w        {: RESULT = w; :}
+                          |   EXITPROGRAM      :w        {: RESULT = w; :}
+                          |   FILE             :w        {: RESULT = w; :}
+                          |   HOST             :w        {: RESULT = w; :}
+                          |   IRC              :w        {: RESULT = w; :}
+                          |   JOURNALMODEL     :w        {: RESULT = w; :}
+                          |   JOURNALNAME      :w        {: RESULT = w; :}
+                          |   JOURNALNUM       :w        {: RESULT = w; :}
+                          |   JVM              :w        {: RESULT = w; :}
+                          |   JVMPOOL          :w        {: RESULT = w; :}
+                          |   JVMPROFILE       :w        {: RESULT = w; :}
+                          |   MODENAME         :w        {: RESULT = w; :}
+                          |   MONITOR          :w        {: RESULT = w; :}
+                          |   MVSTCB           :w        {: RESULT = w; :}
+                          |   NETNAME          :w        {: RESULT = w; :}
+                          |   PARTNER          :w        {: RESULT = w; :}
+                          |   PIPELINE         :w        {: RESULT = w; :}
+                          |   PROCESSTYPE      :w        {: RESULT = w; :}
+                          |   PROFILE          :w        {: RESULT = w; :}
+                          |   PROGRAM          :w        {: RESULT = w; :}
+                          |   REQID            :w        {: RESULT = w; :}
+                          |   REQUESTMODEL     :w        {: RESULT = w; :}
+                          |   RRMS             :w        {: RESULT = w; :}
+                          |   STATISTICS       :w        {: RESULT = w; :}
+                          |   STORAGE          :w        {: RESULT = w; :}
+                          |   STREAMNAME       :w        {: RESULT = w; :}
+                          |   SUBPOOL          :w        {: RESULT = w; :}
+                          |   SYSDUMPCODE      :w        {: RESULT = w; :}
+                          |   SYSTEM           :w        {: RESULT = w; :}
+                          |   TASK             :w        {: RESULT = w; :}
+                          |   TASK LIST        :w        {: RESULT = w; :}
+                          |   TCLASS           :w        {: RESULT = w; :}
+                          |   TCPIP            :w        {: RESULT = w; :}
+                          |   TCPIPSERVICE     :w        {: RESULT = w; :}
+                          |   TDQUEUE          :w        {: RESULT = w; :}
+                          |   TERMINAL         :w        {: RESULT = w; :}
+                          |   TRACEDEST        :w        {: RESULT = w; :}
+                          |   TRACEFLAG        :w        {: RESULT = w; :}
+                          |   TRACETYPE        :w        {: RESULT = w; :}
+                          |   TRANCLASS        :w        {: RESULT = w; :}
+                          |   TRANDUMPCODE     :w        {: RESULT = w; :}
+                          |   TRANSACTION      :w        {: RESULT = w; :}
+                          |   TSMODEL          :w        {: RESULT = w; :}
+                          |   TSPOOL           :w        {: RESULT = w; :}
+                          |   TSQUEUE          :w        {: RESULT = w; :}
+                          |   TSQNAME          :w        {: RESULT = w; :}
+                          |   UOW              :w        {: RESULT = w; :}
+                          |   UOWDSNFAIL       :w        {: RESULT = w; :}
+                          |   UOWENQ           :w        {: RESULT = w; :}
+                          |   UOWLINK          :w        {: RESULT = w; :}
+                          |   URIMAP           :w        {: RESULT = w; :}
+                          |   VOLUME           :w        {: RESULT = w; :}
+                          |   VTAM             :w        {: RESULT = w; :}
+                          |   WEB              :w        {: RESULT = w; :}
+                          |   WEBSERVICE       :w        {: RESULT = w; :}
+                          |   WORKREQUEST      :w        {: RESULT = w; :}
+                          ;
+
+cics_perform              ::=     CLASSCACHE      :w     {: RESULT = w; :}        
+                          |       CORBASERVER     :w     {: RESULT = w; :}
+                          |       DELETSHIPPED    :w     {: RESULT = w; :}
+                          |       DJAR            :w     {: RESULT = w; :}
+                          |       DUMP            :w     {: RESULT = w; :}
+                          |       ENDAFFINITY     :w     {: RESULT = w; :}
+                          |       PIPELINE        :w     {: RESULT = w; :}
+                          |       RESETTIME       :w     {: RESULT = w; :} 
+                          |       SECURITY:w REBUILD:w2  {: RESULT = w.add(w2); :}
+                          |       SHUTDOWN:w
+                          |       STATISTICS:w RECORD:w2 {: RESULT = w.add(w2); :}
+                          ;
+                          
+                         
+cics_set                 ::= AUTOINSTALL     :w          {: RESULT = w; :}
+                         |   BRFACILITY      :w          {: RESULT = w; :}
+                         |   CLASSCACHE      :w          {: RESULT = w; :}
+                         |   CONNECTION      :w          {: RESULT = w; :}
+                         |   CORBASERVER     :w          {: RESULT = w; :}
+                         |   DB2CONN         :w          {: RESULT = w; :}
+                         |   DB2ENTRY        :w          {: RESULT = w; :}
+                         |   DB2TRAN         :w          {: RESULT = w; :}
+                         |   DELETSHIPPED    :w          {: RESULT = w; :}
+                         |   DISPATCHER      :w          {: RESULT = w; :}
+                         |   DSNAME          :w          {: RESULT = w; :}
+                         |   DUMPDS          :w          {: RESULT = w; :}
+                         |   ENQMODEL        :w          {: RESULT = w; :}
+                         |   FILE            :w          {: RESULT = w; :}
+                         |   HOST            :w          {: RESULT = w; :}
+                         |   IRC             :w          {: RESULT = w; :}
+                         |   JOURNALNAME     :w          {: RESULT = w; :}
+                         |   JOURNALNUM      :w          {: RESULT = w; :}
+                         |   JVMPOOL         :w          {: RESULT = w; :}
+                         |   MODENAME        :w          {: RESULT = w; :}
+                         |   MONITOR         :w          {: RESULT = w; :}
+                         |   NETNAME         :w          {: RESULT = w; :}
+                         |   PIPELINE        :w          {: RESULT = w; :}
+                         |   PROCESSTYPE     :w          {: RESULT = w; :}
+                         |   PROGRAM         :w          {: RESULT = w; :}
+                         |   STATISTICS      :w          {: RESULT = w; :}
+                         |   SYSDUMPCODE     :w          {: RESULT = w; :}
+                         |   SYSTEM          :w          {: RESULT = w; :}
+                         |   TASK            :w          {: RESULT = w; :}
+                         |   TCLASS          :w          {: RESULT = w; :}
+                         |   TCPIP           :w          {: RESULT = w; :}
+                         |   TCPIPSERVICE    :w          {: RESULT = w; :}
+                         |   TDQUEUE         :w          {: RESULT = w; :}
+                         |   TERMINAL        :w          {: RESULT = w; :}
+                         |   TRACEDEST       :w          {: RESULT = w; :}
+                         |   TRACEFLAG       :w          {: RESULT = w; :}
+                         |   TRACETYPE       :w          {: RESULT = w; :}
+                         |   TRANCLASS       :w          {: RESULT = w; :}
+                         |   TRANDUMPCODE    :w          {: RESULT = w; :}
+                         |   TRANSACTION     :w          {: RESULT = w; :}
+                         |   TSQUEUE         :w          {: RESULT = w; :}
+                         |   TSQNAME         :w          {: RESULT = w; :}
+                         |   UOW             :w          {: RESULT = w; :}
+                         |   UOWLINK         :w          {: RESULT = w; :}
+                         |   URIMAP          :w          {: RESULT = w; :}
+                         |   VOLUME          :w          {: RESULT = w; :}
+                         |   VTAM            :w          {: RESULT = w; :}
+                         |   WEB             :w          {: RESULT = w; :}
+                         |   WEBSERVICE      :w          {: RESULT = w; :}
+                         |   WORKREQUEST     :w          {: RESULT = w; :}
+                         ;                                                
+
+cics_options ::= cics_options_lst:c 
+             |                      
              ;
              
-cics_parm_list ::= cics_parm_attr:c                {: RESULT = stmt.addOption(c); :}
-               |   cics_parm_list cics_parm_attr:c {: RESULT = stmt.addOption(c); :} 
-               ;
+cics_options_lst ::= cics_option:o                  {: RESULT = stmt.addOption(currOption); :}
+                 |   cics_options_lst cics_option:o {: RESULT = stmt.addOption(currOption); :} 
+                 ;
                                  
-cics_parm_attr ::= ID:i     cics_parm:c  {: RESULT = new Option(i,c); :}
-               |   LENGTH:i cics_parm:c  {: RESULT = new Option(i,c); :}
-               ;
-               
-cics_parm ::= LPAR cics_values:c RPAR   {: RESULT = c;    :}
-          |                             {: RESULT = null; :}
+cics_option ::= cics_option_name:o cics_parm_opt  
+            ;
+
+cics_option_name ::= ID:w                  {: currOption = new Option(w); :}
+                 |   cics_reserved_word:w  {: currOption = new Option(w); :}
+                 ;
+
+cics_reserved_word ::= LENGTH:w        {: RESULT = w; :}
+                   |   PROGRAM:w       {: RESULT = w; :}
+                   ;
+         
+                                                     
+cics_parm_opt ::= LPAR cics_parms:w RPAR     {: currOption.setFunction(); 
+                                                currOption.addParm(w);    
+                                             :}
+          |                              
           ;             
 
-cics_values ::= cics_value:c             {: RESULT = c; :} 
-            |   cics_values:c cics_value {: RESULT = c; /* Nos interesa el primero */ :}
-            ;
+cics_parms ::= cics_parm:w               {: RESULT = w;         :} 
+           |   cics_parms:w cics_parm:w2 {: RESULT = w.add(w2); :} 
+           ;
             
-cics_value ::= ident_base:i           {: RESULT = i; :}
-           |   number:n               {: RESULT = n; :}
-           |   LITERAL:l              {: RESULT = l; :}
-           |   LENGTH OF ident_base:i {: RESULT = i; :}
-           |   LPAR cics_values:i RPAR {: RESULT = i; :}
+cics_parm ::= ident_base:w                 {: RESULT = w; :}
+          |   number:w                     {: RESULT = w; :}
+          |   LITERAL:w                    {: RESULT = w; :}
+          |   LENGTH:w1 OF:w2 ident_base:w {: RESULT = w.setPrefix(w1.add(w2)); :}
+          |   LPAR cics_parms:w RPAR       {: RESULT = w.setFunction();         :}
+          ;
+
+ident_base ::= ID:w padres_lst:w2 {: RESULT = w.add(w2); :} 
            ;
 
-
-number ::= ENTERO:e    {: RESULT = e; :}
-       |   DECIMAL:d   {: RESULT = d; :} 
+number ::= ENTERO:w    {: RESULT = w; :}
+       |   DECIMAL:w   {: RESULT = w; :} 
        ;                                                      
        
        
-ident_base ::= ID:i padres_lst:s {: RESULT = i; :} 
-           ;
 
 padres_lst ::= padres:p  {: RESULT = p;    :}
            |             {: RESULT = null; :}
            ;
 
-padres ::= padre:p           {: RESULT = p; :}
-       |   padres:p padre:i  {: RESULT = i; :}
+padres ::= padre:w            {: RESULT = w;         :}
+       |   padres:w padre:w2  {: RESULT = w.add(w2); :}
        ;
                     
-padre ::= padre_indicator ID:s {: RESULT = s;    :}
+padre ::= padre_indicator:p ID:w {: RESULT = w.setPrefix(p);    :}
       ;
 
-padre_indicator ::= OF
-                |   IN
+padre_indicator ::= OF:w {: RESULT = w; :}
+                |   IN:w {: RESULT = w; :}
                 ;
        

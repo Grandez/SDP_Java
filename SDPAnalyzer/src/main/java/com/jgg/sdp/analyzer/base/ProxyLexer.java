@@ -26,6 +26,7 @@ import com.jgg.sdp.parser.lang.*;
 import com.jgg.sdp.parser.rules.RulesCICS;
 import com.jgg.sdp.parser.rules.RulesSQL;
 import com.jgg.sdp.parser.stmt.*;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 import static com.jgg.sdp.analyzer.base.Parsers.*;
 
@@ -78,13 +79,11 @@ public class ProxyLexer implements GenericScanner {
 
        switch (s.sym) {    	  
          case SQLDATA:             
-        	  Symbol sql = (Symbol) s.value;
-       		  info.addOffset(sql.left);        		  
+       		  info.addOffset(((SDPSymbol) s.value).line);        		  
    	          parserType = Parsers.DB2; 
         	  break;
          case COPY:	    	        
-       	      Symbol cpy = (Symbol) s.value;
-       	      info.addOffset(cpy.left);
+       	      info.addOffset(((SDPSymbol) s.value).line);
     	      parserType = Parsers.COPYBOOK;
     	 	  s =  lexer.next_token(); //Devuelve ENDCOPY (.)
               alterParser();
@@ -104,18 +103,15 @@ public class ProxyLexer implements GenericScanner {
 
        switch (s.sym) {    	  
          case CICSCODE:
-        	  Symbol cic = (Symbol) s.value;
-       		  info.addOffset(cic.left);
+       		  info.addOffset(((SDPSymbol) s.value).line);
    	          parserType = Parsers.CICS;
         	  break;
          case SQLCODE:             
-        	  Symbol sql = (Symbol) s.value;
-       		  info.addOffset(sql.left);        		  
+       		  info.addOffset(((SDPSymbol) s.value).line);        		  
    	          parserType = Parsers.DB2; 
         	  break;
          case COPY:	    	        
-       	      Symbol cpy = (Symbol) s.value;
-       	      info.addOffset(cpy.left);
+       	      info.addOffset(((SDPSymbol) s.value).line);
     	      parserType = Parsers.COPYBOOK;
     	 	  s =  lexer.next_token(); //Devuelve ENDCOPY (.)
               alterParser();
@@ -159,7 +155,7 @@ public class ProxyLexer implements GenericScanner {
    	   if (sql.isInclude()) {
    		   createCopy(s, CDG.DEP_INCLUDE);
    		   updateCopy(s);
-   	       loadCopy(sql.getRValue(0).getName(), CDG.SOURCE_INCLUDE, null);
+   	       loadCopy(sql.getRValue(0).getValue(), CDG.SOURCE_INCLUDE, null);
    	       return;
    	   } 
    	   

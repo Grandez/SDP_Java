@@ -1,7 +1,7 @@
 /**
  * Lista de variables
  */
-package com.jgg.sdp.blocks.symbols;
+package com.jgg.sdp.parser.symbols;
 
 import java.util.ArrayList;
 
@@ -10,6 +10,9 @@ import java_cup.runtime.*;
 public class SymbolList {
 	private ArrayList<SymbolExt> lista = new ArrayList<SymbolExt>();
 
+    public SymbolList () {
+    }
+	
     public SymbolList (SymbolExt t) {
         lista.add(t);
     }
@@ -17,15 +20,16 @@ public class SymbolList {
         lista.add(new SymbolExt(t));
     }
 
-	public SymbolList add(SymbolExt v) {
-		lista.add(v);
+    public SymbolList (SymbolList t) {
+    	for (SymbolExt s : t.getSymbols()) lista.add(s);
+    }
+    
+	public SymbolList add(Object v) {
+		if (v instanceof SymbolExt) lista.add((SymbolExt) v);
+		if (v instanceof Symbol) lista.add(new SymbolExt((Symbol) v));
 		return this;
 	}
-	public SymbolList add(Symbol v) {
-		lista.add(new SymbolExt(v));
-		return this;
-	}
-	
+    
     public ArrayList<SymbolExt> getSymbols() {
         return lista;
     }

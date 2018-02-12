@@ -11,46 +11,46 @@ package com.jgg.sdp.blocks.stmt;
 
 import java.util.ArrayList;
 
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 public class Tokens {
 
-	private ArrayList<Symbol> toks = new ArrayList<Symbol>();
+	private ArrayList<SDPSymbol> toks = new ArrayList<SDPSymbol>();
 	
 	public Tokens() {
 		
 	}
 	
-	public Tokens(Symbol s) {
+	public Tokens(SDPSymbol s) {
 		toks.add(s);
 	}
 
 	public Tokens(Tokens t) {
-		for (Symbol s : t.getTokens()) {
+		for (SDPSymbol s : t.getTokens()) {
 			toks.add(s);
 		}
 	}
 
-	public Tokens(Symbol s, Tokens t) {
+	public Tokens(SDPSymbol s, Tokens t) {
 		this(s);
-		for (Symbol ss : t.getTokens()) {
+		for (SDPSymbol ss : t.getTokens()) {
 			toks.add(ss);
 		}
 	}
 
-	public Tokens add(Symbol s) {
+	public Tokens add(SDPSymbol s) {
 		toks.add(s);
 		return this;
 	}
 	
 	public Tokens add(Tokens lista) {
-		for (Symbol s : lista.getTokens()) {
+		for (SDPSymbol s : lista.getTokens()) {
 			toks.add(s);
 		}
 		return this;
 	}
 	
-	public ArrayList<Symbol> getTokens() {
+	public ArrayList<SDPSymbol> getTokens() {
 		return toks;
 	}
 	 

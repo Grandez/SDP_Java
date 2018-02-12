@@ -3,8 +3,7 @@ package com.jgg.sdp.parser.stmt;
 import java.util.*;
 
 import com.jgg.sdp.blocks.stmt.Statement;
-
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 public class StmtSQL extends Statement<StmtSQL> {
 
@@ -18,7 +17,7 @@ public class StmtSQL extends Statement<StmtSQL> {
 		super(group, subGroup);
 	}
 	
-	public StmtSQL(Symbol s) {
+	public StmtSQL(SDPSymbol s) {
 		super(s);
 	}
 	

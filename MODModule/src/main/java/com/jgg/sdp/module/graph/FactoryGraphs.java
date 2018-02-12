@@ -30,20 +30,12 @@ public class FactoryGraphs {
 	    return new SubGraph(id, name);
 	}
 	
-	public Node getNode(Integer type) {
-		return nodes.add(new Node(type, curGraph, numNodes++));
-    }
-
 	public Node getNode(Integer type, String name) {
-		return getNode(type, name, 0);
+		return getNode(type, type, name, name, 0);
     }
 	
-	public Node getNode(Integer type, String name, int numStatements) {
-		Node n = new Node(type, name, curGraph, numNodes++);
-		n.setSubtype(type);
-		n.setFromTo(name, name);
-		n.setStmts(numStatements);
-		return nodes.add(n);
+	public Node getNode(Integer type, String name, int stmts) {
+		return getNode(type, type, name, name, stmts);
     }
 
 	public Node getNode(Integer type, Integer subtype) {
@@ -51,27 +43,11 @@ public class FactoryGraphs {
 	}	
 	public Node getNode(Integer type, Integer subtype, int stmts) {
 		String name = NodeTypes.getNodeName(type)    + "-" + numNodes;  
-		
-		Node n = new Node(type, name, curGraph, numNodes++);
-		n.setStmts(stmts);
-		n.setSubtype(subtype);
-		n.setFromTo(name, name);
-		return nodes.add(n);
+        return getNode(type, subtype, name, name, stmts);		
     }
 
-	public Node getNode(Integer type, Integer subtype, String name, int numStatements) {
-		Node n = new Node(type, name, curGraph, numNodes++);
-		n.setSubtype(subtype);
-		n.setFromTo(name, name);
-		n.setStmts(numStatements);
-		return nodes.add(n);
-    }
-
-	public Node getNode(Integer type, String from, String to, int stmts) {
-		Node n = new Node(type, from, curGraph, numNodes++);
-		n.setSubtype(type);
-		n.setFromTo(from, to);
-		n.setStmts(stmts);
+	public Node getNode(int type, int subtype, String from, String to, int stmts) {
+		Node n = new Node(type, subtype, from, to, stmts, curGraph, numNodes++);
 		return nodes.add(n);
     }
 

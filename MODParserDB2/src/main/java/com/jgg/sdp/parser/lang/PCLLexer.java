@@ -718,9 +718,7 @@ public class PCLLexer extends GenericLexer implements java_cup.runtime.Scanner {
   }
 
   /* user code: */
-   public Symbol symbol(int code){
-      return makeSymbol(code, yyline, yycolumn, yytext());
-   }   
+   Symbol    symbol    (int code)             { return symbol(code, yyline, yycolumn, yytext()); }
 
 
   /**

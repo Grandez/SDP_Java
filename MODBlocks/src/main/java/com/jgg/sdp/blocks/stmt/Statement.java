@@ -23,26 +23,24 @@ import java.util.*;
 import com.jgg.sdp.tools.Firma;
 import com.jgg.sdp.adt.ADTHashDup;
 import com.jgg.sdp.blocks.reflect.*;
-import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.common.ctes.CDGText;
-
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.*;
 
 public class Statement<T> implements IStatement {
 
 	private   StringBuilder        text     = new StringBuilder();
-    private   SymbolExt            verbo    = null;
+    private   SDPSymbol               verbo    = null;
     private   Integer              group    = null;
     private   Integer              subGroup = null;
-    private   ArrayList<SymbolExt> lvalues  = new ArrayList<SymbolExt>();
-    private   ArrayList<SymbolExt> rvalues  = new ArrayList<SymbolExt>();
-    
+    private   ArrayList<SDPSymbol> lvalues  = new ArrayList<SDPSymbol>();
+    private   ArrayList<SDPSymbol> rvalues  = new ArrayList<SDPSymbol>();
+
     // Opciones segun aparecen
     protected ArrayList<Option>    lstOptions = new ArrayList<Option>();
     
     // Mapeo para busqueda por nombre
     private ADTHashDup<String, Integer>  mapOptName = new ADTHashDup<String, Integer>();
-    // Mapeo para busqueda por Symbol.id
+    // Mapeo para busqueda por SDPSymbol.id
     private ADTHashDup<Integer, Integer> mapOptId = new ADTHashDup<Integer, Integer>();
     
     private String firma = null;
@@ -51,10 +49,10 @@ public class Statement<T> implements IStatement {
     private int orden = -1; 
 	private boolean endPoint = false;
  
-	private int begLine;
-	private int begColumn;
-	private int endLine;
-	private int endColumn;
+	public int begLine;
+	public int begColumn;
+	public int endLine;
+	public int endColumn;
 	
 
 	/***************************************************************/
@@ -74,21 +72,21 @@ public class Statement<T> implements IStatement {
 		this.subGroup = subGroup;
 	}
 	
-	public Statement (Symbol s) {
-		verbo = new SymbolExt(s);
-		begLine   = s.left;
-		begColumn = s.right;
-		endLine   = s.left;
-		endColumn = s.right;
+	public Statement (SDPSymbol s) {
+		verbo     = s;
+		begLine   = s.getLine();
+		begColumn = s.getColumn();
+		endLine   = s.getLine();
+		endColumn = s.getColumn() + s.getValue().length();
 		id = s.sym;
 	}
 
-	public Statement (Symbol s, int count) {
+	public Statement (SDPSymbol s, int count) {
 		this(s);
         orden = count;		
 	}
 
-	public Statement (Symbol s, SymbolList list) {
+	public Statement (SDPSymbol s, SDPSymbol list) {
 		this(s);
         addRValue(list);		
 	}
@@ -107,15 +105,15 @@ public class Statement<T> implements IStatement {
 	/**
 	 * Rellena la instruccion con los datos del verbo
 	 */
-	public void adjust(Symbol last) {
+	public void adjust(SDPSymbol last) {
 
-		begLine = verbo.left;
-		begColumn = verbo.right;
+		begLine = verbo.getLine();
+		begColumn = verbo.getColumn();
 		endLine = begLine;
 		endColumn = begColumn;
 		if (last != null) {
-		   endLine = ((Symbol) last.value).left;
-		   endColumn = ((Symbol) last.value).right;
+		   endLine = last.getLine();
+		   endColumn = last.getColumn();
 		}		
 	}
 
@@ -124,115 +122,72 @@ public class Statement<T> implements IStatement {
 	/***************************************************************/
 	
 	@SuppressWarnings("unchecked")
-	public T addRValue(Symbol s) {
-		text.append(s.value + " ");
-		rvalues.add(new SymbolExt(s));
-		endLine   = s.left;
-		endColumn = s.right;
-		return (T) this;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public T addRValue(SymbolExt s) {
+	public T addRValue(SDPSymbol s) {
 		text.append(s.value + " ");
 		rvalues.add(s);
-		endLine   = s.left;
-		endColumn = s.right;
-		return (T) this;
-	}
-
-	@SuppressWarnings("unchecked")
-	public T addRValue(SymbolList list) {
-		for (Symbol s : list.getSymbols()) {
-			addRValue(s);
-		}
+		endLine   = s.getLine();
+		endColumn = s.getColumn();
 		return (T) this;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public T addLValue(Symbol s) {
-		text.append(s.value + " ");
-		lvalues.add(new SymbolExt(s));
-		endLine   = s.left;
-		endColumn = s.right;
-		return (T) this;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public T addLValue(SymbolExt s) {
+	public T addLValue(SDPSymbol s) {
 		text.append(s.value + " ");
 		lvalues.add(s);
-		endLine   = s.left;
-		endColumn = s.right;
+		endLine   = s.getLine();
+		endColumn = s.getColumn();
 		return (T) this;
 	}
-
-	@SuppressWarnings("unchecked")
-	public T addLValue(SymbolList list) {
-		for (Symbol s : list.getSymbols()) {
-			text.append(s.value + " ");
-			addLValue(s);
-		}
-		return (T) this;
-	}
-
-	public SymbolExt getRValue(int index) {
+	
+	public SDPSymbol getRValue(int index) {
 		return rvalues.get(index);
 	}
 	
-	public ArrayList<SymbolExt> getRValues() {
+	public ArrayList<SDPSymbol> getRValues() {
 		return rvalues;
 	}
+
+	/***************************************************************/
+	/***                TRATAMIENTO VERBO                        ***/
+	/***************************************************************/
 	
+	public int getVerbId() {
+		return verbo.getId();
+	}
 	/**
 	 * Establece el verbo 
 	 * @param s Verbo
 	 * @param replace si es true replaza el verbo existente (en caso de que exista)
 	 */
-    public void setVerb(Symbol s, boolean replace) {
+    public void setVerb(SDPSymbol s, boolean replace) {
     	if (replace && verbo != null) {
     		verbo.value = s.value;
     	} else {
     		if (verbo == null) {
-    		    verbo = new SymbolExt(s);
+    		    verbo = s;
     		}    
     	}
     }
 	
-    public void setVerb(Symbol s) {
+    public void setVerb(SDPSymbol s) {
     	setVerb(s, false);
     }
 
-    public void setVerb(Symbol s, Symbol t) {
+    public void setVerb(SDPSymbol s, SDPSymbol t) {
     	setVerb(s, false);
     	appendVerb(t);
     }
     
-    public void appendVerb(Symbol s) {
+    public void appendVerb(SDPSymbol s) {
     	verbo.add(s);
     }
     
-	public SymbolExt getVerb() {
+	public SDPSymbol getVerb() {
 		return verbo;
 	}
 	
 	public String getVerbName() {
-		StringBuilder verb = new StringBuilder();
-		verb.append(verbo.getName());
-		for (Symbol s : verbo.getParents()) {
-			verb.append(" ");
-            if (s.value instanceof Symbol) {
-			   verb.append((String) ((Symbol) s.value).value);
-		    }
-		    else {
-			   verb.append((String) s.value);
-		    }
-		}
-		return verb.toString();
-	}
-	
-	public int getVerbId() {
-		return verbo.sym;
+		return verbo.toString();
 	}
 	
 	public void setBegLine(int begLine) {
@@ -321,11 +276,11 @@ public class Statement<T> implements IStatement {
     	if (firma != null) return firma;
     	StringBuilder cadena = new StringBuilder();
     	cadena.append(getVerbName());
-    	for (SymbolExt l : lvalues) {
-    		cadena.append(l.getName());
+    	for (SDPSymbol l : lvalues) {
+    		cadena.append(l.getValue());
     	}
-    	for (SymbolExt r : rvalues) {
-    		cadena.append(r.getName());
+    	for (SDPSymbol r : rvalues) {
+    		cadena.append(r.getValue());
     	}
     	return Firma.calculate(cadena.toString());
     }
@@ -382,27 +337,28 @@ public class Statement<T> implements IStatement {
     	return opts;
     }
 
-    public ArrayList<SymbolExt> getLValueList() {
+    public ArrayList<SDPSymbol> getLValueList() {
     	return lvalues; 
     }
     
-    public SymbolExt getLValue() {
+    public SDPSymbol getLValue() {
     	return (lvalues.size() > 0) ? lvalues.get(0) : null; 
     }
 
-    public ArrayList<SymbolExt> getRValueList() {
+    public ArrayList<SDPSymbol> getRValueList() {
     	return rvalues; 
     }
     
-    public SymbolExt getRValue() {
+    public SDPSymbol getRValue() {
     	return (rvalues.size() > 0) ? rvalues.get(0) : null; 
     }
 
-    public int getBegLine()   { return begLine;     }
-    public int getEndLine()   { return endLine;     }
-    public int getBegColumn() { return begColumn;   }
-    public int getEndColumn() { return endColumn;   }    
-    public int getLines()     { return endLine - begLine + 1; }
+    public String getValue()     { return getVerbName(); }
+    public int    getBegLine()   { return begLine;       }
+    public int    getEndLine()   { return endLine;       }
+    public int    getBegColumn() { return begColumn;     }
+    public int    getEndColumn() { return endColumn;     }    
+    public int    getLines()     { return endLine - begLine + 1; }
     
     public String getGroupName() {
     	return CDGText.getStmtGroupName(group);

@@ -1,5 +1,13 @@
 package com.jgg.sdp.ivp;
 
+/**
+ * Log:
+ * 0 - Nada
+ * 1 - Resumen
+ * 2 - Casos
+ * 3 - Cabecera
+ * 4 - Componente
+ */
 
 import java.io.File;
 /**
@@ -17,7 +25,6 @@ import com.jgg.sdp.common.ctes.*;
 import com.jgg.sdp.common.config.*;
 
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
-import com.jgg.sdp.ivp.base.Banners;
 import com.jgg.sdp.ivp.base.IVPConfig;
 import com.jgg.sdp.ivp.components.IVPAnalyzer;
 import com.jgg.sdp.ivp.jaxb.Component;
@@ -28,6 +35,7 @@ import com.jgg.sdp.printer.Printer;
 public class IVP {
 
     private Configuration cfg = DBConfiguration.getInstance();
+	private Printer       log = new Printer();
 
 	private int count     = 0;
 	private int countErrs = 0;
@@ -52,7 +60,8 @@ public class IVP {
 			
 		args = cfg.processCommandLine(IVPParms.parms, args);
 		
-		Banners.banner();
+		log.setLevel(cfg.getInteger(CFG.IVP_LOG));
+		log.banner(3, CDG.SDP_TITLE, "PROCESO DE VERIFICACION");
 		
 //		if (args.length == 0) {
 			loadFromResources();
@@ -97,7 +106,7 @@ public class IVP {
 	}
 
 	private  void processAnalyzer(Component component) throws Exception {
-		Banners.bannerComponent("SDPAnalyzer");
+		log.banner(4, "Component: " + component.getName());
 		IVPAnalyzer analyzer = new IVPAnalyzer(component, cfgBase);
 		analyzer.process();
 		modules   += analyzer.getCountModules();
@@ -202,15 +211,11 @@ public class IVP {
 	}
 	
 	private void printResults() {
-		Printer printer = new Printer();
-		printer.boxBeg();
-		printer.boxLine("SERENDIPITY - IVP", true);
-		printer.boxLine(String.format("%s %5d",  "Modulos analizados: ", modules)  , false);
-		printer.boxLine(String.format("%s %5d",  "Casos realizados:   ", count)    , false);
-		printer.boxLine(String.format("%s %5d",  "Casos erroneos:     ", countErrs), false);		
-		printer.boxEnd();
-		printer.nl();
-		
+		log.banner(1,  CDG.SDP_TITLE + " - IVP"
+		              ,String.format("%s %5d",  "Modulos analizados: ", modules)
+		              ,String.format("%s %5d",  "Casos realizados:   ", count)
+		              ,String.format("%s %5d",  "Casos erroneos:     ", countErrs)
+                  );		
 	}
 
 }

@@ -24,9 +24,7 @@ import static com.jgg.sdp.parser.lang.TCLSym.*;
 
 %{
 
-   public Symbol symbol(int code){
-      return makeSymbol(code, yyline, yycolumn, yytext());
-   }
+   Symbol    symbol    (int code)             { return symbol(code, yyline, yycolumn, yytext()); }
 %}
 
 

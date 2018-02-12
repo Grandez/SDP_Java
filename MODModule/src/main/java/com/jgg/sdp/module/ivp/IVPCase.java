@@ -8,6 +8,7 @@ public class IVPCase {
 	private String value;
 	private String operator;
 	private String description = "No description";
+	private String msgErr = null;
 	
 	public int getGroup() {
 		return group;
@@ -61,10 +62,24 @@ public class IVPCase {
 		this.operator = operator;
 	}
 	
+	public String getMsgErr() {
+		return msgErr;
+	}
+
+	public void setMsgErr(String msgErr) {
+		this.msgErr = msgErr;
+	}
+
 	public void setComponent(String component) {
 		String[] toks = component.split("\\.");
-		object = toks[0];
-		method = toks[1];
+		if (toks.length > 1) {
+		    object = toks[0];
+		    method = toks[1];
+		}
+		else {
+			object = null;
+			method = toks[0];
+		}
 	}
 	
 }

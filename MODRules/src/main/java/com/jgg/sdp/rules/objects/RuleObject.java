@@ -139,7 +139,7 @@ public class RuleObject {
 
 	public String getObjectValue() {
 		if (component == null) return null;
-		return ((IReflect) component).toValue();
+		return ((IReflect) component).getValue();
 	}
 	
 	public Object getLVal() {

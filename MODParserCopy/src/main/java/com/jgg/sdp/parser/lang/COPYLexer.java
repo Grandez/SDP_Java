@@ -303,40 +303,25 @@ public class COPYLexer extends GenericLexer implements java_cup.runtime.Scanner 
 
   /* user code: */
 
-   public Symbol literal(String txt) {
-       return null;
+   Symbol symbol(int code){
+      return symbol(code, yyline, yycolumn, yytext());
    }
    
-   public Symbol symbol(int code){
-      return symbol(code, yytext());
-   }
-   
-   public Symbol symbol(String txt){
-      return symbol(0, txt);
-   }
-
-   public Symbol token(int code) {
-             print("Devuelve SYMBOL " + code + " (" + (cadLine + 1) + "," + cadCol + ") " + cadena.toString());
-       return symbolFactory.newSymbol(cadena.toString(), code, new Symbol(code, cadLine + 1, cadCol, cadena.toString()));
+   Symbol token(int code) {
+        print("Devuelve SYMBOL " + code + " (" + (cadLine + 1) + "," + cadCol + ") " + cadena.toString());
+       return symbol(code, cadLine + 1, cadCol, cadena.toString());
    }   
 
-   public Symbol symbol(int code, String txt) {
+   Symbol symbol(int code, String txt) {
       data = true;
       int col = yycolumn + COLOFFSET;
-      
-      if (txt.indexOf('\t') != -1) checkSymbol(symbol("TAB")); 
       
       if (code != 0) {      
           print("Devuelve SYMBOL " + code + " (" + (yyline + 1) + "," + col + ") " + txt);
       }    
-      return symbolFactory.newSymbol(txt, code, new Symbol(code, yyline + 1, col, txt));
+      return symbol(code, yyline + 1, col, txt);
    }
 
-
-  private void excepcion(int code) {
-      throw new NotSupportedException(code, info.module.getName(), yyline + info.getOffset() + 1, yycolumn + 1, yytext());
-  }
-  
 
 
   /**

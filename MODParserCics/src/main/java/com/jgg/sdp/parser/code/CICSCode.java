@@ -3,21 +3,25 @@ package com.jgg.sdp.parser.code;
 import java.util.*;
 
 import com.jgg.sdp.blocks.stmt.Option;
-import com.jgg.sdp.common.ctes.CDG;
-import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.items.Routine;
-import com.jgg.sdp.parser.lang.CICSSym;
+import com.jgg.sdp.parser.rules.RulesCICS;
 import com.jgg.sdp.parser.stmt.*;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
+import com.jgg.sdp.tools.Cadena;
 
-import java_cup.runtime.Symbol;
+import static com.jgg.sdp.common.ctes.CDG.*;
+import static com.jgg.sdp.parser.lang.CICSSym.*;
+
 
 public class CICSCode {
 
-	private Module module = null;
-	private ArrayList<Option> parms = null;
+	private RulesCICS rules = new RulesCICS();
+	
+	private Module            module = null;
+	private ArrayList<Option> parms  = null;
 
-	private CICSTS cicsTs = CICSTS.getInstance();
+//	private CICSTS cicsTs = CICSTS.getInstance();
 	
 	public CICSCode() {
 		
@@ -27,7 +31,7 @@ public class CICSCode {
 	   this.module = module;
 	}
 
-    public StmtCICS mountStatement(Symbol verb) {
+    public StmtCICS mountStatement(SDPSymbol verb) {
     	StmtCICS stmt = new StmtCICS(verb);
     	stmt.setParms(parms);
     	return stmt;
@@ -44,6 +48,16 @@ public class CICSCode {
      * @return
      */
     public StmtCICS processCICSStatement(StmtCICS stmt) {
+    	switch (stmt.getGroup()) {
+             case STMT_CICS_CTL: processCICSControl(stmt); break;
+    	}
+//        public static final int STMT_CICS      = 20;
+//        public static final int STMT_CICS_SYS  = 21;
+//        public static final int STMT_CICS_PGM  = 22;
+//        public static final int STMT_CICS_CTL  = 23;
+//        public static final int STMT_CICS_WEB  = 24;
+    	
+    	rules.checkRESP(stmt);
     	/*
     	module.getCodigo().incStmtCics();
     	
@@ -71,37 +85,33 @@ public class CICSCode {
     	return stmt;
     }
     
-    private void processCall(StmtCICS stmt, int type) {
-    	Option parm = stmt.getParameter("PROGRAM");
-    	if (parm == null) return;
-    	module.getSummary().setCallMode(type);
-    	module.getSummary().setCallType(CDG.CALL_DYNAMIC);
-    	processDependence(parm.getValue(), parm.getId(), type);
+    private void processCICSControl(StmtCICS stmt) {
+    	int callMode = CALL_UNDEF;
+    	int callType = CALL_DYNAMIC;
+
+    	switch (stmt.getId()) {
+            case LINK:   callMode = CALL_LINK;   break;
+	        case XCTL:   callMode = CALL_XCTL;   break;
+	        case START:  callMode = CALL_START;	 break;        
+	        case RETURN: callMode = CALL_RETURN; break;
+	        default:     callMode = CALL_UNDEF;
+        }
+    	
+    	Option opt = stmt.getOption(PROGRAM);
+    	if (opt == null) opt = stmt.getOption(TRANSID);
+    	if (opt.getValueType() == LITERAL) callType =  CALL_STATIC;
+
+    	processDependence(callMode, callType, opt.getValue());
     }
     
-    private void processTransaction(StmtCICS stmt, int method) {
-    	Option parm = stmt.getParameter("TRANSID");
-    	if (parm == null) return;
-    	
-    	module.getSummary().setCallMode(method);
-    	module.getSummary().setCallType(CDG.CALL_DYNAMIC);
-
-    	processDependence(CDG.DEP_TRAN, parm.getValue(), parm.getId(), method);
-    }
-
-    private void processDependence(String nombre, Integer tipo, int subtipo) {
-   		processDependence(CDG.DEP_MODULE, nombre, tipo, subtipo);
-   	}
    	
-   	private void processDependence(int mod, String nombre, Integer tipo, int subtipo) {
-		int modo = (tipo == CICSSym.ID) ? CDG.DEP_ST_VARIABLE : CDG.CALL_STATIC;
-    	
+   	private void processDependence(int callMode, int callType, String nombre) {
 		nombre = nombre.trim();
 		
 	    Routine rut = new Routine();
-    	rut.setNombre(nombre);
-    	rut.setMetodo(mod);
-    	rut.setModo(modo);
+    	rut.setNombre(Cadena.removeQuotes(nombre));
+    	rut.setModo(callMode);
+    	rut.setMetodo(callType);
 
     	module.addRoutine(rut);
 	}

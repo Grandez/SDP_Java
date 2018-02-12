@@ -8,22 +8,23 @@ import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.parser.stmt.StmtSQL;
+import com.jgg.sdp.parser.symbols.*;
 import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
-   public void syntax_error(Symbol token) throws ParseException {
+   public void syntax_error(SDPSymbol token) throws ParseException {
           info.syntax_error(token);
    }
 
-   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+   public void unrecovered_syntax_error(SDPSymbol token) throws ParseException {
       info.unrecovered_syntax_error(token);
    }
       
 :}
 
 action code {:
-   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
    ParserInfo      info     = ParserInfo.getInstance();
    StmtSQL         stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_DML);
    
@@ -48,56 +49,56 @@ init with {:
 /****************************************************************************/
 
 
-terminal Symbol ID           ;
+terminal SDPSymbol ID           ;
 
-terminal Symbol HOSTVAR1     ;
-terminal Symbol HOSTVAR2     ;
-terminal Symbol IDQUALIFIED  ;
-terminal Symbol PREHOST      ;
-terminal Symbol FULLTABLE    ;
+terminal SDPSymbol HOSTVAR1     ;
+terminal SDPSymbol HOSTVAR2     ;
+terminal SDPSymbol IDQUALIFIED  ;
+terminal SDPSymbol PREHOST      ;
+terminal SDPSymbol FULLTABLE    ;
 
-terminal Symbol LITERAL      ;
+terminal SDPSymbol LITERAL      ;
 
 // Wrapper para ( ..... ) ASC/DESC
-terminal Symbol ASCENDING    ;
-terminal Symbol DESCENDING   ;
+terminal SDPSymbol ASCENDING    ;
+terminal SDPSymbol DESCENDING   ;
 
-terminal Symbol FUNCTION_SCALAR     ;
-terminal Symbol FUNCTION_AGGREGATE  ;
-terminal Symbol FUNCTION_TABLE      ;
-terminal Symbol FUNCTION_ROW        ;
-terminal Symbol FUNCTION_BOTH       ;
+terminal SDPSymbol FUNCTION_SCALAR     ;
+terminal SDPSymbol FUNCTION_AGGREGATE  ;
+terminal SDPSymbol FUNCTION_TABLE      ;
+terminal SDPSymbol FUNCTION_ROW        ;
+terminal SDPSymbol FUNCTION_BOTH       ;
 
-terminal Symbol NUM_ENTERO    ;
-terminal Symbol NUM_SIGNED  ;
-terminal Symbol NUM_DECIMAL   ;
-terminal Symbol NUM_FLOAT     ;
-terminal Symbol NUM_BINARY    ;
-terminal Symbol NUM_GRAPHIC   ;
+terminal SDPSymbol NUM_ENTERO    ;
+terminal SDPSymbol NUM_SIGNED  ;
+terminal SDPSymbol NUM_DECIMAL   ;
+terminal SDPSymbol NUM_FLOAT     ;
+terminal SDPSymbol NUM_BINARY    ;
+terminal SDPSymbol NUM_GRAPHIC   ;
 
 
-terminal Symbol EQ      ;
-terminal Symbol GT      ;
-terminal Symbol LT      ;
-terminal Symbol NE      ;
-terminal Symbol NE2     ;
-terminal Symbol NGT     ;
-terminal Symbol NLT     ;
-terminal Symbol GE      ;
-terminal Symbol LE      ;
-terminal Symbol CONCAT_SYM      ;
+terminal SDPSymbol EQ      ;
+terminal SDPSymbol GT      ;
+terminal SDPSymbol LT      ;
+terminal SDPSymbol NE      ;
+terminal SDPSymbol NE2     ;
+terminal SDPSymbol NGT     ;
+terminal SDPSymbol NLT     ;
+terminal SDPSymbol GE      ;
+terminal SDPSymbol LE      ;
+terminal SDPSymbol CONCAT_SYM      ;
 
-terminal Symbol LPAR                                  ;
-terminal Symbol RPAR                                  ;
-terminal Symbol COMMA                                 ;
+terminal SDPSymbol LPAR                                  ;
+terminal SDPSymbol RPAR                                  ;
+terminal SDPSymbol COMMA                                 ;
 
-terminal Symbol PLUS       ;
-terminal Symbol SUBTRACT   ;
-terminal Symbol MULTIPLIER ;
-terminal Symbol MULTIPLY   ;
-terminal Symbol DIVIDE     ;
+terminal SDPSymbol PLUS       ;
+terminal SDPSymbol SUBTRACT   ;
+terminal SDPSymbol MULTIPLIER ;
+terminal SDPSymbol MULTIPLY   ;
+terminal SDPSymbol DIVIDE     ;
 
-terminal Symbol QUESTION_MARK                         ;
+terminal SDPSymbol QUESTION_MARK                         ;
 
 /****************************************************************************/
 /****************************************************************************/
@@ -105,152 +106,152 @@ terminal Symbol QUESTION_MARK                         ;
 /****************************************************************************/
 /****************************************************************************/
 
-terminal Symbol ACCELERATION               ;
-terminal Symbol AGE                        ;
-terminal Symbol ALLOW                      ;
-terminal Symbol ALL                        ;
-terminal Symbol AND                        ;
-terminal Symbol ANY                        ;
-terminal Symbol APPLICATION                ;
-terminal Symbol AS                         ;
-terminal Symbol ASENSITIVE                 ;
-terminal Symbol BETWEEN                    ;
-terminal Symbol BY                         ;
-terminal Symbol CARDINALITY                ;
-terminal Symbol CASE                       ;
-terminal Symbol CAST                       ;
-terminal Symbol CHARACTER                  ;
-terminal Symbol CHAR                       ;
-terminal Symbol CLIENT_APPLNAME            ;
-terminal Symbol CLIENT_ACCTNG              ;
-terminal Symbol CLIENT_USERID              ;
-terminal Symbol CLIENT_WRKSTNNAME          ;
-terminal Symbol CONNECTION                 ;
-terminal Symbol CURRENT                    ;
-terminal Symbol CURRENT_DATE               ;
-terminal Symbol CURRENT_LC_CTYPE           ;
-terminal Symbol CURRENT_PATH               ;
-terminal Symbol CURRENT_SCHEMA             ;
-terminal Symbol CURRENT_TIME               ;
-terminal Symbol CURRENT_TIMESTAMP          ;
-terminal Symbol CURSOR                     ;
-terminal Symbol DATA                       ;
-terminal Symbol DAYS                       ;
-terminal Symbol DEBUG                      ;
-terminal Symbol DECLARE                    ;
-terminal Symbol DEFAULT                    ;
-terminal Symbol DEGREE                     ;
-terminal Symbol DELETE                     ;
-terminal Symbol DISABLE                    ;
-terminal Symbol DISALLOW                   ;
-terminal Symbol DISTINCT                   ;
-terminal Symbol DOUBLE                     ;
-terminal Symbol DYNAMIC                    ;
-terminal Symbol ELIGIBLE                   ;
-terminal Symbol ELSE                       ;
-terminal Symbol ENABLE                     ;
-terminal Symbol ENCODING                   ;
-terminal Symbol ENCRYPTION                 ;
-terminal Symbol END                        ;
-terminal Symbol ESCAPE                     ;
-terminal Symbol EXCEPT                     ;
-terminal Symbol EXISTS                     ;
-terminal Symbol EXPLAIN                    ;
-terminal Symbol FAILBACK                   ;
-terminal Symbol FETCH                      ;
-terminal Symbol FINAL                      ;
-terminal Symbol FIRST                      ;
-terminal Symbol FOR                        ;
-terminal Symbol FROM                       ;
-terminal Symbol FULL                       ;
-terminal Symbol GET_ACCEL_ARCHIVE          ;
-terminal Symbol GLOBAL                     ;
-terminal Symbol GROUP                      ;
-terminal Symbol HAVING                     ;
-terminal Symbol HINT                       ;
-terminal Symbol HOLD                       ;
-terminal Symbol HOURS                      ;
-terminal Symbol IN                         ;
-terminal Symbol INNER                      ;
-terminal Symbol INSENSITIVE                ;
-terminal Symbol INSERT                     ;
-terminal Symbol INTERSECT                  ;
-terminal Symbol INTO                       ;
-terminal Symbol IS                         ;
-terminal Symbol JOIN                       ;
-terminal Symbol LC_CTYPE                   ;
-terminal Symbol LC_TYPE                    ;
-terminal Symbol LEFT                       ;
-terminal Symbol LIKE                       ;
-terminal Symbol LOCALE                     ;
-terminal Symbol MAINTAINED                 ;
-terminal Symbol MEMBER                     ;
-terminal Symbol MICROSECONDS               ;
-terminal Symbol MINUTES                    ;
-terminal Symbol MODE                       ;
-terminal Symbol MONTHS                     ;
-terminal Symbol NEXT                       ;
-terminal Symbol NEXTVAL                    ;
-terminal Symbol NO                         ;
-terminal Symbol NONE                       ;
-terminal Symbol NOT                        ;
-terminal Symbol NULL                       ;
-terminal Symbol OF                         ;
-terminal Symbol OLD                        ;
-terminal Symbol ON                         ;
-terminal Symbol OPTIMIZATION               ;
-terminal Symbol OPTIMIZE                   ;
-terminal Symbol ORDER                      ;
-terminal Symbol OR                         ;
-terminal Symbol OUTER                      ;
-terminal Symbol PACKAGESET                 ;
-terminal Symbol PACKAGE                    ;
-terminal Symbol PASSWORD                   ;
-terminal Symbol PATH                       ;
-terminal Symbol PRECISION                  ;
-terminal Symbol QUERYNO                    ;
-terminal Symbol QUERY                      ;
-terminal Symbol REFRESH                    ;
-terminal Symbol RETURN                     ;
-terminal Symbol RIGHT                      ;
-terminal Symbol ROUND_MODE                 ;
-terminal Symbol ROUNDING                   ;
-terminal Symbol ROUTINE                    ;
-terminal Symbol ROWID                      ;
-terminal Symbol ROWSET                     ;
-terminal Symbol RULES                      ;
-terminal Symbol SCHEMA                     ;
-terminal Symbol SCHEME                     ;
-terminal Symbol SECONDS                    ;
-terminal Symbol SEQUENCE                   ;
-terminal Symbol SELECT                     ;
-terminal Symbol SENSITIVE                  ;
-terminal Symbol SERVER                     ;
-terminal Symbol SESSION_USER               ;
-terminal Symbol SET                        ;
-terminal Symbol SOME                       ;
-terminal Symbol SQLID                      ;
-terminal Symbol STATIC                     ;
-terminal Symbol STATEMENT                  ;
-terminal Symbol SYSTEM                     ;
-terminal Symbol TABLE                      ;
-terminal Symbol THEN                       ;
-terminal Symbol TO                         ;
-terminal Symbol TYPES                      ;
-terminal Symbol UNION                      ;
-terminal Symbol UPDATE                     ;
-terminal Symbol USER                       ;
-terminal Symbol VALUES                     ;
-terminal Symbol VALUE                      ;
-terminal Symbol VARIABLE                   ;
-terminal Symbol WHEN                       ;
-terminal Symbol WHERE                      ;
-terminal Symbol WITH                       ;
-terminal Symbol XMLCAST                    ;
-terminal Symbol XMLEXISTS                  ;
-terminal Symbol XMLTABLE                   ;
-terminal Symbol YEARS                      ;
-terminal Symbol ZONE                       ;
+terminal SDPSymbol ACCELERATION               ;
+terminal SDPSymbol AGE                        ;
+terminal SDPSymbol ALLOW                      ;
+terminal SDPSymbol ALL                        ;
+terminal SDPSymbol AND                        ;
+terminal SDPSymbol ANY                        ;
+terminal SDPSymbol APPLICATION                ;
+terminal SDPSymbol AS                         ;
+terminal SDPSymbol ASENSITIVE                 ;
+terminal SDPSymbol BETWEEN                    ;
+terminal SDPSymbol BY                         ;
+terminal SDPSymbol CARDINALITY                ;
+terminal SDPSymbol CASE                       ;
+terminal SDPSymbol CAST                       ;
+terminal SDPSymbol CHARACTER                  ;
+terminal SDPSymbol CHAR                       ;
+terminal SDPSymbol CLIENT_APPLNAME            ;
+terminal SDPSymbol CLIENT_ACCTNG              ;
+terminal SDPSymbol CLIENT_USERID              ;
+terminal SDPSymbol CLIENT_WRKSTNNAME          ;
+terminal SDPSymbol CONNECTION                 ;
+terminal SDPSymbol CURRENT                    ;
+terminal SDPSymbol CURRENT_DATE               ;
+terminal SDPSymbol CURRENT_LC_CTYPE           ;
+terminal SDPSymbol CURRENT_PATH               ;
+terminal SDPSymbol CURRENT_SCHEMA             ;
+terminal SDPSymbol CURRENT_TIME               ;
+terminal SDPSymbol CURRENT_TIMESTAMP          ;
+terminal SDPSymbol CURSOR                     ;
+terminal SDPSymbol DATA                       ;
+terminal SDPSymbol DAYS                       ;
+terminal SDPSymbol DEBUG                      ;
+terminal SDPSymbol DECLARE                    ;
+terminal SDPSymbol DEFAULT                    ;
+terminal SDPSymbol DEGREE                     ;
+terminal SDPSymbol DELETE                     ;
+terminal SDPSymbol DISABLE                    ;
+terminal SDPSymbol DISALLOW                   ;
+terminal SDPSymbol DISTINCT                   ;
+terminal SDPSymbol DOUBLE                     ;
+terminal SDPSymbol DYNAMIC                    ;
+terminal SDPSymbol ELIGIBLE                   ;
+terminal SDPSymbol ELSE                       ;
+terminal SDPSymbol ENABLE                     ;
+terminal SDPSymbol ENCODING                   ;
+terminal SDPSymbol ENCRYPTION                 ;
+terminal SDPSymbol END                        ;
+terminal SDPSymbol ESCAPE                     ;
+terminal SDPSymbol EXCEPT                     ;
+terminal SDPSymbol EXISTS                     ;
+terminal SDPSymbol EXPLAIN                    ;
+terminal SDPSymbol FAILBACK                   ;
+terminal SDPSymbol FETCH                      ;
+terminal SDPSymbol FINAL                      ;
+terminal SDPSymbol FIRST                      ;
+terminal SDPSymbol FOR                        ;
+terminal SDPSymbol FROM                       ;
+terminal SDPSymbol FULL                       ;
+terminal SDPSymbol GET_ACCEL_ARCHIVE          ;
+terminal SDPSymbol GLOBAL                     ;
+terminal SDPSymbol GROUP                      ;
+terminal SDPSymbol HAVING                     ;
+terminal SDPSymbol HINT                       ;
+terminal SDPSymbol HOLD                       ;
+terminal SDPSymbol HOURS                      ;
+terminal SDPSymbol IN                         ;
+terminal SDPSymbol INNER                      ;
+terminal SDPSymbol INSENSITIVE                ;
+terminal SDPSymbol INSERT                     ;
+terminal SDPSymbol INTERSECT                  ;
+terminal SDPSymbol INTO                       ;
+terminal SDPSymbol IS                         ;
+terminal SDPSymbol JOIN                       ;
+terminal SDPSymbol LC_CTYPE                   ;
+terminal SDPSymbol LC_TYPE                    ;
+terminal SDPSymbol LEFT                       ;
+terminal SDPSymbol LIKE                       ;
+terminal SDPSymbol LOCALE                     ;
+terminal SDPSymbol MAINTAINED                 ;
+terminal SDPSymbol MEMBER                     ;
+terminal SDPSymbol MICROSECONDS               ;
+terminal SDPSymbol MINUTES                    ;
+terminal SDPSymbol MODE                       ;
+terminal SDPSymbol MONTHS                     ;
+terminal SDPSymbol NEXT                       ;
+terminal SDPSymbol NEXTVAL                    ;
+terminal SDPSymbol NO                         ;
+terminal SDPSymbol NONE                       ;
+terminal SDPSymbol NOT                        ;
+terminal SDPSymbol NULL                       ;
+terminal SDPSymbol OF                         ;
+terminal SDPSymbol OLD                        ;
+terminal SDPSymbol ON                         ;
+terminal SDPSymbol OPTIMIZATION               ;
+terminal SDPSymbol OPTIMIZE                   ;
+terminal SDPSymbol ORDER                      ;
+terminal SDPSymbol OR                         ;
+terminal SDPSymbol OUTER                      ;
+terminal SDPSymbol PACKAGESET                 ;
+terminal SDPSymbol PACKAGE                    ;
+terminal SDPSymbol PASSWORD                   ;
+terminal SDPSymbol PATH                       ;
+terminal SDPSymbol PRECISION                  ;
+terminal SDPSymbol QUERYNO                    ;
+terminal SDPSymbol QUERY                      ;
+terminal SDPSymbol REFRESH                    ;
+terminal SDPSymbol RETURN                     ;
+terminal SDPSymbol RIGHT                      ;
+terminal SDPSymbol ROUND_MODE                 ;
+terminal SDPSymbol ROUNDING                   ;
+terminal SDPSymbol ROUTINE                    ;
+terminal SDPSymbol ROWID                      ;
+terminal SDPSymbol ROWSET                     ;
+terminal SDPSymbol RULES                      ;
+terminal SDPSymbol SCHEMA                     ;
+terminal SDPSymbol SCHEME                     ;
+terminal SDPSymbol SECONDS                    ;
+terminal SDPSymbol SEQUENCE                   ;
+terminal SDPSymbol SELECT                     ;
+terminal SDPSymbol SENSITIVE                  ;
+terminal SDPSymbol SERVER                     ;
+terminal SDPSymbol SESSION_USER               ;
+terminal SDPSymbol SET                        ;
+terminal SDPSymbol SOME                       ;
+terminal SDPSymbol SQLID                      ;
+terminal SDPSymbol STATIC                     ;
+terminal SDPSymbol STATEMENT                  ;
+terminal SDPSymbol SYSTEM                     ;
+terminal SDPSymbol TABLE                      ;
+terminal SDPSymbol THEN                       ;
+terminal SDPSymbol TO                         ;
+terminal SDPSymbol TYPES                      ;
+terminal SDPSymbol UNION                      ;
+terminal SDPSymbol UPDATE                     ;
+terminal SDPSymbol USER                       ;
+terminal SDPSymbol VALUES                     ;
+terminal SDPSymbol VALUE                      ;
+terminal SDPSymbol VARIABLE                   ;
+terminal SDPSymbol WHEN                       ;
+terminal SDPSymbol WHERE                      ;
+terminal SDPSymbol WITH                       ;
+terminal SDPSymbol XMLCAST                    ;
+terminal SDPSymbol XMLEXISTS                  ;
+terminal SDPSymbol XMLTABLE                   ;
+terminal SDPSymbol YEARS                      ;
+terminal SDPSymbol ZONE                       ;
 
 /****************************************************************************/
 /****************************************************************************/
@@ -258,59 +259,59 @@ terminal Symbol ZONE                       ;
 /****************************************************************************/
 /****************************************************************************/
 
-terminal Symbol ASC                                   ;
-terminal Symbol CALLER                                ;
-terminal Symbol CLIENT                                ;
-terminal Symbol CONCAT                                ;
-terminal Symbol DECFLOAT                              ;
-terminal Symbol DESC                                  ;
-terminal Symbol EXCHANGE                              ;
-terminal Symbol INCLUDE                               ;
-terminal Symbol LOCKED                                ;
-terminal Symbol MERGE                                 ;
-terminal Symbol OVERRIDING                            ;
-terminal Symbol POSITIONING                           ;
-terminal Symbol READ                                  ;
-terminal Symbol SCROLL                                ;
-terminal Symbol SESSION                               ;
-terminal Symbol TEMPORARY                             ;
-terminal Symbol BINARY                                ;
-terminal Symbol BUSINESS_TIME                         ;
-terminal Symbol CROSS                                 ;
-terminal Symbol CS                                    ;
-terminal Symbol DATE                                  ;
-terminal Symbol DEC                                   ;
-terminal Symbol DECIMAL                               ;
-terminal Symbol FLOAT                                 ;
-terminal Symbol GRAPHIC                               ;
-terminal Symbol INDICATOR                             ;
-terminal Symbol INPUT                                 ;
-terminal Symbol INTEGER                               ;
-terminal Symbol INT                                   ;
-terminal Symbol MAX                                   ;
-terminal Symbol MIN                                   ;
-terminal Symbol NUMERIC                               ;
-terminal Symbol ONLY                                  ;
-terminal Symbol PREVIOUS                              ;
-terminal Symbol PREVVAL                               ;
-terminal Symbol PORTION                               ;
-terminal Symbol REAL                                  ;
-terminal Symbol ROWS                                  ;
-terminal Symbol RR                                    ;
-terminal Symbol RS                                    ;
-terminal Symbol SELECTIVITY                           ;
-terminal Symbol SKIP                                  ;
-terminal Symbol SMALLINT                              ;
-terminal Symbol SYSTEM_TIME                           ;
-terminal Symbol TIME                                  ;
-terminal Symbol TIMESTAMP                             ;
-terminal Symbol UR                                    ;
-terminal Symbol VARBINARY                             ;
-terminal Symbol VARCHAR                               ;
-terminal Symbol VARGRAPHIC                            ;
-terminal Symbol VERSION                               ;
-terminal Symbol WITHOUT                               ;
-terminal Symbol YES                                   ;
+terminal SDPSymbol ASC                                   ;
+terminal SDPSymbol CALLER                                ;
+terminal SDPSymbol CLIENT                                ;
+terminal SDPSymbol CONCAT                                ;
+terminal SDPSymbol DECFLOAT                              ;
+terminal SDPSymbol DESC                                  ;
+terminal SDPSymbol EXCHANGE                              ;
+terminal SDPSymbol INCLUDE                               ;
+terminal SDPSymbol LOCKED                                ;
+terminal SDPSymbol MERGE                                 ;
+terminal SDPSymbol OVERRIDING                            ;
+terminal SDPSymbol POSITIONING                           ;
+terminal SDPSymbol READ                                  ;
+terminal SDPSymbol SCROLL                                ;
+terminal SDPSymbol SESSION                               ;
+terminal SDPSymbol TEMPORARY                             ;
+terminal SDPSymbol BINARY                                ;
+terminal SDPSymbol BUSINESS_TIME                         ;
+terminal SDPSymbol CROSS                                 ;
+terminal SDPSymbol CS                                    ;
+terminal SDPSymbol DATE                                  ;
+terminal SDPSymbol DEC                                   ;
+terminal SDPSymbol DECIMAL                               ;
+terminal SDPSymbol FLOAT                                 ;
+terminal SDPSymbol GRAPHIC                               ;
+terminal SDPSymbol INDICATOR                             ;
+terminal SDPSymbol INPUT                                 ;
+terminal SDPSymbol INTEGER                               ;
+terminal SDPSymbol INT                                   ;
+terminal SDPSymbol MAX                                   ;
+terminal SDPSymbol MIN                                   ;
+terminal SDPSymbol NUMERIC                               ;
+terminal SDPSymbol ONLY                                  ;
+terminal SDPSymbol PREVIOUS                              ;
+terminal SDPSymbol PREVVAL                               ;
+terminal SDPSymbol PORTION                               ;
+terminal SDPSymbol REAL                                  ;
+terminal SDPSymbol ROWS                                  ;
+terminal SDPSymbol RR                                    ;
+terminal SDPSymbol RS                                    ;
+terminal SDPSymbol SELECTIVITY                           ;
+terminal SDPSymbol SKIP                                  ;
+terminal SDPSymbol SMALLINT                              ;
+terminal SDPSymbol SYSTEM_TIME                           ;
+terminal SDPSymbol TIME                                  ;
+terminal SDPSymbol TIMESTAMP                             ;
+terminal SDPSymbol UR                                    ;
+terminal SDPSymbol VARBINARY                             ;
+terminal SDPSymbol VARCHAR                               ;
+terminal SDPSymbol VARGRAPHIC                            ;
+terminal SDPSymbol VERSION                               ;
+terminal SDPSymbol WITHOUT                               ;
+terminal SDPSymbol YES                                   ;
 
 
 /****************************************************************************/
@@ -321,17 +322,17 @@ terminal Symbol YES                                   ;
 
 non terminal Symbol  sql_stmt      ;
 
-non terminal         sql_dml       ;
-non terminal         sql_declare   ;
-non terminal         sql_delete    ;
-non terminal         sql_exchange  ;
-non terminal         sql_insert    ;
-non terminal         sql_merge     ;
-non terminal         sql_refresh   ;
-non terminal         sql_select    ;
-non terminal         sql_set       ;
-non terminal         sql_truncate  ;
-non terminal         sql_update    ;
+non terminal StmtSQL sql_dml       ;
+non terminal StmtSQL sql_declare   ;
+non terminal StmtSQL sql_delete    ;
+non terminal StmtSQL sql_exchange  ;
+non terminal StmtSQL sql_insert    ;
+non terminal StmtSQL sql_merge     ;
+non terminal StmtSQL sql_refresh   ;
+non terminal StmtSQL sql_select    ;
+non terminal StmtSQL sql_set       ;
+non terminal StmtSQL sql_truncate  ;
+non terminal StmtSQL sql_update    ;
 
 // DECLARE
 
@@ -644,8 +645,8 @@ non terminal expression_var         ;
 non terminal expression_attribute   ;
 
 non terminal operator               ;
-non terminal Symbol comparator      ;
-non terminal Symbol comparator_verb ;
+non terminal SDPSymbol comparator      ;
+non terminal SDPSymbol comparator_verb ;
 
 non terminal constant               ;
 non terminal constant_string        ;
@@ -706,9 +707,9 @@ non terminal include_column_id         ;
 
 non terminal queryno                   ;
 
-non terminal Symbol non_reserved_words ;
-non terminal Symbol reserved_words     ;
-non terminal Symbol other_words        ;
+non terminal SDPSymbol non_reserved_words ;
+non terminal SDPSymbol reserved_words     ;
+non terminal SDPSymbol other_words        ;
 
 non terminal timestamp          ;
 
@@ -734,7 +735,7 @@ non terminal opt_all_distinct          ;
 non terminal opt_not                   ;
 
 non terminal        opt_quantifier   ;
-non terminal Symbol quantifier       ;
+non terminal SDPSymbol quantifier       ;
 non terminal opt_eq           ;
 non terminal opt_minus        ;
 non terminal opt_table        ;
@@ -812,13 +813,9 @@ precedence nonassoc LPAR, RPAR ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql_stmt ::= sql_dml      {: stmt.adjust(info.getLastSymbol());
-                             String name = stmt.getVerbName();
-                             int id =  stmt.getVerbId();
-                             int line = stmt.getVerb().left;
-                             int col = stmt.getVerb().right;
-                             RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
-                          :}
+sql_stmt ::= sql_dml:s {: stmt.adjust(info.getLastSymbol()); 
+                          RESULT = symbolFactory.newSymbol(0, 0, 0, stmt); 
+                       :}
          ;
 
 sql_dml ::= sql_declare
@@ -1744,7 +1741,7 @@ clause_optimize ::= OPTIMIZE FOR NUM_ENTERO opt_rows
 /**********************************************************************/
 /**********************************************************************/
 /*                    FUNCIONES                                       */
-/* Todas son FUNCTION_NAME y el nombre va en el Symbol                */
+/* Todas son FUNCTION_NAME y el nombre va en el SDPSymbol                */
 /* esto permite que el codigo de inicializacion sea inferior a 64K    */
 /**********************************************************************/
 /**********************************************************************/

@@ -5,22 +5,23 @@ import java_cup.runtime.*;
 import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.parser.stmt.StmtSQL;
+import com.jgg.sdp.parser.symbols.*;
 import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
    
-   public void syntax_error(Symbol token) throws ParseException {
+   public void syntax_error(SDPSymbol token) throws ParseException {
           info.syntax_error(token);
    }
 
-   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+   public void unrecovered_syntax_error(SDPSymbol token) throws ParseException {
       info.unrecovered_syntax_error(token);
    }
 :}
 
 action code {:
-   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
    ParserInfo      info     = ParserInfo.getInstance();
    StmtSQL         stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_PCL);
    
@@ -44,70 +45,70 @@ init with {:
 /****************************************************************************/
 /****************************************************************************/
 
-terminal Symbol ALL                                   ;
+terminal SDPSymbol ALL                                   ;
 
-terminal Symbol COMMIT                                ;
-terminal Symbol CURRENT                               ;
-terminal Symbol CURSORS                               ;
+terminal SDPSymbol COMMIT                                ;
+terminal SDPSymbol CURRENT                               ;
+terminal SDPSymbol CURSORS                               ;
 
-terminal Symbol DATE                                  ;
-terminal Symbol DEC                                   ;
+terminal SDPSymbol DATE                                  ;
+terminal SDPSymbol DEC                                   ;
 
-terminal Symbol EXCLUSIVE                             ;
+terminal SDPSymbol EXCLUSIVE                             ;
 
-terminal Symbol HOSTVAR1                              ;
-terminal Symbol HOSTVAR2                              ;
+terminal SDPSymbol HOSTVAR1                              ;
+terminal SDPSymbol HOSTVAR2                              ;
 
-terminal Symbol ID        ;
-terminal Symbol IN                                    ;
-
-
-terminal Symbol LOCK                                  ;
-terminal Symbol LOCKS                                 ;
-
-terminal Symbol MAX                                   ;
-terminal Symbol MIN                                   ;
-terminal Symbol MODE                                  ;
-
-terminal Symbol NUM_ENTERO                            ;
+terminal SDPSymbol ID        ;
+terminal SDPSymbol IN                                    ;
 
 
+terminal SDPSymbol LOCK                                  ;
+terminal SDPSymbol LOCKS                                 ;
 
-terminal Symbol ON                                    ;
+terminal SDPSymbol MAX                                   ;
+terminal SDPSymbol MIN                                   ;
+terminal SDPSymbol MODE                                  ;
 
-terminal Symbol PARTITION                             ;
-
-terminal Symbol QUERYNO                               ;
-
-terminal Symbol REFRESH                               ;
-terminal Symbol RELEASE                               ;
-terminal Symbol RETAIN                                ;
-terminal Symbol ROLLBACK                              ;
-
-terminal Symbol SAVEPOINT                             ;
-terminal Symbol SHARE                                 ;
-terminal Symbol SMALLINT                              ;
-
-
-terminal Symbol TABLE                                 ;
-terminal Symbol TIMESTAMP                             ;
-terminal Symbol TIME                                  ;
-terminal Symbol TO                                    ;
-
-terminal Symbol VERSION                               ;
-
-terminal Symbol WORK                                  ;
+terminal SDPSymbol NUM_ENTERO                            ;
 
 
 
-non terminal Symbol  sql                ;
-non terminal         sql_tcl            ;
-non terminal         sql_commit         ;
-non terminal         sql_rollback       ;
-non terminal         sql_savepoint      ;
-non terminal         sql_lock_table     ;
-non terminal         sql_release        ;
-non terminal         sql_refresh        ;
+terminal SDPSymbol ON                                    ;
+
+terminal SDPSymbol PARTITION                             ;
+
+terminal SDPSymbol QUERYNO                               ;
+
+terminal SDPSymbol REFRESH                               ;
+terminal SDPSymbol RELEASE                               ;
+terminal SDPSymbol RETAIN                                ;
+terminal SDPSymbol ROLLBACK                              ;
+
+terminal SDPSymbol SAVEPOINT                             ;
+terminal SDPSymbol SHARE                                 ;
+terminal SDPSymbol SMALLINT                              ;
+
+
+terminal SDPSymbol TABLE                                 ;
+terminal SDPSymbol TIMESTAMP                             ;
+terminal SDPSymbol TIME                                  ;
+terminal SDPSymbol TO                                    ;
+
+terminal SDPSymbol VERSION                               ;
+
+terminal SDPSymbol WORK                                  ;
+
+
+
+non terminal Symbol  sql_stmt           ;
+non terminal StmtSQL sql_tcl            ;
+non terminal StmtSQL sql_commit         ;
+non terminal StmtSQL sql_rollback       ;
+non terminal StmtSQL sql_savepoint      ;
+non terminal StmtSQL sql_lock_table     ;
+non terminal StmtSQL sql_release        ;
+non terminal StmtSQL sql_refresh        ;
 
 non terminal sql_savepoint_opt  ;
 non terminal sql_savepoint_lst  ;
@@ -122,8 +123,8 @@ non terminal release_connection ;
 non terminal release_savepoint  ;
 
 
-non terminal Symbol non_reserved_words ;
-non terminal Symbol integer     ;
+non terminal SDPSymbol non_reserved_words ;
+non terminal SDPSymbol integer     ;
 
 non terminal opt_clause_queryno ;
 non terminal opt_id             ;
@@ -151,15 +152,11 @@ non terminal host_variable      ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql ::= sql_tcl  {: stmt.adjust(info.getLastSymbol()); 
-                    String name = stmt.getVerbName();
-                    int id =  stmt.getVerbId();
-                    int line = stmt.getVerb().left;
-                    int col = stmt.getVerb().right;
-                    RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
-                 :}
-    ;
-
+sql_stmt ::= sql_tcl:s {: stmt.adjust(info.getLastSymbol()); 
+                          RESULT = symbolFactory.newSymbol(0, 0, 0, stmt); 
+                       :}
+         ;
+    
 sql_tcl ::= sql_commit
         |   sql_rollback
         |   sql_savepoint 

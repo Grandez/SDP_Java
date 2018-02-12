@@ -19,11 +19,7 @@ package com.jgg.sdp.parser.code;
  */
 import java.util.*;
 
-import java_cup.runtime.ComplexSymbolFactory;
-import java_cup.runtime.Symbol;
-
 import com.jgg.sdp.blocks.stmt.*;
-import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.common.ctes.*;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.module.base.Module;
@@ -32,6 +28,7 @@ import com.jgg.sdp.module.items.*;
 import com.jgg.sdp.parser.base.NotSupportedException;
 import com.jgg.sdp.parser.lang.ZCZSym;
 import com.jgg.sdp.parser.stmt.*;
+import com.jgg.sdp.parser.symbols.*;
 import com.jgg.sdp.parser.tools.*;
 
 import static com.jgg.sdp.parser.lang.ZCCSym.*;
@@ -53,7 +50,7 @@ public class ZCCCode extends ZCZCode {
 	// Pila de controles de flujo: IF, PERFORM, EVALUATE, SEARCH
     private Stack<StmtCobol> stackFlujo = new Stack<StmtCobol>(); 
 
-	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+	private SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
 
     // Flag para controlar sentencias que admiten imperative-statement
     // Ejemplo:
@@ -65,8 +62,13 @@ public class ZCCCode extends ZCZCode {
 
     public ZCCCode(Module module) {
        super(module);
-       rootGraph = module.getGraph();
+       rootGraph = module.getComponentGraph();
 	}
+
+    public SDPSymbol add (SDPSymbol base, SDPSymbol... syms) {
+        for (SDPSymbol o : syms) base.add(o);
+        return base;    			      
+    }
 
     public int  getNumStatements()      { return numStatements;   }
 	
@@ -76,14 +78,11 @@ public class ZCCCode extends ZCZCode {
     
     public void setImperative() { imperative = true; }
 
-    public Variable getVariable(Symbol s) {
-    	return null;
-    	/*JGG
-    	String name = (String) s.value;
-    	Variable var = module.getVariable(name);
+    public Variable getVariable(SDPSymbol s) {
+    	Variable var = module.getVariable(s);
     	if (var == null) module.setVarMissing();
         return var;
-        */	
+
     }
     
     public StmtCobol setAtEnd(StmtCobol stmt) { 
@@ -92,8 +91,8 @@ public class ZCCCode extends ZCZCode {
         return stmt; 
     }    
 
-	public void beginCode(Symbol s) {
-		info.addDivision(CDG.SECT_PRC, s.left);
+	public void beginCode(SDPSymbol s) {
+		info.addDivision(CDG.SECT_PRC, s.line);
         Trap trap = new Trap(TRAP.BEG_MODULE, makeLiteral(module.getName()));
         trap = injector.setPrevTrap(trap);
 
@@ -101,14 +100,12 @@ public class ZCCCode extends ZCZCode {
         grafo.addLinearNode(TRAP.BLOCK, 0);
 	}
 	
-	public Symbol makeSymbol(int code, int line, int column, String text) {
-         Symbol s = new Symbol(code, line, column, text);
-		 return symbolFactory.newSymbol(text, code, s);
+	public SDPSymbol makeSymbol(int code, int line, int column, String text) {
+		 return (SDPSymbol) symbolFactory.newSymbol(code, line, column, text).value;
 	}
 
-	public Symbol makeSymbol(Symbol s, int code, String text) {
-        Symbol ss = new Symbol(code, s.left, s.right, text);
-        return symbolFactory.newSymbol(text, code, ss);
+	public SDPSymbol makeSymbol(SDPSymbol s, int code, String text) {
+		return (SDPSymbol) symbolFactory.newSymbol(code, -1, -1, text).value;
 	}
 	
 	/**
@@ -119,8 +116,8 @@ public class ZCCCode extends ZCZCode {
      * @param endp
      *            Punto de PROCEDURE DIVISION
      */
-	public void   parrafoVirtual(Symbol endp) {
-        parrafo = module.addParagraph("", endp.left, 0);		
+	public void   parrafoVirtual(SDPSymbol endp) {
+        parrafo = module.addParagraph("", endp.line, 0);		
 	}
 
 	public int newBlock(boolean trap, Integer cause) {
@@ -222,7 +219,7 @@ public class ZCCCode extends ZCZCode {
 		injector.setNextTrap(new Trap(TRAP.END_PERFORM));
 	}
 	
-	public Symbol processParagraph(Symbol s, StmtCobol last) {
+	public SDPSymbol processParagraph(SDPSymbol s, StmtCobol last) {
 	    boolean firstP = false;
         Trap trap = null;
 	    String name = getName(s);
@@ -238,7 +235,7 @@ public class ZCCCode extends ZCZCode {
             parrafo = module.getParagraph("");
             if (parrafo != null) {
                 parrafo.setName(name);
-                parrafo.setLine(s.left);
+                parrafo.setLine(s.line);
                 firstP = true;
             }    
             injector.removeTraps();  // Quitar el de inicio de modulo
@@ -253,7 +250,7 @@ public class ZCCCode extends ZCZCode {
 //JGG4        }
 
         if (!firstP) {
-        	parrafo = module.addParagraph(name, s.left, numStatements);
+        	parrafo = module.addParagraph(name, s.line, numStatements);
         	grafo = newGraph(parrafo.getOrden(), parrafo.getName());
         }
         
@@ -263,7 +260,7 @@ public class ZCCCode extends ZCZCode {
         
         newBlock(last, true, TRAP.IN_PARR);
 
-        injector.loadTraps(s.left, s.right);
+        injector.loadTraps(s.line, s.column);
  
         return s;
    }
@@ -297,9 +294,9 @@ public class ZCCCode extends ZCZCode {
 	}	
 
 	private void performInline(StmtCobol stmt) {
-	    Symbol verb = stmt.getVerb();
+	    SDPSymbol verb = stmt.getVerb();
 	    
-		injector.loadTraps(verb.left, verb.right);
+		injector.loadTraps(verb.line, verb.column);
         module.closeBlock(stmt.getBegLine(), stmt.getEndLine(), numStatements);
 		newBlock(stmt, true, TRAP.INLINE);
 		skipBlock = true;
@@ -307,17 +304,17 @@ public class ZCCCode extends ZCZCode {
 	}
 
 	private void performOutline(StmtCobol stmt) {
-		Symbol perform = stmt.getVerb();
+		SDPSymbol perform = stmt.getVerb();
 		String from    = stmt.getOptionByPos(0).getName();
 		String to      = null;
 		
         injector.setPrevTrap(new Trap(TRAP.BEG_PERFORM, makeLiteral(from)));
-		injector.loadTraps(perform.left, perform.right);
+		injector.loadTraps(perform.line, perform.column);
         injector.setNextTrap(new Trap(TRAP.END_PERFORM, makeLiteral(from)));
         
         Option thru = stmt.getOption(THRU);
         if (thru != null) {
-        	to = thru.getVar(0).getName();
+        	to = thru.getParm(0).value;
         }
         module.addParagraphReference(from, to);
                 
@@ -325,7 +322,7 @@ public class ZCCCode extends ZCZCode {
         if (currBlock != null) currBlock.addPerform(from);
         
         boolean loop = stmt.getOption(UNTIL) == null ? false : true;
-		grafo.addLinearNode(TRAP.PERFORM, from, to, numStatements, loop);
+		grafo.addLinearNode(TRAP.PERFORM, TRAP.PERFORM, from, to, numStatements, loop);
 	}
 	
 	private void addToGraph(StmtCobol stmt, String from) {
@@ -402,19 +399,19 @@ public class ZCCCode extends ZCZCode {
 	 */
 	public StmtCobol wrapPerform(StmtCobol stmt) {
 		parrafo.incCiclomatic();
-		Symbol s = stmt.getVerb();
+		SDPSymbol s = stmt.getVerb();
 		if (s.sym != NodeTypes.PERFORM) return stmt;
-		injector.setFirstTrap(new Trap(TRAP.BEG_PERFORM, s.left));
-		injector.setNextTrap(new Trap(TRAP.END_PERFORM, s.left));
+		injector.setFirstTrap(new Trap(TRAP.BEG_PERFORM, s.line));
+		injector.setNextTrap(new Trap(TRAP.END_PERFORM, s.line));
 		return stmt;
 	}
 	
-	public StmtCobol fileAction(int action, Symbol base, Tokens files) {
+	public StmtCobol fileAction(int action, SDPSymbol base, Tokens files) {
         StmtCobol stmt = new StmtCobol(base, numStatements);
         return stmt;
         /*JGG
         stmt.addTokens(files);
-        for (Symbol s : files.getTokens()) {
+        for (SDPSymbol s : files.getTokens()) {
              Persistence f = module.getFile( (String) s.value);
              injector.setPrevTrap(new Trap(action, f.getPos() + 1));
         }
@@ -422,7 +419,7 @@ public class ZCCCode extends ZCZCode {
         */
 	}
 	
-	public StmtCobol fileAccess(int action, Symbol base, Symbol f) {
+	public StmtCobol fileAccess(int action, SDPSymbol base, SDPSymbol f) {
         Persistence p;
         
 		StmtCobol stmt = new StmtCobol(base, numStatements);
@@ -465,7 +462,7 @@ public class ZCCCode extends ZCZCode {
         return stmt;
     }
 	
-	public StmtCobol processCall (Symbol verbo, Symbol rutina) {
+	public StmtCobol processCall (SDPSymbol verbo, SDPSymbol rutina) {
 		int callMode = CDG.CALL_CALL;
 		int callType = CDG.CALL_DYNAMIC;
 		
@@ -485,6 +482,9 @@ public class ZCCCode extends ZCZCode {
         injector.setNextTrap(new Trap(TRAP.END_CALL, nombre));
         
         processDependence((String) rutina.value, rutina.sym);
+        
+        grafo.addLinearNode(TRAP.CALL, callType, (String) rutina.value, numStatements);
+        
         return stmt;
 	}
 
@@ -595,6 +595,18 @@ public class ZCCCode extends ZCZCode {
 	    }
 	    return stmt;
 	}
+
+	public StmtCobol endVerb(SDPSymbol s) {
+		StmtCobol stmt = new StmtCobol(s);
+		String tipo = s.value.substring(4).toUpperCase();
+
+		if (tipo.compareTo("IF")       == 0) return endIf(stmt);
+		if (tipo.compareTo("SEARCH")   == 0) return endSearch(stmt);
+		if (tipo.compareTo("PERFORM")  == 0) return endPerform(stmt);
+		if (tipo.compareTo("EVALUATE") == 0) return endPerform(stmt);
+
+        return stmt;
+	}
 	
 	public StmtCobol endIf(StmtCobol stmt) {
 		cleanStackFlujo("IF");
@@ -615,16 +627,17 @@ public class ZCCCode extends ZCZCode {
         grafo.endBlock(numStatements, false);
         return stmt;
     }
-    
-    private void cleanStackFlujo(String txt) {
-        while (stackFlujo.pop().getVerbName().compareToIgnoreCase(txt) != 0);
-    }
 
     public StmtCobol endPerform(StmtCobol stmt) {
         newBlock(stmt, true, TRAP.END_PERFORM);
         //grafo.endCycle(NodeTypes.PERFORM);
         return stmt;
     }
+    
+    private void cleanStackFlujo(String txt) {
+        while (stackFlujo.pop().getVerbName().compareToIgnoreCase(txt) != 0);
+    }
+
         
     public void trapEndModule() {
 		injector.setPrevTrap(new Trap(TRAP.END_MODULE, makeLiteral(module.getName())));
@@ -632,7 +645,7 @@ public class ZCCCode extends ZCZCode {
 	}
 	
 
-    private String getName(Symbol s) {
+    private String getName(SDPSymbol s) {
 		return ((String) s.value).trim();
 	}
 	
@@ -719,32 +732,32 @@ public class ZCCCode extends ZCZCode {
 		injector.setTrap(0, trap);
 	}
 
-	public void notSupportedSection(Symbol s) {
-	    notSupported(MSG.SUPPORT_SECTION, s.left + 1, s.right + 1, (String) s.value);
+	public void notSupportedSection(SDPSymbol s) {
+	    notSupported(MSG.SUPPORT_SECTION, s.line + 1, s.column + 1, (String) s.value);
 	}
 	
-	public void notSupportedParrName(Symbol s) {
-	    notSupported(MSG.SUPPORT_NAME, s.left + 1, s.right + 1, (String) s.value);
+	public void notSupportedParrName(SDPSymbol s) {
+	    notSupported(MSG.SUPPORT_NAME, s.line + 1, s.column + 1, (String) s.value);
 	}
 	
-	public void notSupportedCopy(Symbol s) {
-	    notSupported(MSG.SUPPORT_COPY, s.left + 1, s.right + 1, (String) s.value);
+	public void notSupportedCopy(SDPSymbol s) {
+	    notSupported(MSG.SUPPORT_COPY, s.line + 1, s.column + 1, (String) s.value);
 	}
 	private void notSupported(int code, Object... parms) {
 	     throw new NotSupportedException(code, module.getName(), parms);
 	}
 
-/*	
-	public Variable addVar(Symbol level, Symbol name) {
+	
+	public Variable addVar(SDPSymbol level, SDPSymbol name) {
 		Variable var = new Variable((String) level.value, (String) name.value);
-		var.setLine(level.left);
-		var.setColumn(level.right);
-		var.setSection(section);
+		var.setLine(level.line);
+		var.setColumn(level.column);
+//		var.setSection(section);
 		module.addVariable(var);
 		return var;
 	}
-*/
-	public Symbol setVarRead(SymbolExt s) {
+
+	public SDPSymbol setVarRead(SDPSymbol s) {
 		/*JGG
 		if (s.sym == FUNCTION) return s;
 		String name = (String) s.value;
@@ -753,7 +766,7 @@ public class ZCCCode extends ZCZCode {
 		return s;
 	}
 
-	public Symbol setVarWrite(SymbolExt s) {
+	public SDPSymbol setVarWrite(SDPSymbol s) {
 		return s;
 		/*JGG
 		String name = (String) s.value;
@@ -769,38 +782,28 @@ public class ZCCCode extends ZCZCode {
 		return v;
 	}
 
-	public SymbolList setVarListWrite(SymbolList lista) {
-		for (SymbolExt s : lista.getSymbols()) {
-			module.setVarWrite(s.getName(), s.getParentName());
+	public SDPSymbol setVarListWrite(SDPSymbol lista) {
+		module.setVarWrite(lista.value, lista.getParentName());
+		for (SDPSymbol s : lista.getSymbols()) {
+			module.setVarWrite(s.value, s.getParentName());
 		}
 		return lista;
 	}
 	
-	public void checkCall(SymbolList l, SymbolExt r) {
-		String value = null;
-		boolean id = false;
+	public void checkCall(SDPSymbol l, SDPSymbol r) {
+		boolean isVar = false;
 		
 		if (r == null) return;
 		
 		switch (r.getId()) {
-		     case ID: 
-		    	  id = true;
-		    	  value = (String) r.value;
-		    	  break;
-		     case LITERAL:
-		    	  id = false;
-		    	  value = (String) r.value;
-		    	  break;
-		     case ZCZSym.FIGURATIVE:
-		    	  id = false;
-		    	  value = "";
-		    	  break;
-		    default:
-		    	 return;
+            case LITERAL: 
+		    case ZCZSym.FIGURATIVE: isVar = false; break;
+		    case ID:                isVar = true;  break;
+		    default:                return;
 		}
 		
-        for (SymbolExt s : l.getSymbols()) {
-			   module.setVarValue(s.getName(), value, id);
+        for (SDPSymbol s : l.getSymbols()) {
+			   module.setVarValue(s, isVar);
 		}
 	}
 

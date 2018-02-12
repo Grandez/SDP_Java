@@ -10,6 +10,10 @@ package com.jgg.sdp.tools;
 
 public class Cadena {
 	
+	public static String trim(String s) {
+		return (ltrim(rtrim(s)));
+	}
+	
 	/**
      * Quita espacios por la izquierda
      *
@@ -62,4 +66,9 @@ public class Cadena {
 		return s.substring(s.length() - len + 1);
 	}
 
+	public static String removeQuotes(String s) {
+		String n = trim(s);
+		if (n.charAt(0) != '\'' && n.charAt(0) != '\"') return n;
+		return n.substring(1, n.length() - 1 );
+	}
 }

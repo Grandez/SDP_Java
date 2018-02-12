@@ -7,7 +7,7 @@ public class Matchers {
 	public static int matchInteger(Integer res, IVPCase c) {
 		int tgt = c.getValueInteger();
 		
-//		if (tgt != res) msgErr = String.format("Expected: %d. Found: %d",  tgt, res);
+		if (tgt != res) c.setMsgErr(String.format("Expected: %d. Found: %d",  tgt, res));
 		return (tgt == res) ? 0 : 1;
 	}
 

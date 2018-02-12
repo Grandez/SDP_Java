@@ -255,6 +255,8 @@ public class WindowsColoredPrinter extends AbstractColoredPrinter {
         output.append(msg);
         output.append(appendNewline ?  '\n' : "");
 
-        AnsiConsole.out.print(output.toString());
+//JGG        AnsiConsole.out.print(output.toString());
+        System.out.print(output.toString());
+//        if (appendNewline) System.out.println();
     }
 }

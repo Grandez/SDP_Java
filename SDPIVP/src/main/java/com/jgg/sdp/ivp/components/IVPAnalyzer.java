@@ -4,10 +4,12 @@ import java.io.File;
 import java.util.*;
 
 import com.jgg.sdp.SDPAnalyzer;
+import com.jgg.sdp.common.config.Configuration;
+import com.jgg.sdp.common.ctes.CFG;
 import com.jgg.sdp.common.exceptions.*;
 import com.jgg.sdp.common.files.*;
-import com.jgg.sdp.core.exceptions.*;
 import com.jgg.sdp.domain.services.CommonService;
+import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.ivp.IVPParser;
 import com.jgg.sdp.ivp.base.*;
 import com.jgg.sdp.ivp.commands.CommandLauncher;
@@ -24,12 +26,14 @@ public class IVPAnalyzer {
 	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
 
 	private CommonService dbService = new CommonService();
+
+	private Configuration cfg = DBConfiguration.getInstance();
 	
     private String currArchivo = null;
     
 	private Component component;
 	
-	private Printer     printer  = Printer.getInstance();
+	private Printer     log  = null;
 	
 	private IVPPatterns patterns = new IVPPatterns();
 	
@@ -47,6 +51,7 @@ public class IVPAnalyzer {
 	
 	public IVPAnalyzer(Component component, IVPConfig cfgBase) {
 		this.component = component;
+		log = new Printer(cfg.getInteger(CFG.IVP_LOG));
 		IVPConfig cfg = new IVPConfig(cfgBase);
 		cfg.update(component.getConfig());
 		cfgs.push(cfg);
@@ -67,7 +72,7 @@ public class IVPAnalyzer {
 	}
 	
 	private void processXMLDirectory(String dir) throws Exception {
-		Banners.bannerGroup(dir);
+//		Banners.bannerGroup(dir);
 		List<File> caseFiles = patterns.getFiles(dir, ".xml");
 		processXMLFiles(caseFiles);
 	}
@@ -90,7 +95,7 @@ public class IVPAnalyzer {
 		cfgs.push(cfg);
 		
 //		env.setEnvironment(currBlock, cfgs.peek(), ivp.getEnvironment());
-		Banners.bannerXML(ivp.getDescription());
+//		Banners.bannerXML(5, ivp.getDescription());
 		launcher.process(ivp.getPreProcess());
 		for (IVPGroupType group: ivp.getGroup()) {
 			processCasesGroup(group);
@@ -100,9 +105,9 @@ public class IVPAnalyzer {
 	}
 	private void processCasesGroup(IVPGroupType group) {
 
-		Banners.bannerGroup(group.getName());
+//		Banners.bannerGroup(4, group.getName());
 		currBlock = 0;
-		Banners.bannerBloque(currBlock);
+//		Banners.bannerBloque(currBlock);
 
 		// Bloque inicial
 		processCblModules(group.getPattern());
@@ -137,13 +142,17 @@ public class IVPAnalyzer {
            for (Archive archivo : FileFinder.find(cfgs.peek().getCobolDir(), pattern)) { 
         	   currArchivo = archivo.getFileName();
         	   modules.add(currArchivo);
-        	   printer.lineFixBeg(String.format("%5d - %8s", ++count, archivo.getBaseName()));
-if (archivo.getBaseName().compareTo("IVP50026") == 0) {
+        	   log.lineBeg(2,String.format("%5d - %8s", ++count, archivo.getBaseName()));
+if (archivo.getBaseName().compareTo("IVP55001") == 0) {
 	archivo.toString();	
 }
         	   module = analyze(archivo);
         	   int rc = evaluate(module); 
-               if (rc == 0) printer.lineFixEnd("OK");
+               if (rc == 0) {
+            	   log.lineEnd(2, "OK");
+               } else {
+            	   log.lineEnd(2, "KO");
+               }
                countErrs += rc;
            } 	
 	   }
@@ -180,7 +189,7 @@ if (archivo.getBaseName().compareTo("IVP50026") == 0) {
 	
 
 	private int evaluate(Module module) {
-		AnalyzerEval eval = new AnalyzerEval(module);
+		AnalyzerEval eval = new AnalyzerEval(module, log);
 		return eval.evaluate(currBlock);
 	}
 	

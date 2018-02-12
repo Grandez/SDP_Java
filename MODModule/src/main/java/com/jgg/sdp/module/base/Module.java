@@ -20,6 +20,7 @@ import com.jgg.sdp.module.status.Status;
 import com.jgg.sdp.module.tables.*;
 import com.jgg.sdp.module.unit.Source;
 import com.jgg.sdp.module.unit.Unit;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 public class Module {
 
@@ -400,8 +401,8 @@ public class Module {
      * @return El objeto Var
      */
     	
-	public Variable getVariable(String name) {
-         return tbVars.getVariable(name);		
+	public Variable getVariable(SDPSymbol var) {
+         return tbVars.getVariable(var);		
 	}
 	
 	public Variable addVariable(Variable var) {
@@ -432,14 +433,14 @@ public class Module {
 		return tbVars.setVarWrite(name, parent);
 	}
 
-	public void setVarValue(String name, String value, boolean id) {
-		Variable v = tbVars.getVariable(name);
+	public void setVarValue(SDPSymbol s, boolean isVar) {
+		Variable v = tbVars.getVariable(s);
 		if (v == null) return;
-		if (id) {
-			v.setVariable(value);
+		if (isVar) {
+			v.setVariable(s.value);
 		}
 		else {
-			v.setValue(value);
+			v.setValue(s.value);
 		}
 	}
 	
@@ -483,7 +484,7 @@ public class Module {
     public ArrayList<CICSVerb> getCICSVerbs() {
     	return tbCics.getList();
     }
-
+ 
     //// *********************************************************************
     ////  Tratamiento COPY REPLACING                          
     //// *********************************************************************
@@ -502,7 +503,15 @@ public class Module {
     ////  Tratamiento GRAFO                          
     //// *********************************************************************
     
-    public Graph  getGraph()    { return graph;              }
     public void   makeGraph()   { graph.parse(tbParagraphs); }
+
+
+    //// *********************************************************************
+	//// Llamadas dinamicas                                       
+	//// *********************************************************************
+	
+    public Graph      getComponentGraph()    { return graph;      }
+    public TBIssues   getComponentIssues()   { return tbIssues;   }
+    public TBRoutines getComponentCalls()    { return tbRuts;     }
 
 }

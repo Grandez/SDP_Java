@@ -4,15 +4,13 @@ import java.util.ArrayList;
 
 import com.jgg.sdp.blocks.stmt.Option;
 import com.jgg.sdp.blocks.stmt.Statement;
-import com.jgg.sdp.blocks.symbols.*;
-
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.*;
 
 public class StmtCopy extends Statement<StmtCopy> {
 
 	private boolean ignored = false;
 	
-	public StmtCopy(Symbol s) {
+	public StmtCopy(SDPSymbol s) {
 		super(s);
 	}
 	
@@ -26,8 +24,8 @@ public class StmtCopy extends Statement<StmtCopy> {
 		
 		ArrayList<String> toks = new ArrayList<String>();
 		
-		for (SymbolExt s : opt.getVars()) {
-			toks.add(s.getName());
+		for (SDPSymbol s : opt.getParms()) {
+			toks.addAll(s.getValues());
 		}
 		return toks;
 	}

@@ -1,7 +1,7 @@
 /**
  * Se utiliza para mantener las variables del tipo A OF B
  */
-package com.jgg.sdp.blocks.symbols;
+package com.jgg.sdp.parser.symbols;
 
 import java.util.ArrayList;
 
@@ -10,11 +10,12 @@ import com.jgg.sdp.blocks.reflect.IReflect;
 import java_cup.runtime.Symbol;
 
 public class SymbolExt extends Symbol implements IReflect {
+	  private Symbol base    = null;
       private Symbol current = null;
       
       private StringBuilder sb = new StringBuilder();
       
-      private ArrayList<Symbol> parents  = new ArrayList<Symbol>();
+      private ArrayList<Object> parents  = new ArrayList<Object>();
       private Integer    id = null;;
       
       private int begLine;
@@ -24,17 +25,22 @@ public class SymbolExt extends Symbol implements IReflect {
       
       public SymbolExt(Symbol s) {
     	  super(s.sym, s.left, s.right, s.value);
+    	  base = s;
     	  first(s);
+      }
+      public SymbolExt(Symbol s, SymbolExt e) {
+    	  this(s);
+    	  add(e);
       }
 
       public SymbolExt(Symbol s, String newName) {
     	  super(s.sym, s.left, s.right, newName);
     	  first(s, newName);
+    	  base = s;
     	  current.value = newName;
       }
       
-      public SymbolExt add(Symbol p) {
-    	  if (((String) p.value).trim().length() == 0) return this;
+      public SymbolExt add(Object p) {
     	  parents.add(p);
     	  last(p);
     	  return this;
@@ -43,6 +49,11 @@ public class SymbolExt extends Symbol implements IReflect {
       public String getValue() {
     	  return sb.toString();
       }
+      
+      public Symbol getBase() {
+    	  return base;
+      }
+      
       
 /*      
       public SymbolExt(Symbol s, SymbolExt p) {
@@ -80,11 +91,17 @@ public class SymbolExt extends Symbol implements IReflect {
       }
       
       public ArrayList<Symbol> getParents() {
-    	  return parents;
+    	  ArrayList<Symbol> syms = new ArrayList<Symbol>();
+    	  for (Object o : parents) syms.add((Symbol) o);
+    	  return syms;
       }
       public Symbol getParent() {
     	  if (parents.size() == 0) return null;
-    	  return parents.get(0);
+    	  Object o = parents.get(0);
+    	  if (o instanceof SymbolExt) {
+    		  return ((SymbolExt) o).getBase();
+    	  }
+    	  return (Symbol) o;
       }
       
       public String getName() {
@@ -96,7 +113,8 @@ public class SymbolExt extends Symbol implements IReflect {
       
       public String getParentName() {
     	  if (parents.size() == 0) return null;
-    	  return (String) parents.get(0).value;
+    	  Symbol s = getParent();
+    	  return (String) s.value;
       }
       
       public void setId(int id) {
@@ -130,11 +148,14 @@ public class SymbolExt extends Symbol implements IReflect {
     	  }
       }
       
-      private void last(Symbol s) {
-    	  endLine = s.left;
-    	  endColumn = s.right;
+      private void last(Object s) {
+    	  Symbol t = null;
+    	  if (s instanceof Symbol) t = (SymbolExt) s;
+    	  
+    	  endLine = t.left;
+    	  endColumn = t.right;
     	  sb.append(" ");
-    	  sb.append((String) s.value);
+    	  sb.append((String) t.value);
       }
 
     /***************************************************************/

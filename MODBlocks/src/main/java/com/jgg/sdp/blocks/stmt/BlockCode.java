@@ -2,11 +2,11 @@ package com.jgg.sdp.blocks.stmt;
 
 import java.util.*;
 
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 public class BlockCode {
 
-	private Symbol header;
+	private SDPSymbol header;
 	private int level = 0;
 	protected String name;
 	
@@ -17,12 +17,12 @@ public class BlockCode {
 		this.name = name;
 	}
 	
-	public BlockCode(Symbol s) {
+	public BlockCode(SDPSymbol s) {
 		header = s;
 		name = (String) s.value;
 	}
 
-	public BlockCode(Symbol s, Symbol p) {
+	public BlockCode(SDPSymbol s, SDPSymbol p) {
         this(p);
     }
 	
@@ -35,7 +35,7 @@ public class BlockCode {
 		return this;
 	}
 
-	public Symbol getHeader() {
+	public SDPSymbol getHeader() {
 		return header;
 	}
 	

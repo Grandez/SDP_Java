@@ -5,8 +5,7 @@ import java.util.HashMap;
 
 import com.jgg.sdp.blocks.stmt.Option;
 import com.jgg.sdp.blocks.stmt.Statement;
-
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 public class StmtCICS  extends Statement<StmtCICS> {
 
@@ -15,11 +14,11 @@ public class StmtCICS  extends Statement<StmtCICS> {
 		private ArrayList<Option>       parms = new ArrayList<Option>();
 		private HashMap<String, Option> map   = new HashMap<String, Option>();
 
-		public StmtCICS(Symbol verb) {
+		public StmtCICS(SDPSymbol verb) {
 			super(verb);
 			this.fullVerb = (String) verb.value;
 		}
-		
+
 		public void setQRType(int type) {
 			qrType = type;
 		}

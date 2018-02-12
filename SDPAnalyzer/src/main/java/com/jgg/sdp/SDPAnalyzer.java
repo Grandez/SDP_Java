@@ -26,7 +26,7 @@ public class SDPAnalyzer {
     private Module  module = null;
 	private Unit unit   = null;
 
-	private SDPFileService   fileService    = new SDPFileService();
+	private SDPFileService   fileService   = new SDPFileService();
 	private SDPSourceService sourceService = new SDPSourceService();
 	
     private Messages      msg = Messages.getInstance("PARSER");    

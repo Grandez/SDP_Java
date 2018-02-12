@@ -3305,10 +3305,7 @@ public class DMLLexer extends GenericLexer implements java_cup.runtime.Scanner {
       return (function) ? symFunction : symWord;
    }   
    
-   public Symbol symbol(int code){
-      return makeSymbol(code, yyline, yycolumn, yytext());
-   }
-   
+   Symbol    symbol    (int code)             { return symbol(code, yyline, yycolumn, yytext()); }   
 
 
   /**

@@ -27,6 +27,12 @@
 
      <dependencies>
 
+        <dependency>
+          <groupId>com.jgg.sdp</groupId>
+          <artifactId>MODBlocks</artifactId>
+          <version>${sdp.version}</version>
+        </dependency>
+
          <dependency>
            <groupId>com.jgg.sdp</groupId>
            <artifactId>MODCore</artifactId>
@@ -45,6 +51,13 @@
         <dependency>
           <groupId>com.jgg.sdp</groupId>
           <artifactId>MODCore</artifactId>
+          <version>${sdp.version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>com.jgg.sdp</groupId>
+          <artifactId>MODBlocks</artifactId>
           <version>${sdp.version}</version>
           <scope>provided</scope>
         </dependency>

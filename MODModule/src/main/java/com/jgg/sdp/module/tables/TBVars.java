@@ -11,6 +11,7 @@ package com.jgg.sdp.module.tables;
 import java.util.*;
 
 import com.jgg.sdp.module.items.Variable;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 public class TBVars {
 
@@ -47,9 +48,13 @@ public class TBVars {
     	*/
     }
     
-    public Variable getVariable(String name) {
-    	ArrayList<Variable> lista = vars.get(name);
-    	if (lista == null) return null;
+    public Variable getVariable(SDPSymbol var) {
+    	return getVariable(var.value);
+    }
+    public Variable getVariable(String var) {
+    	ArrayList<Variable> lista = vars.get(var);
+    	if (lista == null)     return null;
+    	if (lista.size() == 1) return lista.get(0);
     	return lista.get(0);
     }
 

@@ -6,29 +6,63 @@ import com.jgg.sdp.tools.Cadena;
 
 public class Printer {
 
-	private int len  = 75;
-	private int curr =  0;
-
+	private int level =  0;
+	private int len   = 75;
+	private int curr  =  0;
+	 
 	private static Printer printer = null;
 	
-	private StringBuilder linea = new StringBuilder();;
+	private StringBuilder linea = new StringBuilder();
 
-	ColoredPrinter cp = new ColoredPrinter.Builder(9, false).build();
+	ColoredPrinter cp = new ColoredPrinter.Builder(99, false).build();
 
+	public Printer() {
+		
+	}
+	public Printer(int level) {
+		this.level = level;
+		this.cp.setLevel(level);
+	}
+	
 	public static Printer getInstance() {
 		if (printer == null) printer = new Printer();
 		return printer;
 	}  
-	
-	public static void print  (String txt) { System.out.print(txt);   }
-	public static void println(String txt) { System.out.println(txt); }
+	public static Printer getInstance(int level) {
+		if (printer == null) printer = new Printer();
+		printer.setLevel(level);
+		printer.cp.setLevel(level);
+		return printer;
+	}  
 
-	public void setLineWidth(int length)   { len = length; }
+	public void setLevel    (int level)    { this.level = level; } 
+	public void setLineWidth(int length)   { this.len = length; }
 	
-	public void nl()                { nl(1); }
-	public void boxBeg()            { boxDecorator(); }
-	public void boxEnd()            { boxDecorator(); }
-	public void boxLine(String txt) { boxLine(txt, false); }
+	public void print   (String txt) {print  (0, txt); }
+	public void println (String txt) {println(0, txt); }
+	
+	public void lineBeg (String txt) {lineBeg(0, txt); }
+	public void lineCnt (String txt) {lineCnt(0, txt); }
+	public void lineEnd (String txt) {lineEnd(0, txt); }
+
+	public void print   (int level, String txt) {
+		cp.print  (level, txt);  curr += txt.length(); 
+	}
+	public void println (int level, String txt) {
+		cp.println(level, txt);  curr = 0; 
+	}
+	
+	public void lineBeg (int level, String txt) {flush(level); print(level, txt); }
+	public void lineCnt (int level, String txt) {print(level, txt);               }
+	public void lineEnd (int level, String txt) {
+		print(level, Cadena.spaces(len - curr));  
+		println(level, txt);
+	}
+	
+	private void flush(int level) {
+		if (this.level < level) return;
+		if (curr > 0) println(0, "");
+	}
 	
 	public void nl(int lines) {
 		for (int idx = 0; idx < lines; idx++) write("");
@@ -47,54 +81,6 @@ public class Printer {
 		writeln();
 	}
 	
-	public void lineBeg(String txt) {
-		linea.setLength(0);
-		linea.append(txt);
-		write(txt);
-	}
-
-	public void lineCnt(String txt) {
-		linea.append(txt);
-		write(txt);
-	}
-
-	public void lineEnd(String txt) {
-		StringBuilder s = new StringBuilder();
-		for (int idx = linea.length() + txt.length(); idx < len; idx++) s.append(' ');
-		s.append(txt);
-		writeln(s.toString());
-	}
-
-	public void lineFixBeg(String txt) {
-//		linea.setLength(0);
-//		linea.append(txt);
-		curr = 0;
-		out(txt);
-	}
-
-	public void lineFixCnt(String txt) {
-//		linea.append(txt);
-		out(txt);
-	}
-
-	public void lineFixEnd(String txt) {
-		out(Cadena.spaces(len - curr));
-		outln(txt);
-	}
-	
-	public void boxLine(String txt, boolean centered) {
-	    int idx = 0;
-		int left = (centered) ? (len - txt.length()) / 2 : 1;
-		linea.setLength(0);
-		linea.append("|");
-		for (idx = 0; idx < left; idx++) linea.append(' ');
-		linea.append(txt);
-		for (idx = linea.length(); idx < len - 1; idx++) linea.append(' ');
-		linea.append("|");
-		writeln();
-	}
-	
-	
 	public void writeAction(String msg) {
 		StringBuilder aux = new StringBuilder();
 		write(msg);
@@ -104,16 +90,7 @@ public class Printer {
 	public void writeRes(String res) {
 		writeln(res);
 	}
-	
-	private void boxDecorator() {
-		linea.setLength(0); 
-		linea.append("+");
-		for (int idx = 0; idx < (len - 2); idx++) linea.append('-');
-		linea.append('+');
-		writeln(Attribute.BOLD);
 		
-	}
-	
 	private void writeln()               { writeln(linea.toString(), Attribute.NONE); }	
 	private void writeln(Attribute attr) { writeln(linea.toString(), attr);           }
 	
@@ -136,6 +113,46 @@ public class Printer {
 	private void outln(String txt) {
 		System.out.println(txt);
 		curr = 0;
+	}
+
+	/**********************************************************/
+	/***               BANNERS                              ***/
+	/**********************************************************/
+	
+	public void banner(int level, String... txt) {
+		if (this.level < level) return;
+		boxBeg();
+		for (int idx = 0; idx < txt.length; idx++) {
+		    boxLine(txt[idx], true);
+		}
+		boxEnd();
+		nl();
+	}
+
+	private void nl()                { nl(1); }
+	private void boxBeg()            { boxDecorator(); }
+	private void boxEnd()            { boxDecorator(); }
+	private void boxLine(String txt) { boxLine(txt, false); }
+
+	private void boxLine(String txt, boolean centered) {
+	    int idx = 0;
+		int left = (centered) ? (len - txt.length()) / 2 : 1;
+		linea.setLength(0);
+		linea.append("|");
+		for (idx = 0; idx < left; idx++) linea.append(' ');
+		linea.append(txt);
+		for (idx = linea.length(); idx < len - 1; idx++) linea.append(' ');
+		linea.append("|");
+		writeln();
+	}
+
+	private void boxDecorator() {
+		linea.setLength(0); 
+		linea.append("+");
+		for (int idx = 0; idx < (len - 2); idx++) linea.append('-');
+		linea.append('+');
+		writeln(Attribute.BOLD);
+		
 	}
 	
 }

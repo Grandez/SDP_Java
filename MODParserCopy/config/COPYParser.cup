@@ -4,20 +4,19 @@ import java_cup.runtime.*;
 
 import com.jgg.sdp.parser.base.*;
 
-import com.jgg.sdp.blocks.symbols.*;
 import com.jgg.sdp.blocks.stmt.*;
 import com.jgg.sdp.parser.stmt.*;
-
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
              
-   public void syntax_error(Symbol token) throws ParseException {
+   public void syntax_error(SDPSymbol token) throws ParseException {
           info.syntax_error(token);
    }
 
-   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+   public void unrecovered_syntax_error(SDPSymbol token) throws ParseException {
       info.unrecovered_syntax_error(token);
    }
 :}
@@ -25,8 +24,6 @@ parser code {:
 action code {:
    ParserInfo    info    = ParserInfo.getInstance();      
    
-   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
-         
    StmtCopy stmt = null;  // Instruccion en proceso
    
    public void initActionClass() {
@@ -51,11 +48,11 @@ init with {:
 /****************************************************************************/
 /****************************************************************************/
 
-terminal Symbol SUPPRESS  ;
-terminal Symbol REPLACING ;
-terminal Symbol ID        ;
-terminal Symbol IN        ;
-terminal Symbol OF        ;
+terminal SDPSymbol SUPPRESS  ;
+terminal SDPSymbol REPLACING ;
+terminal SDPSymbol ID        ;
+terminal SDPSymbol IN        ;
+terminal SDPSymbol OF        ;
 
 /****************************************************************************/
 /****************************************************************************/
@@ -63,19 +60,19 @@ terminal Symbol OF        ;
 /****************************************************************************/
 /****************************************************************************/
 
-non terminal Symbol     copy        ; 
+non terminal StmtCopy  copy        ; 
 
 non terminal StmtCopy   cpy_stmt    ;
-non terminal Symbol     cpy_member  ;
+non terminal SDPSymbol  cpy_member  ;
 non terminal            cpy_options ;
          
 non terminal            cpy_supress_opt     ;
 non terminal            cpy_replacing_opt   ;
 non terminal            cpy_replacing       ;
-non terminal Symbol     cpy_member_id       ;
+non terminal SDPSymbol  cpy_member_id       ;
 non terminal Option     cpy_lib_opt         ;
-non terminal SymbolList cpy_replacing_lst   ;
-non terminal Symbol     cpy_replacing_token ;
+non terminal SDPSymbol  cpy_replacing_lst   ;
+non terminal SDPSymbol  cpy_replacing_token ;
 
 /**********************************************************************/
 /**********************************************************************/
@@ -85,8 +82,8 @@ non terminal Symbol     cpy_replacing_token ;
 /**********************************************************************/
 /**********************************************************************/
 
-copy ::=  cpy_stmt:c  {: stmt.setGroup(CDG.STMT_COPY);
-                         RESULT = symbolFactory.newSymbol(stmt.getVerbName(), stmt.getVerbId(), stmt);  
+copy ::=  cpy_stmt:s  {: stmt.setGroup(CDG.STMT_COPY);
+                         RESULT = s;  
                       :}
      ; 
 
@@ -129,8 +126,8 @@ cpy_replacing ::= REPLACING:s  cpy_replacing_lst:l {: Option opt = new Option(s)
                                                     :}
               ;
               
-cpy_replacing_lst ::= cpy_replacing_token:c                     {: RESULT = new SymbolList(c); :}
-                  |   cpy_replacing_lst:l cpy_replacing_token:c {: RESULT = l.add(c);          :}
+cpy_replacing_lst ::= cpy_replacing_token:s                     {: RESULT = s;         :}
+                  |   cpy_replacing_lst:s cpy_replacing_token:c {: RESULT = s.add(c);  :}
                   ;
                        
 cpy_replacing_token ::= ID:s         {: RESULT = s; :}

@@ -15,7 +15,7 @@ public class CommandLauncher {
         
 		commonService.beginTrans();
 		for (JAXBElement<?> command : commands.getCommentOrModuleOrComponent()) {
-		    System.out.println(command.getName());
+//		    System.out.println(command.getName());
 			if (command.getName().toString().compareToIgnoreCase("MODULE") == 0) {
 				processModule((IVPModule) command.getValue());
 			}

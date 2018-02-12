@@ -13,8 +13,6 @@
  */
 package com.jgg.sdp.parser.code;
 
-import java_cup.runtime.Symbol;
-
 import static com.jgg.sdp.parser.lang.ZCDSym.*;
 
 import com.jgg.sdp.blocks.stmt.Statement;
@@ -22,6 +20,7 @@ import com.jgg.sdp.common.ctes.CDG;
 import com.jgg.sdp.core.ctes.*;
 import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.*;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 import com.jgg.sdp.rules.components.RulesData;
 
 public class ZCDCode extends ZCZCode{
@@ -39,7 +38,7 @@ public class ZCDCode extends ZCZCode{
     	info.addSection(sect, line);
     }
     
-    public Variable getVariable(Symbol s) {
+    public Variable getVariable(SDPSymbol s) {
     	return null;
     	/*JGG
     	String name = (String) s.value;
@@ -49,7 +48,7 @@ public class ZCDCode extends ZCZCode{
         */	
     }
 
-    public Variable setVarType(Variable var, Symbol type) {
+    public Variable setVarType(Variable var, SDPSymbol type) {
     	switch (type.sym) {
     	   case COMP1:   var.setType(VAR.COMP1);   break;
     	   case COMP2:   var.setType(VAR.COMP2);   break;
@@ -63,7 +62,7 @@ public class ZCDCode extends ZCZCode{
     	return var;
     }
     
-    public Symbol calculateSizeLen(Variable var, Symbol sym) {
+    public SDPSymbol calculateSizeLen(Variable var, SDPSymbol sym) {
     	String szSize = (String) sym.value;
     	int pos = szSize.indexOf('(');
 
@@ -92,7 +91,7 @@ public class ZCDCode extends ZCZCode{
     	return sym;
     }
 
-    public Symbol calculateSizeFormat(Variable var, Symbol sym) {
+    public SDPSymbol calculateSizeFormat(Variable var, SDPSymbol sym) {
     	String szSize = (String) sym.value;
     	char c;
     	int size = 0;
@@ -104,24 +103,23 @@ public class ZCDCode extends ZCZCode{
     	return sym;
     }
 
-    public Symbol calculateSize(Variable var, Symbol sym) {
+    public SDPSymbol calculateSize(Variable var, SDPSymbol sym) {
     	String szSize = (String) sym.value;
     	var.addSize(szSize.length() - 1);
     	return sym;
+    }
+
+    public Variable addSize(Variable var, SDPSymbol size) {
+    	var.addSize(Integer.parseInt(size.value));
+    	return var;
     }
 
     public Variable addSize(Variable var, int size) {
     	var.addSize(size);
     	return var;
     }
-
-    public Symbol addSize(Variable var, Symbol sym) {
-    	String szSize = (String) sym.value;
-    	var.addSize(Integer.parseInt(szSize));
-    	return sym;
-    }
     
-	public void setBounds(Variable var, Symbol from, Symbol to) {
+	public void setBounds(Variable var, SDPSymbol from, SDPSymbol to) {
 		Integer min = Integer.parseInt((String) from.value);
         Integer max = Integer.parseInt((String) to.value);
         if (max < min) max = min;
@@ -129,16 +127,26 @@ public class ZCDCode extends ZCZCode{
 	}
     
 	
-	public Variable createVar(Symbol level, Symbol name) {
+	public Variable createVar(SDPSymbol level, SDPSymbol name) {
 		Variable var = new Variable((String) level.value, (String) name.value);
-		var.setLine(level.left);
-		var.setColumn(level.right);
+		var.setLine(level.line);
+		var.setColumn(level.column);
 		var.setSection(info.getSection());
 		return var;
 	}
 
+   public SDPSymbol removePoint(SDPSymbol s) {
+	   String aux = s.value;
+	   if (aux.endsWith(".")) {
+	       aux = aux.substring(0, aux.length() - 1);
+	       aux = aux.trim();
+	   }
+	   s.value = aux;
+	   return s;
+   }
+
 	private void processIdentification(Statement stmt) {
-		info.addDivision(CDG.SECT_ID, stmt.getVerb().left);
+		info.addDivision(CDG.SECT_ID, stmt.getVerb().line);
 		rules.checkIdentification(stmt);
 	}
 }

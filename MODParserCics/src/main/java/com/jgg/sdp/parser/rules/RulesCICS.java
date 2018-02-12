@@ -13,4 +13,15 @@ public class RulesCICS extends RulesBase {
 	       RuleObject obj = new RuleObject(cics);
 	       rulesProcessor.processGroupByName(GROUP_CICS, obj);        
 	}
+	
+	public void checkRESP(Object stmt) {
+        RuleObject obj = new RuleObject(stmt);
+        rulesProcessor.processGroupByName(GROUP_DIV_ID, obj);        
+	}
+
+	public void checkOption(Object stmt) {
+        RuleObject obj = new RuleObject(stmt);
+        rulesProcessor.processGroupByName(GROUP_DIV_ID, obj);        
+	}
+	
 }

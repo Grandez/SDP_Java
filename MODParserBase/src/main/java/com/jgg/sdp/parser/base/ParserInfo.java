@@ -12,9 +12,8 @@ import com.jgg.sdp.module.base.Module;
 import com.jgg.sdp.module.items.Copy;
 import com.jgg.sdp.module.ivp.IVPCase;
 import com.jgg.sdp.module.unit.Unit;
+import com.jgg.sdp.parser.symbols.*;
 
-import java_cup.runtime.ComplexSymbolFactory;
-import java_cup.runtime.Symbol;
 
 public class ParserInfo {
 
@@ -22,7 +21,7 @@ public class ParserInfo {
 
 	private Configuration cfg = ConfigurationBase.getInstance();
 	
-	private ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+	private SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
 	   
     public Unit   unit   = null;
     public Module module = null;
@@ -47,8 +46,8 @@ public class ParserInfo {
 	
 	// Simbolo ultimo.
 	// Usado para COPY e INCLUDE
-	private Symbol prevSymbol = null;
-	private Symbol lastSymbol = null;
+	private SDPSymbol prevSymbol = null;
+	private SDPSymbol lastSymbol = null;
 
 	private ParserInfo() {
 		stkOffset.add(0);
@@ -85,10 +84,10 @@ public class ParserInfo {
 		return moduleName;
 	}
 	
-//	public Symbol cosa(String txt, int code, int line, int col) {
+//	public SDPSymbol cosa(String txt, int code, int line, int col) {
 //		int l = line + getOffset() + 1;
-//		//Symbol s = new Symbol(code, l, col, txt); 
-//		return symbolFactory.newSymbol(txt, code, new Symbol(code, l, col, txt));
+//		//SDPSymbol s = new SDPSymbol(code, l, col, txt); 
+//		return symbolFactory.newSymbol(txt, code, new SDPSymbol(code, l, col, txt));
 //	}
 	/*************************************************************/
 	/***      TRATAMIENTO DE SECCIONES                         ***/
@@ -203,21 +202,21 @@ public class ParserInfo {
 		return name.toString();
 	}
 	
-	public Symbol setPrevSymbol(Symbol s) {
+	public SDPSymbol setPrevSymbol(SDPSymbol s) {
 		prevSymbol = s;
 		return s;
 	}
 	
-	public Symbol getPrevSymbol() {
+	public SDPSymbol getPrevSymbol() {
 		return prevSymbol;
 	}
 	
-	public Symbol setLastSymbol(Symbol s) {
+	public SDPSymbol setLastSymbol(SDPSymbol s) {
 		lastSymbol = s;
 		return s;
 	}
 	
-	public Symbol getLastSymbol() {
+	public SDPSymbol getLastSymbol() {
 		return lastSymbol;
 	}
 	
@@ -225,27 +224,25 @@ public class ParserInfo {
 	/***  Gestion de errores                                 ***/
 	/***********************************************************/
 
-	public void syntax_error (Symbol token) {
+	public void syntax_error (SDPSymbol s) {
         
-       Symbol s = (Symbol) token.value;
 //       int col = cfg.getInteger(CFG.MARGIN_LEFT,  0);
        int col = 0;
-       col = col + s.right + 1;
+       col = col + s.column + 1;
 
        throw new ParseException(MSG.EXCEPTION_SYNTAX, 
                                 info.getMemberName(), 
-                                s.left + 1,  
+                                s.line,  
                                 col, 
-                                (String) s.value);
+                                s.value);
    }
 
-   public void unrecovered_syntax_error(Symbol token) {
-       Symbol s = (Symbol) token.value;
+   public void unrecovered_syntax_error(SDPSymbol s) {
        throw new ParseException(MSG.EXCEPTION_CUP, 
                                getMemberName(), 
-                               s.left, 
-                               s.right + 1, 
-                               (String) s.value); 
+                               s.line, 
+                               s.column + 1, 
+                               s.value); 
    }
 
 	/***********************************************************/

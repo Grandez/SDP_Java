@@ -79,8 +79,21 @@ public class Graph {
            
            processNodes(graph, sigGraph, tbPars);
     	} 
-    	printData();
+//    	printData();
     }
+
+    /************************************************/
+    /*** introspeccion                            ***/
+    /************************************************/
+    
+    public Integer getNumGraphs() { return graphs.size(); }
+    public Integer getNumNodes()  { return nodos.size();  }
+    public Integer getNumEdges()  { return edges.size();  }
+    
+   /************************************************/
+   /*** METODOS PRIVADOS                         ***/
+   /************************************************/
+    
     
     private void processNodes(SubGraph graph, JGGQueue<String> sig, TBParagraphs tbPars) {
         JGGQueue<Node>  nodes   = new JGGQueue<Node>();

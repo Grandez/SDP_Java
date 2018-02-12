@@ -10,6 +10,8 @@ package com.jgg.sdp.common.ctes;
 
 public class CDG {
 
+	public static final String SDP_TITLE = "SERENDIPITY";
+	
 	// Codigos de la tabla de configuracion
 	
 	public static final int CFG_MODULE        =  1;
@@ -196,7 +198,13 @@ public class CDG {
     public static final int STMT_ARIT    = 14;
     public static final int STMT_IO      = 15;
     public static final int STMT_LANG    = 16;       
-    public static final int STMT_CICS    = 20;
+    
+    public static final int STMT_CICS      = 20;
+    public static final int STMT_CICS_SYS  = 21;
+    public static final int STMT_CICS_PGM  = 22;
+    public static final int STMT_CICS_CTL  = 23;
+    public static final int STMT_CICS_WEB  = 24;
+    
     public static final int STMT_SQL     = 30;
     public static final int STMT_DCL     = 31; 
     public static final int STMT_DDL     = 32;

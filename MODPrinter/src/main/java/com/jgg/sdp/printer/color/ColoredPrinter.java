@@ -189,10 +189,18 @@ public class ColoredPrinter implements IColoredPrinter {
         getImpl().printTimestamp();
     }
 
+    public void print(int level, Object msg) {
+        getImpl().debugPrint(msg, level);
+    }
+    
     public void print(Object msg) {
         getImpl().print(msg);
     }
 
+    public void println(int level, Object msg) {
+        getImpl().debugPrintln(msg, level);
+    }
+    
     public void println(Object msg) {
         getImpl().println(msg);
     }

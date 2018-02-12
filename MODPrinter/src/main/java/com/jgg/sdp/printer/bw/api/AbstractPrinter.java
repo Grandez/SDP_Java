@@ -91,6 +91,7 @@ public abstract class AbstractPrinter implements IPrinter {
      * @return true if Printer can print a message with that level of debug.
      */
     protected boolean canPrint(int level) {
-        return (getLevel() == 0) || (getLevel() >= level);
+        // return (getLevel() == 0) || (getLevel() >= level);
+        return (getLevel() >= level);
     }
 }

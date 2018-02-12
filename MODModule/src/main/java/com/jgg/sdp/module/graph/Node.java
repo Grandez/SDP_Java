@@ -39,31 +39,14 @@ public class Node
 	/***                TRATAMIENTO NODOS                           */
 	/****************************************************************/
 	
-    public Node(Integer type, String name, int idGraph, int id) {
-    	this(type, type, name, name, idGraph, id);
-    }
-
-    public Node(Integer type, String from, String to, int stmts, int idGraph, int id) {
-    	this(type, type, from, to, idGraph, id);
-    }
-
-    public Node(int type, int idGraph, int id) {
-    	String n = NodeTypes.getNodeName(type) + "-" + id;
-    	this.type = type;
-    	this.subtype = type;
-    	this.name = n;
-    	this.to   = n;
-    	this.id = id;
-    	this.idGraph = idGraph;
-    	this.graph = -1;
-    }
-    
-    public Node(int type, Integer subtype, String from, String to, int idGraph, int id) {
+    public Node(int type, int subtype, String from, String to, int stmts, int idGraph, int id) { 	
     	this.type = type;
     	this.subtype = subtype;
     	this.name = from;
     	this.to   = to;
+    	if (to == null) this.to = from; 
     	this.id = id;
+    	this.stmts = stmts;
     	this.idGraph = idGraph;
     	this.graph = -1;
     }
@@ -133,11 +116,11 @@ public class Node
     }
     
     public String getFrom() {
-    	return name.toUpperCase();
+    	return name;
     }
     
     public String getTo() {
-    	return to.toUpperCase();
+    	return to;
     }
     
     public int getNumNodes() {

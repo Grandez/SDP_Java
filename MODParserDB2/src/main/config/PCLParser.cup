@@ -3,24 +3,24 @@ package com.jgg.sdp.parser.lang;
 import java_cup.runtime.*;
 
 import com.jgg.sdp.parser.base.*;
-import com.jgg.sdp.blocks.symbols.*;
 
 import com.jgg.sdp.parser.stmt.StmtSQL;
+import com.jgg.sdp.parser.symbols.*;
 import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
-   public void syntax_error(Symbol token) throws ParseException {
+   public void syntax_error(SDPSymbol token) throws ParseException {
           info.syntax_error(token);
    }
 
-   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+   public void unrecovered_syntax_error(SDPSymbol token) throws ParseException {
       info.unrecovered_syntax_error(token);
    }
 :}
 
 action code {:
-   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
    ParserInfo      info     = ParserInfo.getInstance();
    StmtSQL         stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_PCL);
    
@@ -48,111 +48,118 @@ init with {:
 /***                    PATRONES                                          ***/
 /****************************************************************************/
 
-terminal Symbol ID                                    ;
-terminal Symbol HOSTVAR1                              ;
-terminal Symbol HOSTVAR2                              ;
-terminal Symbol IDQUALIFIED                           ;
-terminal Symbol PREHOST                               ;
+terminal SDPSymbol ID                                    ;
+terminal SDPSymbol HOSTVAR1                              ;
+terminal SDPSymbol HOSTVAR2                              ;
+terminal SDPSymbol IDQUALIFIED                           ;
+terminal SDPSymbol PREHOST                               ;
 
-terminal Symbol LITERAL                               ;
-terminal Symbol NUM_ENTERO                            ;
+terminal SDPSymbol LITERAL                               ;
+terminal SDPSymbol NUM_ENTERO                            ;
 
-terminal Symbol COMMA                                 ;
+terminal SDPSymbol COMMA                                 ;
 
 /****************************************************************************/
 /***                    SIMBOLOS                                         ***/
 /****************************************************************************/
 
-terminal Symbol ABSOLUTE                              ;
-terminal Symbol AFTER                                 ;
-terminal Symbol ALLOCATE                              ;
-terminal Symbol ASSOCIATE                             ; 
-terminal Symbol AT                                    ;
+terminal SDPSymbol ABSOLUTE                              ;
+terminal SDPSymbol AFTER                                 ;
+terminal SDPSymbol ALLOCATE                              ;
+terminal SDPSymbol ASSOCIATE                             ; 
+terminal SDPSymbol AT                                    ;
 
-terminal Symbol BEFORE                                ;
-terminal Symbol BEGIN                                 ;
+terminal SDPSymbol BEFORE                                ;
+terminal SDPSymbol BEGIN                                 ;
 
-terminal Symbol CALL                                  ;
-terminal Symbol CLOSE                                 ;
+terminal SDPSymbol CALL                                  ;
+terminal SDPSymbol CLOSE                                 ;
 
-terminal Symbol CONNECT                               ;
-terminal Symbol CONTINUE                              ;
-terminal Symbol CURRENT                               ;
-terminal Symbol CURSOR                                ;
+terminal SDPSymbol CONNECT                               ;
+terminal SDPSymbol CONTINUE                              ;
+terminal SDPSymbol CURRENT                               ;
+terminal SDPSymbol CURSOR                                ;
 
-terminal Symbol DECLARE                               ;
-terminal Symbol DESCRIPTOR                            ;
+terminal SDPSymbol DECLARE                               ;
+terminal SDPSymbol DESCRIPTOR                            ;
 
-terminal Symbol END                                   ;
-terminal Symbol EXECUTE                               ;
+terminal SDPSymbol END                                   ;
+terminal SDPSymbol EXECUTE                               ;
 
-terminal Symbol FETCH                                 ;
-terminal Symbol FIRST                                 ;
-terminal Symbol FOR                                   ;
-terminal Symbol FOUND                                 ;
-terminal Symbol FREE                                  ;
-terminal Symbol FROM                                  ;
+terminal SDPSymbol FETCH                                 ;
+terminal SDPSymbol FIRST                                 ;
+terminal SDPSymbol FOR                                   ;
+terminal SDPSymbol FOUND                                 ;
+terminal SDPSymbol FREE                                  ;
+terminal SDPSymbol FROM                                  ;
 
-terminal Symbol GOTO                                  ;
+terminal SDPSymbol GOTO                                  ;
 
-terminal Symbol HOLD                                  ;
+terminal SDPSymbol HOLD                                  ;
 
-terminal Symbol IMMEDIATE                             ;
-terminal Symbol INCLUDE                               ;
-terminal Symbol INSENSITIVE                           ;
-terminal Symbol INTO                                  ;
+terminal SDPSymbol IMMEDIATE                             ;
+terminal SDPSymbol INCLUDE                               ;
+terminal SDPSymbol INSENSITIVE                           ;
+terminal SDPSymbol INTO                                  ;
 
-terminal Symbol LAST                                  ;
-terminal Symbol LOCATOR                               ;
-terminal Symbol LPAR                                  ;
+terminal SDPSymbol LAST                                  ;
+terminal SDPSymbol LOCATOR                               ;
+terminal SDPSymbol LPAR                                  ;
 
-terminal Symbol NEXT                                  ;
-terminal Symbol NOT                                   ;
+terminal SDPSymbol NEXT                                  ;
+terminal SDPSymbol NOT                                   ;
 
-terminal Symbol OPEN                                  ;
+terminal SDPSymbol OPEN                                  ;
 
-terminal Symbol PREPARE                               ;
-terminal Symbol PRIOR                                 ;
-terminal Symbol PROCEDURE                             ;
+terminal SDPSymbol PREPARE                               ;
+terminal SDPSymbol PRIOR                                 ;
+terminal SDPSymbol PROCEDURE                             ;
 
-terminal Symbol RELATIVE                              ;
-terminal Symbol RESET                                 ;
-terminal Symbol RESULT                                ;
-terminal Symbol RPAR                                  ;
-terminal Symbol ROWSET                                ;
-terminal Symbol ROWS                                  ;
+terminal SDPSymbol RELATIVE                              ;
+terminal SDPSymbol RESET                                 ;
+terminal SDPSymbol RESULT                                ;
+terminal SDPSymbol RPAR                                  ;
+terminal SDPSymbol ROWSET                                ;
+terminal SDPSymbol ROWS                                  ;
 
-terminal Symbol SECTION                               ;
-terminal Symbol SENSITIVE                             ;
-terminal Symbol SET                                   ;
-terminal Symbol SIGNAL                                ;
-terminal Symbol SQLERROR                              ;
-terminal Symbol SQLWARNING                            ;
-terminal Symbol STARTING                              ;
+terminal SDPSymbol SECTION                               ;
+terminal SDPSymbol SENSITIVE                             ;
+terminal SDPSymbol SET                                   ;
+terminal SDPSymbol SIGNAL                                ;
+terminal SDPSymbol SQLERROR                              ;
+terminal SDPSymbol SQLWARNING                            ;
+terminal SDPSymbol STARTING                              ;
 
-terminal Symbol TO                                    ;
+terminal SDPSymbol TO                                    ;
 
-terminal Symbol USER                                  ;
-terminal Symbol USING                                 ;
+terminal SDPSymbol USER                                  ;
+terminal SDPSymbol USING                                 ;
 
-terminal Symbol WHENEVER                              ;
+terminal SDPSymbol WHENEVER                              ;
 
-terminal Symbol WITH                                  ;
+terminal SDPSymbol WITH                                  ;
 
-non terminal Symbol  sql                   ;
-non terminal         sql_pcl               ;
-non terminal         sql_allocate          ;
+non terminal Symbol  sql_stmt              ;
+non terminal StmtSQL sql_pcl               ;
+non terminal StmtSQL sql_allocate          ;
+non terminal StmtSQL sql_locator ;
+non terminal StmtSQL sql_hold_locator      ;
+non terminal StmtSQL sql_free_locator      ;
+non terminal StmtSQL sql_call              ;
+non terminal StmtSQL sql_close             ;
+non terminal StmtSQL sql_connect           ;
+non terminal StmtSQL sql_declare_begin     ;
+non terminal StmtSQL sql_declare_end       ;
+non terminal StmtSQL sql_execute           ;
+non terminal StmtSQL sql_fetch             ;
+non terminal StmtSQL sql_include           ;
+non terminal StmtSQL sql_open              ;
+non terminal StmtSQL sql_prepare           ;
+non terminal StmtSQL sql_signal            ;
+non terminal StmtSQL sql_whenever          ;
 
-non terminal         sql_associate_locator ;
-non terminal         sql_hold_locator      ;
-non terminal         sql_free_locator      ;
-
-non terminal         sql_call              ;
 non terminal         call_opt              ;
 
-non terminal         sql_close             ;
-
-non terminal         sql_connect           ;
 non terminal         connect_opt           ;
 non terminal         connect_mode          ;
 non terminal         connect_to            ;
@@ -160,15 +167,11 @@ non terminal         connect_reset         ;
 non terminal         connect_auth          ;
 non terminal         connect_auth_opt      ;             
 
-non terminal         sql_declare_begin     ;
-non terminal         sql_declare_end       ;
 non terminal         declare_section       ;
 
-non terminal         sql_execute           ;
 non terminal         execute_verb          ;
 non terminal         execute_type          ;
 
-non terminal         sql_fetch             ;
 non terminal         sql_fetch_verb        ;
 non terminal         sql_fetch_options     ;
 non terminal         sql_fetch_cursor      ;
@@ -182,18 +185,10 @@ non terminal         sql_fetch_count_opt   ;
 non terminal         sql_fetch_fields      ;
 non terminal         sql_fetch_fields_lst  ;
 
-non terminal         sql_include           ;
-
-non terminal         sql_open              ;
 non terminal         sql_open_using_opt    ;
 non terminal         sql_open_using_type   ;
 non terminal         sql_open_using_fields ;
 
-non terminal         sql_prepare           ;
-
-non terminal         sql_signal            ;
-
-non terminal         sql_whenever          ;
 non terminal         whenever_type         ;
 non terminal         whenever_action       ;
 
@@ -224,7 +219,6 @@ non terminal         choice_abs_rel        ;
 non terminal         var_string            ;
 non terminal         var_int               ;
 non terminal         var_id                ;
-non terminal         literal               ;
 
 non terminal         host_field            ;
 non terminal         host_var_opt          ;
@@ -248,31 +242,27 @@ non terminal         non_reserved_words    ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql ::= sql_pcl {: stmt.adjust(info.getLastSymbol()); 
-                   String name = stmt.getVerbName();
-                   int id =  stmt.getVerbId();
-                   int line = stmt.getVerb().left;
-                   int col = stmt.getVerb().right;
-                   RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
-                :}
-    ;
-
-sql_pcl ::= sql_allocate
-        |   sql_associate_locator
-        |   sql_call
-        |   sql_close
-        |   sql_connect        
-        |   sql_declare_begin
-        |   sql_declare_end
-        |   sql_execute
-        |   sql_fetch
-        |   sql_free_locator
-        |   sql_hold_locator
-        |   sql_include
-        |   sql_open
-        |   sql_prepare        
-        |   sql_signal
-        |   sql_whenever        
+sql_stmt ::= sql_pcl:s {: stmt.adjust(info.getLastSymbol()); 
+                          RESULT = symbolFactory.newSymbol(0, 0, 0, stmt); 
+                       :}
+         ;
+    
+sql_pcl ::= sql_allocate:s        {: RESULT = s; :}
+        |   sql_locator:s         {: RESULT = s; :}
+        |   sql_call:s            {: RESULT = s; :}
+        |   sql_close:s           {: RESULT = s; :}
+        |   sql_connect:s         {: RESULT = s; :}        
+        |   sql_declare_begin:s   {: RESULT = s; :}
+        |   sql_declare_end:s     {: RESULT = s; :}
+        |   sql_execute:s         {: RESULT = s; :}
+        |   sql_fetch:s           {: RESULT = s; :}
+        |   sql_free_locator:s    {: RESULT = s; :}
+        |   sql_hold_locator:s    {: RESULT = s; :}
+        |   sql_include:s         {: RESULT = s; :}
+        |   sql_open:s            {: RESULT = s; :}
+        |   sql_prepare:s         {: RESULT = s; :}        
+        |   sql_signal:s          {: RESULT = s; :}
+        |   sql_whenever:s        {: RESULT = s; :}        
         ; 
 
 /********************************************************************/
@@ -286,7 +276,7 @@ sql_allocate ::= ALLOCATE:s {: stmt.setVerb(s); :}  cursor_name CURSOR FOR RESUL
 /*                 ASSOCIATE                                       */
 /********************************************************************/
 
-sql_associate_locator ::= ASSOCIATE:s {: stmt.setVerb(s); :}  opt_result_set LOCATOR LPAR locator_variable_lst RPAR WITH PROCEDURE procedure_name
+sql_locator ::= ASSOCIATE:s {: stmt.setVerb(s); :}  opt_result_set LOCATOR LPAR locator_variable_lst RPAR WITH PROCEDURE procedure_name
                       ;
 
 procedure_name ::= id
@@ -388,7 +378,7 @@ sql_fetch ::= sql_fetch_verb sql_fetch_options opt_from sql_fetch_cursor sql_fet
           ;
 
 sql_fetch_verb ::= FETCH:i {: stmt.setVerb(i); 
-//JGG                                  stmt.addRValue(new SymbolExt(m));
+//JGG                                  stmt.addRValue(new SDPSymbol(m));
                             :}
                ;
 
@@ -448,7 +438,7 @@ sql_fetch_count_opt ::= FOR var_int ROWS
 /********************************************************************/
 
 sql_include ::= INCLUDE:i ID:m {: stmt.setVerb(i); 
-                                  stmt.addRValue(new SymbolExt(m));
+                                  stmt.addRValue(new SDPSymbol(m));
                                :}
             ;
 
@@ -575,10 +565,6 @@ var_id ::= host_var
        |   ID
        ;
 
-literal ::= LITERAL
-        |   literal LITERAL
-        ;
-                                       
 /**********************************************************************/
 /**********************************************************************/
 /**********************************************************************/

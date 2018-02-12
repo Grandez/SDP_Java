@@ -12,12 +12,11 @@ package com.jgg.sdp.parser.base;
 import java.io.IOException;
 import java.util.*;
 
-import com.jgg.sdp.blocks.symbols.SymbolExt;
 import com.jgg.sdp.common.config.*;
 import com.jgg.sdp.module.base.*;
 import com.jgg.sdp.module.unit.Unit;
-import com.jgg.sdp.module.work.CommentBlock;
-import com.jgg.sdp.module.work.CommentLine;
+import com.jgg.sdp.module.work.*;
+import com.jgg.sdp.parser.symbols.*;
 import com.jgg.sdp.rules.components.RulesBase;
 
 import java_cup.runtime.*;
@@ -31,8 +30,8 @@ public abstract class GenericLexer {
    public abstract Symbol next_token() throws IOException, ParseException ;
    public abstract void   yypushStream(java.io.Reader reader);
 
-   protected Stack<Integer>       stack = new Stack<Integer>();
-   protected ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
+   protected Stack<Integer>   stack = new Stack<Integer>();
+   protected SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
 
    protected Unit      unit   = null;
    protected boolean   data   = false;
@@ -144,15 +143,20 @@ public abstract class GenericLexer {
    /*** GESTION DE SIMBOLOS                             ***/
    /*******************************************************/
 
-   protected Symbol symbol(int code, String txt, int yyline, int yycolumn) {
-	      setLastSymbol(code);
-	      data = true;
-	      int col = yycolumn + COLOFFSET;
+   protected Symbol symbol(int code, int yyline, int yycolumn, String txt) {
 	      int line = yyline + linOffset + 1;
-	      print("Devuelve SYMBOL " + code + " (" + line + "," + col + ") " + txt);   
-	      return symbolFactory.newSymbol(txt, code, new Symbol(code, line, col, txt));
+	      int col = yycolumn + COLOFFSET;
+	      setLastSymbol(code);
+          print("Devuelve SYMBOL " + code + " (" + (yyline + 1) + "," + col + ") " + txt);
+	      return symbolFactory.newSymbol(code, line, col, txt);
    }
 
+   protected SDPSymbol sdpSymbol(int code, int yyline, int yycolumn, String txt) {
+	      int line = yyline + linOffset + 1;
+	      int col = yycolumn + COLOFFSET;
+	      return (SDPSymbol) symbolFactory.newSymbol(code, line, col, txt).value;
+}
+   
    protected Symbol literal(int code, boolean clean) { 
        String txt = cadena.toString();
        if (clean) cadena.setLength(0);
@@ -162,8 +166,7 @@ public abstract class GenericLexer {
    protected Symbol literal(int code, String txt) {
 	      setLastSymbol(code);
 	      print("Devuelve LITERAL - " + txt);
-	      Symbol s = new Symbol(code, litLine, litColumn, txt);
-	      Symbol x = symbolFactory.newSymbol(txt, code, s);
+	      return symbolFactory.newSymbol(code, litLine, litColumn, txt);
 	      
 	      // Espacio es el primer caracter no imprimible en ASCII
 	      // Character.codePointAt(new char[] {'a'},0)
@@ -173,26 +176,26 @@ public abstract class GenericLexer {
 //	              ruleNoPrintable(litLine, litColumn);
 //	              break;
 //	          } 
-//	      }
-	      return x;      
+//	      }     
 	   }
    
    protected Symbol symbolDummy(int code) {
 	      data = true;
 	      lastSymbol = 0;
-	      return symbol(code, "EXEC", -1, -1);
+	      return symbol(code, -1, -1, "EXEC");
    }
 
    private void setLastSymbol(int id) {
 	      prevSymbol = lastSymbol;
 	      lastSymbol = id;
+	      data = true;
    }
 
   protected void excepcion(int code, String txt, int line, int col) {
       throw new NotSupportedException(code, info.module.getName(), line + info.getOffset() + 1, col + 1, txt);
   }
    
-   
+/*   
    protected Symbol makeSymbol(int code, int yyline, int yycolumn, String token) {
 	      data = true;
 	      lastID = code;
@@ -202,9 +205,9 @@ public abstract class GenericLexer {
 	      
 	      print ("Devuelve SYMBOL(" + code + ") - (" + line + "," + col + ") " + token);
 	      Symbol s = new Symbol(code, line, col, token);
-	      return info.setLastSymbol(symbolFactory.newSymbol(token, code, s));
+	      return info.setLastSymbol(sdpSymbol(code, line, col, token));
    }
-   
+  */ 
    // code = LITERAL, pero depende del parser
    // Se procesa en su estado, por lo que hay que quitarlo
    protected Symbol literal(int code) {
@@ -215,15 +218,11 @@ public abstract class GenericLexer {
 	      popState();
 	      
 	      print ("Devuelve LITERAL (" + code + ") - " + texto);
-	      Symbol s = new Symbol(code, litLine, litColumn, texto);
-	      return info.setLastSymbol(symbolFactory.newSymbol(texto, code, s));
+	      Symbol s = symbol(code, litLine, litColumn, texto);
+	      info.setLastSymbol((SDPSymbol) s.value);
+	      return s;
 	   }
 
-   protected void checkSymbol(Symbol sym) {
-	   Symbol s = (Symbol) sym.value;
-//	   rules.checkSymbol((String) s.value,  s.left, s.right);
-   }
-   
    protected void checkLiteral(Symbol sym) {
 	   Symbol s = (Symbol) sym.value;
 //	   rules.checkSymbol(" ",  s.left, s.right);
@@ -259,10 +258,8 @@ public abstract class GenericLexer {
    
    private void processComment(CommentLine comment) {
        int pos = comment.getRawComment().indexOf('\t');
-	   if ( pos != -1) {
-		   SymbolExt s = new SymbolExt(new Symbol(-2, comment.getLine(), pos, "\t"));
-		   rules.checkTab(s);  
-	   }
+       Symbol s = symbolFactory.newSymbol(-2, comment.getLine(), pos, comment.getRawComment());
+	   if ( pos != -1) tabsInText(s);
 	   
 	   info.getModule().getComment().incLines();
 	   if (comment.isDecorator()) info.getModule().getComment().incDecorators();
@@ -299,6 +296,12 @@ public abstract class GenericLexer {
    /********************************************************/
    /* Issues en el analizador lexico                       */
    /********************************************************/
+   protected Symbol  tabsInText(Symbol s) {
+	   SDPSymbol ss = (SDPSymbol) s.value;
+	   if (ss.value.indexOf('\t') != -1) rules.checkTabsInText(ss);
+	   return s;
+   }
+   
 /*   
    protected void checkDivision() {
 //   	   if (info.module.getNumSources() != 1) {

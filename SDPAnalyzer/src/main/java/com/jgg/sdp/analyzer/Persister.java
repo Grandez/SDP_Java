@@ -527,8 +527,8 @@ public class Persister {
     }
     
     private void updateGrafo() {
-    	Graph g = module.getGraph();
-
+    	Graph g = module.getComponentGraph();
+    	
     	for (SubGraph grf : g.getGraphs()) {
     		DCGGraph grafo = new DCGGraph();
     		grafo.setIdVersion(idVersion);

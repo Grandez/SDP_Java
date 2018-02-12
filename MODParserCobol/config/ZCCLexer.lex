@@ -5,7 +5,7 @@ import java_cup.runtime.Symbol;
 import com.jgg.sdp.parser.base.*;
 import com.jgg.sdp.rules.components.RulesCode;
 
-import com.jgg.sdp.blocks.symbols.SymbolExt;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 import static com.jgg.sdp.parser.lang.ZCCSym.*;
 import static com.jgg.sdp.parser.lang.ZCZSym.*;
@@ -57,19 +57,8 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
    public Symbol literal(String txt) {     
       setLastSymbol(LITERAL);
       print("Devuelve LITERAL - " + txt);
-      Symbol s = new Symbol(LITERAL, litLine, litColumn, txt);
-      Symbol x = symbolFactory.newSymbol(txt, LITERAL, s);
 
-      // Espacio es el primer caracter no imprimible en ASCII
-      // Character.codePointAt(new char[] {'a'},0)
-      
-      for (int idx = 0; idx < txt.length(); idx++) {
-          if (txt.charAt(idx) < ' ') {
-//              ruleNoPrintable(litLine, litColumn);
-              break;
-          } 
-      }
-      return x;      
+      return symbolFactory.newSymbol(LITERAL, litLine, litColumn, txt);    
    }
 
    public Symbol symbolDummy(int code) {
@@ -78,24 +67,12 @@ import static com.jgg.sdp.parser.lang.ZCZSym.*;
       return symbol(code);
    }
                   
-   public void tabsInText(String txt) {
-      if (txt.indexOf('\t') != -1) rules.checkTabsInText(symbolExt(WORDSLINE));
-   }
-                  
-   public SymbolExt symbolExt(int code)             { return new SymbolExt(symbol(code));              }     
-   public Symbol    symbol   (int code)             { return symbol(code, yytext(), yyline, yycolumn); }
-   public Symbol    symbol   (int code, String txt) { return symbol(code, txt,      yyline, yycolumn); }
-   public SymbolExt symbolExt(int code, String txt) { return new SymbolExt(symbol(code), txt);         }   
-
-   public Symbol reservedStd() {
-      return symbol(ID, yytext(), yyline, yycolumn);
-   }
-   public Symbol reservedFuture() {
-      return reservedFuture(ID);
-   }
-   public Symbol reservedFuture(int code) {
-      return symbol(code, yytext(), yyline, yycolumn);
-   }
+   public Symbol    symbol    (int code)             { return symbol(code, yyline, yycolumn, yytext()); }
+   public Symbol    symbol    (int code, String txt) { return symbol(code, yyline, yycolumn, txt);      }
+   public SDPSymbol sdpSymbol (int code, String txt) { return sdpSymbol(code, yyline, yycolumn, txt);   }   
+   public Symbol    reservedStd()                    { return symbol(ID, yyline, yycolumn, yytext());   }
+   public Symbol    reservedFuture()                 { return reservedFuture(ID);                       }
+   public Symbol    reservedFuture(int code)         { return symbol(code, yyline, yycolumn, yytext()); }
 
    private void setLastSymbol(int id) {
       prevSymbol = lastSymbol;
@@ -153,8 +130,8 @@ PARAGRAPH  = {SP}{ID}
                 }
   ^\-           { /* JGG, Pendiente de revisar */ }    
 
-  ^[ \t]+EJECT[ ]*[\.]? { rules.checkPrintDirective(symbolExt(EJECT, "EJECT")); }
-  ^[ \t]+SKIP[1-9]?     { rules.checkPrintDirective(symbolExt(SKIP, "SKIP"));  }  
+  ^[ \t]+EJECT[ ]*[\.]? { rules.checkPrintDirective(sdpSymbol(EJECT, "EJECT")); }
+  ^[ \t]+SKIP[1-9]?     { rules.checkPrintDirective(sdpSymbol(SKIP, "SKIP"));  }  
   
   ^[ ]+EXECUTE { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
   ^[ ]+EXEC    { begExec = symbolDummy(ZCZSym.EXEC); pushState(STEXEC);    }
@@ -237,18 +214,6 @@ PARAGRAPH  = {SP}{ID}
   COM-REG                     { return symbol(COM_REG                 ); } 
   COMMA                       { return symbol(COMMA                   ); } 
   COMMON                      { return symbol(COMMON                  ); } 
-  COMP                        { return symbol(COMP                    ); } 
-  COMP-1                      { return symbol(COMP1                   ); } 
-  COMP-2                      { return symbol(COMP2                   ); } 
-  COMP-3                      { return symbol(COMP3                   ); } 
-  COMP-4                      { return symbol(COMP4                   ); } 
-  COMP-5                      { return symbol(COMP5                   ); } 
-  COMPUTATIONAL               { return symbol(COMP                    ); } 
-  COMPUTATIONAL-1             { return symbol(COMP1                   ); } 
-  COMPUTATIONAL-2             { return symbol(COMP2                   ); } 
-  COMPUTATIONAL-3             { return symbol(COMP3                   ); } 
-  COMPUTATIONAL-4             { return symbol(COMP4                   ); } 
-  COMPUTATIONAL-5             { return symbol(COMP5                   ); } 
   COMPUTE                     { return symbol(COMPUTE                 ); } 
   CONTAINS                    { return symbol(CONTAINS                ); } 
   CONTENT                     { return symbol(CONTENT                 ); } 
@@ -285,29 +250,8 @@ PARAGRAPH  = {SP}{ID}
   DYNAMIC                     { return symbol(DYNAMIC                 ); } 
   EGCS                        { return symbol(EGCS                    ); } 
   ELSE                        { return symbol(ELSE                    ); } 
+  {ENDVERB}                   { return symbol(ENDVERB);                  }  
   END                         { return symbol(END                     ); } 
-  END-ADD                     { return symbol(END_VERB                ); } 
-  END-CALL                    { return symbol(END_VERB                ); } 
-  END-COMPUTE                 { return symbol(END_VERB             ); } 
-  END-DELETE                  { return symbol(END_VERB              ); } 
-  END-DIVIDE                  { return symbol(END_VERB              ); } 
-  END-EVALUATE                { return symbol(END_EVALUATE            ); } 
-  END-EXEC                    { return symbol(END_EXEC                ); } 
-  END-IF                      { return symbol(END_IF                  ); } 
-  END-INVOKE                  { return symbol(END_VERB              ); } 
-  END-MULTIPLY                { return symbol(END_VERB            ); } 
-  END-OF-PAGE                 { return symbol(END_OF_PAGE             ); } 
-  END-PERFORM                 { return symbol(END_PERFORM             ); } 
-  END-READ                    { return symbol(END_VERB                ); } 
-  END-RETURN                  { return symbol(END_VERB             ); } 
-  END-REWRITE                 { return symbol(END_VERB             ); } 
-  END-SEARCH                  { return symbol(END_SEARCH              ); } 
-  END-START                   { return symbol(END_VERB               ); } 
-  END-STRING                  { return symbol(END_VERB              ); } 
-  END-SUBTRACT                { return symbol(END_VERB            ); } 
-  END-UNSTRING                { return symbol(END_VERB            ); } 
-  END-WRITE                   { return symbol(END_VERB               ); } 
-  END-XML                     { return symbol(END_VERB                ); } 
   ENDING                      { return symbol(ENDING                  ); } 
   ENTER                       { return symbol(ENTER                   ); } 
   ENTRY                       { return symbol(ENTRY                   ); } 
@@ -404,7 +348,6 @@ PARAGRAPH  = {SP}{ID}
   NUMERIC                     { return symbol(NUMERIC                 ); } 
   NUMERIC-EDITED              { return symbol(NUMERIC_EDITED          ); } 
   OBJECT                      { return symbol(OBJECT                  ); } 
-  OBJECT-COMPUTER             { return symbol(OBJECT_COMPUTER         ); } 
   OCCURS                      { return symbol(OCCURS                  ); } 
   OF                          { return symbol(OF                      ); } 
   OFF                         { return symbol(OFF                     ); } 
@@ -497,7 +440,6 @@ PARAGRAPH  = {SP}{ID}
   SORT-MESSAGE                { return symbol(SORT_MESSAGE            ); } 
   SORT-MODE-SIZE              { return symbol(SORT_MODE_SIZE          ); } 
   SORT-RETURN                 { return symbol(SORT_RETURN             ); } 
-  SOURCE-COMPUTER             { return symbol(SOURCE_COMPUTER         ); } 
   SPACE                       { return symbol(SPACES                  ); } 
   SPACES                      { return symbol(SPACES                  ); } 
 //  SPECIAL-NAMES               { return symbol(SPECIAL_NAMES           ); } 
@@ -542,10 +484,8 @@ PARAGRAPH  = {SP}{ID}
   VALUES                      { return symbol(VALUES                  ); } 
   VARYING                     { return symbol(VARYING                 ); } 
   WHEN                        { return symbol(WHEN                    ); } 
-  WHEN-COMPILED               { return symbol(WHEN_COMPILED           ); } 
   WITH                        { return symbol(WITH                    ); } 
-  WORDS                       { return symbol(WORDS                   ); } 
-  WORKING-STORAGE             { return symbol(WORKING_STORAGE         ); } 
+  WORDS                       { return symbol(WORDS                   ); }  
   WRITE                       { return symbol(WRITE                   ); } 
   WRITE-ONLY                  { return symbol(WRITE_ONLY              ); } 
   XML                         { return symbol(XML                     ); } 
@@ -579,7 +519,6 @@ PARAGRAPH  = {SP}{ID}
   EGI                         { return reservedStd(); }
   EMI                         { return reservedStd(); }
   ENABLE                      { return reservedStd(); }
-  END-RECEIVE                 { return reservedStd(); }
   ESI                         { return reservedStd(); }
   FINAL                       { return reservedStd(); }
   GROUP                       { return reservedStd(); }
@@ -645,8 +584,6 @@ PARAGRAPH  = {SP}{ID}
   DATA-POINTER                { return reservedFuture(); }
   DEFAULT                     { return reservedFuture(); }
   EC                          { return reservedFuture(); }
-  END-ACCEPT                  { return reservedFuture(); }
-  END-DISPLAY                 { return reservedFuture(); }
   EO                          { return reservedFuture(); }
   EXCEPTION-OBJECT            { return reservedFuture(); }
   FLOAT-EXTENDED              { return reservedFuture(); }
@@ -726,15 +663,12 @@ PARAGRAPH  = {SP}{ID}
  ";"               { data = true; }
  ":"               { return symbol(OP_COLON); }  
 
-  {ENDVERB}        { return symbol(END_VERB);    }
-  
-
 /*******************************************************/  
 /* Patrones                                            */
 /*******************************************************/
 
   {SPACES}      { /* nada */ }
-  {TABS}        { rules.checkTab(symbolExt(TAB)); }
+  {TABS}        { rules.checkTab((SDPSymbol) symbol(TAB).value); }
 
   // Capturar  al inicio de linea
   ^[ ]+COPY{BLANKS}              { initEmbedded(); 
@@ -779,7 +713,7 @@ PARAGRAPH  = {SP}{ID}
 
 <ST_FUNCTION> {
   {SPACES}           { /* EAT */ }
-  {TABS}             { rules.checkTab(symbolExt(TAB)); }
+  {TABS}             { rules.checkTab((SDPSymbol) symbol(TAB).value); }
   ^[\*\/]            { commentInit(yytext(), yyline);   }
   {ID}               { popState(); return symbol(INTRINSIC);  }
   \r                 { /* EAT */ }
@@ -825,7 +759,7 @@ PARAGRAPH  = {SP}{ID}
 */
 <ENDLINE> {
   {SPACES}      { /* Nada */  }
-  {TABS}        { rules.checkTab(symbolExt(TAB)); }
+  {TABS}        { rules.checkTab((SDPSymbol) symbol(TAB).value); }
   \n            { popState(); return symbol(ENDP); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
@@ -837,15 +771,15 @@ PARAGRAPH  = {SP}{ID}
 <EATLINE> {
 
   {SPACES}      { /* Nada */  }
-  {TABS}        { rules.checkTab(symbolExt(TAB)); }
+  {TABS}        { rules.checkTab((SDPSymbol) symbol(TAB).value); }
   \n            { popState(); }  
   \r            { /* comer */ }
   \.            { /* comer */ }
-  [^]             { /* comer */ }
+  [^]           { /* comer */ }
 }
 
 <COMMENT> {
-  {BLANKS}      { tabsInText(yytext()); commentAppend(yytext()); }
+  {BLANKS}      { tabsInText(symbol(BLANKS)); commentAppend(yytext()); }
   \n            { commentEnd(yyline);      }                 
   [a-zA-Z0-9]+  { commentAppend(yytext()); }
   [^]           { commentAppend(yytext()); }    
@@ -914,7 +848,7 @@ PARAGRAPH  = {SP}{ID}
                   return symbol(SQLCODE);
                 } 
    {SPACES}     { /* DO NOTHING */ }
-   {TABS}       { rules.checkTab(symbolExt(TAB)); }
+   {TABS}       { rules.checkTab((SDPSymbol) symbol(TAB).value); }
    \n           { info.module.incLines(data); data = false; }
    \r           { /* do nothing */ }
     
@@ -926,7 +860,7 @@ PARAGRAPH  = {SP}{ID}
                   commentInit(yytext(), yyline);    
                 }
    {SPACES}     { /* DO NOTHING */ }
-   {TABS}       { rules.checkTab(symbolExt(TAB)); }
+   {TABS}       { rules.checkTab((SDPSymbol) symbol(TAB).value); }
    \n           { info.module.incLines(data); data = false; }
    \r           { /* do nothing */ }
    \.           { popState(); }

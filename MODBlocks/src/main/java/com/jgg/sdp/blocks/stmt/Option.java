@@ -8,22 +8,24 @@ package com.jgg.sdp.blocks.stmt;
 import java.util.*;
 
 import com.jgg.sdp.blocks.reflect.*;
-import com.jgg.sdp.blocks.symbols.*;
-
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.*;
 
 public class Option implements IReflect {
      private int id;
      private String name;
-     private Symbol sym;
+     private SDPSymbol sym;
      
      private int begLine;
      private int endLine;
      private int begColumn;
      private int endColumn;
      
-     private ArrayList<SymbolExt> vars = new ArrayList<SymbolExt>();
+ 	// Indica si el texto va entre parentesis
+ 	public boolean function = false;
 
+     private ArrayList<SDPSymbol> parms = new ArrayList<SDPSymbol>();
+     private ArrayList<Option>    opts  = new ArrayList<Option>();
+     
      public Option() {
     	 this.id = -1;
     	 this.name = "";
@@ -34,37 +36,29 @@ public class Option implements IReflect {
     	 this.name = name;
      }
      
-     public Option(Symbol s) {
+     public Option(SDPSymbol s) {
     	 first(s);
      }
 
-     public Option(Symbol s, SymbolExt t) {
+     public Option(SDPSymbol s, SDPSymbol t) {
     	 first(s);
     	 if (t != null) last(t);
+     }
+     public Option(SDPSymbol s, Option o) {
+    	 first(s);
+    	 if (o != null) opts.add(o);
      }
      
-     public Option(Symbol s, Symbol t) {
-    	 first(s);
-    	 if (t != null) last(t);
-     }
-
-     public Option addValue(SymbolExt v) {
-    	 vars.add(v);
+     public Option add(SDPSymbol v) {
+    	 parms.add(v);
     	 return this;
      }
-     public Option addValue(Symbol v) {
-    	 vars.add(new SymbolExt(v));
+     public Option add(Option o) {
+    	 opts.add(o);
     	 return this;
      }
 
-     public void addValue(SymbolList l) {
-    	 SymbolExt e = new SymbolExt(l.getSymbol());
-//    	 StringBuilder sb = new StringBuilder();
-//    	 for (Symbol s : l.getSymbols()) sb.append((String)((Symbol)s.value).value + " "); 
-    	 vars.add(e);
-     }
-
- 	public Symbol getSymbol() {
+ 	public SDPSymbol getSymbol() {
 		return sym;
 	}
      
@@ -84,63 +78,68 @@ public class Option implements IReflect {
 		this.name = name;
 	}
 
-//	public SymbolExt getAsSymbolExt() {
-//		return sym;
-//	}
-	
-	public SymbolExt getVar(int pos) {
-		if (vars.size() == 0) return null;
-		return vars.get(pos);
+	public Option setFunction() {
+		function = true;
+		return this;
 	}
 	
-	public ArrayList<SymbolExt> getVars() {
-		return vars;
+	public Option addParm(SDPSymbol s) {
+		parms.add(s);
+		return this;
+	}
+	public SDPSymbol getParm(int pos) {
+		if (parms.size() == 0) return null;
+		return parms.get(pos);
+	}
+	
+	public ArrayList<SDPSymbol> getParms() {
+		return parms;
 	}
 
-	public void setVars(ArrayList<SymbolExt> vars) {
-		this.vars = vars;
+	public void setParms(ArrayList<SDPSymbol> parms) {
+		this.parms = parms;
 	}
 
 	public String  getValue() {
-		if (vars.size() == 0) return null;
-		return vars.get(0).getName();
+		if (parms.size() == 0) return null;
+		return parms.get(0).getValue();
+	}
+	public int  getValueType() {
+		if (parms.size() == 0) return 0;
+		return parms.get(0).getId();
 	}
 	
 	// Parametro es PARM(valor), Opcion es PARM
-	public boolean isParm()   { return vars.size() != 0; }
-	public boolean isOption() { return vars.size() == 0; }
+	public boolean isParm()   { return parms.size() != 0; }
+	public boolean isOption() { return parms.size() == 0; }
 	
-    public Option addSymbol(SymbolExt s) {
-    	vars.add(s);
+    public Option addSymbol(SDPSymbol s) {
+    	parms.add(s);
     	return this;
     }
     
-    public Option add(SymbolList list) {
-    	for (Symbol s : list.getSymbols()) {
-    		vars.add(new SymbolExt(s));
-    	}
-    	return this;
-    }
+//    public Option add(SDPSymbol list) {
+//    	for (SDPSymbol s : list.getSymbols()) {
+//    		vars.add(new SDPSymbol(s));
+//    	}
+//    	return this;
+//    }
 
-    private void first(Symbol s) {
+    private void first(SDPSymbol s) {
    	   this.id = s.sym;
    	   this.name = (String) s.value;
    	   sym = s;
-   	   begLine = s.left;
-   	   begColumn = s.right;
-   	   endLine = s.left;
-   	   endColumn = s.right;
+   	   begLine = s.getLine();
+   	   begColumn = s.getColumn();
+   	   endLine = s.getLine();
+   	   endColumn = s.getColumn() + s.getValue().length();
     }
-    
-    private void last(Symbol s) {
-    	last(new SymbolExt(s));
-    }
-    
-    private void last(SymbolExt s) {
+        
+    private void last(SDPSymbol s) {
 		if (s == null) return;
-	    vars.add(s);
-	    endLine = s.getEndLine();
-	    endColumn = s.getEndColumn();
+	    parms.add(s);
+	    endLine = s.getLine();
+	    endColumn = s.getColumn() + s.getValue().length();
     }
     
     /***************************************************************/
@@ -153,7 +152,7 @@ public class Option implements IReflect {
     
     public String toValue() {
     	StringBuilder sb = new StringBuilder();
-    	for (SymbolExt s : vars) {
+    	for (SDPSymbol s : parms) {
     		sb.append(s.getValue());
     		sb.append(" ");
     	}

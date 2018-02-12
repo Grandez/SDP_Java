@@ -31,6 +31,7 @@ public interface ZCZSym {
   public static final int CMT_SLASH = 50007;
   public static final int MULTILINE = 50008;
   public static final int WORDSLINE = 50009;
+  public static final int BLANKS    = 50010;
 
 }
 

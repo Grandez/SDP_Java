@@ -1,10 +1,10 @@
 package com.jgg.sdp.blocks.stmt;
 
-import java_cup.runtime.Symbol;
+import com.jgg.sdp.parser.symbols.SDPSymbol;
 
 public class StmtGral extends Statement<StmtGral> {
 
-	public StmtGral(Symbol s) {
+	public StmtGral(SDPSymbol s) {
 		super(s);
 	}
 }

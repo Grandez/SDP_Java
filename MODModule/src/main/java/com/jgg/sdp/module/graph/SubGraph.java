@@ -87,18 +87,23 @@ public class SubGraph {
     }
 
     public void addLinearNode(Integer type, String name, int stmts) {
-    	addLinearNode(type, name, name, stmts);
+    	addLinearNode(type, type, name, name, stmts, false);
     }
-    public void addLinearNode(Integer type, String from, String to, int stmts) {
-    	addLinearNode(type, from, to, stmts, false);
+    public void addLinearNode(Integer type, int subtype, String name, int stmts) {
+    	addLinearNode(type, subtype, name, name, stmts, false);
+    }
+
+    public void addLinearNode(int type, String from, String to, int stmts) {
+    	addLinearNode(type, type, from, to, stmts, false);
     }
     
-    public Node addLinearNode(Integer type, String from, String to, int stmts, boolean loop) {
-  	    Node node = nodes.getNode(type, from, to, stmts);
+    public Node addLinearNode(int type, int subtype, String from, String to, int stmts, boolean loop) {
+  	    Node node = nodes.getNode(type, subtype, from, to, stmts);
   	  
+  	    node.setCause(checkCause(node, current));
+  	    
     	if (current.getSubtype() == BRANCH_BEG) {
     		node.addChild(current.getTerminal());
-    		node.setCause(EDGE_IF);
     		current.addChild(node);
     		stackPush(node);
     		return node;
@@ -123,6 +128,11 @@ public class SubGraph {
        }
        real = true;
        return node;
+    }
+    
+    private int checkCause(Node act, Node parent) {
+    	if (current.getSubtype() == BRANCH_BEG) return EDGE_IF;
+    	return EDGE_NORMAL;
     }
     
     /**
@@ -172,7 +182,7 @@ public class SubGraph {
     
     public void endBlock(int stmts, boolean full) {
     	Node end;
-    	Node n;
+
     	do { end = stackPop();
     	     end.endStmts(stmts);
     	}  	while (end.getSubtype() != BRANCH_BEG && end.getSubtype() != BRANCH_END);
@@ -181,19 +191,19 @@ public class SubGraph {
     	// Si encuentra en END ha habido un ELSE
     	if (end.getSubtype() == BRANCH_BEG) {
     	    if (end.getNumChilds() < 2) end.addChild(end.getTerminal());
-    	    end = stackPop();
+//    	    end = stackPop();
     	}
     	
     	// Fin con punto. Acaba todas las ramas
     	if (full) {
-    		n = stackPop();
-    		while (n.getSubtype() == BRANCH_END) {
-    			n = stackPop();
-    			if (n.getSubtype() == BRANCH_BEG) {
-    				if (n.getNumChilds() < 2) n.addChild(end.getTerminal());
+    		end = stackPop();
+    		while (end.getSubtype() == BRANCH_END && !stackEmpty()) {
+    			end = stackPop();
+    			if (end.getSubtype() == BRANCH_BEG) {
+    				if (end.getNumChilds() < 2) end.addChild(end.getTerminal());
     			}
     		}
-    	   n.endStmts(stmts); 
+    	   end.endStmts(stmts); 
     	}
  	   stackPush(end);
     }
@@ -201,7 +211,7 @@ public class SubGraph {
     public Node addBranch(int type, int stmts, boolean close, String label) {
     	current.endStmts(stmts);
 
-    	Node node   = nodes.getNode(TRAP.BLOCK, BRANCH, "CODE", stmts);
+    	Node node   = nodes.getNode(TRAP.BLOCK, BRANCH, "CODE", "CODE", stmts);
     	node.setLabel(label);
 		node.setCause(EDGE_ELSE);
 		
@@ -244,6 +254,10 @@ public class SubGraph {
     /* TRATAMIENTO DE LA PILA                          */
     /***************************************************/
     
+    private boolean stackEmpty() {
+    	return currents.empty();
+    }
+    
     private void stackReplace(Node n) {
     	currents.pop();
     	current = currents.push(n);
@@ -252,6 +266,7 @@ public class SubGraph {
     private Node stackPop() {
     	return stackPop(true);
     }
+    
     private Node stackPop(boolean setCurrent) {
     	Node n = currents.pop();
     	if (setCurrent && !currents.empty()) current = currents.peek();

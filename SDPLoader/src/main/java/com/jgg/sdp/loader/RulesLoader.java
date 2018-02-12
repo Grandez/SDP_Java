@@ -8,11 +8,13 @@ import com.jgg.sdp.domain.rules.*;
 import com.jgg.sdp.domain.services.*;
 import com.jgg.sdp.domain.services.cfg.DBConfiguration;
 import com.jgg.sdp.loader.jaxb.rules.*;
+import com.jgg.sdp.printer.Printer;
 import com.jgg.sdp.rules.processor.*;
 
 public class RulesLoader {
     
     private Configuration cfg = DBConfiguration.getInstance();
+	private Printer       printer = Printer.getInstance(cfg.getVerbose());
 	
 	private boolean replace = false;
 	
@@ -48,10 +50,10 @@ public class RulesLoader {
 		XMLParser<SDPRules> loader = new XMLParser<SDPRules>();
 		
 		for (File f : loader.loadFromResource("rules")) {
-			System.out.print("Processing " + f.getName());
+			printer.print(1, "Processing " + f.getName());
 			SDPRules cfg = loader.readXML(f, "/SDPRules.xsd", SDPRules.class);
 			loadXMLFile(cfg);
-	        System.out.println("\tOK");
+			printer.println(1, "\tOK");
 		}
 
 		return 0;
@@ -132,23 +134,28 @@ public class RulesLoader {
     	   }
     	}
     	if (rules != null) {
-    	   for (RULRule rule : rules.getRules())  dbCommon.update(rule);
+    	   for (RULRule rule : rules.getRules())  
+    		   dbCommon.update(rule);
     	}
     	if (conds != null) {
-    	   for (RULCond cond : conds.getConditions()) dbCommon.update(cond);
+    	   for (RULCond cond : conds.getConditions()) 
+    		   dbCommon.update(cond);
     	}
     	if (scripts != null) {
-    	   for (RULScript script : scripts.getScripts()) dbCommon.update(script);
+    	   for (RULScript script : scripts.getScripts()) 
+    		   dbCommon.update(script);
     	}
     	if (descs != null) {
     	   for (RULDesc desc : descs.getDescriptions()) 
     		   dbCommon.update(desc);
     	}
         if (samples != null) {
-      	   for (RULSample     samp  : samples.getSamples()) dbCommon.update(samp);
+      	   for (RULSample     samp  : samples.getSamples()) 
+      		   dbCommon.update(samp);
     	}    	
         if (msgs != null) {
-       	   for (RULMessage     msg  : msgs.getMessages()) dbCommon.update(msg);
+       	   for (RULMessage     msg  : msgs.getMessages()) 
+       		   dbCommon.update(msg);
      	}    	
 
     }

@@ -5,25 +5,25 @@ import java_cup.runtime.*;
 import com.jgg.sdp.parser.base.*;
 
 import com.jgg.sdp.parser.stmt.StmtSQL;
-
+import com.jgg.sdp.parser.symbols.*;
 import com.jgg.sdp.common.ctes.*;
 
 parser code {:
    ParserInfo    info     = ParserInfo.getInstance();
-   public void syntax_error(Symbol token) throws ParseException {
+   public void syntax_error(SDPSymbol token) throws ParseException {
           info.syntax_error(token);
    }
 
-   public void unrecovered_syntax_error(Symbol token) throws ParseException {
+   public void unrecovered_syntax_error(SDPSymbol token) throws ParseException {
       info.unrecovered_syntax_error(token);
    }
 
 :}
 
 action code {:
-   ComplexSymbolFactory symbolFactory = new ComplexSymbolFactory();
-   ParserInfo      info     = ParserInfo.getInstance();
-   StmtSQL         stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_DCL);
+   SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
+   ParserInfo       info     = ParserInfo.getInstance();
+   StmtSQL          stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_DCL);
    
    public void initActionClass() {
    }
@@ -49,70 +49,70 @@ init with {:
 /***                    PATRONES                                          ***/
 /****************************************************************************/
 
-terminal Symbol ID         ;
-terminal Symbol LITERAL    ;
+terminal SDPSymbol ID         ;
+terminal SDPSymbol LITERAL    ;
 
 /****************************************************************************/
 /***                    SIMBOLOS                                         ***/
 /****************************************************************************/
 
-terminal Symbol ALL                                   ;
+terminal SDPSymbol ALL                                   ;
 
-terminal Symbol BY                                    ;
+terminal SDPSymbol BY                                    ;
 
-terminal Symbol COMMA                                 ;
-terminal Symbol CURRENT                               ;
-terminal Symbol CURSOR                                ;
+terminal SDPSymbol COMMA                                 ;
+terminal SDPSymbol CURRENT                               ;
+terminal SDPSymbol CURSOR                                ;
 
-terminal Symbol DATE                                  ;
-terminal Symbol DEC                                   ;
-terminal Symbol DEPENDENT                             ;
-terminal Symbol DESCRIBE                              ;
-terminal Symbol DIAGNOSTICS                           ;
+terminal SDPSymbol DATE                                  ;
+terminal SDPSymbol DEC                                   ;
+terminal SDPSymbol DEPENDENT                             ;
+terminal SDPSymbol DESCRIBE                              ;
+terminal SDPSymbol DIAGNOSTICS                           ;
 
-terminal Symbol EXPLAIN                               ;
+terminal SDPSymbol EXPLAIN                               ;
 
-terminal Symbol FROM                                  ;
+terminal SDPSymbol FROM                                  ;
 
-terminal Symbol GET                                   ;
-terminal Symbol GRANT                                 ;
+terminal SDPSymbol GET                                   ;
+terminal SDPSymbol GRANT                                 ;
 
-terminal Symbol INCLUDING                             ;
-terminal Symbol INPUT                                 ;
+terminal SDPSymbol INCLUDING                             ;
+terminal SDPSymbol INPUT                                 ;
 
-terminal Symbol LPAR                                  ;
+terminal SDPSymbol LPAR                                  ;
 
-terminal Symbol MAX                                   ;
-terminal Symbol MESSAGE_TEXT                          ;
-terminal Symbol MIN                                   ;
+terminal SDPSymbol MAX                                   ;
+terminal SDPSymbol MESSAGE_TEXT                          ;
+terminal SDPSymbol MIN                                   ;
 
-terminal Symbol OPTION                                ;
-terminal Symbol OUTPUT                                ;
+terminal SDPSymbol OPTION                                ;
+terminal SDPSymbol OUTPUT                                ;
 
-terminal Symbol PACKAGE                               ;
-terminal Symbol PLAN                                  ;
-terminal Symbol PRIVILEGES                            ;
-terminal Symbol PROCEDURE                             ;
-terminal Symbol PUBLIC                                ;
+terminal SDPSymbol PACKAGE                               ;
+terminal SDPSymbol PLAN                                  ;
+terminal SDPSymbol PRIVILEGES                            ;
+terminal SDPSymbol PROCEDURE                             ;
+terminal SDPSymbol PUBLIC                                ;
 
-terminal Symbol REVOKE                                ;
-terminal Symbol ROLE                                  ;
-terminal Symbol RPAR                                  ;
+terminal SDPSymbol REVOKE                                ;
+terminal SDPSymbol ROLE                                  ;
+terminal SDPSymbol RPAR                                  ;
 
-terminal Symbol SMALLINT                              ;
-terminal Symbol STACKED                               ;
-terminal Symbol STMTCACHE                             ;
+terminal SDPSymbol SMALLINT                              ;
+terminal SDPSymbol STACKED                               ;
+terminal SDPSymbol STMTCACHE                             ;
 
-terminal Symbol TABLE                                 ;
-terminal Symbol TIMESTAMP                             ;
-terminal Symbol TIME                                  ;
-terminal Symbol TO                                    ;
+terminal SDPSymbol TABLE                                 ;
+terminal SDPSymbol TIMESTAMP                             ;
+terminal SDPSymbol TIME                                  ;
+terminal SDPSymbol TO                                    ;
 
-terminal Symbol VERSION                               ;
+terminal SDPSymbol VERSION                               ;
 
-terminal Symbol WITH                                  ;
+terminal SDPSymbol WITH                                  ;
 
-non terminal Symbol  sql                   ;
+non terminal Symbol  sql_stmt              ;
 non terminal         sql_dcl               ;
 
 non terminal         sql_describe          ;
@@ -139,7 +139,7 @@ non terminal         clause_revoke_lst     ;
 non terminal         clause_revoke_role_lst;
 non terminal         clause_revoke_role    ;
 
-non terminal Symbol non_reserved_words ;
+non terminal SDPSymbol non_reserved_words ;
 
 non terminal         opt_grant               ;
 
@@ -160,14 +160,10 @@ non terminal         opt_not               ;
 /**********************************************************************/
 /**********************************************************************/
 
-sql ::= sql_dcl  {: stmt.adjust(info.getLastSymbol()); 
-                    String name = stmt.getVerbName();
-                    int id =  stmt.getVerbId();
-                    int line = stmt.getVerb().left;
-                    int col = stmt.getVerb().right;
-                    RESULT = symbolFactory.newSymbol(name, id, new Symbol(id, line, col, stmt));  
-                 :}
-    ;
+sql_stmt ::= sql_dcl:s {: stmt.adjust(info.getLastSymbol()); 
+                          RESULT = symbolFactory.newSymbol(0, 0, 0, stmt); 
+                       :}
+         ;
 
 sql_dcl ::= sql_describe
         |   sql_explain

@@ -9,6 +9,7 @@ import java.util.*;
 import org.slf4j.*;
 
 import com.jgg.sdp.common.exceptions.SDPException;
+import com.jgg.sdp.printer.Printer;
 
 public class Messages {
 
@@ -17,6 +18,8 @@ public class Messages {
     private static Configuration cfg = null;
 	private final ResourceBundle msg = ResourceBundle.getBundle("messages");
 	
+	private Printer     log  = Printer.getInstance();
+		
 	private int levelInfo = 0;
     private boolean inLine = false;
 	
@@ -64,7 +67,7 @@ public class Messages {
 	public void exception(SDPException e) {
 		String x = e.getMessage();
 		if (x == null) {
-			System.out.println("Para");
+			log.println("Para");
 		}
 	    String[] lineas = e.getMessage().split("\\n");
 	    for (int index = 0; index < lineas.length; index++) {
@@ -75,7 +78,7 @@ public class Messages {
 		StringBuilder data = new StringBuilder();
 		String x = e.getMessage();
 		if (x == null) {
-			System.out.println("Para");
+			log.println("Para");
 		}
 	    String[] lineas = e.getMessage().split("\\n");
 	    for (int index = 0; index < lineas.length; index++) {
@@ -86,24 +89,24 @@ public class Messages {
      }
 
 	public void print(String txt) {
-		System.out.println(txt);
+		log.println(txt);
 	}
 	
 	public void progress(int id, Object... args) {
 		progressCont(id, args);
-		System.out.println("");
+		log.println("");
 		inLine = false;
 	}
 	
 	public void progressCont(int id, Object... args) {
 		if (!inLine) {
-	       System.out.print(df.format(new Date()) + " - ");
+	       log.print(df.format(new Date()) + " - ");
 		}   
 	    progressContEx(id, args);
 	}
 
 	public void progressContEx(int id, Object... args) {
-	    System.out.print(getMsg(id, args));
+	    log.print(getMsg(id, args));
 	    inLine = true;
 	}
 	

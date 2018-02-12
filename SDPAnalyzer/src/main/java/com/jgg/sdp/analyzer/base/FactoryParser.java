@@ -10,9 +10,9 @@
  */
 package com.jgg.sdp.analyzer.base;
 
-import com.jgg.sdp.blocks.symbols.SDPSymbolFactory;
 import com.jgg.sdp.parser.db2.DB2Parser;
 import com.jgg.sdp.parser.lang.*;
+import com.jgg.sdp.parser.symbols.SDPSymbolFactory;
 
 import java_cup.runtime.*;
 

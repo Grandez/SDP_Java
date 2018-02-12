@@ -11,17 +11,14 @@ import com.jgg.sdp.printer.Printer;
 
 public class AnalyzerEval {
 
-	private final int SDPANALYZER = 1;
-	private final int ISSUES      = 2;
-	
-	private Module module = null;
-	
-	private Printer     printer  = Printer.getInstance();
+	private Module  module;
+	private Printer log;
 	
 	private HashMap<Integer, BlockCases> bloques = new HashMap<Integer, BlockCases>();
 	
-	public AnalyzerEval(Module module) {
+	public AnalyzerEval(Module module, Printer log) {
 	   this.module = module;	
+	   this.log = log;
 	}
 	
 	public int evaluate(int block) {
@@ -33,8 +30,8 @@ public class AnalyzerEval {
 		for (IVPCase c : cases.getCases(block)) {
 			rc = evaluateCase(module, c); 
 			if (rc == 1) {
-				if (ko == 0) printer.lineFixEnd("KO");
-//				printer.line("        ERROR: " + msgErr);
+				if (ko == 0) log.lineEnd(2, "KO");
+				log.println(2, "        ERROR: " + c.getMsgErr());
 			}
 			ko += rc;
 		}
@@ -62,11 +59,20 @@ public class AnalyzerEval {
 	}
 	
 	private int evaluateCase(Module module, IVPCase c) {
-		if (c.getDescription().length() > 0) printer.lineFixCnt(" - " + c.getDescription());
-	
+		if (c.getDescription().length() > 0) log.lineCnt(2, " - " + c.getDescription());
+		Object component = module;
+		
 		String strObj = selectObject(c.getObject());
-		Object component = getResult(module, "get" + strObj);
-		Object value     = getResult(component, "get" + c.getMethod());
+		
+		if (strObj != null) {
+			if (!strObj.startsWith("get")) {
+				strObj = "getComponent" + strObj;
+			}
+			component = getResult(module, strObj);
+		}
+		String strMethod = c.getMethod();
+		if (!strMethod.startsWith("get")) strMethod = "get" + strMethod;
+		Object value = getResult(component, strMethod);
 		return evaluate(value, c);
     }
 

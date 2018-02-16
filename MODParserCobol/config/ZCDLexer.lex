@@ -312,7 +312,6 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   {SPACES}         { /* nada */          }
   {TABS}           { rules.checkTab(sdpsymbol(TAB)); }
   \n               { info.module.incLines(data); data = false; }
-  \r               { /* do nothing */ }
 
   [^]              { data = true; 
                      System.err.println("JGG: " + yyline + "-" + yycolumn + " -" + yytext() + "-"); }
@@ -336,17 +335,34 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   \'               { pushState(QUOTE_STRING);  }  
   \"               { pushState(DQUOTE_STRING); }
 
-  CLASS            { return symbol(CLASS); }
-  COMMA            { data = true; }
-  DEBUGGING        { data = true; }
-  DECIMAL-POINT    { return symbol(DECIMALPOINT); }
-  IS               { data = true; }
-  MODE             { data = true; }
-  OBJECT-COMPUTER  { return symbol(OBJECT_COMPUTER); }
+  ALPHABET         { return symbol(ALPHABET);        }
+  CHARACTER[Ss]?   { return symbol(CHARACTERS);      }
+  CLASS            { return symbol(CLASS);           }
+  COMMA            { return symbol(COMMA);           }
+  CURRENCY         { return symbol(CURRENCY);        }
+  DEBUGGING        { return symbol(DEBUGGING);       }
+  DECIMAL-POINT    { return symbol(DECIMALPOINT);    }
+  EBCDIC           { return symbol(EBCDIC);          }  
+  IN               { return symbol(IN);              }  
+  IS               { return symbol(IS);              }
+  MEMORY           { return symbol(MEMORY);          }
+  MODE             { return symbol(MODE);            }
+  MODULES          { return symbol(MODULES);         }
+  NATIVE           { return symbol(NATIVE);          }
+  OBJECT-COMPUTER  { return symbol(OBJECT_COMPUTER); }  
+  PICTURE          { return symbol(PICTURE);         }  
+  REPOSITORY       { return symbol(REPOSITORY);      }
+  SEGMENT          { return symbol(SEGMENT);         }
+  SEQUENCE         { return symbol(SEQUENCE);        }
   SOURCE-COMPUTER  { return symbol(SOURCE_COMPUTER); }
   SPECIAL-NAMES    { return symbol(SPECIAL_NAMES);   }
-  THRU             { data = true; } 
-  WITH             { data = true; }
+  STANDARD         { return symbol(STANDARD);        }  
+  SYMBOLIC         { return symbol(SYMBOLIC);        }
+  SYMBOL           { return symbol(SYMBOL);          }  
+  THRU             { return symbol(THRU);            }
+  WITH             { return symbol(WITH);            }
+  WORDS            { return symbol(WORDS);           }
+  XMLSCHEMA        { return symbol(XMLSCHEMA);       }
 
   COPY         { initEmbedded(); 
                  pushState(COPYS); 
@@ -392,27 +408,34 @@ REPLACE            { excepcion(MSG.EXCEPTION_NOT_ALLOW, yytext(), yyline, yycolu
   ^[ ]+EJECT[ ]*[\.]? { rules.checkPrintDirective(sdpsymbol(EJECT, "EJECT")); }
 
   ACCESS         { return symbol(ACCESS);       }
-  ALTERNATE      { return symbol(ALTERNATE);    }  
+  ALTERNATE      { return symbol(ALTERNATE);    }
+  AREA[Ss]?      { return symbol(AREAS);        }
   ASSIGN         { return symbol(ASSIGN);       }
+  CHARACTER[Ss]? { return symbol(CHARACTERS);   }  
   DYNAMIC        { return symbol(DYNAMIC);      }
+  DELIMITER      { return symbol(DELIMITER);    }  
   DISPLAY        { return symbol(ZCDSym.DISPLAY);      }
-  DUPLICATES     { data = true;                 }  
+  DUPLICATES     { return symbol(DUPLICATES);   }  
   INDEXED        { return symbol(INDEXED);      }
   FILE-CONTROL   { return symbol(FILE_CONTROL); }
-  FILE           { data = true;                 }
+  FILE           { return symbol(FILE);         }
   IS             { data = true;                 }
-  KEY            { data = true;                 }
-  LINE           { data = true;                 }
+  KEY            { return symbol(KEY);          }
+  LINE           { return symbol(LINE);         }
   MODE           { data = true;                 }
-  OPTIONAL       { data = true;                 }
+  OPTIONAL       { return symbol(OPTIONAL);     }
   ORGANIZATION   { return symbol(ORGANIZATION); }
+  PADDING        { return symbol(PADDING);      }  
+  PASSWORD       { return symbol(PASSWORD);     }  
   RANDOM         { return symbol(RANDOM);       }
   RECORDING      { return symbol(RECORDING);    }
   RECORD         { return symbol(RECORD);       }
   RELATIVE       { return symbol(RELATIVE);     }
+  RESERVE        { return symbol(RESERVE);      }
   SELECT         { return symbol(SELECT);       }
   SEQUENTIAL     { return symbol(SEQUENTIAL);   }
   STATUS         { return symbol(STATUS);       }
+  STANDARD-1     { return symbol(STANDARD1);    }
   TO             { data = true;                 }
   WITH           { data = true;                 }
 

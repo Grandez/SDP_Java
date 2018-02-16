@@ -126,7 +126,8 @@ public class MSG {
 	public static final int EXCEPTION_FORMAT     = 99504;
 	public static final int EXCEPTION_LOCK       = 99505;	
 	public static final int EXCEPTION_RULE_GROUP = 99510;
-
+	public static final int EXCEPTION_DB2_VERB   = 99511;
+	
 	// Situaciones no permitidas
 	public static final int SUPPORT_SECTION     = 98010;
 	public static final int SUPPORT_NAME        = 98020;
@@ -135,6 +136,7 @@ public class MSG {
 	public static final int SUPPORT_FACTORY     = 98023;
 	public static final int SUPPORT_OBJECT      = 98024;
 	public static final int SUPPORT_METHOD      = 98025;
+
 	
 	public static final int EXCEPTION_KEY        = 99600;
 	public static final int EXCEPTION_KEY_SERVER = 99601;

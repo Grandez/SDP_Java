@@ -23,7 +23,7 @@ parser code {:
 action code {:
    SDPSymbolFactory symbolFactory = new SDPSymbolFactory();
    ParserInfo       info     = ParserInfo.getInstance();
-   StmtSQL          stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_DCL);
+   StmtSQL          stmt     = new StmtSQL(CDG.STMT_SQL, CDG.STMT_SQL_DCL);
    
    public void initActionClass() {
    }

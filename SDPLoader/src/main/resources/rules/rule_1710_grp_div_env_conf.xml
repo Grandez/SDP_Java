@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>ENVIRONMENT DIVISION</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="DIV_ENV">
+      <idGroup>171</idGroup>
+      <idParent>17</idParent>
+      <prefix>CFG</prefix>
+      <active>true</active>
+      <r:title>
+          <text>CONFIGURATION SECTION</text>      
+      </r:title>
+
+      <r:description>
+          <text lang="xx">Reglas de control de configuration section</text>      
+      </r:description>
+      
+      <r:item name="SECT_CONF">
+         <object>CONFIGURATION</object>
+         <active>true</active>
+         <r:title>
+             <text>Opciones de CONFIGURATION SECTION</text>      
+         </r:title>
+         
+         <r:description>
+             <text lang="xx">
+               SOURCE y OBJECT COMPUTER son unicamente informativos
+               No es necesario indicarlos
+             </text>      
+         </r:description>
+         <r:message>
+                  <text lang="xx" dialect="XX">No es necesario indicar **:Lvalue:**</text>
+         </r:message>
+         
+         <r:rule>
+            <severity>2</severity>
+            <condition>
+               <lvalue type="option">SOURCE-COMPUTER</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+         
+         <r:rule>
+            <severity>2</severity>
+            <condition>
+               <lvalue type="option">OBJECT-COMPUTER</lvalue>
+               <property>has</property>
+            </condition>        
+         </r:rule>
+
+      </r:item>
+      
+      <r:item name="CONF_LINES">
+         <object type="list">Option</object>
+         <r:title>
+             <text>Codificar en la misma linea</text>      
+         </r:title>
+
+         <r:rule name="lines">
+            <priority>3</priority>
+            <severity>3</severity>
+            <r:description>
+               <text lang="xx">Codificar las opciones en la misma linea</text>      
+            </r:description>
+            <condition>
+               <lvalue type="attribute">lines</lvalue>
+               <operator>gt</operator>
+               <rvalue>1</rvalue>
+            </condition>        
+         </r:rule>
+      </r:item>
+      
+   </r:group>
+
+</r:SDPRules>
+

@@ -9,11 +9,15 @@ package com.jgg.sdp.module.items;
 
 import java.util.*;
 
+import com.jgg.sdp.blocks.stmt.Option;
+import com.jgg.sdp.blocks.stmt.TBOptions;
+
 public class Persistence {
 
 	public final static int SEQUENTIAL = 0x01;
 	public final static int RELATIVE   = 0x02;
     public final static int INDEXED    = 0x04;
+    public final static int LINE       = 0x08;
     public final static int TABLE      = 0x10;
     public final static int CURSOR     = 0x20;    
 	
@@ -25,12 +29,22 @@ public class Persistence {
     public final static int READ       = 0x01;
     public final static int WRITE      = 0x02;
     
+    public final static int ACC_SEQUENTIAL = 0x01;
+    public final static int ACC_DYNAMIC    = 0x02;
+    public final static int ACC_RANDOM     = 0x04;
+    public final static int ACC_RELATIVE   = 0x08;
+    
     private String  logicalName;
     private String  physicalName;
+
+    private TBOptions          options     = new TBOptions();    
     private ArrayList<String>  recordNames = new ArrayList<String>();
+ 
+    
     private boolean master;
 	
-    private int type;
+    private int type   = SEQUENTIAL;
+    private int mode   = ACC_SEQUENTIAL;
 	private int access = 0x00;
 	private int pos = -1;
 	
@@ -66,6 +80,13 @@ public class Persistence {
 	
 	public int getType() {
 		return type;
+	}
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+	
+	public int getMode() {
+		return mode;
 	}
 	
 	public void setAccess(int access) {
@@ -110,5 +131,8 @@ public class Persistence {
 	
 	public boolean isMaster() {
 		return master;
+	}
+	public void addOption(Option o) {
+		options.add(o);
 	}
 }

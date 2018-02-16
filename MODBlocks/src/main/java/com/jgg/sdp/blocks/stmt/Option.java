@@ -10,51 +10,54 @@ import java.util.*;
 import com.jgg.sdp.blocks.reflect.*;
 import com.jgg.sdp.parser.symbols.*;
 
-public class Option implements IReflect {
+public class Option extends Reflect {
      private int id;
      private String name;
      private SDPSymbol sym;
      
-     private int begLine;
-     private int endLine;
-     private int begColumn;
-     private int endColumn;
-     
  	// Indica si el texto va entre parentesis
  	public boolean function = false;
 
-     private ArrayList<SDPSymbol> parms = new ArrayList<SDPSymbol>();
-     private ArrayList<Option>    opts  = new ArrayList<Option>();
+     private ArrayList<SDPSymbol> lstParms   = new ArrayList<SDPSymbol>();
+     private ArrayList<Option>    lstOptions = new ArrayList<Option>();
      
      public Option() {
+    	 super();
     	 this.id = -1;
     	 this.name = "";
      }
      
      public Option(int id, String name) {
+    	 super();
     	 this.id = id;
     	 this.name = name;
      }
      
      public Option(SDPSymbol s) {
+    	 super();
     	 first(s);
+    	 setLines(true, (Reflect) s);
      }
 
      public Option(SDPSymbol s, SDPSymbol t) {
     	 first(s);
     	 if (t != null) last(t);
+    	 setLines(s, t);
      }
      public Option(SDPSymbol s, Option o) {
     	 first(s);
-    	 if (o != null) opts.add(o);
+    	 if (o != null) lstOptions.add(o);
+    	 setLines(s, o);
      }
      
-     public Option add(SDPSymbol v) {
-    	 parms.add(v);
+     public Option add(SDPSymbol s) {
+    	 lstParms.add(s);
+    	 setLines(false, s);
     	 return this;
      }
      public Option add(Option o) {
-    	 opts.add(o);
+    	 lstOptions.add(o);
+    	 setLines(false, o);
     	 return this;
      }
 
@@ -84,37 +87,37 @@ public class Option implements IReflect {
 	}
 	
 	public Option addParm(SDPSymbol s) {
-		parms.add(s);
+		lstParms.add(s);
 		return this;
 	}
 	public SDPSymbol getParm(int pos) {
-		if (parms.size() == 0) return null;
-		return parms.get(pos);
+		if (lstParms.size() == 0) return null;
+		return lstParms.get(pos);
 	}
 	
 	public ArrayList<SDPSymbol> getParms() {
-		return parms;
+		return lstParms;
 	}
 
 	public void setParms(ArrayList<SDPSymbol> parms) {
-		this.parms = parms;
+		this.lstParms = parms;
 	}
 
 	public String  getValue() {
-		if (parms.size() == 0) return null;
-		return parms.get(0).getValue();
+		if (lstParms.size() == 0) return null;
+		return lstParms.get(0).getValue();
 	}
 	public int  getValueType() {
-		if (parms.size() == 0) return 0;
-		return parms.get(0).getId();
+		if (lstParms.size() == 0) return 0;
+		return lstParms.get(0).getId();
 	}
 	
 	// Parametro es PARM(valor), Opcion es PARM
-	public boolean isParm()   { return parms.size() != 0; }
-	public boolean isOption() { return parms.size() == 0; }
+	public boolean isParm()   { return lstParms.size() != 0; }
+	public boolean isOption() { return lstParms.size() == 0; }
 	
     public Option addSymbol(SDPSymbol s) {
-    	parms.add(s);
+    	lstParms.add(s);
     	return this;
     }
     
@@ -137,32 +140,28 @@ public class Option implements IReflect {
         
     private void last(SDPSymbol s) {
 		if (s == null) return;
-	    parms.add(s);
+	    lstParms.add(s);
 	    endLine = s.getLine();
 	    endColumn = s.getColumn() + s.getValue().length();
     }
-    
+
     /***************************************************************/
 	/***   INTERFAZ PARA LLAMADAS INTROSPECTION                  ***/
 	/***************************************************************/
 
+	public List<Option> getOptionList() { return (List<Option>) lstOptions; }
+	
     public String toString() {
     	return name;
     }
     
     public String toValue() {
     	StringBuilder sb = new StringBuilder();
-    	for (SDPSymbol s : parms) {
+    	for (SDPSymbol s : lstParms) {
     		sb.append(s.getValue());
     		sb.append(" ");
     	}
     	return sb.toString().trim();    	
     }
-
-    public int getBegLine()   { return begLine;     }
-    public int getEndLine()   { return endLine;     }
-    public int getBegColumn() { return begColumn;   }
-    public int getEndColumn() { return endColumn;   }    
-    public int getLines()     { return endLine - begLine + 1; }
 
 }

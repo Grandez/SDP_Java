@@ -145,8 +145,4 @@ public class ZCDCode extends ZCZCode{
 	   return s;
    }
 
-	private void processIdentification(Statement stmt) {
-		info.addDivision(CDG.SECT_ID, stmt.getVerb().line);
-		rules.checkIdentification(stmt);
-	}
 }

@@ -6,6 +6,8 @@ import com.jgg.sdp.parser.lang.*;
 
 import java_cup.runtime.*;
 
+import static com.jgg.sdp.common.ctes.CDG.*;
+
 public class DB2Parser extends DB2Base {
 
 	private DMLParser dml   = null;
@@ -26,21 +28,21 @@ public class DB2Parser extends DB2Base {
 	 
 	public void setParser(Scanner sc, SymbolFactory sf) {
 		switch (dialecto) {
-		   case DB2ParserTypes.DML:  dml = new DMLParser(sc); break;		
-		   case DB2ParserTypes.DDL:  ddl = new DDLParser(sc); break;
-		   case DB2ParserTypes.DCL:  dcl = new DCLParser(sc); break;		   
-		   case DB2ParserTypes.TCL:  tcl = new TCLParser(sc); break;
-		   case DB2ParserTypes.PCL:  pcl = new PCLParser(sc); break;
+		   case STMT_SQL_DML:  dml = new DMLParser(sc); break;		
+		   case STMT_SQL_DDL:  ddl = new DDLParser(sc); break;
+		   case STMT_SQL_DCL:  dcl = new DCLParser(sc); break;		   
+		   case STMT_SQL_TCL:  tcl = new TCLParser(sc); break;
+		   case STMT_SQL_PCL:  pcl = new PCLParser(sc); break;
 		}
 	}
 
 	public Symbol parse() throws Exception {
 		switch(dialecto) {
-		   case DB2ParserTypes.DML:       return dml.parse();		
-		   case DB2ParserTypes.DDL:       return ddl.parse();
-		   case DB2ParserTypes.DCL:       return dcl.parse();		   
-		   case DB2ParserTypes.TCL:       return tcl.parse();	
-		   case DB2ParserTypes.PCL:       return pcl.parse();		   
+		   case STMT_SQL_DML:       return dml.parse();		
+		   case STMT_SQL_DDL:       return ddl.parse();
+		   case STMT_SQL_DCL:       return dcl.parse();		   
+		   case STMT_SQL_TCL:       return tcl.parse();	
+		   case STMT_SQL_PCL:       return pcl.parse();		   
 		}
 		
 		return null;
@@ -48,11 +50,11 @@ public class DB2Parser extends DB2Base {
 
 	public Scanner getLexer(int type, Source src) {
 		switch (type) {
-		   case DB2ParserTypes.DML: return new DMLLexer(src);
-		   case DB2ParserTypes.DCL: return new DCLLexer(src);
-		   case DB2ParserTypes.DDL: return new DDLLexer(src);
-		   case DB2ParserTypes.TCL: return new TCLLexer(src);
-		   case DB2ParserTypes.PCL: return new PCLLexer(src);
+		   case STMT_SQL_DML: return new DMLLexer(src);
+		   case STMT_SQL_DCL: return new DCLLexer(src);
+		   case STMT_SQL_DDL: return new DDLLexer(src);
+		   case STMT_SQL_TCL: return new TCLLexer(src);
+		   case STMT_SQL_PCL: return new PCLLexer(src);
 		   default: return null;
 		}
 	}

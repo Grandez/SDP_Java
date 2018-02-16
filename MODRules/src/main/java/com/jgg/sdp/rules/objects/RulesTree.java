@@ -38,9 +38,7 @@ public class RulesTree {
 
 	public RuleGroup getGroupByName(String name) {
 		Long id = groupsNameMap.get(name);
-		if (id == null) return null;
-		
-		return getGroupById(id);
+        return (id == null) ? null : getGroupById(id); 
 	}
 	
 	public RuleItem getItemByName(String name) {

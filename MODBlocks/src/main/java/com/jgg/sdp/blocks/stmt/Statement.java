@@ -26,23 +26,17 @@ import com.jgg.sdp.blocks.reflect.*;
 import com.jgg.sdp.common.ctes.CDGText;
 import com.jgg.sdp.parser.symbols.*;
 
-public class Statement<T> implements IStatement {
+public class Statement<T> extends Reflect {
 
 	private   StringBuilder        text     = new StringBuilder();
-    private   SDPSymbol               verbo    = null;
+    private   SDPSymbol            verbo    = null;
     private   Integer              group    = null;
     private   Integer              subGroup = null;
     private   ArrayList<SDPSymbol> lvalues  = new ArrayList<SDPSymbol>();
     private   ArrayList<SDPSymbol> rvalues  = new ArrayList<SDPSymbol>();
 
-    // Opciones segun aparecen
-    protected ArrayList<Option>    lstOptions = new ArrayList<Option>();
-    
-    // Mapeo para busqueda por nombre
-    private ADTHashDup<String, Integer>  mapOptName = new ADTHashDup<String, Integer>();
-    // Mapeo para busqueda por SDPSymbol.id
-    private ADTHashDup<Integer, Integer> mapOptId = new ADTHashDup<Integer, Integer>();
-    
+    protected TBOptions options = new TBOptions();
+
     private String firma = null;
     
     private int id = 0;
@@ -248,94 +242,45 @@ public class Statement<T> implements IStatement {
 	/***     OPCIONES                                            ***/
 	/***************************************************************/
 
-	public Option addOption(Option opt) {
-		if (opt == null) return null;
-		lstOptions.add(opt);
-		mapOptName.addItem(opt.getName(),lstOptions.size() - 1);
-		mapOptId.addItem  (opt.getId(),  lstOptions.size() - 1);
-		return opt;
-	}
+	public Option       addOption(Option opt)         { return options.add(opt);              }	
+	public boolean      hasOptions()                  { return options.numOptions() > 0;      }
+	public boolean      hasOption(int id)             { return options.hasOption(id);         }
+	public boolean      hasOption(String name)        { return options.hasOption(name);       }
+    public Option       getOptionByPos(int pos)       { return options.getOptionByPos(pos);   }       
+    public Option       getOptionByName(String  name) { return options.getOptionByName(name); }
+    public List<Option> getOptions()                  { return options.getOptions();          }
+	public Option       getOption(int id)             { return options.getOption(id);         }
 	
-	public boolean hasOptions() {
-		return lstOptions.size() > 0;
-	}
-
-	public boolean hasOption(int id) {
-		return mapOptId.getItem(id) != null;
-	}
+//	private List<Option> getOptionListByName(String name) {
+//    	List<Integer> l = mapOptName.getItemList(name);
+//    	if (l == null) return null;
+//    	ArrayList<Option> opts = new ArrayList<Option>();
+//    	for (Integer i : l) {
+//    	   opts.add(lstOptions.get(i));	
+//    	}
+//    	return opts;
+//	}
+//
+//    public List<Option> getOptionListById(int idOption) {
+//    	List<Integer> l = mapOptId.getItemList(idOption);
+//    	if (l == null) return null;
+//    	ArrayList<Option> opts = new ArrayList<Option>();
+//    	for (Integer i : l) {
+//    	   opts.add(lstOptions.get(i));	
+//    	}
+//    	return opts;
+//    }
 	
-    public Option getOptionByPos(int pos) {
-    	return lstOptions.get(pos);
-    }
-        
-    public ArrayList<Option> getOptions() {
-    	return lstOptions;
-    }
-    
-    public String getFirma() {
-    	if (firma != null) return firma;
-    	StringBuilder cadena = new StringBuilder();
-    	cadena.append(getVerbName());
-    	for (SDPSymbol l : lvalues) {
-    		cadena.append(l.getValue());
-    	}
-    	for (SDPSymbol r : rvalues) {
-    		cadena.append(r.getValue());
-    	}
-    	return Firma.calculate(cadena.toString());
-    }
 
     /***************************************************************/
 	/***   INTERFAZ PARA LLAMADAS INTROSPECTION                  ***/
 	/***************************************************************/
     
-	public String toValue() {
-		return toString();
-	}
-    
-    public boolean hasEndPoint() {
-    	return endPoint;
-    }
-    
-    public boolean hasOption(String name) {
-    	for (Option opt : lstOptions) {
-    		if (opt.getName().compareToIgnoreCase(name) == 0) return true;
-    	}
-    	return false;
-    }
-    
-	public List<Option> getOptionList() {
-		return (List<Option>) lstOptions;
-	}
+	public String  toValue()            { return toString();   }
+    public boolean hasEndPoint()        { return endPoint;     }
+	public List<Option> getOptionList() { return getOptions(); }
+        
 
-	private List<Option> getOptionListByName(String name) {
-    	List<Integer> l = mapOptName.getItemList(name);
-    	if (l == null) return null;
-    	ArrayList<Option> opts = new ArrayList<Option>();
-    	for (Integer i : l) {
-    	   opts.add(lstOptions.get(i));	
-    	}
-    	return opts;
-	}
-	public Option getOptionByName(String name) {
-		List<Option> l = getOptionListByName(name);
-    	return (l == null) ? null : l.get(0);
-	}
-
-	public Option getOption(int id) {
-		List<Option> l = getOptionListById(id);
-    	return (l == null) ? null : l.get(0);
-	}
-	
-    public List<Option> getOptionListById(int idOption) {
-    	List<Integer> l = mapOptId.getItemList(idOption);
-    	if (l == null) return null;
-    	ArrayList<Option> opts = new ArrayList<Option>();
-    	for (Integer i : l) {
-    	   opts.add(lstOptions.get(i));	
-    	}
-    	return opts;
-    }
 
     public ArrayList<SDPSymbol> getLValueList() {
     	return lvalues; 
@@ -372,7 +317,23 @@ public class Statement<T> implements IStatement {
     public Integer getNumLValues() {
     	return lvalues.size();
     }
+    public Integer getNumOptions() {
+    	return options.numOptions();
+    }
 
+    public String getFirma() {
+    	if (firma != null) return firma;
+    	StringBuilder cadena = new StringBuilder();
+    	cadena.append(getVerbName());
+    	for (SDPSymbol l : lvalues) {
+    		cadena.append(l.getValue());
+    	}
+    	for (SDPSymbol r : rvalues) {
+    		cadena.append(r.getValue());
+    	}
+    	return Firma.calculate(cadena.toString());
+    }
+    
     @Override    
     public String toString() {
     	return verbo.toString();

@@ -382,7 +382,9 @@ public class Module {
     //// Tratamiento de persistencia                                      
     //// ********************************************************************
 
-    public void        addFile(Persistence f)       { tbFiles.addFile(f); 	                }
+    public void        addFile(Persistence f)       { tbFiles.addFile(f);
+                                                      summary.setFile();
+                                                    }
 	public Persistence getFile(String name)         { return tbFiles.getFile(name); 	    }
 	public Persistence getFileByRecord(String name) { return tbFiles.getFileByRecord(name); }
 

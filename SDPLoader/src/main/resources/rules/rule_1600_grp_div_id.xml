@@ -8,7 +8,7 @@
       <replace>true</replace>
    </r:header>
    
-   <r:group name="DIV_ID">
+   <r:group name="IDENTIFICATION">
       <idGroup>16</idGroup>
       <idParent>15</idParent>
       <prefix>DIV</prefix>

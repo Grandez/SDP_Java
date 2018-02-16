@@ -30,10 +30,7 @@ public class StmtCobol extends Statement<StmtCobol> {
 	// Caso WHEN / WHEN OTHER
 	// Podria quedarse un WHEN huerfano
 	public Option replaceOption(Option opt) {
-		Option last = lstOptions.get(lstOptions.size() - 1);
-	    opt.addSymbol(new SDPSymbol(last.getSymbol()));
-	    lstOptions.remove(lstOptions.size() - 1);
-	    return addOption(opt);
+		return options.replace(opt);
 	}		
 
 }

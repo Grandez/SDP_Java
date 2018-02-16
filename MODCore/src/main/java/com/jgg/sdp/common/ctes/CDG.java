@@ -205,13 +205,14 @@ public class CDG {
     public static final int STMT_CICS_CTL  = 23;
     public static final int STMT_CICS_WEB  = 24;
     
-    public static final int STMT_SQL     = 30;
-    public static final int STMT_DCL     = 31; 
-    public static final int STMT_DDL     = 32;
-    public static final int STMT_DML     = 33;
-    public static final int STMT_PCL     = 34;
-    public static final int STMT_TCL     = 35;   
-    public static final int STMT_COPY    = 40;
+    public static final int STMT_SQL       = 30;
+    public static final int STMT_SQL_DCL   = 31; 
+    public static final int STMT_SQL_DDL   = 32;
+    public static final int STMT_SQL_DML   = 33;
+    public static final int STMT_SQL_PCL   = 34;
+    public static final int STMT_SQL_TCL   = 35;
+    
+    public static final int STMT_COPY      = 40;
     
 	private CDG() {
 		

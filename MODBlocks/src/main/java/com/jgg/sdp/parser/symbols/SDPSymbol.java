@@ -2,9 +2,9 @@ package com.jgg.sdp.parser.symbols;
 
 import java.util.ArrayList;
 
-import com.jgg.sdp.blocks.reflect.IReflect;
+import com.jgg.sdp.blocks.reflect.Reflect;
 
-public class SDPSymbol  implements IReflect {
+public class SDPSymbol  extends Reflect {
 	public int id     = -1;
 	public int sym    = -1;
 	public int line   = -1;
@@ -27,6 +27,7 @@ public class SDPSymbol  implements IReflect {
 	}
 	
 	public SDPSymbol(int id, int line, int column, String value) {
+		super();
 		this.id     = id;
 		this.sym    = id;
 		this.value  = value;
@@ -35,6 +36,7 @@ public class SDPSymbol  implements IReflect {
 	}
 
 	public SDPSymbol(SDPSymbol other) {
+		super();
 		this.id     = other.id;
 		this.sym    = other.id;
 		this.value  = other.value;
@@ -135,8 +137,8 @@ public class SDPSymbol  implements IReflect {
 		if (idx < s.length && s[idx] != null) {
 			syms.add(s[idx]);
 			s[idx].add(idx, s);
+			setLines(false, s[idx]);
 		}
-		
 		return this;
 	}
 
@@ -149,7 +151,6 @@ public class SDPSymbol  implements IReflect {
 			s[me].add(s[idx]);
 			s[idx].add(idx, s);
 		}
-		
 		return this;
 	}
 	
@@ -187,13 +188,5 @@ public class SDPSymbol  implements IReflect {
 
 	public String toString(){
         return value;
-    }
-	
-	public int    getLines()     { return 1;      }
-	public int    getBegLine()   { return line;   }
-	public int    getBegColumn() { return column; }
-	public int    getEndLine()   { return line;   }
-	public int    getEndColumn() { return column + value.length(); }
-    
-    
+    }	
 }

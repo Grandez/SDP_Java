@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>DATA DIVISION</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="DATA">
+      <idGroup>18</idGroup>
+      <idParent>15</idParent>
+      <prefix>DAT</prefix>
+      <active>true</active>
+      <r:title>
+          <text>DATA DIVISION</text>      
+      </r:title>
+
+      <r:description>
+          <text lang="xx">Reglas de control de environment division</text>      
+      </r:description>
+      
+<!--       <r:item name="DIV_DATA"> -->
+<!--          <object>DATA</object> -->
+<!--          <active>true</active> -->
+<!--          <r:title> -->
+<!--              <text>Opciones de DATA DIVISION</text>       -->
+<!--          </r:title> -->
+         
+<!--          <r:description> -->
+<!--              <text lang="xx"> -->
+<!--                SOURCE y OBJECT COMPUTER son unicamente informativos -->
+<!--                No es necesario indicarlos -->
+<!--              </text>       -->
+<!--          </r:description> -->
+<!--          <r:message> -->
+<!--                   <text lang="xx" dialect="XX">ENVIRONMENT DIVISION no tiene contenido</text> -->
+<!--          </r:message> -->
+         
+<!--          <r:rule> -->
+<!--             <severity>2</severity> -->
+<!--             <condition> -->
+<!--                <lvalue type="property">numOptions</lvalue> -->
+<!--                <operator>eq</operator> -->
+<!--                <rvalue>0</rvalue> -->
+<!--             </condition>         -->
+<!--          </r:rule> -->
+         
+<!--       </r:item> -->
+
+   </r:group>
+
+</r:SDPRules>
+

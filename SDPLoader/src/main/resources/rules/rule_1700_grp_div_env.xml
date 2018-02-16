@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<r:SDPRules xmlns:r="http://www.sdp.com/SDPRules" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.sdp.com/SDPRules ../SDPRules.xsd ">
+
+   <r:header>
+      <title>ENVIRONMENT DIVISION</title>
+      <replace>true</replace>
+   </r:header>
+   
+   <r:group name="ENVIRONMENT">
+      <idGroup>17</idGroup>
+      <idParent>15</idParent>
+      <prefix>ENV</prefix>
+      <active>true</active>
+      <r:title>
+          <text>ENVIRONMENT DIVISION</text>      
+      </r:title>
+
+      <r:description>
+          <text lang="xx">Reglas de control de environment division</text>      
+      </r:description>
+      
+      <r:item name="DIV_ENV">
+         <object>ENVIRONMENT</object>
+         <active>true</active>
+         <r:title>
+             <text>Opciones de ENVIRONMENT DIVISION</text>      
+         </r:title>
+         
+         <r:description>
+             <text lang="xx">
+               SOURCE y OBJECT COMPUTER son unicamente informativos
+               No es necesario indicarlos
+             </text>      
+         </r:description>
+         <r:message>
+                  <text lang="xx" dialect="XX">ENVIRONMENT DIVISION no tiene contenido</text>
+         </r:message>
+         
+         <r:rule>
+            <severity>2</severity>
+            <condition>
+               <lvalue type="attribute">numOptions</lvalue>
+               <operator>eq</operator>
+               <rvalue>0</rvalue>
+            </condition>        
+         </r:rule>
+         
+      </r:item>
+
+   </r:group>
+
+</r:SDPRules>
+

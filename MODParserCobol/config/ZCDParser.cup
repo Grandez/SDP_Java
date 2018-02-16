@@ -47,9 +47,10 @@ action code {:
  
    ParserInfo      info     = ParserInfo.getInstance();
       
-   Variable  currVar  = null;
-   StmtGral  currStmt = null;  // Instruccion en proceso
-   
+   Variable  currVar    = null;
+   StmtGral  currStmt   = null;  // Instruccion en proceso
+   Option    currOption = null;  // Opcion en proceso
+
    boolean   hasEndProgram = false; // Hay STOPRUN o GOBACK?
     
    boolean master     = false;  // El fichero es el maestro?   
@@ -132,7 +133,6 @@ terminal SDPSymbol SEGMENT      ;
 terminal SDPSymbol MODE         ;
 terminal SDPSymbol IN           ;
 terminal SDPSymbol IS           ;
-terminal SDPSymbol DECIMALPOINT ;
 terminal SDPSymbol COMMA        ;
 terminal SDPSymbol XMLSCHEMA    ;
 terminal SDPSymbol ON           ;
@@ -141,20 +141,30 @@ terminal SDPSymbol OFF          ;
 /* Verbos de ENVIRONMENT */
 
 terminal SDPSymbol ACCESS       ;
+terminal SDPSymbol AREAS        ;
 terminal SDPSymbol ALPHABET     ;
 terminal SDPSymbol ALTERNATE    ;
 terminal SDPSymbol ASSIGN       ;
 terminal SDPSymbol BLOCK        ;
 terminal SDPSymbol CURRENCY     ;
 terminal SDPSymbol DATA         ;
+terminal SDPSymbol DECIMALPOINT ;
+terminal SDPSymbol DELIMITER    ;
+terminal SDPSymbol DUPLICATES   ;
 terminal SDPSymbol DYNAMIC      ;
 terminal SDPSymbol EBCDIC       ;
 terminal SDPSymbol FD           ;
+terminal SDPSymbol FILE         ;
 terminal SDPSymbol INDEXED      ;
 terminal SDPSymbol INDEX        ;
+terminal SDPSymbol KEY          ;
 terminal SDPSymbol LABEL        ;
 terminal SDPSymbol LINAGE       ;
+terminal SDPSymbol LINE         ;
+terminal SDPSymbol OPTIONAL     ;
 terminal SDPSymbol ORGANIZATION ;
+terminal SDPSymbol PADDING      ;
+terminal SDPSymbol PASSWORD     ;
 terminal SDPSymbol NATIVE       ;
 terminal SDPSymbol RANDOM       ;
 terminal SDPSymbol RECORDING    ;
@@ -162,11 +172,13 @@ terminal SDPSymbol RECORDS      ;
 terminal SDPSymbol RECORD       ;
 terminal SDPSymbol RELATIVE     ;
 terminal SDPSymbol REPOSITORY   ;
+terminal SDPSymbol RESERVE      ;
 terminal SDPSymbol SD           ;
 terminal SDPSymbol SEQUENTIAL   ;
 terminal SDPSymbol SELECT       ;
 terminal SDPSymbol STATUS       ;
 terminal SDPSymbol STANDARD     ;
+terminal SDPSymbol STANDARD1    ;
 terminal SDPSymbol SIZE         ;
 terminal SDPSymbol SIGN         ;
 terminal SDPSymbol SYMBOLIC     ;
@@ -275,13 +287,59 @@ non terminal SDPSymbol  programId_name     ;
 non terminal SDPSymbol  programId_type_opt ;
 non terminal SDPSymbol  programId_type     ;
 
-non terminal SDPSymbol   comment_entry_opt  ;
-non terminal SDPSymbol   comment_entry      ;
-non terminal SDPSymbol   comment_entry_line ;
+non terminal SDPSymbol   ident_opt_entry  ;
+non terminal SDPSymbol   ident_entry      ;
+non terminal SDPSymbol   ident_entry_line ;
 
 non terminal env_div_header ;
 non terminal data_div_header;
 non terminal env_div_sections     ;
+
+/* CONFIGURATION SECTION */
+
+non terminal            configuration_section_opt  ;
+non terminal  Option    configuration_section      ;
+non terminal  Option    conf_sect_header           ;
+non terminal            opt_configuration_data     ;
+non terminal            configuration_data         ;
+non terminal  Option    configuration_item         ;
+non terminal  Option    configuration_source       ;
+non terminal  Option    configuration_object       ;
+non terminal  Option    configuration_names        ;
+non terminal  Option    configuration_repo         ;
+non terminal  Option    opt_conf_sect_names        ;
+non terminal  Option    conf_sect_names            ;
+non terminal  Option    conf_sect_names_item       ;
+non terminal  Option    special_names_id           ;
+non terminal  Option    special_names_alphabet     ;
+non terminal  Option    special_names_symbolic     ;
+non terminal  Option    special_names_class        ;
+non terminal  Option    special_names_currency     ;
+non terminal  Option    special_names_decimal      ;
+non terminal  Option    special_names_xml          ;
+non terminal  SDPSymbol alphabet_name              ;
+non terminal  SDPSymbol opt_conf_sect_src          ;
+non terminal  SDPSymbol opt_conf_sect_obj          ;
+non terminal  SDPSymbol opt_conf_sect_mem          ;
+non terminal  SDPSymbol opt_conf_sect_entry        ;
+non terminal  SDPSymbol conf_sect_mem_type         ;
+non terminal  SDPSymbol conf_sect_entry            ;
+non terminal  SDPSymbol conf_sect_entry_item       ;
+non terminal  Option    opt_conf_sect_repo         ;
+non terminal  Option    conf_sect_repo             ;
+non terminal  Option    conf_sect_repo_item        ;
+
+// non terminal         special_names_classes      ;
+// non terminal         special_names_class_name   ;
+// non terminal         opt_class_thru             ;
+
+non terminal  Option    io_section_opt             ;
+non terminal  Option    io_section                 ;
+
+non terminal  Option    io_sect_header             ;
+non terminal io_sect_bloques       ;
+non terminal file_control_decl     ;
+non terminal file_control_header   ;
 
 
 non terminal bloque_data    ;
@@ -355,52 +413,6 @@ non terminal SDPSymbol   pic_dec_opt   ;
 non terminal SDPSymbol   pic_dec       ;
 non terminal SDPSymbol   compn ;
 
-/* CONFIGURATION SECTION */
-
-non terminal            opt_configuration_section  ;
-non terminal            configuration_section      ;
-non terminal            conf_sect_header           ;
-non terminal            opt_configuration_data     ;
-non terminal            configuration_data         ;
-non terminal  Option    configuration_item         ;
-non terminal  Option    configuration_source       ;
-non terminal  Option    configuration_object       ;
-non terminal  Option    configuration_names        ;
-non terminal  Option    configuration_repo         ;
-non terminal  Option    opt_conf_sect_names        ;
-non terminal  Option    conf_sect_names            ;
-non terminal  Option    conf_sect_names_item       ;
-non terminal  Option    special_names_id           ;
-non terminal  Option    special_names_alphabet     ;
-non terminal  Option    special_names_symbolic     ;
-non terminal  Option   special_names_class        ;
-non terminal  Option     special_names_currency     ;
-non terminal  Option    special_names_decimal      ;
-non terminal  Option    special_names_xml          ;
-non terminal  SDPSymbol alphabet_name              ;
-non terminal  SDPSymbol opt_conf_sect_src          ;
-non terminal  SDPSymbol opt_conf_sect_obj          ;
-non terminal  SDPSymbol opt_conf_sect_mem          ;
-non terminal  SDPSymbol opt_conf_sect_entry        ;
-non terminal  SDPSymbol conf_sect_mem_type         ;
-non terminal  SDPSymbol conf_sect_entry            ;
-non terminal  SDPSymbol conf_sect_entry_item       ;
-non terminal  Option    opt_conf_sect_repo         ;
-non terminal  Option    conf_sect_repo             ;
-non terminal  Option    conf_sect_repo_item        ;
-
-// non terminal            special_names_classes      ;
-// non terminal            special_names_class_name   ;
-// non terminal            opt_class_thru             ;
-
-non terminal            opt_io_section             ;
-non terminal            io_section                 ;
-
-non terminal section_io            ;
-non terminal sect_io_header        ;
-non terminal sect_io_bloques       ;
-non terminal file_control_decl     ;
-non terminal file_control_header   ;
 
 /***********************************************************/
 /*                    SELECT FICHEROS                      */
@@ -411,35 +423,43 @@ non terminal select_file      ;
 non terminal select_file_mark ;
 non terminal select_file_list ;
 
-non terminal file_select       ;
-non terminal file_attrs        ;
-non terminal file_attr_item    ;
-non terminal file_attr_common  ;
-non terminal file_attr_assign  ;
-non terminal file_attr_fs      ;
-non terminal file_attr_org     ;
-non terminal file_attr_rel     ;
-non terminal file_attr_key     ;
-non terminal file_attr_alt     ;
-non terminal file_attr_assign_dd ;
-non terminal file_attr_org_type  ;
-non terminal file_attr_access    ;
-non terminal file_attr_acc_mode  ;
+non terminal file_select        ;
+non terminal file_attrs         ;
+non terminal file_attr_first    ;
+non terminal file_attr_type     ;
+non terminal file_attr_reserve  ;
+non terminal file_attr_rest_opt ;
+non terminal file_attr_rest     ;
+non terminal Option      file_attr_item    ;
+
+non terminal Option      file_attr_assign       ;
+non terminal Option      file_attr_assign_dd    ;
+non terminal Option      file_attr_fs           ;
+non terminal Option      file_attr_padding      ;
+non terminal SDPSymbol   file_attr_padding_type ;
+non terminal Option      file_attr_password     ;
+non terminal Option      file_attr_record       ;
+non terminal SDPSymbol   file_attr_record_type  ;
+non terminal Option      file_attr_key          ;
+non terminal Option      file_attr_alternate    ;
+non terminal Option      file_attr_access       ;
+non terminal SDPSymbol   file_attr_access_type  ;
+non terminal SDPSymbol   file_attr_access_rel   ;
 
 non terminal             fd                ;
 non terminal             fd_list           ;
 non terminal             fd_fields         ;
 non terminal             fd_attr_label     ;
-non terminal Option  fd_attrs_opt ;
-non terminal Option  fd_attrs     ;
+non terminal Option      fd_attrs_opt ;
+non terminal Option      fd_attrs     ;
 non terminal Option      fd_attr      ;
 non terminal Option      fd_attr_names     ;
 non terminal SDPSymbol   fd_attr_name      ;
-non terminal fd_attr_record    ;
-non terminal fd_attr_record_detail ;
-non terminal fd_attr_record_size   ;
-non terminal fd_attr_records   ;
-non terminal fd_attr_record_to ;
+non terminal SDPSymbol   fd_attr_record    ;
+non terminal SDPSymbol   fd_attr_record_detail ;
+non terminal SDPSymbol   fd_attr_record_size   ;
+non terminal SDPSymbol   fd_attr_records   ;
+non terminal SDPSymbol   fd_attr_record_to ;
 
 non terminal Option fd_attr_mode      ;
 non terminal SDPSymbol fd_attr_mode_type ;
@@ -473,6 +493,7 @@ non terminal clause_value_item     ;
 /*    OTRAS SENTENCIAS                                     */
 /***********************************************************/
 
+non terminal SDPSymbol    data_name   ;
 non terminal SDPSymbol    rvalue      ;
 
 non terminal SDPSymbol   figurative  ;
@@ -486,17 +507,25 @@ non terminal SDPSymbol      opt_is_on_off  ;
 non terminal SDPSymbol      opt_on_off     ;
 non terminal SDPSymbol      on_off         ;
 
-non terminal SDPSymbol      opt_characters ;
+non terminal SDPSymbol      opt_areas      ;
+non terminal SDPSymbol      opt_character  ;
 
 non terminal SDPSymbol      opt_collating  ;
 non terminal SDPSymbol      opt_currency_picture ;
 non terminal SDPSymbol      opt_debugging  ;
 non terminal SDPSymbol          debugging  ;
+non terminal SDPSymbol      opt_duplicates ;
+non terminal SDPSymbol      opt_endp       ;
 
 non terminal SDPSymbol      opt_is         ;
 non terminal SDPSymbol          is         ;
+non terminal SDPSymbol      opt_key        ;
 
+non terminal SDPSymbol      opt_mode       ;   
+non terminal SDPSymbol      opt_organization   ;
+non terminal SDPSymbol      opt_optional   ;
 non terminal SDPSymbol      opt_program    ;
+non terminal SDPSymbol      opt_record     ;
 
 non terminal SDPSymbol      opt_sign       ;
 non terminal SDPSymbol          sign       ;
@@ -528,9 +557,9 @@ cobolData ::=  module {: RESULT = null; :}
       para procesar sus issues
 */
                          
-module ::= identification_division {: rules.checkIdentification(currStmt); :}
+module ::= identification_division 
            environment_division    
-           data_division         
+           data_division           
        ;
 
 /*********************************************************************/
@@ -538,6 +567,7 @@ module ::= identification_division {: rules.checkIdentification(currStmt); :}
 /*********************************************************************/
 
 identification_division ::= ident_header ident_type ident_options_opt 
+                            {: rules.checkDivision(currStmt); :}
                         ;
 
 ident_header ::= DIV_ID:s  ENDP:p  {: currStmt = new StmtGral(s); :}
@@ -585,7 +615,7 @@ ident_options ::= ident_option:s                 {: currStmt.addOption(s); :}
 ident_option ::= ident_opt:s  {: RESULT = s; :}
              ;
 
-ident_opt ::= ident_opt_word:w  ident_endp:p comment_entry_opt:o {: RESULT = new Option(w, o); :}
+ident_opt ::= ident_opt_word:w  ident_endp:p ident_opt_entry:o {: RESULT = new Option(w, o); :}
           ;
           
 ident_opt_word ::= AUTHOR:w         {: RESULT = w; :}
@@ -603,40 +633,40 @@ pgmid_endp ::= ENDP:w {: RESULT = w;     :}
            |          {: RESULT = null;  :}
            ;
               
-comment_entry_opt ::= comment_entry:o {: RESULT = o;    :}
+ident_opt_entry ::= ident_entry:o {: RESULT = o;    :}
                   |                   {: RESULT = null; :}
                   ;
                 
-comment_entry ::= IDTOKEN:l                            {: RESULT = code.removePoint(l); :}
-              |   comment_entry:a comment_entry_line:l {: RESULT = a.add(l);         :}
-              ;
+ident_entry ::= IDTOKEN:l                        {: RESULT = code.removePoint(l); :}
+            |   ident_entry:a ident_entry_line:l {: RESULT = a.add(l);            :}
+            ;
 
-comment_entry_line ::= IDTOKEN:s            {: RESULT = code.removePoint(s); :}
-                   |   ENDP:p               {: RESULT = code.removePoint(p); :}
-                   ;
+ident_entry_line ::= IDTOKEN:s            {: RESULT = code.removePoint(s); :}
+                 |   ENDP:p               {: RESULT = code.removePoint(p); :}
+                 ;
                    
 /*********************************************************************/
 /* Environment division                                              */
 /*********************************************************************/
 
-environment_division  ::= env_div_header env_div_sections  {: /* rules.checkDivision(currBlock); */ :}
+environment_division  ::= env_div_header env_div_sections  {: rules.checkDivision(currStmt); :}
                       |
                       ;
                      
-env_div_header        ::= DIV_ENV:s ENDP:p {: currStmt = new StmtGral(s); 
-                                              currBlock = new BlockCode(s, p); 
-                                              code.setDivision(CDG.SECT_ENV, s.line); 
-                                           :} 
-                      ;
+env_div_header ::= DIV_ENV:s ENDP:p {: currStmt = new StmtGral(s); 
+                                       currBlock = new BlockCode(s, p); 
+                                       code.setDivision(CDG.SECT_ENV, s.line); 
+                                    :} 
+               ;
 
-env_div_sections ::= opt_configuration_section opt_io_section
-                      ;
+env_div_sections ::= configuration_section_opt io_section_opt
+                 ;
 
-opt_configuration_section ::= configuration_section
-                          |
+configuration_section_opt ::= configuration_section:o {: currStmt.addOption(o);    :}
+                          |                           
                           ;
 
-opt_io_section ::= io_section
+io_section_opt ::= io_section:o 
                |
                ;
 
@@ -644,19 +674,20 @@ opt_io_section ::= io_section
 /* CONFIGURATION SECTION                                             */
 /*********************************************************************/
                           
-configuration_section ::= conf_sect_header opt_configuration_data
+configuration_section ::= conf_sect_header:o opt_configuration_data {: RESULT = o; :}
                       ;
                       
-conf_sect_header ::= CONF_SECTION:s ENDP {: currStmt = new StmtGral(s);
-                                            code.setSection(CDG.SECT_CONF, s.line); 
-                                         :}
+conf_sect_header ::= CONF_SECTION:s ENDP:w {: currOption = sf.option(s, w);
+                                              code.setSection(CDG.SECT_CONF, s.line);
+                                              RESULT = currOption;  
+                                           :}
                   ;
 opt_configuration_data ::= configuration_data
                        |
                        ;
                        
-configuration_data ::= configuration_item:o                    {: currStmt.addOption(o); :}
-                   |   configuration_data configuration_item:o {: currStmt.addOption(o); :}
+configuration_data ::= configuration_item:o                    {: currOption.add(o); :}
+                   |   configuration_data configuration_item:o {: currOption.add(o); :}
                    ;
                    
 configuration_item ::= configuration_source:o {: RESULT = o; :}
@@ -675,10 +706,12 @@ opt_conf_sect_src ::= ID:w opt_with:w1 opt_debugging:w2 ENDP:w3 {: RESULT = w.ad
                   ;
                                    
 
-opt_conf_sect_obj ::= ID:w opt_conf_sect_mem:w1 opt_conf_sect_entry:w2 ENDP {: RESULT = w.add(w1, w2); :}
+opt_conf_sect_obj ::= ID:w opt_conf_sect_mem:w1 opt_conf_sect_entry:w2 ENDP:w3 {: RESULT = w.add(w1, w2, w3); :}
+                  |                                                            {: RESULT = null;              :}
                   ;
                                                       
 opt_conf_sect_mem ::= MEMORY:w opt_size:w1 ID:w2 conf_sect_mem_type:w3      {: RESULT = w.add(w1, w2, w3); :}
+                  |                                                         {: RESULT = null;              :}
                   ;
 
 conf_sect_mem_type ::= WORDS:w       {: RESULT = w; :}
@@ -705,8 +738,8 @@ opt_conf_sect_names ::= conf_sect_names:w {: RESULT = w; :}
                     |
                     ;
 
-conf_sect_names ::= conf_sect_names_item:o                     {: RESULT = o; :}
-                |   conf_sect_names:o conf_sect_names_item:o1  {: RESULT = o.add(o1); :}
+conf_sect_names ::= conf_sect_names_item:o  opt_endp:w                    {: RESULT = o.add(w);         :}
+                |   conf_sect_names:o conf_sect_names_item:o1  opt_endp:w {: RESULT = o.add(o1.add(w)); :}
                 ;
                 
 conf_sect_names_item ::= special_names_id:o        {: RESULT = o; :}
@@ -720,7 +753,7 @@ conf_sect_names_item ::= special_names_id:o        {: RESULT = o; :}
 
 special_names_id ::=       ID:o opt_is_on_off:w ID:w1 opt_on_off:w2                 {: RESULT = sf.option(o, w.add(w1,w2));   :}  ;
 special_names_alphabet ::= ALPHABET:o ID:w opt_is alphabet_name:w1                  {: RESULT = sf.option(o, w.add(w1));      :}  ;
-special_names_symbolic ::= SYMBOLIC:o opt_characters ID:w opt_symbolic_in:w1        {: RESULT = sf.option(o, w.add(w1));      :}  ;
+special_names_symbolic ::= SYMBOLIC:o opt_character ID:w opt_symbolic_in:w1        {: RESULT = sf.option(o, w.add(w1));      :}  ;
 special_names_class ::=    CLASS:o ID:w opt_is ID:w1                                {: RESULT = sf.option(o, w.add(w1));      :}  ;
 special_names_currency ::= CURRENCY:o opt_sign opt_is ID:w opt_currency_picture:w1  {: RESULT = sf.option(o, w.add(w1));      :}  ;
 special_names_decimal ::=  DECIMALPOINT:o opt_is COMMA:w                            {: RESULT = sf.option(o, w);              :}  ; 
@@ -743,15 +776,15 @@ clause_on_off_item ::= on_off opt_status opt_is ID
                    ;
                                  
 
-alphabet_name ::= STANDARD
-              |   NATIVE
-              |   EBCDIC
-              |   LITERAL
+alphabet_name ::= STANDARD:w  {: RESULT = w; :}
+              |   NATIVE:w    {: RESULT = w; :}
+              |   EBCDIC:w    {: RESULT = w; :}
+              |   LITERAL:w   {: RESULT = w; :}
               ;
                                                                        
 
-opt_symbolic_in ::= IN ID
-                |
+opt_symbolic_in ::= IN:w1 ID:w {: RESULT = w.setPrefix(w1); :}
+                |              {: RESULT = null;            :} 
                 ;
 
 /*
@@ -780,15 +813,21 @@ conf_sect_repo ::= conf_sect_repo_item:o                    {: RESULT = o;      
                
 conf_sect_repo_item ::= CLASS:w ID:w1 opt_is ID:w2   {: RESULT = sf.option(w, w1.add(w2)); :} 
                     ;               
+
+/*********************************************************************/
+/* I-O SECTION                                                       */
+/*********************************************************************/
                
-section_io ::= sect_io_header sect_io_bloques
-           |
+io_section ::= io_sect_header:o io_sect_bloques {: currStmt.addOption(o);    :}
            ;
 
-sect_io_header ::= IO_SECTION:s {: code.setSection(CDG.SECT_IO, s.line); :} ENDP 
+io_sect_header ::= IO_SECTION:s ENDP:w {: currOption = sf.option(s, w);
+                                          code.setSection(CDG.SECT_IO, s.line);
+                                          RESULT = currOption;  
+                                       :}
                ;
 
-sect_io_bloques ::= file_control_decl
+io_sect_bloques ::= file_control_decl
                 |
                 ;       
 
@@ -810,75 +849,107 @@ select_file_mark ::= SDPMASTER    {: master = true; :}
                  |   select_file
                  ;
                       
-select_file ::= file_select  file_attrs  ENDP 
+select_file ::= file_select  file_attr_first  file_attr_rest_opt ENDP 
             ;         
 
-file_select ::= SELECT ID:s {: fichero = new Persistence(getSymbolName(s), master);
-                               module.addFile(fichero);
-                               master = false; 
-                               module.setFile();
-                            :}
+file_select ::= SELECT opt_optional:w ID:s {: fichero = new Persistence(s.setPrefix(w).value, master);
+                                              module.addFile(fichero);
+                                           :}
             ;
 
-file_attrs ::= file_attr_item 
-           |   file_attrs file_attr_item 
-           ;
+file_attr_first ::= file_attr_assign file_attr_reserve opt_organization file_attr_type 
+                ;
 
-file_attr_item ::= file_attr_assign 
-               |   file_attr_fs
-               |   file_attr_access
-               |   file_attr_common
-               |   file_attr_org
-               |   file_attr_key
-               |   file_attr_rel               
-               |   file_attr_alt               
-               ;
-                      
 file_attr_assign ::= ASSIGN file_attr_assign_dd
                  ;  
                       
-file_attr_assign_dd ::= LITERAL:s  {: fichero.setPhysicalName(getSymbolName(s)); :} 
-                    |   ID:s       {: fichero.setPhysicalName(getSymbolName(s)); :} 
-                    |   DISPLAY:s  {: fichero.setPhysicalName("DISPLAY");        :}   
+file_attr_assign_dd ::= LITERAL:s  {: fichero.setPhysicalName(s.value); :} 
+                    |   ID:s       {: fichero.setPhysicalName(s.value); :} 
+                    |   DISPLAY:s  {: fichero.setPhysicalName(s.value);  :}   
                     ;
-                        
-file_attr_fs ::= STATUS ID 
-             ;
 
-file_attr_org ::= ORGANIZATION file_attr_org_type                               
-              ;                      
+file_attr_reserve ::= RESERVE NUMERO opt_areas
+                  |
+                  ;
 
-file_attr_org_type ::= SEQUENTIAL   {: fichero.setType(Persistence.SEQUENTIAL); :}
-                   |   RELATIVE     {: fichero.setType(Persistence.RELATIVE); :}
-                   |   INDEXED      {: fichero.setType(Persistence.INDEXED); :}
+file_attr_type ::= SEQUENTIAL:w         {: fichero.setType(Persistence.SEQUENTIAL); :}
+               |   INDEXED:w            {: fichero.setType(Persistence.INDEXED);    :}
+               |   RELATIVE:w           {: fichero.setType(Persistence.RELATIVE);   :}
+               |   LINE:w SEQUENTIAL:w1 {: fichero.setType(Persistence.LINE);       :}
+               |                        {: fichero.setType(Persistence.SEQUENTIAL); :}
+               ;
+               
+
+file_attr_rest_opt ::= file_attr_rest
+                   |
                    ;
+                                      
+file_attr_rest ::= file_attr_item:o             {: fichero.addOption(o); :}
+               |   file_attrs file_attr_item:o  {: fichero.addOption(o); :}
+               ;
 
-file_attr_access ::= ACCESS file_attr_acc_mode
+file_attr_item ::= file_attr_access:o           {: RESULT = o; :}
+               |   file_attr_record:o           {: RESULT = o; :}
+               |   file_attr_padding:o          {: RESULT = o; :}
+               |   file_attr_password:o         {: RESULT = o; :}
+               |   file_attr_fs:o               {: RESULT = o; :}
+               |   file_attr_alternate:o        {: RESULT = o; :}
+               |   file_attr_key:o              {: RESULT = o; :}
+               ;
+                      
+file_attr_padding ::= PADDING:w opt_character:w1 file_attr_padding_type:w2 {: RESULT = sf.option(w.add(w1,w2)); :}                               
+                  ;
+                                        
+file_attr_padding_type ::= ID:w          {: RESULT = w; :}
+                       |   LITERAL:w     {: RESULT = w; :}
+                       ;
+
+file_attr_record ::= RECORD:w DELIMITER:w1  file_attr_record_type:w2 {: RESULT = sf.option(w.setSuffix(w1).add(w2)); :}                               
+                 ;
+                                                                 
+file_attr_record_type ::= STANDARD1:w  {: RESULT = w; :}
+                      |   ID:w         {: RESULT = w; :}
+                      ;
+
+file_attr_access ::= ACCESS:w opt_mode:w1 file_attr_access_type:w2 file_attr_access_rel:w3
+                             {: RESULT = sf.option(w.add(w1,w2,w3)); :}
                  ;                            
 
-file_attr_acc_mode ::= SEQUENTIAL
-                   |   DYNAMIC
-                   |   RANDOM
-                   ;
+file_attr_access_type ::= SEQUENTIAL:w   {: RESULT = w; fichero.setType(Persistence.ACC_SEQUENTIAL); :}
+                      |   DYNAMIC:w      {: RESULT = w; fichero.setType(Persistence.ACC_DYNAMIC);    :}
+                      |   RANDOM:w       {: RESULT = w; fichero.setType(Persistence.ACC_RANDOM);     :}
+                      ;
 
-file_attr_rel ::= RELATIVE ID
+file_attr_access_rel ::= RELATIVE:w opt_key:w1 opt_is data_name:w2 {: RESULT = w.add(w1, w2); :}
+                     |                                             {: RESULT = null;          :} 
+                     ;
+                         
+file_attr_password ::= PASSWORD:w data_name:w1 {: RESULT = sf.option(w.add(w1)); :}
+                   ;                            
+                      
+file_attr_fs ::= FILE:p STATUS:w ID:w1   {: RESULT = sf.option(w.setPrefix(p).add(w1)); :}
+             |   STATUS:w ID:w1          {: RESULT = sf.option(w.add(w1));              :}
+             ;
+
+file_attr_alternate ::= ALTERNATE:w opt_record:w1 opt_key:w2 opt_is:w3 data_name:w4 opt_duplicates:w5
+                                  {: RESULT = sf.option(w.add(w1,w2,w3,w4,w5)); :}
+                    ;
+
+
+file_attr_key ::= RECORD:p ID:w {: RESULT = sf.option(p, w); :}
               ;
 
-file_attr_key ::= RECORD ID
-              ;
-
-file_attr_alt ::= ALTERNATE ID
-              ;
                                                                    
 /*********************************************************************/
 /* Data division                                                     */
 /*********************************************************************/
 
-data_division   ::= data_div_header bloque_data  {: /* rules.checkDivision(currBlock); */ :}
+data_division   ::= data_div_header bloque_data  {: rules.checkDivision(currStmt); :}
                 |
                 ;
 
-data_div_header ::=  DIV_DATA:s ENDP:p {: currBlock = new BlockCode(s, p); 
+data_div_header ::=  DIV_DATA:s ENDP:p {: currStmt = new StmtGral(s); 
+                                          currBlock = new BlockCode(s, p); 
                                           code.setDivision(CDG.SECT_DATA, s.line); 
                                        :}
                 ;
@@ -1256,17 +1327,57 @@ clause_thru ::= THRU constant
             ;
 
 
+data_name ::= LITERAL
+          |   ID
+          ;
+           
 on_off ::= ON:w   {: RESULT = w;    :}
        |   OFF:w  {: RESULT = w;    :}
        ;
+
+opt_areas ::= AREAS:w {: RESULT = w;    :}
+          |           {: RESULT = null; :}
+          ;
+
+opt_character ::= CHARACTERS:w {: RESULT = w;    :}
+              |                {: RESULT = null; :}
+              ;
         
 opt_debugging ::= debugging:w {: RESULT = w;    :}
               |               {: RESULT = null; :}
               ;
 
+opt_duplicates ::= opt_with:p DUPLICATES:w {: RESULT = w.setPrefix(p); :}
+               |                           {: RESULT = null;           :}
+               ;
+
+opt_endp ::= ENDP:w {: RESULT = w;    :}
+         |          {: RESULT = null; :}
+         ;
+
 opt_is ::= is:w {: RESULT = w;    :}
        |        {: RESULT = null; :}
        ;
+
+opt_key ::= KEY:w {: RESULT = w;    :}
+        |         {: RESULT = null; :}
+        ;
+
+opt_mode ::= MODE:w {: RESULT = w;    :}
+         |          {: RESULT = null; :}
+         ;
+
+opt_optional ::= OPTIONAL:w {: RESULT = w;    :}
+             |              {: RESULT = null; :}
+             ;
+
+opt_organization ::= ORGANIZATION:w {: RESULT = w;    :}
+                 |                  {: RESULT = null; :}
+                 ;
+
+opt_record ::= RECORD:w {: RESULT = w;    :}
+           |                  {: RESULT = null; :}
+           ;
 
 opt_sign ::= sign:w {: RESULT = w;    :}      
          |          {: RESULT = null; :}

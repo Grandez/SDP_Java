@@ -71,4 +71,11 @@ public class Cadena {
 		if (n.charAt(0) != '\'' && n.charAt(0) != '\"') return n;
 		return n.substring(1, n.length() - 1 );
 	}
+	
+	public static String getWord(String s, int n) {
+		String ss = s.trim();
+		String[] w = ss.split("[ \t]+");
+		if (w.length < n) return null;
+		return w[n];
+	}
 }

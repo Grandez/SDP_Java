@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.jgg.sdp.blocks.stmt.Option;
 
-public interface IStatement extends IReflect {
+public interface IStatement { // extends Reflect {
 
 	// Propiedades
 	public boolean hasEndPoint();

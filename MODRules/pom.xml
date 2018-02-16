@@ -27,9 +27,15 @@
            
            <dependencies>
            
+<!--              <dependency> -->
+<!--                 <groupId>com.jgg.sdp</groupId> -->
+<!--                 <artifactId>MODTools</artifactId> -->
+<!--                 <version>${sdp.version}</version> -->
+<!--              </dependency> -->
+
              <dependency>
                 <groupId>com.jgg.sdp</groupId>
-                <artifactId>MODTools</artifactId>
+                <artifactId>MODCore</artifactId>
                 <version>${sdp.version}</version>
              </dependency>
            

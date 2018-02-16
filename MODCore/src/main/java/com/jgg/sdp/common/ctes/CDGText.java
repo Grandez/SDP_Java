@@ -26,11 +26,11 @@ public class CDGText {
            case STMT_LANG:    return "LANG";    
            case STMT_CICS:    return "CICS";
            case STMT_SQL:     return "SQL";
-           case STMT_DCL:     return "DCL";
-           case STMT_DDL:     return "DDL";
-           case STMT_DML:     return "DML";
-           case STMT_PCL:     return "PCL";
-           case STMT_TCL:     return "TCL";
+           case STMT_SQL_DCL: return "DCL";
+           case STMT_SQL_DDL: return "DDL";
+           case STMT_SQL_DML: return "DML";
+           case STMT_SQL_PCL: return "PCL";
+           case STMT_SQL_TCL: return "TCL";
            case STMT_COPY:    return "COPY";
            default:           return "N/A";
 		}    

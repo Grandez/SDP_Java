@@ -42,6 +42,14 @@
                <rvalue>DDL</rvalue>
             </condition>            
          </r:rule>
+
+         <r:rule>
+            <severity>5</severity>            
+            <condition>
+               <value>SET</value>
+            </condition>            
+         </r:rule>
+
       </r:item>
    </r:group>
 

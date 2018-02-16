@@ -51,7 +51,7 @@ public class RulesProcessor {
 
     public void processGroupByName(String name, RuleObject obj) {
     	RuleGroup group = tree.getGroupByName(name);
-    	processGroup(group, obj);
+    	if (group != null) processGroup(group, obj);
     }
 
     public void processGroupById(Long idGroup, RuleObject obj) {
@@ -321,27 +321,8 @@ public class RulesProcessor {
 	private boolean applyDefaultOperator(RuleObject obj) {
 		return true;
 	}
-	
-/*	
-		if (cond == null) return true;
 		
-		switch (cond.getLvalueType()) {
-		    case TYPE_PROPERTY: return processProperty(cond, obj);
-		    case TYPE_STRING:   return processType(cond, obj);
-//	    case TYPE_VERB:    return processRuleVerb(rule, obj);
-//	    case TYPE_METHOD:  return processRuleMethod(rule, obj);
-	    //case TYPE_VALUE:   return processRuleValue(rule, obj);		    
-//	    case TYPE_FORMULA: return processRuleFormula(rule, obj);
-	    default:
-	    	System.out.println("Falta tipo de objeto");
-        }
-	    return true;
-		
-	}
-*/
-
-		
-	// Una propiedad es boolean. La cumple o no
+	// Una propiedad es booleana. La cumple o no
 	private Object processProperty(int type, String data, RuleObject obj) {
 		Boolean res = true;
 		String pat = data.toUpperCase();
@@ -353,11 +334,6 @@ public class RulesProcessor {
 		    res = (Boolean) Reflect.executeMethod(obj.getComponent(), data);
 		}
 		return res;
-	}
-
-	private Object processAttribute(int type, String data, RuleObject obj) {
-       String m = mountMethodName(type, data);
-       return Reflect.executeMethod(obj.getComponent(), m);
 	}
 
 	private Object processValue(int type, String data, RuleObject obj) {
@@ -374,8 +350,6 @@ public class RulesProcessor {
 	}
 
 	private Object processScript(int type, String data, RuleObject obj) {
-//		System.out.println("JGG processRuleFormula");
-		
 		RULScriptsService service = new RULScriptsService();
 		String script = service.getScript(Long.parseLong(data));
         Calculator c = new Calculator(script);
@@ -391,52 +365,6 @@ public class RulesProcessor {
 		return null;
 	}
 
-	private boolean processType(RuleCond cond, RuleObject obj) {
-//		Object lval = parseType(cond.getLvalueType(), (String) obj.getComponent());
-	    Object lval;	
-		switch (cond.getLvalueType()) {
-	       case TYPE_STRING:   lval = (String) obj.getComponent();
-		}
-		Object rval = parseType(cond.getRvalue());
-	//	applyOperator(lval, rval, cond.getOperator());
-		return false;
-	}
-/*	
-	private boolean processRuleVerb(RuleRule rule, RuleObject obj) {
-		boolean res = false;
-		
-		switch (rule.getComparator() % 100) {
-		   case OP_EXIST: return checkExist(rule, obj);
-		   case OP_START: return checkTypeStart(rule, obj);     
-		    default:
-		    	System.out.println("Falta tipo de comparacion");
-		   
-		}
-		return res;
-	}
-*/	
-	private boolean processRuleMethod(RuleRule rule, RuleObject obj) {
-//		System.out.println("JGG processRuleMethod");
-/*		
-		String method = rule.getProperty();
-		method = "get" + method.substring(0,1).toUpperCase() + method.substring(1);
-		Object result = JGGJava.executeMethod(obj, method);
-		if (result instanceof Integer) return  matchInteger((Integer) result, rule);
-*/		
-		return false;
-	}
-/*
-	private boolean processRuleValue(RuleRule rule, RuleObject obj) {
-        Object o = obj.getValue();		
-		if (o instanceof Integer)    return  matchInteger((Integer) o, rule);
-		if (o instanceof BigDecimal) return  matchBigDecimal((BigDecimal) o, rule);
-		return false;
-	}
-*/
-	
-	private boolean processString(RuleCond cond, String lvalue) {
-		return false;
-	}
 	/**
 	 * Realmente existe, miramos si esta prohibido
 	 * @param rule
@@ -527,19 +455,6 @@ public class RulesProcessor {
 		
 	private String mountMethodName(int type, String name) {
 		return "get" + Character.toUpperCase(name.charAt(0)) + name.substring(1);
-//		return name;
-/*		
-		StringBuilder sb = new StringBuilder("dyn");
-		sb.append(name.substring(0, 1).toUpperCase());
-		int pos = name.indexOf('(');
-		if (pos != -1) {
-			sb.append(name.substring(1,pos));
-		}
-		else {
-			sb.append(name.substring(1));
-		}
-		return sb.toString();
-*/		
 	}
 	
 	private boolean isNegated(int o) {

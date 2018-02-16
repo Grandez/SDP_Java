@@ -55,5 +55,8 @@ public class SDPSymbolFactory implements SymbolFactory{
 	public Option option(SDPSymbol s, Option o) {
 		return new Option(s, o);
 	}
+	public Option option(SDPSymbol s) {
+		return new Option(s);
+	}
 
 }

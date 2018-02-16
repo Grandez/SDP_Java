@@ -119,7 +119,7 @@ public class ProxyLexer implements GenericScanner {
               break;
          case ENDEXEC:	    	  		       
               alterParser();
-//              s =  next_token();
+              s =  next_token();
  	          break;	          
        }     
 	   return s;

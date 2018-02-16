@@ -143,7 +143,7 @@ public class IVPAnalyzer {
         	   currArchivo = archivo.getFileName();
         	   modules.add(currArchivo);
         	   log.lineBeg(2,String.format("%5d - %8s", ++count, archivo.getBaseName()));
-if (archivo.getBaseName().compareTo("IVP55001") == 0) {
+if (archivo.getBaseName().compareTo("IVP50031") == 0) {
 	archivo.toString();	
 }
         	   module = analyze(archivo);

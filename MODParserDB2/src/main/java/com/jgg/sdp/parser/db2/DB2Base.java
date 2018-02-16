@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import com.jgg.sdp.common.ctes.MSG;
 import com.jgg.sdp.common.exceptions.SDPException;
+import com.jgg.sdp.parser.base.NotSupportedException;
 
 public abstract class DB2Base {
 
@@ -25,7 +26,9 @@ public abstract class DB2Base {
 	protected static int getLexerType(String wrd) {		
 		if (verbs == null) loadVerbs();
 		Object sqlType = verbs.get(wrd);
-		if (sqlType == null) return 0;
+		if (sqlType == null) { 
+			throw new NotSupportedException(MSG.EXCEPTION_DB2_VERB, wrd);
+	    }
 		dialecto = Integer.parseInt((String) sqlType); 
         return dialecto;
 	}

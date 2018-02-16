@@ -358,10 +358,10 @@ non terminal StmtCICS     cics_stmt_perform         ;
 non terminal StmtCICS     cics_stmt_resync          ;
 non terminal StmtCICS     cics_stmt_set             ;
                           
-non terminal SDPSymbol       cics_create               ;
-non terminal SDPSymbol       cics_disable              ;
-non terminal SDPSymbol       cics_perform              ;
-non terminal SDPSymbol       cics_set                  ;
+non terminal SDPSymbol    cics_create               ;
+non terminal SDPSymbol    cics_disable              ;
+non terminal SDPSymbol    cics_perform              ;
+non terminal SDPSymbol    cics_set                  ;
 
 non terminal StmtCICS cics_area_pgm      ;
 non terminal StmtCICS cics_area_program  ;
@@ -478,7 +478,7 @@ non terminal SDPSymbol   padre_indicator    ;
 /**********************************************************************/
 /**********************************************************************/
 /*                        INICIO PARSER                               */
-/**********************************************************************/
+/***********************S***********************************************/
 /**********************************************************************/
 /**********************************************************************/
 

@@ -3,7 +3,7 @@ package com.jgg.sdp.rules.objects;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jgg.sdp.blocks.reflect.IReflect;
+import com.jgg.sdp.blocks.reflect.Reflect;
 
 public class RuleObject {
 	private int begLine   = 0;
@@ -30,7 +30,7 @@ public class RuleObject {
     
     public RuleObject(Object o) {
     	setComponent(o);
-    	IReflect i = (IReflect) o;
+    	Reflect i = (Reflect) o;
     	begLine    = i.getBegLine();
     	begColumn  = i.getBegColumn();
     	endLine    = i.getEndLine();
@@ -139,7 +139,7 @@ public class RuleObject {
 
 	public String getObjectValue() {
 		if (component == null) return null;
-		return ((IReflect) component).getValue();
+		return ((Reflect) component).getValue();
 	}
 	
 	public Object getLVal() {
